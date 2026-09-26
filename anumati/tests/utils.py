@@ -34,6 +34,8 @@ def make_principal(ref=None, **kw):
 
 def make_event(principal=None, programme="TST", **kw):
 	make_programme(programme)
+	for code in (*kw.get("purposes_granted", ["screen", "follow"]), *kw.get("purposes_denied", ["research"])):
+		make_purpose(programme, code, code.title())
 	principal = principal or make_principal().name
 	doc = frappe.get_doc(
 		{
