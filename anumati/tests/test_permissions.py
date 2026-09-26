@@ -87,10 +87,14 @@ class TestGuestAccess(FrappeTestCase):
 		self.assertEqual(whitelisted(guest_only=True), GUEST_ALLOWLIST)
 
 	def test_authenticated_methods_check_roles(self):
+		from anumati.api.v1 import chain as chain_api
+
+		# frappe.only_for is a no-op while frappe.flags.in_test is set; switch it off for this check.
+		in_test = frappe.flags.in_test
+		frappe.flags.in_test = False
 		frappe.set_user("Guest")
 		try:
-			from anumati.api.v1 import chain as chain_api
-
 			self.assertRaises(frappe.PermissionError, chain_api.verify)
 		finally:
 			frappe.set_user("Administrator")
+			frappe.flags.in_test = in_test

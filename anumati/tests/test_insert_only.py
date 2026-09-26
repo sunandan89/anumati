@@ -40,7 +40,7 @@ class TestInsertOnly(FrappeTestCase):
 	def _audit_entry(self):
 		programme = frappe.get_doc("Programme", make_programme())
 		programme.programme_name = "Test Health Camp (renamed)"
-		programme.save()
+		programme.save(ignore_version=False)  # Frappe skips Version in tests by default
 		chain.seal_audit_trail()
 		name = frappe.db.get_value("Audit Entry", {"ref_doctype": "Programme", "ref_name": programme.name})
 		self.assertTrue(name, "editing a Programme should produce a sealed Audit Entry")

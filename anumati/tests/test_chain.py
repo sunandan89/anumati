@@ -78,7 +78,7 @@ class TestChain(FrappeTestCase):
 	def test_admin_changes_are_sealed_and_tamper_evident(self):
 		programme = frappe.get_doc("Programme", make_programme())
 		programme.status = "Paused"
-		programme.save()
+		programme.save(ignore_version=False)  # Frappe skips Version in tests by default
 		self.assertGreaterEqual(chain.seal_audit_trail(), 1)
 		self.assertTrue(chain.verify_chain("Audit Entry")["ok"])
 		entry = frappe.db.get_value("Audit Entry", {"ref_doctype": "Programme", "action": "update"}, "name")
@@ -91,6 +91,6 @@ class TestChain(FrappeTestCase):
 	def test_sealing_is_idempotent(self):
 		programme = frappe.get_doc("Programme", make_programme())
 		programme.status = "Live"
-		programme.save()
+		programme.save(ignore_version=False)  # Frappe skips Version in tests by default
 		chain.seal_audit_trail()
 		self.assertEqual(chain.seal_audit_trail(), 0)
