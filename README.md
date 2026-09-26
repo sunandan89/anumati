@@ -6,6 +6,6 @@ Consent that works where the internet doesn't — an open-source DPDP consent pl
 - Append-only, signed, hash-chained consent ledger
 - Hosted (India region) or self-hosted
 
-Status: pre-alpha, Phase 0. See [`docs/anumati-spec-v0.3.md`](docs/anumati-spec-v0.3.md).
+Status: pre-alpha, Phase 0. See [`docs/anumati-spec-v0.4.md`](docs/anumati-spec-v0.4.md).
 
 Licence: AGPL-3.0 (server).

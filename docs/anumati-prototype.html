@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
 <title>Anumati Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,100&family=Hind:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -201,6 +201,7 @@ code.blk{display:block;white-space:pre;overflow-x:auto;background:var(--ink);col
 .big{width:100%;min-height:50px;border-radius:12px;border:0;background:var(--terra);color:var(--terra-ink);font-size:16px;font-weight:600;cursor:pointer}
 .big[disabled]{background:var(--line);color:var(--ink3);cursor:not-allowed}
 .big.alt{background:transparent;border:1.5px solid var(--terra);color:var(--terra)}
+.big.alt.on{background:var(--terra);color:var(--terra-ink)} .big:disabled{opacity:.45;cursor:not-allowed}
 .tile{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line2);border-radius:14px;padding:14px;cursor:pointer;text-align:left;width:100%}
 .tile:hover{border-color:var(--terra)}
 .ico{width:42px;height:42px;border-radius:12px;background:var(--terra-soft);color:var(--terra-deep);display:grid;place-items:center;flex-shrink:0}
@@ -1035,8 +1036,9 @@ function cDash(){
 
 /* ---- programmes ---- */
 function cProgrammes(){
+  if (S.con.progNew) return progWizard();
   if (!S.con.progOpen) {
-    return `<div class="ph"><div><div class="eyebrow">Each programme has its own notice, languages, rules and keys</div><h1>Programmes</h1></div><span class="spacer"></span><button class="btn pri" data-a="toast" data-m="New programme wizard opens here (prototype)">New programme</button></div>
+    return `<div class="ph"><div><div class="eyebrow">Each programme has its own notice, languages, rules and keys</div><h1>Programmes</h1></div><span class="spacer"></span><button class="btn pri" data-a="pwnew">New programme</button></div>
     <div class="grid g2">${D.programmes.map(p => `<button class="card stack" style="text-align:left;cursor:pointer;gap:10px" data-a="openprog" data-id="${p.id}">
       <div class="row" style="justify-content:space-between"><strong style="font-size:18px">${p.name}</strong><span class="chip ${p.status==='Live'?'c-ok':'c-wait'}">${p.status}</span></div>
       <div class="small muted">${p.persona} · ${p.channel} · ${p.districts}</div>
@@ -1106,7 +1108,7 @@ function pgWithdrawal(){
 }
 function pgTeam(){
   return `<div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Field worker</th><th>Device</th><th>Last sync</th><th class="r">Waiting</th><th>App</th><th></th></tr></thead><tbody>
-    ${D.devices.map(d => `<tr><td>${d.who}</td><td class="mono">${d.id}</td><td>${d.last}</td><td class="r num">${d.id==='FW-104'?S.outbox:d.pending}</td><td>${d.ver}</td><td><button class="btn sm" data-a="toast" data-m="Remote logout sent to ${d.id}">Log out device</button></td></tr>`).join('')}
+    ${D.devices.map(d => `<tr><td>${d.who}</td><td class="mono">${d.id}</td><td>${d.last}</td><td class="r num">${d.id==='FW-104'?S.outbox:d.pending}</td><td>${d.ver}</td><td class="r">${D.lost[d.id]?`<span class="chip c-bad">Lost · logged out · wipe ${D.lost[d.id]}</span>`:`<div class="row" style="gap:6px;justify-content:flex-end"><button class="btn sm" data-a="toast" data-m="Remote logout sent to ${d.id}">Log out</button><button class="btn sm" data-a="devlost" data-id="${d.id}">Report lost</button></div>`}</td></tr>`).join('')}
   </tbody></table></div></div>`;
 }
 function pgIntegration(){
@@ -1128,10 +1130,11 @@ function cNotices(){
   const tabs = [['purposes','Purposes'],['content','Notice content'],['translations','Translations'],['versions','Versions']];
   let body = '';
   if (S.con.noticeTab === 'purposes') body = PURPOSES.mhu.map(u => `<div class="card row" style="padding:12px 14px;align-items:flex-start"><div style="flex:1"><strong>${u.en}</strong>${u.isNew?' <span class="chip c-terra">New in v4</span>':''}<div class="small muted">${u.items} · kept ${u.retain}${u.processor?' · processor: '+u.processor:''}</div></div>${u.essential?'<span class="chip c-neu">Essential</span>':'<span class="chip c-ok">Optional</span>'}${u.minor?'':' <span class="chip c-ind">Not for minors</span>'}</div>`).join('') + `<button class="btn sm" data-a="toast" data-m="Purpose editor opens here (prototype)" style="align-self:flex-start">${ic('plus',16)} Add purpose</button><div class="small muted">Optional purposes start off on every screen. “Yes to all” and “No to all” have equal weight.</div>`;
-  if (S.con.noticeTab === 'content') body = `<div class="card stack"><div class="small muted">Rule 3 checklist — the notice must say all of this</div>${['Each data item and each purpose','How to withdraw consent','How to exercise rights','How to complain to the Data Protection Board','DPO or grievance contact','Summary of security safeguards'].map((x,i) => `<label class="check"><input type="checkbox" checked id="r3-${i}"> ${x}</label>`).join('')}</div>`;
-  if (S.con.noticeTab === 'translations') body = `<div class="row" style="justify-content:space-between"><span class="small muted">9 of 22 languages human-reviewed · 12 shown</span><button class="btn sm" data-a="toast" data-m="Language pack request sent to Dhwani">Request language pack</button></div><div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Language</th><th>Text</th><th>Audio</th><th>Reviewer</th></tr></thead><tbody>${D.trans.map(x => `<tr><td class="hi">${x.lang}</td><td><span class="chip ${x.st==='Reviewed'?'c-ok':x.st==='Missing'?'c-bad':x.st==='Awaiting review'?'c-wait':'c-neu'}">${x.st}</span></td><td class="num">${x.audio}</td><td>${x.rev}</td></tr>`).join('')}</tbody></table></div></div><div class="small muted">Machine drafts can’t be published.</div>`;
+  if (S.con.noticeTab === 'content') body = `<div class="card stack"><div class="small muted">Rule 3 checklist — the notice must say all of this</div>${['Each data item and each purpose','How to withdraw consent','How to exercise rights','How to complain to the Data Protection Board','DPO or grievance contact','Summary of security safeguards','Processors and other recipients, by purpose','Whether data leaves India, and where','Button labels match the choices (Yes / No, equal weight)'].map((x,i) => `<label class="check"><input type="checkbox" checked id="r3-${i}"> ${x}</label>`).join('')}</div>`;
+  if (S.con.noticeTab === 'translations') body = `<div class="row" style="justify-content:space-between"><span class="small muted">9 of 22 languages human-reviewed · 12 shown</span><button class="btn sm" data-a="toast" data-m="Language pack request sent to Dhwani">Request language pack</button></div><div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Language</th><th>Text</th><th>Audio</th><th>Reviewer</th></tr></thead><tbody>${D.trans.map(x => `<tr><td class="hi">${x.lang}</td><td><span class="chip ${x.st==='Reviewed'?'c-ok':x.st==='Missing'?'c-bad':x.st==='Awaiting review'?'c-wait':'c-neu'}">${x.st}</span></td><td>${transAudio(x)}</td><td>${x.rev}</td></tr>`).join('')}</tbody></table></div></div><div class="small muted">Machine drafts, text or audio, can’t be published until a named reviewer signs off.</div>`;
   if (S.con.noticeTab === 'versions') body = `<div class="card" style="padding:0"><table class="t"><thead><tr><th>Version</th><th>Change</th><th>Status</th><th class="r">People on it</th></tr></thead><tbody><tr><td>v4</td><td>Adds anonymised research</td><td><span class="chip c-wait">Draft · material change</span></td><td class="r">0</td></tr><tr><td>v3</td><td>Adds DHO sharing</td><td><span class="chip c-ok">Live</span></td><td class="r num">8,410</td></tr><tr><td>v2</td><td>Marathi added</td><td><span class="chip c-neu">Retired</span></td><td class="r num">0</td></tr></tbody></table></div>`;
-  return `<div class="ph"><div><div class="eyebrow">Mobile Health Unit</div><h1>Health screening notice</h1></div><span class="chip c-wait">v4 draft</span><span class="spacer"></span><button class="btn" data-a="noticetab" data-t="versions">Compare with v3</button><button class="btn pri" data-a="publishv4">Publish v4 + start re-consent</button></div>
+  return `<div class="ph"><div><div class="eyebrow">Mobile Health Unit</div><h1>Health screening notice</h1></div><span class="chip c-wait">v4 draft</span><span class="spacer"></span><button class="btn" data-a="noticetab" data-t="versions">Compare with v3</button><button class="btn pri" data-a="publishv4" ${S.con.dpiaDone?'':'aria-disabled="true" style="opacity:.55"'}>Publish v4 + start re-consent</button></div>
+  ${publishGate()}
   <div class="split">
     <div class="stack"><div class="tabs">${tabs.map(([k,l]) => `<button class="tab ${S.con.noticeTab===k?'on':''}" data-a="noticetab" data-t="${k}">${l}</button>`).join('')}</div>${body}</div>
     <div class="stack" style="align-items:center">
@@ -1191,9 +1194,10 @@ function cPrincipals(){
 }
 function principalRecord(){
   const p = P();
+  if (S.con.certOpen) return certView(p);
   return `<div class="crumb"><button data-a="closep">Principals</button> / ${p.id}</div>
   <div class="ph"><div><h1>${p.name}</h1><div class="row wr" style="margin-top:8px;gap:6px"><span class="chip c-neu hi">Prefers ${p.lang}</span>${p.flags.map(f => `<span class="chip c-wait">${f}</span>`).join('')}</div></div><span class="spacer"></span>
-    <button class="btn" data-a="toast" data-m="Signed artefact ${p.code}.json prepared (prototype)">Download signed record</button><button class="btn" data-a="toast" data-m="PII access logged: Priya M. viewed ${p.id}">${ic('eye',16)} Access log</button></div>
+    ${p.ended?`<span class="chip c-wait">Relationship ended ${p.ended}</span>`:`<button class="btn" data-a="pended">Relationship ended</button>`}<button class="btn" data-a="certopen">Evidence certificate</button><button class="btn" data-a="toast" data-m="Signed artefact ${p.code}.json prepared (prototype)">Download signed record</button><button class="btn" data-a="toast" data-m="PII access logged: Priya M. viewed ${p.id}">${ic('eye',16)} Access log</button></div>
   <div class="split">
     <div class="stack">
       <div class="card" style="padding:0"><div style="padding:14px 16px 4px;font-weight:600">Current consent · ${D.programmes.find(x=>x.id===p.prog).name}</div>
@@ -1231,7 +1235,7 @@ function cInbox(){
     ${sel ? inboxDetail(sel) : '<div class="card empty">Pick a request</div>'}
   </div>`;
 }
-function inboxDetail(r){
+function inboxDetail0(r){
   if (r.id === 'RQ-2291' && r.status !== 'done') {
     const opts = [['MHU-004211','Sunita D.','Phone owner · Mobile Health Unit'],['MHU-004212','Kamla D.','Mother-in-law · Mobile Health Unit'],['SCH-000877','Pooja D. (14)','Daughter · Scholarship · guardian Sunita D.']];
     return `<div class="card stack"><div class="eyebrow">${r.id} · missed call · withdraw</div><h3 style="font-size:20px">+91 98XXX X4410 called at 09:12</h3>
@@ -1271,12 +1275,12 @@ function cGov(){
   const t = S.con.govTab;
   const tabs = [['audit','Audit log'],['retention','Retention'],['processors','Processors'],['ropa','Records of processing'],['breach','Breach'],['access','Access log']];
   let body = '';
-  if (t==='audit') body = `<div class="row wr"><span class="chip c-ok">${ic('chain',14)} ${fmt(48211 + D.audit.length - 7)} entries · verified 02:00</span><span class="spacer"></span><button class="btn sm" data-a="lens" data-k="aud">Open auditor view</button><button class="btn sm pri" data-a="toast" data-m="Audit pack (PDF + JSON + chain proof) prepared">Export audit pack</button></div>
-    <div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Object</th><th>Hash</th></tr></thead><tbody>${D.audit.map(a => `<tr><td>${a.when}</td><td>${a.actor}</td><td>${a.action}</td><td>${a.obj}</td><td class="mono">${a.hash}</td></tr>`).join('')}</tbody></table></div></div>`;
-  if (t==='retention') body = `<div class="card stack"><div class="row" style="justify-content:space-between"><strong>Follow-up calls · 12-month purpose</strong><span class="chip c-wait">112 due</span></div><div class="small muted">Advance notice SMS sent 19 Sep · purge runs 26 Oct · systems asked to delete: Anumati Collect, MIS</div><button class="btn sm" data-a="toast" data-m="Retention queue opened" style="align-self:flex-start">Review queue</button></div>`;
+  if (t==='audit') body = `<div class="row wr"><span class="chip c-ok">${ic('chain',14)} ${fmt(48211 + D.audit.length - 7)} entries · verified 02:00</span><span class="spacer"></span><button class="btn sm" data-a="sharenew">Create auditor share link</button><button class="btn sm" data-a="lens" data-k="aud">Open auditor view</button><button class="btn sm pri" data-a="toast" data-m="Audit pack (PDF + JSON + chain proof) prepared">Export audit pack</button></div>
+    ${shareCard()}<div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>When</th><th>Actor</th><th>Action</th><th>Object</th><th>Hash</th></tr></thead><tbody>${D.audit.map(a => `<tr><td>${a.when}</td><td>${a.actor}</td><td>${a.action}</td><td>${a.obj}</td><td class="mono">${a.hash}</td></tr>`).join('')}</tbody></table></div></div>`;
+  if (t==='retention') body = retentionTab(); if (false) body = `<div class="card stack"><div class="row" style="justify-content:space-between"><strong>Follow-up calls · 12-month purpose</strong><span class="chip c-wait">112 due</span></div><div class="small muted">Advance notice SMS sent 19 Sep · purge runs 26 Oct · systems asked to delete: Anumati Collect, MIS</div><button class="btn sm" data-a="toast" data-m="Retention queue opened" style="align-self:flex-start">Review queue</button></div>`;
   if (t==='processors') body = `<div class="card" style="padding:0"><table class="t"><thead><tr><th>Processor</th><th>Purposes</th><th>Agreement</th><th>Pending confirmations</th></tr></thead><tbody><tr><td>District Health Office</td><td>DHO sharing</td><td>DPA 2026-03</td><td>${D.processors.filter(x=>!x.acked).length}</td></tr><tr><td>Bank disbursement partner</td><td>Scholarship payment</td><td>DPA 2026-05</td><td>${D.processors[1].acked?0:1}</td></tr></tbody></table></div><button class="btn sm" data-a="goto" data-lens="aud" data-view="partners" style="align-self:flex-start">Open partner confirmations</button>`;
-  if (t==='ropa') body = `<div class="card" style="padding:0"><table class="t"><thead><tr><th>Activity</th><th>Data</th><th>Recipients</th><th>Kept</th><th>Complete</th></tr></thead><tbody>${[['Health screening','Health readings','—','24 m','Yes'],['DHO sharing','Screening results','District Health Office','24 m','Yes'],['Anonymised research','De-identified readings','Research partner','36 m','Missing DPIA']].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="chip ${r[4]==='Yes'?'c-ok':'c-wait'}">${r[4]}</span></td></tr>`).join('')}</tbody></table></div><button class="btn sm" data-a="toast" data-m="Records derived from current purposes" style="align-self:flex-start">Derive from purposes</button>`;
-  if (t==='breach') body = `<div class="card stack"><strong>No open incidents</strong><div class="small muted">Report a breach to notify affected people by SMS, WhatsApp and IVR, and generate the Board report.</div><button class="btn sm" data-a="toast" data-m="Breach report form opens here (prototype)" style="align-self:flex-start">Report a breach</button></div>`;
+  if (t==='ropa') body = ropaTab(); if (false) body = `<div class="card" style="padding:0"><table class="t"><thead><tr><th>Activity</th><th>Data</th><th>Recipients</th><th>Kept</th><th>Complete</th></tr></thead><tbody>${[['Health screening','Health readings','—','24 m','Yes'],['DHO sharing','Screening results','District Health Office','24 m','Yes'],['Anonymised research','De-identified readings','Research partner','36 m','Missing DPIA']].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="chip ${r[4]==='Yes'?'c-ok':'c-wait'}">${r[4]}</span></td></tr>`).join('')}</tbody></table></div><button class="btn sm" data-a="toast" data-m="Records derived from current purposes" style="align-self:flex-start">Derive from purposes</button>`;
+  if (t==='breach') body = breachTab(); if (false) body = `<div class="card stack"><strong>No open incidents</strong><div class="small muted">Report a breach to notify affected people by SMS, WhatsApp and IVR, and generate the Board report.</div><button class="btn sm" data-a="toast" data-m="Breach report form opens here (prototype)" style="align-self:flex-start">Report a breach</button></div>`;
   if (t==='access') body = `<div class="card" style="padding:0"><table class="t"><thead><tr><th>When</th><th>Staff</th><th>Viewed</th><th>Action</th></tr></thead><tbody><tr><td>Today 09:31</td><td>Priya M.</td><td>MHU-004211</td><td>View</td></tr><tr><td>Today 08:02</td><td>Anil T.</td><td>SKL-001204</td><td>Export</td></tr><tr><td>Yesterday</td><td>Ravi K.</td><td>MHU-003990</td><td>View (app)</td></tr></tbody></table></div>`;
   return `<div class="ph"><div><div class="eyebrow">Proof for the Board and auditors</div><h1>Audit & governance</h1></div></div>
   <div class="tabs">${tabs.map(([k,l]) => `<button class="tab ${t===k?'on':''}" data-a="govtab" data-t="${k}">${l}</button>`).join('')}</div>${body}`;
@@ -1285,11 +1289,12 @@ function cGov(){
 /* ---- settings ---- */
 function cSettings(){
   const t = S.con.setTab;
-  const tabs = [['org','Organisation'],['team','Team & roles'],['brand','Branding'],['billing','Plan & billing']];
+  const tabs = [['org','Organisation'],['team','Team & roles'],['brand','Branding'],['access','Sign-in & sharing'],['billing','Plan & billing']];
   let body = '';
   if (t==='org') body = `<div class="card grid g2"><label class="field">Legal name<input id="s-name" value="Aaroh Foundation"></label><label class="field">Type<input id="s-type" value="Section 8 company"></label><label class="field">Role under DPDP<input id="s-role" value="Data Fiduciary"></label><label class="field">DPO contact<input id="s-dpo" value="dpo@aaroh.org"></label><label class="field">Data residency<input id="s-res" value="India (Mumbai region)"></label><label class="field">Processor agreement with Dhwani<input id="s-dpa" value="Signed 12 Jul 2026"></label></div>`;
   if (t==='team') body = `<div class="card" style="padding:0"><table class="t"><thead><tr><th>Name</th><th>Role</th><th>2FA</th></tr></thead><tbody>${[['Swapnil A.','Owner','On'],['Priya M.','DPO','On'],['Anil T.','Operator (inbox)','On'],['Ravi K.','Developer','On'],['18 field workers','Field (app only)','OTP login']].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td><span class="chip c-ok">${r[2]}</span></td></tr>`).join('')}</tbody></table></div>`;
   if (t==='brand') body = `<div class="card grid g2"><label class="field">Name on receipts<input id="s-bn" value="Aaroh Foundation"></label><label class="field">SMS sender ID<input id="s-sid" value="AAROHF"></label><div class="small muted">Logo and colours appear on the field app, hosted page and receipts.</div></div>`;
+  if (t==='access') body = settingsAccess();
   if (t==='billing') body = `<div class="card stack"><strong>Hosted Programme</strong><div class="small muted">4 programmes · unlimited consents · your own MSG91 account · renewal Jul 2027 · amount [to be set]</div></div>`;
   return `<div class="ph"><h1>Settings</h1></div><div class="tabs">${tabs.map(([k,l]) => `<button class="tab ${t===k?'on':''}" data-a="settab" data-t="${k}">${l}</button>`).join('')}</div>${body}`;
 }
@@ -1358,7 +1363,7 @@ function renderAnalytics(){
   </div>`;
 }
 /* ================= FIELD APP ================= */
-const APP_SCREENS = [['home','Home & sync'],['principal','Beneficiary'],['guardian','Guardian'],['notice','Notice'],['purposes','Choices'],['evidence','Evidence'],['verify','Verify'],['saved','Receipt'],['withdraw','Log a withdrawal']];
+const APP_SCREENS = [['home','Home & sync'],['principal','Beneficiary'],['guardian','Guardian'],['notice','Notice'],['purposes','Choices'],['evidence','Evidence'],['verify','Verify'],['saved','Receipt'],['withdraw','Log a withdrawal'],['addpurpose','Add a purpose later']];
 const APP_NOTES = {
   home:['Offline home','Shows what is waiting on the phone. Sync signs and chains everything on the server.','A5 offline capture'],
   principal:['Who is consenting','Segment flags decide which steps follow. Language carries through SMS, calls and the preference centre.','A6, C1, C2'],
@@ -1368,7 +1373,8 @@ const APP_NOTES = {
   evidence:['Assisted evidence','Voice, thumbprint and a witness, with the worker’s attestation.','A7'],
   verify:['Verify without data','The ladder offers the best method for the signal available right now.','Verification ladder'],
   saved:['Receipt','Consent code and withdrawal routes go to her by SMS or printed slip.','B1, B4'],
-  withdraw:['Withdrawal in person','Any worker can log a withdrawal offline. It takes effect on the phone at once.','B4, B5']
+  withdraw:['Withdrawal in person','Any worker can log a withdrawal offline. It takes effect on the phone at once.','B4, B5'],
+  addpurpose:['Ask for one more purpose, later','Just-in-time consent on a later visit. Only the new purpose’s notice is played; earlier choices stay as they are.','A2, A4']
 };
 function appFlow(){ const a = S.app; const f = ['home','principal']; if (a.flags.minor || a.flags.pwd) f.push('guardian'); return f.concat(['notice','purposes','evidence','verify','saved']); }
 function stepLabel(){ const fl = appFlow().slice(1, -1); const i = fl.indexOf(S.app.screen); return i >= 0 ? `Step ${i+1} of ${fl.length}` : ''; }
@@ -1390,7 +1396,7 @@ function renderApp(){
 function abar(title, back, sub){ return `<div class="appbar">${back?`<button data-a="ascreen" data-s="${back}" aria-label="Back">${ic('back',22)}</button>`:''}<div style="flex:1"><div class="s">${sub || stepLabel()}</div><div class="t">${title}</div></div><span class="chip" style="background:rgba(255,255,255,.18);color:#fff">Offline</span></div>`; }
 function nextOf(s){ const f = appFlow(); return f[f.indexOf(s)+1]; }
 function prevOf(s){ const f = appFlow(); return f[f.indexOf(s)-1]; }
-function appScreen(){
+function appScreen0(){
   const a = S.app;
   switch (a.screen){
   case 'home': return `<div class="appbar" style="flex-direction:column;align-items:stretch;gap:12px;padding:20px 16px"><div class="row" style="justify-content:space-between"><div><div class="s">Aaroh Foundation · FW-104</div><div class="t" style="font-family:var(--disp);font-size:24px">Namaste, Ravi</div></div><span class="chip" style="background:rgba(255,255,255,.18);color:#fff">${S.outbox?'Offline':'Synced'}</span></div>
@@ -1399,6 +1405,7 @@ function appScreen(){
       <div class="small muted">Programme</div><div class="pcard"><div style="flex:1">Mobile Health Unit · notice v3</div><span class="small" style="color:var(--terra)">Change</span></div>
       <button class="tile" data-a="appnew"><span class="ico">${ic('plus')}</span><span><strong>Take new consent</strong><div class="small muted">Self, assisted or guardian</div></span></button>
       <button class="tile" data-a="ascreen" data-s="withdraw"><span class="ico">${ic('x')}</span><span><strong>Log withdrawal or request</strong><div class="small muted">Told in person, slip or letter</div></span></button>
+      <button class="tile" data-a="ascreen" data-s="addpurpose"><span class="ico">${ic('plus')}</span><span><strong>Ask for one more purpose</strong><div class="small muted">Existing beneficiary, new use</div></span></button>
       <button class="tile" data-a="toast" data-m="Search works offline across people on this phone"><span class="ico">${ic('search')}</span><span><strong>Find beneficiary</strong><div class="small muted">See consent status offline</div></span></button>
     </div>`;
   case 'principal': return `${abar('Who is giving consent?','home')}
@@ -1624,10 +1631,272 @@ function renderAud(){
     ${p?`<div class="card stack"><div class="row" style="justify-content:space-between"><strong>${p.code} · ${p.id}</strong><span class="chip c-ok">Signature valid</span></div><div class="small muted">Name hidden in auditor view · ${D.programmes.find(x=>x.id===p.prog).name} · ${p.verify}</div>
       <table class="t"><tbody>${PURPOSES.mhu.map(u => `<tr><td>${u.en}</td><td>${stChip(p.state[u.id])}</td></tr>`).join('')}</tbody></table></div>`:`<div class="card empty">No consent with that code.</div>`}`; }
   if (a.tab === 'partners') body = `<div class="card small muted">Signed in as District Health Office and bank disbursement partner (processors). Confirm when you have acted on a withdrawal or erasure.</div>
-    <div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Request</th><th>What to do</th><th>Sent</th><th></th></tr></thead><tbody>${D.processors.map((x,i) => `<tr><td class="mono">${x.req}</td><td>${x.what}</td><td>${x.sent}</td><td class="r">${x.acked?'<span class="chip c-ok">Confirmed</span>':`<button class="btn sm pri" data-a="aack" data-i="${i}">Confirm done</button>`}</td></tr>`).join('')}</tbody></table></div></div>`;
+    <div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Request</th><th>What to do</th><th>Sent</th><th class="r">Proof of action</th></tr></thead><tbody>${D.processors.map((x,i) => `<tr><td class="mono">${x.req}</td><td>${x.what}</td><td>${x.sent}</td><td class="r">${x.acked?`<span class="chip c-ok">Confirmed</span>${x.proof?`<div class="mono small muted">${esc(x.proof)}</div>`:''}`:`<div class="row" style="gap:6px;justify-content:flex-end"><input id="pf-${i}" placeholder="Evidence hash or deletion ref" style="max-width:220px;font-size:13px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--raised)"><button class="btn sm pri" data-a="aack" data-i="${i}">Confirm done</button></div>`}</td></tr>`).join('')}</tbody></table></div></div>`;
   return `<div class="main" style="max-width:1180px;margin:0 auto"><div class="ph"><div><div class="eyebrow">Read-only access for auditors, the Board and processors</div><h1>Auditor & partners</h1></div></div>
     <div class="tabs">${tabs.map(([k,l]) => `<button class="tab ${a.tab===k?'on':''}" data-a="atb" data-t="${k}">${l}</button>`).join('')}</div>${body}</div>`;
 }
+/* ================= v0.3 FINAL ADDITIONS ================= */
+Object.assign(S.con, { dpiaDone:false, dpiaOpen:false, progNew:false, certOpen:false, retNew:false, breachNew:false, share:false, sso:{google:true, ms:false, saml:false}, funder:false, reply:'sms', replyText:'' });
+S.pw = { step:1, tpl:'health', q:{ children:false, pwd:false, health:true, share:true, photos:false, abroad:false, nophone:true }, off:{}, name:'Monsoon health camps', districts:'Nashik, Dhule', cap:'Anumati Collect', langs:{ English:true, 'हिन्दी':true, 'मराठी':true, 'اردو':false } };
+Object.assign(S.app, { apHeard:false, apChoice:null, apPreview:false });
+D.lost = {};
+D.breaches = [];
+D.threads = {};
+D.retention = [
+  { data:'Health readings', purpose:'Screening and referral', dur:'24 months', start:'Collection', act:'Erase', sys:'Anumati Collect, MIS' },
+  { data:'Phone number', purpose:'Follow-up calls', dur:'12 months', start:'Collection', act:'Erase', sys:'MIS, IVR' },
+  { data:'Screening results', purpose:'DHO sharing', dur:'30 days', start:'Withdrawal', act:'Ask processor to erase', sys:'District Health Office' },
+  { data:'De-identified readings', purpose:'Anonymised research', dur:'36 months', start:'Collection', act:'Erase', sys:'Research partner' },
+  { data:'Disbursement ledger', purpose:'Scholarship payment', dur:'8 years', start:'Relationship ended', act:'Legal hold, then anonymise', sys:'mGrant, bank partner' },
+  { data:'Photos and stories', purpose:'Reports to funders', dur:'90 days', start:'Withdrawal', act:'Erase', sys:'Media library' }
+];
+
+/* ---- programme templates + wizard ---- */
+const PTPL = {
+  health: { name:'Health camp or mobile clinic', persona:'Patient', ico:'shield', purposes:[
+    ['Screening and referral','Name, age, phone, readings','24 months · from collection',true],
+    ['Follow-up calls','Phone number','12 months · from collection',false],
+    ['Share results with the District Health Office','Readings, village','30 days after withdrawal',false,'processor'],
+    ['Anonymised research','De-identified readings','36 months · DPIA required',false,'research'] ] },
+  edu: { name:'Education and scholarships', persona:'Student', ico:'user', purposes:[
+    ['Enrolment and eligibility','Name, school, marks, family income band','Till course ends',true],
+    ['Scholarship payment through the bank','Bank account, ID','Ledger 8 years (legal hold)',true,'processor'],
+    ['Mentoring calls','Phone number','12 months',false],
+    ['Photos and stories in reports','Photo, first name','90 days after withdrawal',false] ] },
+  live: { name:'Livelihoods and skilling', persona:'Trainee', ico:'sync', purposes:[
+    ['Training and certification','Name, phone, attendance, scores','36 months',true],
+    ['Share profile with employers for placement','CV fields','Until placement or withdrawal',false,'processor'],
+    ['Alumni check-in calls','Phone number','24 months',false],
+    ['Impact evaluation survey','Income, work status','24 months',false] ] },
+  sp: { name:'Social protection and entitlements', persona:'Applicant', ico:'slip', purposes:[
+    ['Eligibility check for schemes','Household details, documents','24 months',true],
+    ['File applications with government departments','Application data, ID','As the department requires',true,'processor'],
+    ['Status update SMS','Phone number','Until the application closes',false],
+    ['Aggregated reports to funders','Counts only, no names','Not personal data',false] ] }
+};
+const PWQ = [
+  ['children','Will you work with anyone under 18?','Adds the guardian step. Tracking and research are switched off for minors.'],
+  ['pwd','Will some people have a lawful guardian because of a disability?','Adds the guardian step with guardian type and proof.'],
+  ['health','Will you record health, biometric or financial details?','Flags the programme for a DPIA before launch.'],
+  ['share','Will you share data with government or partner organisations?','Adds processors and a confirmation loop for withdrawals.'],
+  ['photos','Will you use photos, videos or stories in reports?','Adds a separate optional purpose. Never bundled.'],
+  ['abroad','Will any data be stored or sent outside India?','Adds a cross-border line to the notice.'],
+  ['nophone','Do many people have no phone, or share one?','Turns on assisted consent, slips and evidence-only records.']
+];
+function pwPurposes(){
+  const t = PTPL[S.pw.tpl], q = S.pw.q;
+  let list = t.purposes.map(p => ({ en:p[0], items:p[1], keep:p[2], ess:p[3], tag:p[4]||'' }));
+  if (q.photos && !list.some(p => /Photo/.test(p.en))) list.push({ en:'Photos and stories in reports', items:'Photo, first name, quote', keep:'90 days after withdrawal', ess:false, tag:'' });
+  if (!q.share) list = list.filter(p => p.tag !== 'processor' || p.ess);
+  return list;
+}
+function progWizard(){
+  const w = S.pw, steps = ['Template','About your data','Suggested purposes','Capture & languages','Review'];
+  let body = '';
+  if (w.step === 1) body = `<div class="small muted">Start from a template made for Indian nonprofit programmes. You can change everything later.</div>
+    <div class="grid g2">${Object.entries(PTPL).map(([k,t]) => `<button class="opt ${w.tpl===k?'on':''}" style="text-align:left" data-a="pwtpl" data-k="${k}"><span class="ico" style="width:44px;height:44px;border-radius:12px;background:var(--terra-soft);color:var(--terra-deep);display:grid;place-items:center;flex:none">${ic(t.ico,22)}</span><span style="flex:1"><strong>${t.name}</strong><div class="small muted">${t.purposes.length} purposes · persona: ${t.persona}</div><div class="small muted">${t.purposes.map(p=>p[0]).slice(0,3).join(' · ')}…</div></span></button>`).join('')}
+    <button class="opt" style="text-align:left" data-a="toast" data-m="Blank programme: you add each purpose yourself (prototype)"><span style="flex:1"><strong>Start blank</strong><div class="small muted">For programmes that don’t fit a template</div></span></button></div>`;
+  if (w.step === 2) body = `<div class="small muted">Seven questions. Your answers decide which steps, purposes and checks the programme gets.</div>
+    ${PWQ.map(([k,qq,d]) => `<div class="card row" style="padding:12px 14px;align-items:flex-start"><div style="flex:1"><strong>${qq}</strong><div class="small muted">${d}</div></div><div class="seg"><button class="${w.q[k]?'on':''}" data-a="pwq" data-k="${k}" data-v="1">Yes</button><button class="${w.q[k]?'':'on'}" data-a="pwq" data-k="${k}" data-v="0">No</button></div></div>`).join('')}`;
+  if (w.step === 3) { const list = pwPurposes();
+    body = `<div class="small muted">Suggested from your template and answers. Essential purposes are needed to run the service; everything else is optional and starts switched off for the person.</div>
+    <div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Include</th><th>Purpose</th><th>Data items</th><th>Kept for</th><th>Type</th></tr></thead><tbody>
+    ${list.map((p,i) => `<tr><td>${p.ess?'<span class="chip c-neu">Always</span>':`<button class="switch ${w.off[p.en]?'':'on'}" role="switch" aria-checked="${!w.off[p.en]}" aria-label="Include ${p.en}" data-a="pwoff" data-k="${esc(p.en)}"></button>`}</td><td><strong>${p.en}</strong>${p.tag==='research'?' <span class="chip c-wait">Needs DPIA</span>':''}${p.tag==='processor'?' <span class="chip c-ind">Processor</span>':''}${w.q.children && !p.ess && /research|evaluation|Photo/i.test(p.en)?' <span class="chip c-ind">Not for minors</span>':''}</td><td class="small">${p.items}</td><td class="small">${p.keep}</td><td>${p.ess?'<span class="chip c-neu">Essential</span>':'<span class="chip c-ok">Optional</span>'}</td></tr>`).join('')}
+    </tbody></table></div></div>
+    <div class="grid g2"><div class="card small stack" style="gap:4px"><strong>Also switched on</strong>${[w.q.children||w.q.pwd?'Guardian step with verification':'',w.q.nophone?'Assisted consent, printed slip, evidence-only records':'',w.q.share?'Processor agreements and withdrawal confirmations':'',w.q.abroad?'Cross-border transfer line in the notice':'',w.q.health?'DPIA before launch':''].filter(Boolean).map(x=>`<div>• ${x}</div>`).join('') || '<div class="muted">Nothing extra</div>'}</div>
+    <div class="card small stack" style="gap:4px"><strong>Retention</strong><div class="muted">Each purpose gets a retention policy with a start event: collection, withdrawal or relationship ended. Edit them later under Audit & governance → Retention.</div></div></div>`; }
+  if (w.step === 4) body = `<div class="grid g2"><label class="field">Programme name<input id="pw-name" value="${esc(w.name)}" data-bind="pw.name"></label><label class="field">Districts<input id="pw-d" value="${esc(w.districts)}" data-bind="pw.districts"></label>
+    <label class="field">How consent is captured<select id="pw-cap" data-bind="pw.cap">${['Anumati Collect','ODK Collect connector','CommCare connector','Hosted page + API','API only (your own app)'].map(c => `<option ${w.cap===c?'selected':''}>${c}</option>`).join('')}</select></label>
+    <div class="field">Notice languages<div class="row wr" style="gap:6px">${Object.keys(w.langs).map(l => `<label class="check pcard hi" style="padding:8px 10px"><input type="checkbox" ${w.langs[l]?'checked':''} data-a="pwlang" data-k="${l}" id="pwl-${l}"> ${l}</label>`).join('')}</div><div class="small muted">Languages without a reviewed translation start as drafts.</div></div></div>`;
+  if (w.step === 5) { const list = pwPurposes().filter(p => p.ess || !w.off[p.en]);
+    body = `<div class="card"><dl class="kv"><dt>Template</dt><dd>${PTPL[w.tpl].name}</dd><dt>Name</dt><dd>${esc(w.name)}</dd><dt>Districts</dt><dd>${esc(w.districts)}</dd><dt>Capture</dt><dd>${w.cap}</dd><dt>Languages</dt><dd class="hi">${Object.keys(w.langs).filter(l=>w.langs[l]).join(', ')}</dd><dt>Purposes</dt><dd>${list.map(p=>p.en).join(' · ')}</dd><dt>Before going live</dt><dd>${[w.q.health?'Sign off the DPIA':'','Review translations','Approve DLT SMS templates','Assign field workers'].filter(Boolean).join(' · ')}</dd></dl></div>
+    <div class="small muted">Creates the programme in Setup with notice v1 as a draft. Nothing is shown to beneficiaries until you publish.</div>`; }
+  return `<div class="crumb"><button data-a="pwclose">Programmes</button> / New programme</div>
+  <div class="ph"><div><div class="eyebrow">Step ${w.step} of 5 · ${steps[w.step-1]}</div><h1>New programme</h1></div></div>
+  <div class="row wr" style="gap:6px">${steps.map((s,i) => `<span class="chip ${i+1===w.step?'c-terra':i+1<w.step?'c-ok':'c-neu'}">${i+1}. ${s}</span>`).join('')}</div>
+  ${body}
+  <div class="row" style="justify-content:space-between"><button class="btn" data-a="${w.step===1?'pwclose':'pwstep'}" data-d="-1">${w.step===1?'Cancel':'Back'}</button>${w.step<5?`<button class="btn pri" data-a="pwstep" data-d="1">Continue</button>`:`<button class="btn pri" data-a="pwcreate">Create programme</button>`}</div>`;
+}
+
+/* ---- notice publish gate (T18) ---- */
+function publishGate(){
+  if (!S.con.dpiaDone) return `<div class="card row wr" style="background:var(--turmeric-soft);border-color:transparent;gap:12px"><div style="flex:1;min-width:240px"><strong>Can’t publish yet</strong><div class="small">v4 adds “Anonymised research”. Its record of processing has no DPIA, so publishing and the re-consent campaign are blocked.</div></div><button class="btn sm" data-a="gotoropa">Complete the DPIA</button></div>`;
+  return `<div class="small" style="color:var(--leaf)">${ic('check',14)} Checks passed: Rule 3 content complete · records of processing complete with DPIA · हिन्दी and English reviewed (मराठी joins after review).</div>`;
+}
+
+/* ---- records of processing + DPIA ---- */
+function ropaTab(){
+  const rows = [['Health screening','Health readings','—','24 m','Yes'],['DHO sharing','Screening results','District Health Office','24 m','Yes'],['Anonymised research','De-identified readings','Research partner','36 m', S.con.dpiaDone?'Yes · DPIA signed today':'Missing DPIA']];
+  return `<div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Activity</th><th>Data</th><th>Recipients</th><th>Kept</th><th>Complete</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="chip ${/^Yes/.test(r[4])?'c-ok':'c-wait'}">${r[4]}</span></td><td class="r">${r[4]==='Missing DPIA'?`<button class="btn sm pri" data-a="dpiaopen">Complete DPIA</button>`:''}</td></tr>`).join('')}</tbody></table></div></div>
+  ${S.con.dpiaOpen && !S.con.dpiaDone ? `<div class="card stack"><div class="row" style="justify-content:space-between"><strong>Data protection impact assessment · Anonymised research</strong><span class="chip c-wait">Draft</span></div>
+    <label class="field">Why this is needed<textarea id="dp-1">Study anaemia trends across blocks to plan camp locations with the District Health Office.</textarea></label>
+    <div class="grid g2"><label class="field">Minimisation<textarea id="dp-2">De-identified on the server before export. Age in 5-year bands, village replaced by block. Groups smaller than 5 are suppressed.</textarea></label>
+    <label class="field">Risks<textarea id="dp-3">Re-identification in small villages. Partner keeping data beyond 36 months. Accidental inclusion of minors.</textarea></label>
+    <label class="field">Safeguards<textarea id="dp-4">Minors excluded by rule. Signed agreement with the partner. Deletion confirmation with evidence hash at 36 months. Access logged.</textarea></label>
+    <label class="field">Residual risk<select id="dp-5"><option>Low</option><option>Medium</option><option>High — consult before launch</option></select></label></div>
+    <label class="check"><input type="checkbox" id="dp-ok" checked> I, Priya M. (DPO), have reviewed this assessment and approve the purpose.</label>
+    <div class="row"><button class="btn" data-a="dpiaopen">Cancel</button><button class="btn pri" data-a="dpiasign">Sign off DPIA</button></div></div>` : ''}
+  <button class="btn sm" data-a="toast" data-m="Records derived from current purposes" style="align-self:flex-start">Derive from purposes</button>`;
+}
+
+/* ---- retention policies ---- */
+function retentionTab(){
+  return `<div class="row wr"><span class="small muted">Each policy says how long, from which event, and what happens at the end.</span><span class="spacer"></span><button class="btn sm pri" data-a="retnew">${ic('plus',14)} Add policy</button></div>
+  ${S.con.retNew ? `<div class="card grid g3"><label class="field">Data category<input id="rt-d" value="Voice recordings"></label><label class="field">Purpose<select id="rt-p">${PURPOSES.mhu.map(u=>`<option>${u.en}</option>`).join('')}</select></label><label class="field">Keep for<input id="rt-k" value="6 months"></label>
+    <label class="field">Clock starts at<select id="rt-s"><option>Collection</option><option>Withdrawal</option><option>Relationship ended</option></select></label><label class="field">At the end<select id="rt-a"><option>Erase</option><option>Anonymise</option><option>Ask processor to erase</option><option>Legal hold, then review</option></select></label><div class="field"><span>&nbsp;</span><button class="btn pri" data-a="retsave">Save policy</button></div></div>` : ''}
+  <div class="card" style="padding:0"><div class="tbl-wrap"><table class="t"><thead><tr><th>Data</th><th>Purpose</th><th>Keep for</th><th>Clock starts at</th><th>At the end</th><th>Systems told</th></tr></thead><tbody>
+    ${D.retention.map(r => `<tr><td><strong>${r.data}</strong></td><td>${r.purpose}</td><td>${r.dur}</td><td><span class="chip ${r.start==='Collection'?'c-neu':r.start==='Withdrawal'?'c-bad':'c-wait'}">${r.start}</span></td><td>${r.act}</td><td class="small">${r.sys}</td></tr>`).join('')}
+  </tbody></table></div></div>
+  <div class="grid g2"><div class="card stack"><div class="row" style="justify-content:space-between"><strong>Follow-up calls · 12-month purpose</strong><span class="chip c-wait">112 due</span></div><div class="small muted">Advance notice SMS sent 19 Sep · purge runs 26 Oct · systems asked to delete: Anumati Collect, MIS</div><button class="btn sm" data-a="toast" data-m="Retention queue opened" style="align-self:flex-start">Review queue</button></div>
+  <div class="card small stack" style="gap:6px"><strong>How the clock works</strong><div class="muted">“Relationship ended” is set on a principal’s record when the programme stops serving them. Consent evidence itself is kept for the period the DPO sets, separately from the data it covers.</div></div></div>`;
+}
+
+/* ---- breach ---- */
+const BTYPES = ['Data leak','Lost or stolen device','Phishing','Ransomware','Unauthorised access'];
+function breachCard(b){
+  const steps = [['Contain', b.contained], ['Assess risk to people', b.assessed], ['Tell affected people (SMS, WhatsApp, IVR in their language)', false], ['Intimate the Data Protection Board without delay', false], ['Detailed Board report within 72 hours', false], ['Close with lessons learned', false]];
+  return `<div class="card stack"><div class="row wr" style="justify-content:space-between"><strong>${b.id} · ${b.type}</strong><span class="chip c-bad">${b.status} · 72 h clock started ${b.when}</span></div>
+    <div class="small muted">${b.what}</div><dl class="kv"><dt>People possibly affected</dt><dd>${b.people}</dd><dt>Programmes</dt><dd>${b.prog}</dd>${b.device?`<dt>Device</dt><dd>${b.device} · remote logout sent · wipe queued · data encrypted on device</dd>`:''}</dl>
+    ${steps.map(([s,d]) => `<div class="row small" style="gap:8px">${d?`<span style="color:var(--leaf)">${ic('check',16)}</span>`:'<span class="dot" style="background:var(--line2);width:10px;height:10px;border-radius:50%;margin:0 3px"></span>'}${s}</div>`).join('')}
+    <div class="row wr"><button class="btn sm" data-a="toast" data-m="Notification preview: ${b.type} message in हिन्दी, मराठी and English">Preview messages</button><button class="btn sm pri" data-a="toast" data-m="Board intimation drafted with nature, extent, timing, likely impact (prototype)">Draft Board intimation</button></div></div>`;
+}
+function breachTab(){
+  return `${D.breaches.map(breachCard).join('') || `<div class="card stack"><strong>No open incidents</strong><div class="small muted">Report a breach to start the 72-hour clock, notify affected people and draft the Board report.</div></div>`}
+  ${S.con.breachNew ? `<div class="card stack"><strong>Report a breach</strong><div class="grid g2"><label class="field">What kind<select id="br-t">${BTYPES.map(t=>`<option>${t}</option>`).join('')}</select></label><label class="field">Discovered<input id="br-w" value="Today 10:05"></label>
+    <label class="field">Programmes<select id="br-p">${D.programmes.map(p=>`<option>${p.name}</option>`).join('')}</select></label><label class="field">People possibly affected<input id="br-n" value="About 200"></label></div>
+    <label class="field">What happened<textarea id="br-d">Staff member received an email asking for console login; clicked and entered password before 2FA prompt.</textarea></label>
+    <div class="row"><button class="btn" data-a="breachnew">Cancel</button><button class="btn pri" data-a="breachsave">Start assessment</button></div></div>`
+  : `<button class="btn sm" data-a="breachnew" style="align-self:flex-start">Report a breach</button>`}`;
+}
+
+/* ---- auditor share link ---- */
+function shareCard(){
+  if (!S.con.share) return '';
+  return `<div class="card stack" style="border-color:var(--leaf)"><div class="row wr" style="justify-content:space-between"><strong>Auditor share link</strong><span class="chip c-ok">Active · expires in 14 days</span></div>
+    <code class="blk">https://aaroh.anumati.org/audit/s/7QxK-2mPa</code>
+    <div class="small muted">Period 1 Jul – 26 Sep 2026 · read-only · names hidden · includes chain proof · every view is logged</div>
+    <div class="row"><button class="btn sm" data-a="lens" data-k="aud">Preview as auditor</button><button class="btn sm" data-a="sharenew">Revoke</button></div></div>`;
+}
+
+/* ---- settings: sign-in & sharing ---- */
+function settingsAccess(){
+  const s = S.con.sso;
+  return `<div class="grid g2" style="align-items:start"><div class="card stack"><strong>Staff sign-in</strong><div class="small muted">Console staff can use your organisation’s accounts. Field workers sign in to the app with a phone OTP on a registered device.</div>
+    ${[['google','Google Workspace'],['ms','Microsoft Entra ID'],['saml','Other SAML / OIDC']].map(([k,l]) => `<div class="row" style="justify-content:space-between"><span>${l}</span><button class="switch ${s[k]?'on':''}" role="switch" aria-checked="${s[k]}" aria-label="${l}" data-a="sso" data-k="${k}"></button></div>`).join('')}
+    <label class="check"><input type="checkbox" checked id="st-2fa"> Require 2FA for anyone who can view personal data</label></div>
+    <div class="card stack"><div class="row" style="justify-content:space-between"><strong>Share results with funders</strong><button class="switch ${S.con.funder?'on':''}" role="switch" aria-checked="${S.con.funder}" aria-label="Share with funders" data-a="funder"></button></div>
+    <div class="small muted">Off by default. When on, funders get a link to aggregate numbers only: consents recorded, % confirmed, withdrawals and response times. No names, phones or records.</div>
+    ${S.con.funder?`<div class="card" style="background:var(--sunk)"><dl class="kv"><dt>Funder</dt><dd>CSR partner (example)</dd><dt>Programmes</dt><dd>Mobile Health Unit</dd><dt>Link</dt><dd class="mono small">aaroh.anumati.org/f/9Kd2</dd><dt>Expires</dt><dd>31 Mar 2027</dd></dl></div>`:''}</div></div>`;
+}
+
+/* ---- translations: machine audio ---- */
+function transAudio(x){
+  if (x.audio === 'machine') return `<span class="chip c-wait">Machine-made · not reviewed</span>`;
+  if (x.audio === '—' && x.st !== 'Missing') return `<button class="btn sm" data-a="tgen" data-l="${x.lang}">Generate draft audio</button>`;
+  return `<span class="num">${x.audio}</span>`;
+}
+
+/* ---- evidence certificate ---- */
+function certView(p){
+  const sun = p.id === 'MHU-004211';
+  const ev = sun ? [['14 Jul 11:20','Captured offline · notice v3 · हिन्दी · FW-104','5e0a…71bd','0000…genesis'],['16 Jul 09:58','Recorded and signed on server','1a77…09fe','5e0a…71bd'],['16 Jul 10:05','Confirmed · deferred SMS delivered','3c2f…aa18','1a77…09fe'],['Today 08:40','Withdrawn · DHO sharing · SMS STOP AN-7K2Q','9b1d…44c0','3c2f…aa18']]
+    : [[p.since,'Consent recorded · '+p.verify,'4f10…c2d7','0000…genesis']];
+  return `<div class="crumb"><button data-a="closep">Principals</button> / <button data-a="certclose">${p.id}</button> / Evidence certificate</div>
+  <div class="ph"><div><div class="eyebrow">Certificate for electronic records · Bharatiya Sakshya Adhiniyam 2023, s.63</div><h1>Evidence certificate</h1></div><span class="spacer"></span><button class="btn" data-a="certclose">Back to record</button><button class="btn pri" data-a="toast" data-m="Signed PDF with JSON bundle and chain proof generated (prototype)">Generate signed PDF</button></div>
+  <div class="split"><div class="stack">
+    <div class="card grid g2"><label class="field">Case or reference<input id="ce-case" value="Grievance G-2026-114 / DPB"></label><label class="field">Requested by<input id="ce-by" value="Data Protection Board"></label>
+      <label class="field">Certifying officer<input id="ce-off" value="Priya M."></label><label class="field">Designation<input id="ce-des" value="Data Protection Officer"></label>
+      <label class="field">Organisation<input id="ce-org" value="Aaroh Foundation"></label><label class="field">Period covered<input id="ce-per" value="14 Jul – 27 Sep 2026"></label></div>
+    <div class="card stack"><strong>System that produced the records</strong><dl class="kv"><dt>Software</dt><dd>Anumati 1.0 (open source, AGPL) on Frappe</dd><dt>Hosting</dt><dd>Dhwani hosted service · India (Mumbai region)</dd><dt>Clock source</dt><dd>NTP, IST; device time recorded separately</dd><dt>Signing key</dt><dd class="mono">k-2026-07 · Ed25519 · fingerprint 8c:1e:…:a4</dd><dt>Operated normally</dt><dd>Yes · no outage in period · chain verified 02:00 today</dd></dl></div>
+    <div class="card" style="padding:0"><div style="padding:14px 16px 4px;font-weight:600">Records certified · ${p.code}</div><div class="tbl-wrap"><table class="t"><thead><tr><th>When</th><th>Event</th><th>Hash</th><th>Previous hash</th></tr></thead><tbody>${ev.map(e => `<tr><td>${e[0]}</td><td>${e[1]}</td><td class="mono">${e[2]}</td><td class="mono">${e[3]}</td></tr>`).join('')}</tbody></table></div></div>
+  </div>
+  <div class="card stack stitch-box"><strong>Attestation</strong>
+    <div class="small">I certify that the electronic records listed were produced by the system described, in the ordinary course of its use, while it was operating properly; that each record is signed and linked to the one before it; and that the attached copies are true copies.</div>
+    <div class="small hi">मैं प्रमाणित करती हूँ कि ऊपर दिए गए इलेक्ट्रॉनिक रिकॉर्ड बताई गई प्रणाली द्वारा उसके सामान्य उपयोग में, उसके सही ढंग से काम करते समय बनाए गए; हर रिकॉर्ड हस्ताक्षरित है और पिछले रिकॉर्ड से जुड़ा है; और संलग्न प्रतियाँ सही प्रतियाँ हैं।</div>
+    <hr class="stitch"><dl class="kv"><dt>Signed</dt><dd>Priya M., DPO</dd><dt>Date</dt><dd>27 Sep 2026</dd><dt>Part B</dt><dd>Expert’s part left for the certifying expert, as the law requires</dd></dl></div></div>`;
+}
+
+/* ---- inbox thread ---- */
+function threadFor(r){
+  if (D.threads[r.id]) return D.threads[r.id];
+  let t;
+  if (r.id === 'RQ-2291') t = [['in','Missed call','09:12','Missed call from +91 98XXX X4410 (number shared by 3 people)'],['sys','System','09:12','Couldn’t match to one person. IVR call-back queued within 2 hours.'],['out','SMS','09:13','आपकी मिस्ड कॉल मिली। किसकी सहमति वापस लेनी है? 1 सुनीता 2 कमला 3 पूजा — जवाब में नंबर भेजें।']];
+  else if (r.id === 'RQ-2281') t = [['in','WhatsApp','Yesterday 18:02','मुझे देखना है आपके पास मेरी क्या जानकारी है'],['out','WhatsApp','Yesterday 18:02','Received. Your reference is RQ-2281. We will reply within 30 days.'],['in','SMS','Today 07:50','Please send on WhatsApp only']];
+  else if (r.id === 'RQ-2198') t = [['in','Letter','19 Aug','Letter from Rekha P. asking to erase her son’s data. Scanned by camp desk.'],['out','SMS','19 Aug','Received your request RQ-2198. We will confirm within 30 days.'],['sys','System','21 Aug','Erasure sent to 5 systems. Bank partner has not confirmed.'],['out','IVR call','Today 09:40','Called Rekha P.: delay explained, new date given (answered, 1 min 12 s)']];
+  else t = [['in', r.ch, r.when, `${r.type} request received`],['out','SMS', r.when, `Received. Your reference is ${r.id}.`]];
+  D.threads[r.id] = t; return t;
+}
+function inboxThread(r){
+  const t = threadFor(r), ch = S.con.reply;
+  return `<div class="card stack"><div class="row" style="justify-content:space-between"><strong>Conversation</strong><span class="small muted">All channels, one thread</span></div>
+    <div class="stack" style="gap:8px">${t.map(([dir,c,w,m]) => dir==='sys' ? `<div class="small muted" style="text-align:center">${c} · ${w} · ${m}</div>` : `<div class="${dir==='in'?'bubble-in':'bubble-out'} hi"><div style="font-size:11.5px;opacity:.75">${c} · ${w}</div>${m}</div>`).join('')}</div>
+    <div class="seg">${[['sms','SMS'],['wa','WhatsApp'],['ivr','Call back'],['email','Email'],['note','Note']].map(([k,l]) => `<button class="${ch===k?'on':''}" data-a="replych" data-k="${k}">${l}</button>`).join('')}</div>
+    <form class="row" data-form="reply" data-id="${r.id}" style="gap:6px"><input id="rp-t" style="flex:1;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--raised)" placeholder="${ch==='sms'?'Uses an approved DLT template in her language':ch==='ivr'?'What to tell her on the call':ch==='note'?'Internal note, not sent':'Message in her language'}"><button class="btn sm pri" type="submit">${ch==='note'?'Add':'Send'}</button></form></div>`;
+}
+function inboxDetail(r){ return `<div class="stack">${inboxDetail0(r)}${inboxThread(r)}</div>`; }
+
+/* ---- field app: just-in-time purpose ---- */
+function appScreen(){
+  const a = S.app;
+  if (a.screen !== 'addpurpose') return appScreen0();
+  const p = D.principals[0], live = D.programmes[0].notice === 'v4' || a.apPreview;
+  return `${abar('Ask for one more purpose','home','Later visit · Sunita D.')}
+  <div class="appbody hi">
+    <div class="pcard"><div style="flex:1"><strong>Sunita D.</strong><div class="small muted">MHU-004211 · AN-7K2Q · हिन्दी</div></div></div>
+    <div class="small muted">Already decided — not asked again</div>
+    ${PURPOSES.mhu.filter(u => u.id !== 'research').map(u => `<div class="row small" style="justify-content:space-between"><span>${u.hi}</span>${stChip(p.state[u.id])}</div>`).join('')}
+    <hr class="stitch">
+    ${!live ? `<div class="small" style="background:var(--turmeric-soft);color:var(--turmeric);padding:10px;border-radius:10px">Nothing new to ask on notice v3. “Anonymised research” appears once notice v4 is published.</div><button class="btn sm ghost" data-a="appv4preview">Prototype: preview as if v4 is live</button>`
+    : p.state.research === 'granted' || p.state.research === 'denied' ? `<div class="card small">Anonymised research: ${stChip(p.state.research)} — already answered.</div>`
+    : `<div class="pcard" style="flex-direction:column;align-items:stretch;gap:8px;border-color:var(--leaf)"><strong>नया उपयोग: गुमनाम शोध</strong><div class="small">आपकी जाँच के नतीजे, बिना नाम के, इलाके की योजना बनाने के लिए। 36 महीने। कभी भी वापस ले सकती हैं।</div>
+      <button class="btn sm" data-a="apheard">${ic(a.apHeard?'check':'play',16)} ${a.apHeard?'Played · 0:28':'Play this part of the notice · 0:28'}</button></div>
+      <div class="grid g2" style="gap:8px"><button class="big alt ${a.apChoice==='yes'?'on':''}" data-a="apchoice" data-k="yes" ${a.apHeard?'':'disabled'}>हाँ</button><button class="big alt ${a.apChoice==='no'?'on':''}" data-a="apchoice" data-k="no" ${a.apHeard?'':'disabled'}>नहीं</button></div>
+      <div class="small muted">Verified with the same method as last time: SMS code from this phone.</div>`}
+  </div><div class="appfoot"><button class="big" data-a="apsave" ${live && a.apChoice?'':'disabled'}>Save</button></div>`;
+}
+
+/* ---- actions ---- */
+const A2 = {
+  pwnew: () => { S.con.progNew = true; S.pw.step = 1; window.scrollTo(0,0); },
+  pwclose: () => { S.con.progNew = false; },
+  pwtpl: d => { S.pw.tpl = d.k; S.pw.off = {}; },
+  pwq: d => { S.pw.q[d.k] = d.v === '1'; },
+  pwoff: d => { S.pw.off[d.k] = !S.pw.off[d.k]; },
+  pwlang: d => { S.pw.langs[d.k] = !S.pw.langs[d.k]; },
+  pwstep: d => { S.pw.step = Math.min(5, Math.max(1, S.pw.step + Number(d.d))); window.scrollTo(0,0); },
+  pwcreate: () => { const w = S.pw, id = 'p' + Date.now();
+    D.programmes.push({ id, name:w.name || 'New programme', persona:PTPL[w.tpl].persona, notice:'v1', draft:'v1 draft', langs:Object.keys(w.langs).filter(l=>w.langs[l]), channel:w.cap, recorded:0, confirmed:0, status:'Setup', team:0, districts:w.districts });
+    logAudit('Priya M.','Programme created', w.name); S.con.progNew = false; S.con.prog = id; S.con.progOpen = true; S.con.progTab = 'overview'; toast(`${w.name} created in Setup. Publish its notice when translations and the DPIA are done.`); },
+  gotoropa: () => { S.toast = null; renderToast(); S.con.view = 'governance'; S.con.govTab = 'ropa'; S.con.dpiaOpen = true; window.scrollTo(0,0); },
+  dpiaopen: () => { S.con.dpiaOpen = !S.con.dpiaOpen; },
+  dpiasign: () => { if (!document.getElementById('dp-ok')?.checked){ toast('Tick the DPO approval first'); return false; } S.con.dpiaDone = true; S.con.dpiaOpen = false; logAudit('Priya M.','DPIA signed off','Anonymised research'); toast('DPIA signed. Notice v4 can now be published.', ['con','notices','Back to notice']); },
+  retnew: () => { S.con.retNew = !S.con.retNew; },
+  retsave: () => { const v = id => document.getElementById(id).value; D.retention.push({ data:v('rt-d'), purpose:v('rt-p'), dur:v('rt-k'), start:v('rt-s'), act:v('rt-a'), sys:'All connected systems' }); S.con.retNew = false; logAudit('Priya M.','Retention policy added', v('rt-d')); toast('Retention policy saved'); },
+  pended: () => { const p = P(); p.ended = 'today'; p.events = p.events || []; p.events.unshift({ t:'Relationship ended', d:'Just now · Priya M. · retention clocks that start at “relationship ended” are now running; advance notice goes out before any erasure' }); logAudit('Priya M.','Relationship ended', p.id); toast('Relationship ended. Retention clocks started.', ['con','governance','See retention']); S.con.govTab = 'retention'; },
+  certopen: () => { S.con.certOpen = true; window.scrollTo(0,0); },
+  certclose: () => { S.con.certOpen = false; },
+  breachnew: () => { S.con.breachNew = !S.con.breachNew; },
+  breachsave: () => { const v = id => document.getElementById(id).value; D.breaches.unshift({ id:'BR-' + String(D.breaches.length + 7).padStart(3,'0'), type:v('br-t'), when:'just now', people:v('br-n'), prog:v('br-p'), what:v('br-d'), status:'Assessing', contained:false, assessed:false }); S.con.breachNew = false; logAudit('Priya M.','Breach reported', v('br-t')); toast('Breach logged. 72-hour clock started.'); },
+  devlost: d => { const dv = D.devices.find(x => x.id === d.id); D.lost[d.id] = 'queued';
+    D.breaches.unshift({ id:'BR-' + String(D.breaches.length + 7).padStart(3,'0'), type:'Lost or stolen device', when:'just now', people:`Up to ${d.id==='FW-104'?S.outbox:dv.pending} unsynced records`, prog:'Mobile Health Unit', what:`${dv.who} reported ${d.id} lost. Records waiting on the phone are encrypted and can’t be read without the app PIN.`, status:'Assessing', contained:true, assessed:false, device:d.id });
+    logAudit('Priya M.','Device reported lost', d.id); S.con.govTab = 'breach'; toast(`${d.id} logged out and wipe queued. Breach assessment opened.`, ['con','governance','Open breach']); },
+  sharenew: () => { S.con.share = !S.con.share; logAudit('Priya M.', S.con.share?'Auditor link created':'Auditor link revoked', '1 Jul – 26 Sep'); if (S.con.share) toast('Share link created. Copy it for the auditor.'); },
+  sso: d => { S.con.sso[d.k] = !S.con.sso[d.k]; },
+  funder: () => { S.con.funder = !S.con.funder; logAudit('Swapnil A.', S.con.funder?'Funder sharing on':'Funder sharing off', 'Mobile Health Unit'); },
+  tgen: d => { const x = D.trans.find(t => t.lang === d.l); x.audio = 'machine'; logAudit('Priya M.','Draft audio generated', d.l); toast(`Draft audio made for ${d.l}. Marked machine-made; the field app won’t play it until a reviewer signs off.`); },
+  replych: d => { S.con.reply = d.k; },
+  appv4preview: () => { S.app.apPreview = true; },
+  apheard: () => { S.app.apHeard = true; },
+  apchoice: d => { S.app.apChoice = d.k; },
+  apsave: () => { const p = D.principals[0], yes = S.app.apChoice === 'yes'; p.state.research = yes ? 'granted' : 'denied'; p.events = p.events || []; p.events.unshift({ t:`${yes?'Granted':'Declined'} · Anonymised research (just-in-time)`, d:'Just now · FW-104 · notice v4 section · SMS code from device' }); S.outbox++; Object.assign(S.app, { screen:'home', apHeard:false, apChoice:null }); toast('Saved on this phone. Earlier choices unchanged.', ['con','principals','See her record']); }
+};
+document.addEventListener('submit', e => {
+  if (e.target.dataset.form !== 'reply') return;
+  const id = e.target.dataset.id, inp = document.getElementById('rp-t'), txt = (inp.value || '').trim(); if (!txt) return;
+  const lab = { sms:'SMS', wa:'WhatsApp', ivr:'IVR call', email:'Email', note:'Note' }[S.con.reply];
+  threadFor({ id }).push(S.con.reply === 'note' ? ['sys','Note by Priya M.','Just now',esc(txt)] : ['out',lab,'Just now',esc(txt)]);
+  logAudit('Priya M.', 'Reply sent · ' + lab, id); render();
+});
 /* ================= ACTIONS ================= */
 let reqSeq = 2292, codeSeq = 0;
 function withdrawFor(pid, purposes, channel, label, grp){
@@ -1655,7 +1924,7 @@ const A = {
   receipt: d => { const r = S.cfg.receipt; const i = r.indexOf(d.k); i>=0 ? r.splice(i,1) : r.push(d.k); },
   noticetab: d => { S.con.noticeTab = d.t; },
   nlang: d => { S.con.noticeLang = d.l; },
-  publishv4: () => { const c = D.campaigns.find(x => x.id==='c2'); c.status = 'Running'; D.programmes[0].notice = 'v4'; D.programmes[0].draft = null; logAudit('Priya M.','Notice v4 published','Mobile Health Unit'); toast('Notice v4 published. Re-consent campaign started for 8,410 people.', ['con','campaigns','Open campaign']); S.con.camp = 'c2'; },
+  publishv4: () => { if (!S.con.dpiaDone){ S.con.govTab = 'ropa'; toast('Blocked: “Anonymised research” has no DPIA yet. Complete it in Records of processing.', ['con','governance','Open records']); return; } const c = D.campaigns.find(x => x.id==='c2'); c.status = 'Running'; D.programmes[0].notice = 'v4'; D.programmes[0].draft = null; logAudit('Priya M.','Notice v4 published','Mobile Health Unit'); toast('Notice v4 published. Re-consent campaign started for 8,410 people.', ['con','campaigns','Open campaign']); S.con.camp = 'c2'; },
   campnew: () => { S.con.campNew = true; S.camp.step = 1; },
   campclose: () => { S.con.campNew = false; },
   campstep: d => { S.camp.step = Math.min(5, Math.max(1, S.camp.step + Number(d.d))); },
@@ -1721,7 +1990,7 @@ const A = {
   averify: () => { S.aud.verifying = true; S.aud.verified = false; S.aud.progress = 0; render();
     const t = setInterval(() => { S.aud.progress += 7; const b = document.getElementById('aud-prog'); if (b) b.style.width = Math.min(100,S.aud.progress) + '%';
       if (S.aud.progress >= 100){ clearInterval(t); S.aud.verifying = false; S.aud.verified = true; render(); } }, 90); return false; },
-  aack: d => { D.processors[d.i].acked = true; const r = D.requests.find(x => x.id === D.processors[d.i].req); if (r && r.id==='RQ-2284'){ r.status='done'; r.sla='Done'; } logAudit('Processor','Action confirmed', D.processors[d.i].req); toast('Confirmed. The NGO sees this against the request.', ['con','inbox','See in NGO inbox']); }
+  aack: d => { const pf = document.getElementById('pf-'+d.i); D.processors[d.i].proof = (pf && pf.value.trim()) ? 'proof '+pf.value.trim() : 'No proof attached'; D.processors[d.i].acked = true; const r = D.requests.find(x => x.id === D.processors[d.i].req); if (r && r.id==='RQ-2284'){ r.status='done'; r.sla='Done'; } logAudit('Processor','Action confirmed', D.processors[d.i].req); toast('Confirmed. The NGO sees this against the request.', ['con','inbox','See in NGO inbox']); }
 };
 let audT = null;
 function startAudio(){ clearInterval(audT); audT = setInterval(() => {
@@ -1758,6 +2027,7 @@ document.addEventListener('submit', e => {
   if (f === 'tenant'){ const n = document.getElementById('pt-n').value || 'New organisation'; D.tenants.push({ org:n, plan:document.getElementById('pt-p').value, progs:0, principals:'0', sms:document.getElementById('pt-s').value, health:'Setup', since:'Sep 2026' }); S.plat.newTenant = false; render(); toast(`${n} site created: ${n.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.anumati.org`); }
   if (f === 'lookup') render();
 });
+Object.assign(A, A2);
 (function init(){ try { const l = localStorage.getItem('anumati-lens'); if (l && LENSES.some(x => x[0]===l)) S.lens = l; } catch(e) {} render(); })();
 </script>
 </body></html>

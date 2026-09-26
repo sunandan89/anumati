@@ -4,7 +4,7 @@ Anumati is an open-source, field-first DPDP consent platform for nonprofits, bui
 
 ## Source of truth
 
-- `docs/anumati-spec-v0.3.md` — behaviour, data model, rules, security, APIs. Wins on data, rules and security.
+- `docs/anumati-spec-v0.4.md` (current; v0.3 kept for history) — behaviour, data model, rules, security, APIs. Wins on data, rules and security.
 - `docs/anumati-prototype.html` — look, copy, flows across eight surfaces. Wins on UX and copy. Lift CSS tokens, `mark()`, `maina()`, `icon64()`, `heroArt()` from it; do not redraw.
 
 ## Non-negotiables
