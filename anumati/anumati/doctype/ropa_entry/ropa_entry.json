@@ -1,0 +1,227 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "hash",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "purpose",
+  "status",
+  "data_categories",
+  "data_subjects",
+  "c1",
+  "recipients",
+  "retention",
+  "safeguards",
+  "dpia_section",
+  "dpia_required",
+  "dpia_necessity",
+  "dpia_minimisation",
+  "c2",
+  "dpia_risks",
+  "dpia_safeguards",
+  "dpia_residual_risk",
+  "signoff_section",
+  "dpo_approval"
+ ],
+ "fields": [
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Purpose",
+   "options": "Purpose",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Draft",
+   "description": "Set by the ROPA workflow; only the DPO approves",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nApproved\nRetired",
+   "read_only": 1
+  },
+  {
+   "fieldname": "data_categories",
+   "fieldtype": "Table MultiSelect",
+   "label": "Data categories",
+   "options": "Data Category Row"
+  },
+  {
+   "fieldname": "data_subjects",
+   "fieldtype": "Small Text",
+   "label": "Data principals concerned"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "recipients",
+   "fieldtype": "Small Text",
+   "label": "Recipients"
+  },
+  {
+   "fieldname": "retention",
+   "fieldtype": "Data",
+   "label": "Retention"
+  },
+  {
+   "fieldname": "safeguards",
+   "fieldtype": "Small Text",
+   "label": "Safeguards"
+  },
+  {
+   "fieldname": "dpia_section",
+   "fieldtype": "Section Break",
+   "label": "Data protection impact assessment"
+  },
+  {
+   "fetch_from": "purpose.dpia_required",
+   "fetch_if_empty": 1,
+   "fieldname": "dpia_required",
+   "fieldtype": "Check",
+   "label": "DPIA required"
+  },
+  {
+   "fieldname": "dpia_necessity",
+   "fieldtype": "Small Text",
+   "label": "Why this is needed"
+  },
+  {
+   "fieldname": "dpia_minimisation",
+   "fieldtype": "Small Text",
+   "label": "Minimisation"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dpia_risks",
+   "fieldtype": "Small Text",
+   "label": "Risks"
+  },
+  {
+   "fieldname": "dpia_safeguards",
+   "fieldtype": "Small Text",
+   "label": "Safeguards"
+  },
+  {
+   "fieldname": "dpia_residual_risk",
+   "fieldtype": "Select",
+   "label": "Residual risk",
+   "options": "\nLow\nMedium\nHigh"
+  },
+  {
+   "fieldname": "signoff_section",
+   "fieldtype": "Section Break",
+   "label": "DPO approval"
+  },
+  {
+   "description": "Required before a DPO can approve a record that needs a DPIA. Who approved and when is in the document history.",
+   "fieldname": "dpo_approval",
+   "fieldtype": "Check",
+   "label": "I have reviewed this assessment and approve the purpose"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "ROPA Entry",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Auditor",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "purpose",
+ "track_changes": 1
+}

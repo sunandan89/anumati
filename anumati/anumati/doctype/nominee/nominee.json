@@ -1,0 +1,57 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "nominee_name",
+  "relation",
+  "contact",
+  "evidence",
+  "nominated_on"
+ ],
+ "fields": [
+  {
+   "fieldname": "nominee_name",
+   "fieldtype": "Password",
+   "in_list_view": 1,
+   "label": "Name (encrypted)"
+  },
+  {
+   "fieldname": "relation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Relation"
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Password",
+   "label": "Contact (encrypted)"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Attach",
+   "label": "Evidence"
+  },
+  {
+   "fieldname": "nominated_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Nominated on"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Nominee",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

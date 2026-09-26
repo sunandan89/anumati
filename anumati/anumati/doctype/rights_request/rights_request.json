@@ -1,0 +1,234 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:RQ-{#####}",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "email_append_to": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "request_type",
+  "channel",
+  "status",
+  "received_on",
+  "sla_due",
+  "c1",
+  "matched_principal",
+  "match_confidence",
+  "assigned_to",
+  "paper_trail_number",
+  "linked_event",
+  "detail_section",
+  "raw_payload",
+  "resolution",
+  "evidence"
+ ],
+ "fields": [
+  {
+   "fieldname": "request_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "withdrawal\naccess\ncorrection\nerasure\ngrievance\nnomination",
+   "reqd": 1
+  },
+  {
+   "fieldname": "channel",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Channel",
+   "options": "field_worker\nslip\nsms\nmissed_call\nivr\nwhatsapp\nweb\nemail\ncommunity\napi\nussd",
+   "reqd": 1
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nUnmatched\nIn Progress\nAwaiting Acknowledgement\nClosed\nRejected"
+  },
+  {
+   "default": "now",
+   "description": "SLA clock starts here, not at match",
+   "fieldname": "received_on",
+   "fieldtype": "Datetime",
+   "label": "Received on",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sla_due",
+   "fieldtype": "Date",
+   "label": "SLA due"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "matched_principal",
+   "fieldtype": "Link",
+   "label": "Matched principal",
+   "options": "Data Principal"
+  },
+  {
+   "fieldname": "match_confidence",
+   "fieldtype": "Percent",
+   "label": "Match confidence"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "label": "Assigned to",
+   "options": "User"
+  },
+  {
+   "description": "Printed on slips so offline requests reconcile",
+   "fieldname": "paper_trail_number",
+   "fieldtype": "Data",
+   "label": "Paper-trail number"
+  },
+  {
+   "fieldname": "linked_event",
+   "fieldtype": "Link",
+   "label": "Resulting consent event",
+   "options": "Consent Event",
+   "read_only": 1
+  },
+  {
+   "fieldname": "detail_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "description": "As received from the channel",
+   "fieldname": "raw_payload",
+   "fieldtype": "Long Text",
+   "label": "Raw payload"
+  },
+  {
+   "fieldname": "resolution",
+   "fieldtype": "Small Text",
+   "label": "Resolution"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Attach",
+   "label": "Evidence"
+  }
+ ],
+ "has_web_view": 0,
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Rights Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 1
+}

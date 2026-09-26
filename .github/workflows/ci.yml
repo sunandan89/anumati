@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Python compiles, JSON parses
+        run: |
+          python -m compileall -q anumati ci
+          find anumati -name '*.json' -print0 | xargs -0 -n1 python -m json.tool > /dev/null
+      - name: Ledger primitives (no Frappe needed)
+        run: |
+          pip install -q cryptography
+          PYTHONPATH=. python ci/ledger_selftest.py
+
+  server:
+    name: Frappe tests and security gates
+    runs-on: ubuntu-latest
+    needs: checks
+    timeout-minutes: 45
+    services:
+      redis-cache:
+        image: redis:alpine
+        ports: ["13000:6379"]
+      redis-queue:
+        image: redis:alpine
+        ports: ["11000:6379"]
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports: ["3306:3306"]
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install MariaDB client
+        run: sudo apt-get update -q && sudo apt-get install -y -q mariadb-client
+
+      - name: Set up bench (Frappe v15)
+        run: |
+          pip install -q frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch version-15 --python "$(which python)" ~/frappe-bench
+          mysql --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
+          mysql --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
+
+      - name: Install app on two tenant sites
+        working-directory: /home/runner/frappe-bench
+        env:
+          CI: "Yes"
+        run: |
+          bench get-app anumati "$GITHUB_WORKSPACE"
+          bench setup requirements --dev
+          for site in tenant-a.localhost tenant-b.localhost; do
+            bench new-site --db-root-password root --admin-password admin "$site"
+            bench --site "$site" install-app anumati
+            bench --site "$site" set-config allow_tests true
+          done
+
+      - name: Unit tests (insert-only, chain, roles, PII, workflows)
+        working-directory: /home/runner/frappe-bench
+        run: bench --site tenant-a.localhost run-tests --app anumati
+
+      - name: Start server
+        working-directory: /home/runner/frappe-bench
+        run: |
+          nohup bench serve --port 8000 --noreload > /tmp/serve.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -sf -H "Host: tenant-a.localhost" http://127.0.0.1:8000/api/method/ping > /dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/serve.log; exit 1
+
+      - name: HTTP security gates (unauthenticated routes, tenant isolation)
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench --site tenant-a.localhost execute anumati.tests.ci_setup.prepare --args '["/tmp/tenant-a.json"]'
+          bench --site tenant-b.localhost execute anumati.tests.ci_setup.prepare --args '["/tmp/tenant-b.json"]'
+          bench --site tenant-a.localhost execute anumati.tests.ci_setup.inventory --args '["/tmp/inventory.json"]'
+          ./env/bin/python "$GITHUB_WORKSPACE/ci/security_http_check.py" http://127.0.0.1:8000 \
+            tenant-a.localhost tenant-b.localhost /tmp/tenant-a.json /tmp/tenant-b.json /tmp/inventory.json
+
+      - name: Server log on failure
+        if: failure()
+        run: tail -n 200 /tmp/serve.log || true

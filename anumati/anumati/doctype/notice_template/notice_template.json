@@ -1,0 +1,279 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:{programme}-v{version}",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "programme",
+  "version",
+  "status",
+  "c1",
+  "material_change",
+  "cross_border_transfers",
+  "purposes_section",
+  "purposes",
+  "processors",
+  "content_section",
+  "summary",
+  "full_text",
+  "rule3_section",
+  "withdrawal_methods",
+  "rights_text",
+  "board_complaint_route",
+  "c2",
+  "dpo_contact",
+  "security_summary",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "programme",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Programme",
+   "options": "Programme",
+   "reqd": 1
+  },
+  {
+   "description": "Semantic version, e.g. 4.0.0",
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Version",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nPublished\nRetired",
+   "read_only": 1
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Starts a re-consent campaign when published",
+   "fieldname": "material_change",
+   "fieldtype": "Check",
+   "label": "Material change"
+  },
+  {
+   "default": "None",
+   "fieldname": "cross_border_transfers",
+   "fieldtype": "Small Text",
+   "label": "Cross-border transfers"
+  },
+  {
+   "fieldname": "purposes_section",
+   "fieldtype": "Section Break",
+   "label": "Purposes"
+  },
+  {
+   "fieldname": "purposes",
+   "fieldtype": "Table",
+   "label": "Purposes",
+   "options": "Notice Purpose",
+   "reqd": 1
+  },
+  {
+   "fieldname": "processors",
+   "fieldtype": "Table",
+   "label": "Processors and recipients",
+   "options": "Notice Processor"
+  },
+  {
+   "fieldname": "content_section",
+   "fieldtype": "Section Break",
+   "label": "Notice content"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Small Text",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "full_text",
+   "fieldtype": "Text Editor",
+   "label": "Full text"
+  },
+  {
+   "description": "Every notice must say all of this",
+   "fieldname": "rule3_section",
+   "fieldtype": "Section Break",
+   "label": "Rule 3 contents"
+  },
+  {
+   "fieldname": "withdrawal_methods",
+   "fieldtype": "Small Text",
+   "label": "How to withdraw consent"
+  },
+  {
+   "fieldname": "rights_text",
+   "fieldtype": "Small Text",
+   "label": "How to exercise rights"
+  },
+  {
+   "fieldname": "board_complaint_route",
+   "fieldtype": "Small Text",
+   "label": "How to complain to the Data Protection Board"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dpo_contact",
+   "fieldtype": "Small Text",
+   "label": "DPO or grievance contact"
+  },
+  {
+   "fieldname": "security_summary",
+   "fieldtype": "Small Text",
+   "label": "Summary of security safeguards"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Notice Template",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Notice Template",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Developer",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "programme",
+ "track_changes": 1
+}
