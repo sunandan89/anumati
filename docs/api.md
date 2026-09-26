@@ -1,0 +1,45 @@
+# Anumati API v1
+
+Base: `https://<tenant>/api/v2/method/anumati.api.v1.<module>.<method>` (the `/api/method/…` form also works).
+Auth: `Authorization: token <api_key>:<api_secret>` of a Frappe user. There's no separate scope system; the user's roles are the scope (spec gap 10):
+
+| Scope | Needs | Roles that have it |
+|---|---|---|
+| capture | create on Consent Event | Anumati Field Worker, System Manager |
+| check | read on Consent State | Field Worker, Developer, Operator, Programme Manager, DPO, Admin |
+| principal | create/write on Data Principal | Field Worker, Operator, DPO, Admin |
+
+For a connector or host app, create a User with the right role, generate its API key on the User form, and register it as a **Source System** (its `check` calls then land in System Usage Log).
+
+## consent.record (POST)
+```json
+{"event": {"event_uuid": "c0a8…", "principal_ref": "MHU-004211", "programme": "MHU",
+  "purposes_granted": ["screen", "follow"], "purposes_denied": ["research"],
+  "notice": "MHU-v4.0.0", "language": "hi", "capture_mode": "assisted_thumbprint", "channel": "app",
+  "device_id": "FW-104", "device_time": "2026-09-20 11:20:00", "verification_method": "device_sms_otp",
+  "verification_status": "recorded", "witness": "…", "evidence": [{"file": "…", "sha256": "…"}]}}
+```
+Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, signature, key_id, server_time, verification_status}`. Replaying the same `event_uuid` returns the original artefact. Rules: purposes must belong to the programme; minors need a `guardian_link` and can't be granted purposes marked "not for minors"; `action` is grant | refuse | renew.
+
+## consent.withdraw (POST)
+`principal_ref, programme, channel, event_uuid, purposes?` plus any capture fields. With no `purposes`, it withdraws every optional purpose currently granted (spec section 6). Idempotent on `event_uuid`.
+
+## consent.check (GET)
+`principal_ref, purpose, programme?` returns `{allow, status, event, principal_ref, purpose, checked_at}`. It is served from Redis. `status` is one of granted | withdrawn | refused | not_asked | unknown_principal | awaiting_confirmation. A grant that isn't confirmed yet is denied for minors, and for programmes with *Allow processing before confirmation* off.
+
+## consent.state (GET)
+`principal_ref, programme?` returns every purpose's `{purpose, status, verification_status, event}`.
+
+## consent.verify, consent.public_keys (GET, public)
+Verify an artefact's hash and signature without seeing personal data. `public_keys` lists this tenant's signing keys.
+
+## principal.upsert (POST)
+`principal_ref` plus any of `full_name, phone, email, preferred_language, persona, date_of_birth, age_band, phone_owner_relation, is_minor, pwd_guarded, needs_assistance, shared_phone, no_phone`. Returns `{principal_ref, created}` and never echoes personal data.
+
+## notice.get_active (GET)
+`programme, language?` returns the live notice with its purposes, Rule 3 contents and cross-border line. The translation is included only if a reviewer signed it off; machine-made audio is only served once reviewed.
+
+## chain.verify (GET, DPO/Admin)
+`ledger` = Consent Event | Audit Entry. Walks the chain and reports the first broken link.
+
+Out-of-order sync: a purpose's state only changes when an event is newer than the one that last set it (device time, then server time). Consent State can be rebuilt from the ledger at any time (`anumati.enforcement.rebuild`).

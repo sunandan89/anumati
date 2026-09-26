@@ -71,6 +71,11 @@ for own, other in ((site_a, site_b), (site_b, site_a)):
 	expect(r.status_code in DENIED, f"{own} key listing {other} events -> {r.status_code}")
 	r = call("GET", other, "/api/method/anumati.api.v1.chain.verify", token=me)
 	expect(r.status_code in DENIED, f"{own} key verifying {other} chain -> {r.status_code}")
+	chk = {"principal_ref": "CI-NOBODY", "purpose": "CI-screen"}
+	r = call("GET", own, "/api/method/anumati.api.v1.consent.check", token=me, params=chk)
+	expect(r.status_code == 200, f"positive control: {own} key calling own consent.check -> {r.status_code}")
+	r = call("GET", other, "/api/method/anumati.api.v1.consent.check", token=me, params=chk)
+	expect(r.status_code in DENIED, f"{own} key calling {other} consent.check -> {r.status_code}")
 	r = call("GET", other, "/api/method/anumati.api.v1.consent.verify", params={"hash": me["hash"]})
 	expect(r.status_code == 200 and r.json()["message"]["in_chain"] is False,
 	       f"{own} consent hash must not be on {other}'s chain -> {r.status_code} {r.text[:200]}")
