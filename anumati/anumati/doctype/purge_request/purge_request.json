@@ -1,0 +1,189 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:PRG-{#####}",
+ "creation": "2026-09-27 10:00:00.000000",
+ "description": "System acknowledgements are tracked in Propagation Ack. A purpose with no linked system still creates a DPO task.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "principal",
+  "purpose",
+  "data_category",
+  "purge_action",
+  "status",
+  "c1",
+  "due_on",
+  "notified_on",
+  "purged_on",
+  "rights_request",
+  "retention_policy",
+  "hold_section",
+  "legal_hold",
+  "hold_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "principal",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Principal",
+   "options": "Data Principal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Purpose",
+   "options": "Purpose"
+  },
+  {
+   "fieldname": "data_category",
+   "fieldtype": "Link",
+   "label": "Data category",
+   "options": "Data Category"
+  },
+  {
+   "default": "hard_purge",
+   "fieldname": "purge_action",
+   "fieldtype": "Select",
+   "label": "Action",
+   "options": "hard_purge\nanonymise\nlegal_hold",
+   "reqd": 1
+  },
+  {
+   "default": "Scheduled",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Scheduled\nNotified\nRequested\nAcknowledged\nCompleted\nOn Hold"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "due_on",
+   "fieldtype": "Date",
+   "label": "Deadline",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notified_on",
+   "fieldtype": "Datetime",
+   "label": "Principal notified on"
+  },
+  {
+   "fieldname": "purged_on",
+   "fieldtype": "Datetime",
+   "label": "Purged on"
+  },
+  {
+   "fieldname": "rights_request",
+   "fieldtype": "Link",
+   "label": "Rights request",
+   "options": "Rights Request"
+  },
+  {
+   "fieldname": "retention_policy",
+   "fieldtype": "Link",
+   "label": "Retention policy",
+   "options": "Retention Policy"
+  },
+  {
+   "fieldname": "hold_section",
+   "fieldtype": "Section Break",
+   "label": "Legal hold"
+  },
+  {
+   "fieldname": "legal_hold",
+   "fieldtype": "Check",
+   "label": "Legal hold"
+  },
+  {
+   "fieldname": "hold_reason",
+   "fieldtype": "Small Text",
+   "label": "Reason"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Purge Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

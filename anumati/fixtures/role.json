@@ -1,0 +1,101 @@
+[
+ {
+  "doctype": "Role",
+  "name": "Anumati Admin",
+  "role_name": "Anumati Admin",
+  "desk_access": 1,
+  "two_factor_auth": 1,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 1,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati DPO",
+  "role_name": "Anumati DPO",
+  "desk_access": 1,
+  "two_factor_auth": 1,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 1,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Operator",
+  "role_name": "Anumati Operator",
+  "desk_access": 1,
+  "two_factor_auth": 1,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 1,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Programme Manager",
+  "role_name": "Anumati Programme Manager",
+  "desk_access": 1,
+  "two_factor_auth": 1,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 1,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Field Worker",
+  "role_name": "Anumati Field Worker",
+  "desk_access": 0,
+  "two_factor_auth": 0,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 0,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Developer",
+  "role_name": "Anumati Developer",
+  "desk_access": 1,
+  "two_factor_auth": 0,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 1,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Auditor",
+  "role_name": "Anumati Auditor",
+  "desk_access": 0,
+  "two_factor_auth": 0,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 0,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Processor Partner",
+  "role_name": "Anumati Processor Partner",
+  "desk_access": 0,
+  "two_factor_auth": 0,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 0,
+  "home_page": ""
+ },
+ {
+  "doctype": "Role",
+  "name": "Anumati Funder Viewer",
+  "role_name": "Anumati Funder Viewer",
+  "desk_access": 0,
+  "two_factor_auth": 0,
+  "disabled": 0,
+  "notifications": 1,
+  "search_bar": 0,
+  "home_page": ""
+ }
+]

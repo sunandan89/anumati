@@ -1,0 +1,22 @@
+[
+ {
+  "doctype": "Workflow Action Master",
+  "name": "Publish",
+  "workflow_action_name": "Publish"
+ },
+ {
+  "doctype": "Workflow Action Master",
+  "name": "Retire",
+  "workflow_action_name": "Retire"
+ },
+ {
+  "doctype": "Workflow Action Master",
+  "name": "Approve",
+  "workflow_action_name": "Approve"
+ },
+ {
+  "doctype": "Workflow Action Master",
+  "name": "Send Back",
+  "workflow_action_name": "Send Back"
+ }
+]

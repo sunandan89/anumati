@@ -1,0 +1,380 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:event_uuid",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "event_uuid",
+  "action",
+  "principal",
+  "programme",
+  "notice",
+  "notice_version",
+  "language",
+  "c1",
+  "purposes_granted",
+  "purposes_denied",
+  "capture_mode",
+  "channel",
+  "captured_by",
+  "guardian_link",
+  "source_system",
+  "evidence_section",
+  "witness",
+  "witness_digest",
+  "evidence",
+  "c2",
+  "verification_method",
+  "verification_status",
+  "device_section",
+  "device_id",
+  "device_time",
+  "server_time",
+  "c3",
+  "ip_address",
+  "gps",
+  "chain_section",
+  "chain_seq",
+  "key_id",
+  "chain_col",
+  "prev_hash",
+  "hash",
+  "signature"
+ ],
+ "fields": [
+  {
+   "description": "Client-generated; sync is idempotent on this",
+   "fieldname": "event_uuid",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Event UUID",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "action",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Action",
+   "options": "grant\nwithdraw\nrefuse\nrenew",
+   "reqd": 1
+  },
+  {
+   "fieldname": "principal",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Principal",
+   "options": "Data Principal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "programme",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Programme",
+   "options": "Programme",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notice",
+   "fieldtype": "Link",
+   "label": "Notice",
+   "options": "Notice Template"
+  },
+  {
+   "fieldname": "notice_version",
+   "fieldtype": "Data",
+   "label": "Notice version"
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "label": "Language",
+   "options": "Language"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "purposes_granted",
+   "fieldtype": "JSON",
+   "label": "Purposes granted"
+  },
+  {
+   "fieldname": "purposes_denied",
+   "fieldtype": "JSON",
+   "label": "Purposes denied"
+  },
+  {
+   "fieldname": "capture_mode",
+   "fieldtype": "Select",
+   "label": "Capture mode",
+   "options": "self_digital\nself_worker_device\nassisted_verbal\nassisted_thumbprint\nassisted_witnessed\nguardian_minor\nguardian_pwd\npaper"
+  },
+  {
+   "fieldname": "channel",
+   "fieldtype": "Select",
+   "label": "Channel",
+   "options": "app\nhosted_page\nconnector\nfield_worker\nslip\nsms\nmissed_call\nivr\nwhatsapp\nweb\nemail\ncommunity\napi\nussd"
+  },
+  {
+   "fieldname": "captured_by",
+   "fieldtype": "Link",
+   "label": "Captured by",
+   "options": "User"
+  },
+  {
+   "fieldname": "guardian_link",
+   "fieldtype": "Link",
+   "label": "Guardian link",
+   "options": "Guardian Link"
+  },
+  {
+   "fieldname": "source_system",
+   "fieldtype": "Link",
+   "label": "Source system",
+   "options": "Source System"
+  },
+  {
+   "fieldname": "evidence_section",
+   "fieldtype": "Section Break",
+   "label": "Evidence"
+  },
+  {
+   "description": "Name and relation; stored encrypted",
+   "fieldname": "witness",
+   "fieldtype": "Password",
+   "label": "Witness (encrypted)"
+  },
+  {
+   "description": "SHA-256 of the witness text; this, not the text, is signed",
+   "fieldname": "witness_digest",
+   "fieldtype": "Data",
+   "label": "Witness digest",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "List of {\"file\": ..., \"sha256\": ..., \"kind\": ...}",
+   "fieldname": "evidence",
+   "fieldtype": "JSON",
+   "label": "Evidence files"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "verification_method",
+   "fieldtype": "Select",
+   "label": "Verification method",
+   "options": "\nserver_otp\ndevice_sms_otp\nreverse_sms\nmissed_call\ndeferred\nevidence_only"
+  },
+  {
+   "default": "recorded",
+   "description": "Later confirmation lives in Verification Attempt and Consent State; this event never changes",
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "label": "Verification status at recording",
+   "options": "captured\nrecorded\nconfirmed\nunconfirmed\nevidence_only"
+  },
+  {
+   "fieldname": "device_section",
+   "fieldtype": "Section Break",
+   "label": "Device and time"
+  },
+  {
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "label": "Device ID"
+  },
+  {
+   "fieldname": "device_time",
+   "fieldtype": "Datetime",
+   "label": "Device time"
+  },
+  {
+   "fieldname": "server_time",
+   "fieldtype": "Datetime",
+   "label": "Server time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "c3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Optional; offline captures have none",
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP address"
+  },
+  {
+   "fieldname": "gps",
+   "fieldtype": "Data",
+   "label": "GPS (lat,long)"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "chain_section",
+   "fieldtype": "Section Break",
+   "label": "Signature and chain"
+  },
+  {
+   "fieldname": "chain_seq",
+   "fieldtype": "Int",
+   "label": "Chain sequence",
+   "no_copy": 1,
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "key_id",
+   "fieldtype": "Data",
+   "label": "Signing key ID",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "chain_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "prev_hash",
+   "fieldtype": "Data",
+   "label": "Previous hash",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "hash",
+   "fieldtype": "Data",
+   "label": "Hash",
+   "no_copy": 1,
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "signature",
+   "fieldtype": "Small Text",
+   "label": "Signature (Ed25519, base64)",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Consent Event",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "System Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_views": 1
+}

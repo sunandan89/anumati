@@ -1,0 +1,257 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:{notice}-{language}",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "notice",
+  "language",
+  "machine_translated",
+  "c1",
+  "reviewer",
+  "reviewed_on",
+  "text_section",
+  "summary",
+  "full_text",
+  "labels_section",
+  "label_yes_all",
+  "label_no_all",
+  "c2",
+  "label_manage",
+  "label_save",
+  "media_section",
+  "audio_file",
+  "audio_machine_made",
+  "audio_reviewed_by",
+  "c3",
+  "pictorial_card"
+ ],
+ "fields": [
+  {
+   "fieldname": "notice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Notice",
+   "options": "Notice Template",
+   "reqd": 1
+  },
+  {
+   "description": "Link to Frappe's Language (code, e.g. hi, mr, en)",
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Language",
+   "options": "Language",
+   "reqd": 1
+  },
+  {
+   "fieldname": "machine_translated",
+   "fieldtype": "Check",
+   "label": "Machine translated"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reviewer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Reviewer",
+   "options": "User"
+  },
+  {
+   "fieldname": "reviewed_on",
+   "fieldtype": "Date",
+   "label": "Reviewed on"
+  },
+  {
+   "fieldname": "text_section",
+   "fieldtype": "Section Break",
+   "label": "Text"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Small Text",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "full_text",
+   "fieldtype": "Text Editor",
+   "label": "Full text"
+  },
+  {
+   "description": "Must match the choices; Yes to all and No to all carry equal weight",
+   "fieldname": "labels_section",
+   "fieldtype": "Section Break",
+   "label": "Button labels"
+  },
+  {
+   "fieldname": "label_yes_all",
+   "fieldtype": "Data",
+   "label": "Yes to all"
+  },
+  {
+   "fieldname": "label_no_all",
+   "fieldtype": "Data",
+   "label": "No to all"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "label_manage",
+   "fieldtype": "Data",
+   "label": "Manage"
+  },
+  {
+   "fieldname": "label_save",
+   "fieldtype": "Data",
+   "label": "Save"
+  },
+  {
+   "fieldname": "media_section",
+   "fieldtype": "Section Break",
+   "label": "Audio and picture card"
+  },
+  {
+   "fieldname": "audio_file",
+   "fieldtype": "Attach",
+   "label": "Audio notice"
+  },
+  {
+   "description": "Machine-made audio is never played in the field until a reviewer approves it",
+   "fieldname": "audio_machine_made",
+   "fieldtype": "Check",
+   "label": "Audio is machine-made"
+  },
+  {
+   "fieldname": "audio_reviewed_by",
+   "fieldtype": "Link",
+   "label": "Audio reviewed by",
+   "options": "User"
+  },
+  {
+   "fieldname": "c3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pictorial_card",
+   "fieldtype": "Attach Image",
+   "label": "Pictorial card"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Notice Translation",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

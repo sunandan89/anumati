@@ -1,0 +1,30 @@
+[
+ {
+  "doctype": "Workflow State",
+  "name": "Draft",
+  "workflow_state_name": "Draft",
+  "style": "",
+  "icon": ""
+ },
+ {
+  "doctype": "Workflow State",
+  "name": "Published",
+  "workflow_state_name": "Published",
+  "style": "Success",
+  "icon": ""
+ },
+ {
+  "doctype": "Workflow State",
+  "name": "Retired",
+  "workflow_state_name": "Retired",
+  "style": "Inverse",
+  "icon": ""
+ },
+ {
+  "doctype": "Workflow State",
+  "name": "Approved",
+  "workflow_state_name": "Approved",
+  "style": "Success",
+  "icon": ""
+ }
+]

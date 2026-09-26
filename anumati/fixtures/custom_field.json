@@ -1,0 +1,121 @@
+[
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_section",
+  "dt": "Communication",
+  "fieldname": "anumati_section",
+  "fieldtype": "Section Break",
+  "label": "Anumati",
+  "insert_after": "reference_name",
+  "module": "Anumati",
+  "collapsible": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_channel",
+  "dt": "Communication",
+  "fieldname": "anumati_channel",
+  "fieldtype": "Select",
+  "label": "Anumati channel",
+  "insert_after": "anumati_section",
+  "module": "Anumati",
+  "options": "\nsms\nwhatsapp\nivr\nmissed_call\nemail\nfield_worker\nslip\ncommunity\napi\nweb"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_sender_hash",
+  "dt": "Communication",
+  "fieldname": "anumati_sender_hash",
+  "fieldtype": "Data",
+  "label": "Sender phone hash",
+  "insert_after": "anumati_channel",
+  "module": "Anumati",
+  "read_only": 1,
+  "search_index": 1,
+  "description": "Salted hash; the number itself is never stored here"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_provider",
+  "dt": "Communication",
+  "fieldname": "anumati_provider",
+  "fieldtype": "Link",
+  "label": "Channel provider",
+  "insert_after": "anumati_sender_hash",
+  "module": "Anumati",
+  "options": "Channel Provider"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_column",
+  "dt": "Communication",
+  "fieldname": "anumati_column",
+  "fieldtype": "Column Break",
+  "label": "",
+  "insert_after": "anumati_provider",
+  "module": "Anumati"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_message_template",
+  "dt": "Communication",
+  "fieldname": "anumati_message_template",
+  "fieldtype": "Link",
+  "label": "Message template",
+  "insert_after": "anumati_column",
+  "module": "Anumati",
+  "options": "Message Template"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Communication-anumati_consent_event",
+  "dt": "Communication",
+  "fieldname": "anumati_consent_event",
+  "fieldtype": "Link",
+  "label": "Consent event",
+  "insert_after": "anumati_message_template",
+  "module": "Anumati",
+  "options": "Consent Event"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Translation-anumati_audio",
+  "dt": "Translation",
+  "fieldname": "anumati_audio",
+  "fieldtype": "Attach",
+  "label": "Audio",
+  "insert_after": "translated_text",
+  "module": "Anumati"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Translation-anumati_reviewer",
+  "dt": "Translation",
+  "fieldname": "anumati_reviewer",
+  "fieldtype": "Link",
+  "label": "Reviewer",
+  "insert_after": "anumati_audio",
+  "module": "Anumati",
+  "options": "User"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Translation-anumati_reviewed_on",
+  "dt": "Translation",
+  "fieldname": "anumati_reviewed_on",
+  "fieldtype": "Date",
+  "label": "Reviewed on",
+  "insert_after": "anumati_reviewer",
+  "module": "Anumati"
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Translation-anumati_pack_version",
+  "dt": "Translation",
+  "fieldname": "anumati_pack_version",
+  "fieldtype": "Data",
+  "label": "Language pack version",
+  "insert_after": "anumati_reviewed_on",
+  "module": "Anumati"
+ }
+]

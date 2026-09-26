@@ -1,0 +1,287 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "hash",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "principal_ref",
+  "full_name",
+  "phone",
+  "phone_hash",
+  "email",
+  "c1",
+  "preferred_language",
+  "persona",
+  "date_of_birth",
+  "age_band",
+  "phone_owner_relation",
+  "flags_section",
+  "is_minor",
+  "pwd_guarded",
+  "needs_assistance",
+  "c2",
+  "shared_phone",
+  "no_phone",
+  "lifecycle_section",
+  "relationship_ended_on",
+  "c3",
+  "merged_into",
+  "nominee_section",
+  "nominees"
+ ],
+ "fields": [
+  {
+   "description": "ID from the host system, e.g. MHU-004211. Never a name or phone number.",
+   "fieldname": "principal_ref",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Principal ref",
+   "unique": 1
+  },
+  {
+   "description": "Stored encrypted; not searchable",
+   "fieldname": "full_name",
+   "fieldtype": "Password",
+   "label": "Name (encrypted)"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Password",
+   "label": "Phone (encrypted)"
+  },
+  {
+   "description": "Salted HMAC of the normalised number; used for lookups",
+   "fieldname": "phone_hash",
+   "fieldtype": "Data",
+   "label": "Phone hash",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "preferred_language",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Preferred language",
+   "options": "Language"
+  },
+  {
+   "default": "beneficiary",
+   "fieldname": "persona",
+   "fieldtype": "Select",
+   "label": "Persona",
+   "options": "beneficiary\npatient\nstudent\nemployee\nmember\nother"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of birth"
+  },
+  {
+   "fieldname": "age_band",
+   "fieldtype": "Select",
+   "label": "Age band",
+   "options": "\nunder_18\n18_plus\nunknown"
+  },
+  {
+   "default": "self",
+   "fieldname": "phone_owner_relation",
+   "fieldtype": "Select",
+   "label": "Phone owner",
+   "options": "self\nspouse\nparent\nchild\nsibling\nrelative\nneighbour\nfield_worker\nother"
+  },
+  {
+   "fieldname": "flags_section",
+   "fieldtype": "Section Break",
+   "label": "Segment flags"
+  },
+  {
+   "fieldname": "is_minor",
+   "fieldtype": "Check",
+   "label": "Minor (under 18)"
+  },
+  {
+   "fieldname": "pwd_guarded",
+   "fieldtype": "Check",
+   "label": "Person with disability, lawful guardian"
+  },
+  {
+   "fieldname": "needs_assistance",
+   "fieldtype": "Check",
+   "label": "Needs help to read the notice"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shared_phone",
+   "fieldtype": "Check",
+   "label": "Shared phone"
+  },
+  {
+   "fieldname": "no_phone",
+   "fieldtype": "Check",
+   "label": "No phone"
+  },
+  {
+   "fieldname": "lifecycle_section",
+   "fieldtype": "Section Break",
+   "label": "Lifecycle"
+  },
+  {
+   "description": "Cessation: starts retention clocks that run from 'relationship ended'",
+   "fieldname": "relationship_ended_on",
+   "fieldtype": "Date",
+   "label": "Relationship ended on"
+  },
+  {
+   "fieldname": "c3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "merged_into",
+   "fieldtype": "Link",
+   "label": "Merged into",
+   "options": "Data Principal",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "nominee_section",
+   "fieldtype": "Section Break",
+   "label": "Nominees"
+  },
+  {
+   "fieldname": "nominees",
+   "fieldtype": "Table",
+   "label": "Nominees",
+   "options": "Nominee"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Data Principal",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "search_fields": "principal_ref",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "principal_ref",
+ "track_changes": 1,
+ "track_views": 1
+}

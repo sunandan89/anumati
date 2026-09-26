@@ -1,0 +1,230 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "org_section",
+  "org_legal_name",
+  "dpdp_role",
+  "residency",
+  "org_col",
+  "dpo_name",
+  "dpo_email",
+  "dpo_phone",
+  "default_languages",
+  "consent_record_retention_years",
+  "signing_section",
+  "signing_key_id",
+  "signing_public_key",
+  "signing_private_key",
+  "signing_col",
+  "retired_signing_keys",
+  "phone_hash_salt",
+  "chain_status_section",
+  "last_chain_check",
+  "last_chain_status",
+  "chain_status_col",
+  "consent_anchor",
+  "audit_anchor"
+ ],
+ "fields": [
+  {
+   "fieldname": "org_section",
+   "fieldtype": "Section Break",
+   "label": "Organisation"
+  },
+  {
+   "fieldname": "org_legal_name",
+   "fieldtype": "Data",
+   "label": "Organisation legal name"
+  },
+  {
+   "default": "Data Fiduciary",
+   "fieldname": "dpdp_role",
+   "fieldtype": "Select",
+   "label": "DPDP role",
+   "options": "Data Fiduciary\nSignificant Data Fiduciary\nData Processor"
+  },
+  {
+   "default": "India (hosted)",
+   "fieldname": "residency",
+   "fieldtype": "Select",
+   "label": "Data residency",
+   "options": "India (hosted)\nIndia (dedicated)\nSelf-hosted"
+  },
+  {
+   "fieldname": "org_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dpo_name",
+   "fieldtype": "Data",
+   "label": "DPO name"
+  },
+  {
+   "fieldname": "dpo_email",
+   "fieldtype": "Data",
+   "label": "DPO email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "dpo_phone",
+   "fieldtype": "Data",
+   "label": "DPO phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "default_languages",
+   "fieldtype": "Table MultiSelect",
+   "label": "Default languages",
+   "options": "Language Row"
+  },
+  {
+   "default": "7",
+   "description": "Default 7 years, pending counsel. Programmes may override.",
+   "fieldname": "consent_record_retention_years",
+   "fieldtype": "Int",
+   "label": "Consent record retention (years)"
+  },
+  {
+   "collapsible": 1,
+   "description": "Generated on install. The private key never leaves the server; a site-config key (anumati_signing_key) overrides it.",
+   "fieldname": "signing_section",
+   "fieldtype": "Section Break",
+   "label": "Signing key"
+  },
+  {
+   "fieldname": "signing_key_id",
+   "fieldtype": "Data",
+   "label": "Active key ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signing_public_key",
+   "fieldtype": "Small Text",
+   "label": "Active public key (base64)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signing_private_key",
+   "fieldtype": "Password",
+   "hidden": 1,
+   "label": "Private key"
+  },
+  {
+   "fieldname": "signing_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Old keys stay here so events signed before a rotation still verify",
+   "fieldname": "retired_signing_keys",
+   "fieldtype": "JSON",
+   "label": "Retired public keys",
+   "read_only": 1
+  },
+  {
+   "fieldname": "phone_hash_salt",
+   "fieldtype": "Password",
+   "hidden": 1,
+   "label": "Phone hash salt"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "chain_status_section",
+   "fieldtype": "Section Break",
+   "label": "Chain verification"
+  },
+  {
+   "fieldname": "last_chain_check",
+   "fieldtype": "Datetime",
+   "label": "Last verified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_chain_status",
+   "fieldtype": "Small Text",
+   "label": "Result",
+   "read_only": 1
+  },
+  {
+   "fieldname": "chain_status_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "consent_anchor",
+   "fieldtype": "Small Text",
+   "label": "Consent chain checkpoint",
+   "read_only": 1
+  },
+  {
+   "fieldname": "audit_anchor",
+   "fieldtype": "Small Text",
+   "label": "Audit chain checkpoint",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-09-27 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Anumati Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Admin",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "System Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

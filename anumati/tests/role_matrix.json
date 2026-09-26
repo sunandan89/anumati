@@ -1,0 +1,1017 @@
+{
+ "Anumati Settings": {
+  "Anumati Admin": [
+   "read",
+   "write"
+  ],
+  "Anumati DPO": [
+   "read"
+  ],
+  "System Manager": [
+   "read",
+   "write"
+  ]
+ },
+ "Audit Entry": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Auditor": [
+   "read"
+  ],
+  "Anumati DPO": [
+   "export",
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "print",
+   "read",
+   "report"
+  ]
+ },
+ "Audit Share": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Breach Incident": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Campaign": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Channel Provider": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Consent Event": {
+  "Anumati Admin": [
+   "export",
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "export",
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Field Worker": [
+   "create",
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "read"
+  ]
+ },
+ "Consent State": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Developer": [
+   "read"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Data Category": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "read"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Data Principal": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Field Device": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Funder Link": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Funder Viewer": [
+   "read"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Guardian Link": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Message Template": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Notice Template": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "amend",
+   "cancel",
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "submit",
+   "write"
+  ],
+  "Anumati Developer": [
+   "read"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "amend",
+   "cancel",
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "submit",
+   "write"
+  ]
+ },
+ "Notice Translation": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Processor": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Processor Partner": [
+   "read"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Programme": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Developer": [
+   "read"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Propagation Ack": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Processor Partner": [
+   "read"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Purge Request": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Purpose": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Developer": [
+   "read"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "ROPA Entry": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Auditor": [
+   "read"
+  ],
+  "Anumati DPO": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Retention Policy": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Rights Request": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "create",
+   "read"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "Source System": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Developer": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
+ "System Usage Log": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Developer": [
+   "read"
+  ],
+  "System Manager": [
+   "print",
+   "read",
+   "report"
+  ]
+ },
+ "Verification Attempt": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Field Worker": [
+   "create",
+   "read"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ }
+}
