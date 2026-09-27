@@ -950,6 +950,98 @@
     "summary": "Create or update a principal"
    }
   },
+  "/api/v2/method/anumati.api.v1.rights.add_nominee": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "nominee_name",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "relation",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "contact",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Nomination: record a nominee, encrypted (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.close": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "resolution",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Close or reject a request and tell the principal (staff)"
+   }
+  },
   "/api/v2/method/anumati.api.v1.rights.fulfil_withdrawal": {
    "post": {
     "parameters": [
@@ -982,6 +1074,126 @@
      }
     },
     "summary": "Carry out a withdrawal request (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.mark_corrected": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Correction: close with the changed field names (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.reply": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "template_event",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Reply on the thread with an approved template (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.send_summary": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Access: send a summary of what is held (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.start_erasure": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "programme",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Erasure: withdraw optional purposes and open purge requests (staff)"
    }
   },
   "/api/v2/method/anumati.api.v1.rights.submit": {

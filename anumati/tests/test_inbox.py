@@ -81,5 +81,5 @@ class TestInbox(FrappeTestCase):
 		self.assertNotIn("Radha", html)
 
 	def test_sla_notifications_are_installed(self):
-		for name in ("Anumati - new rights request", "Anumati - rights request due soon"):
+		for name in ("Anumati - new rights request", "Anumati - rights request due soon", "Anumati - rights request overdue"):
 			self.assertTrue(frappe.db.get_value("Notification", name, "enabled"), name)

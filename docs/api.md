@@ -45,6 +45,17 @@ Verify an artefact's hash and signature without seeing personal data. `public_ke
 ## rights.fulfil_withdrawal (POST, staff)
 `request, programme, purposes?` records one signed withdrawal for a matched request and closes it. Calling it twice returns the same event. In Desk this is the **Record withdrawal** button on the request.
 
+## Other rights (POST, staff) — Phase 2a
+Each takes `request` and needs write permission on it; none returns personal data. In Desk these are the buttons on the Rights Request form.
+- `rights.send_summary` (access): threads a summary of what is held (field names, purposes and their status, receipt codes, who it is shared with — never the values) and sends it with the `access_summary` template if one is approved. Closes the request.
+- `rights.mark_corrected` (correction): edit the principal first; closes with the names of the fields changed since the request arrived.
+- `rights.start_erasure` (erasure), `programme?`: withdraws every optional purpose, then opens one Purge Request per purpose held. Purposes with legal basis *legal obligation* go on legal hold for DPO review. The request waits in *Awaiting Acknowledgement* and can't be closed until every purge is completed or on hold. Idempotent.
+- `rights.add_nominee` (nomination), `nominee_name, relation, contact?`: stored encrypted on the principal.
+- `rights.close`, `resolution?, status?` (Closed | Rejected): closing a grievance appends the Board complaint route from Anumati Settings. The principal gets the `rights_update` template in their language. Returns `on_time`.
+- `rights.reply`, `template_event?`: sends an approved template on the request's channel and threads it. Free-text replies go by email (stock composer) or stay as internal comments.
+
+Open requests past their SLA date get *Past deadline* each night and notify the DPO and the assignee.
+
 ## notifications.feed (GET)
 `since` (ISO datetime), `limit?` (at most 500) returns `{events: [...], until}`. It mirrors the webhook events (`consent.recorded`, `consent.withdrawn`, `rights.created`, `rights.closed`) for hosts that can't receive webhooks. Pass `until` back as the next `since`. It carries identifiers and purpose codes only.
 

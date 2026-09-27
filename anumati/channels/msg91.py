@@ -5,7 +5,7 @@ context lists them, plus named keys for flows that use names."""
 import requests
 
 API = "https://control.msg91.com/api/v5/flow"
-VARS = ("code", "programme", "purposes", "date", "otp")
+VARS = ("code", "programme", "purposes", "date", "otp", "status", "board_route")  # append only: DLT flows are numbered
 
 
 def send(provider, phone_digits: str, template, context: dict) -> str | None:

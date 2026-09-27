@@ -33,7 +33,7 @@ def template_for(event: str, channel: str, language: str | None):
 	return None
 
 
-def send_sms(principal: str, event: str, context: dict, reference=None) -> str | None:
+def send_sms(principal: str, event: str, context: dict, reference=None, reference_doctype="Consent Event") -> str | None:
 	"""Send one templated SMS to a principal. Returns the Communication name, or None if not sendable
 	(no provider, no approved template, no phone). Never raises for a missing setup: capture must not
 	fail because a receipt could not be sent."""
@@ -52,12 +52,30 @@ def send_sms(principal: str, event: str, context: dict, reference=None) -> str |
 		status = "Error"
 		frappe.log_error(title=f"Anumati SMS send failed ({event})", message=f"provider={provider.name} template={template.name}")
 	return log(provider, "Sent", body, pii.phone_hash(phone), template=template.name, status=status,
-	           message_id=message_id, reference=reference)
+	           message_id=message_id, reference=reference, reference_doctype=reference_doctype)
+
+
+SENDERS = {"sms": "send_sms"}  # channel -> sender; WhatsApp and email join in Phase 2e/2g
+
+
+def send(principal: str, event: str, context: dict, channel=None, reference=None, reference_doctype="Consent Event"):
+	"""Send a templated message on the channel the principal used, falling back to SMS. Returns the
+	Communication name or None when nothing could be sent (never raises for a missing setup)."""
+	for ch in dict.fromkeys([channel, "sms"]):
+		if ch in SENDERS:
+			comm = globals()[SENDERS[ch]](principal, event, context, reference=reference, reference_doctype=reference_doctype)
+			if comm:
+				return comm
+	return None
 
 
 def log(provider, direction, body, phone_hash, template=None, status=None, message_id=None, reference=None,
-        channel="sms"):
-	"""A stock Communication with the Anumati custom fields; phone_no is deliberately left empty."""
+        channel="sms", reference_doctype="Consent Event"):
+	"""A stock Communication with the Anumati custom fields; phone_no is deliberately left empty.
+	`reference` links it to a Consent Event (default) or to a Rights Request thread."""
+	if not (reference and frappe.db.exists(reference_doctype, reference)):
+		reference = None
+	event = reference if reference_doctype == "Consent Event" else None
 	comm = frappe.get_doc({
 		"doctype": "Communication",
 		"communication_type": "Communication",
@@ -72,9 +90,9 @@ def log(provider, direction, body, phone_hash, template=None, status=None, messa
 		"anumati_sender_hash": phone_hash,
 		"anumati_provider": provider.name if provider else None,
 		"anumati_message_template": template,
-		"anumati_consent_event": reference if reference and frappe.db.exists("Consent Event", reference) else None,
-		"reference_doctype": "Consent Event" if reference and frappe.db.exists("Consent Event", reference) else None,
-		"reference_name": reference if reference and frappe.db.exists("Consent Event", reference) else None,
+		"anumati_consent_event": event,
+		"reference_doctype": reference_doctype if reference else None,
+		"reference_name": reference,
 	})
 	comm.flags.ignore_permissions = True
 	comm.insert()

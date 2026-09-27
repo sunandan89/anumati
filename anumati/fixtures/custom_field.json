@@ -19,7 +19,7 @@
   "label": "Anumati channel",
   "insert_after": "anumati_section",
   "module": "Anumati",
-  "options": "\nsms\nwhatsapp\nivr\nmissed_call\nemail\nfield_worker\nslip\ncommunity\napi\nweb"
+  "options": "\nsms\nwhatsapp\nivr\nmissed_call\nemail\nfield_worker\nslip\ncommunity\napi\nweb\nnote"
  },
  {
   "doctype": "Custom Field",

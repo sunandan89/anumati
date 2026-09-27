@@ -20,6 +20,9 @@
   "assigned_to",
   "paper_trail_number",
   "linked_event",
+  "programme",
+  "overdue",
+  "closed_on",
   "sender_section",
   "raised_by",
   "sender_hash",
@@ -118,6 +121,29 @@
    "read_only": 1
   },
   {
+   "description": "Leave empty to act on every programme",
+   "fieldname": "programme",
+   "fieldtype": "Link",
+   "label": "Programme",
+   "options": "Programme"
+  },
+  {
+   "description": "Set each day while the request is open after its SLA date",
+   "fieldname": "overdue",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Past deadline",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "closed_on",
+   "fieldtype": "Datetime",
+   "label": "Closed on",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
    "collapsible": 1,
    "fieldname": "sender_section",
    "fieldtype": "Section Break",
@@ -163,7 +189,7 @@
  "has_web_view": 0,
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Rights Request",

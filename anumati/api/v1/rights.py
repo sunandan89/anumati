@@ -3,6 +3,7 @@
 import frappe
 from frappe import _
 
+from anumati import rights
 from anumati.api import schema
 from anumati.api.v1 import consent
 
@@ -44,3 +45,48 @@ def fulfil_withdrawal(request, programme, purposes=None):
 		artefact["consent_id"], artefact["short_code"])
 	doc.save()
 	return artefact
+
+
+# ---------------------------------------------------------------- Phase 2a: the other rights (spec B5)
+# Staff actions behind the buttons on the Rights Request form. Each checks write permission on the
+# request; none returns or logs personal data.
+
+
+@frappe.whitelist(methods=["POST"])
+def send_summary(request):
+	"""Access: thread a summary of what is held (never the values) and send it if a template exists."""
+	out = rights.send_summary(request)
+	return {"request": out["request"], "sent": out["sent"]}
+
+
+@frappe.whitelist(methods=["POST"])
+def mark_corrected(request):
+	"""Correction: after editing the principal's record, close with the changed field names."""
+	return rights.mark_corrected(request)
+
+
+@frappe.whitelist(methods=["POST"])
+def start_erasure(request, programme=None):
+	"""Erasure: withdraw optional purposes and open one Purge Request per purpose held."""
+	return rights.start_erasure(request, programme)
+
+
+@frappe.whitelist(methods=["POST"])
+def add_nominee(request, nominee_name, relation, contact=None):
+	"""Nomination: store the nominee (encrypted) on the principal and close."""
+	return rights.add_nominee(request, nominee_name, relation, contact)
+
+
+@frappe.whitelist(methods=["POST"])
+def close(request, resolution=None, status="Closed"):
+	"""Close or reject a request; the principal is told on the channel they used."""
+	if status not in ("Closed", "Rejected"):
+		frappe.throw(_("status must be Closed or Rejected"))
+	doc = rights.close(request, resolution, status)
+	return {"request": doc.name, "status": doc.status, "on_time": rights.on_time(doc)}
+
+
+@frappe.whitelist(methods=["POST"])
+def reply(request, template_event="rights_update"):
+	"""Reply on the thread with an approved template (SMS needs DLT approval)."""
+	return {"communication": rights.reply(request, template_event)}

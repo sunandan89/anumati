@@ -43,5 +43,28 @@
     "receiver_by_role": "Anumati DPO"
    }
   ]
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - rights request overdue",
+  "subject": "{{ doc.name }} is past its deadline ({{ doc.sla_due }})",
+  "document_type": "Rights Request",
+  "event": "Value Change",
+  "condition": "doc.overdue and doc.status not in ('Closed', 'Rejected')",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }} ({{ doc.request_type }}) was due on {{ doc.sla_due }} and is still {{ doc.status }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_document_field": "assigned_to"
+   },
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   }
+  ],
+  "value_changed": "overdue"
  }
 ]

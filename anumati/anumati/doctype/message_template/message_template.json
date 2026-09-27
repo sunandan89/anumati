@@ -21,7 +21,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Event",
-   "options": "receipt\nconfirmation\ndeferred_confirmation\nwithdrawal_confirmation\notp\nreminder\nrenewal\nretention_notice\nbreach_notice\nrights_update",
+   "options": "receipt\nconfirmation\ndeferred_confirmation\nwithdrawal_confirmation\notp\nreminder\nrenewal\nretention_notice\nbreach_notice\nrights_update\naccess_summary",
    "reqd": 1
   },
   {
@@ -69,7 +69,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Message Template",

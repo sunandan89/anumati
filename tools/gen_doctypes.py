@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-27 14:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-28 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -133,6 +133,8 @@ doctype("Anumati Settings", [
     F("default_languages", "Table MultiSelect", "Default languages", "Language Row"),
     F("rights_sla_days", "Int", "Rights request SLA (days)", default="30",
       description="Default response time for rights requests, pending counsel"),
+    F("board_complaint_route", "Small Text", "How to complain to the Board",
+      description="Shown when a grievance is closed, e.g. the Data Protection Board's online complaint address"),
     F("consent_record_retention_years", "Int", "Consent record retention (years)", default="7",
       description="Default 7 years, pending counsel. Programmes may override."),
     sec("signing_section", "Signing key", collapsible=True,
@@ -373,6 +375,10 @@ doctype("Rights Request", [
     F("assigned_to", "Link", "Assigned to", "User"),
     F("paper_trail_number", "Data", "Paper-trail number", description="Printed on slips so offline requests reconcile"),
     F("linked_event", "Link", "Resulting consent event", "Consent Event", read_only=True),
+    F("programme", "Link", "Programme", "Programme", description="Leave empty to act on every programme"),
+    F("overdue", "Check", "Past deadline", read_only=True, in_standard_filter=True, no_copy=True,
+      description="Set each day while the request is open after its SLA date"),
+    F("closed_on", "Datetime", "Closed on", read_only=True, no_copy=True),
     sec("sender_section", "Sender", collapsible=True),
     F("raised_by", "Data", "Sender email", "Email", description="Set when the request arrives by email"),
     F("sender_hash", "Data", "Sender phone hash", read_only=True, search_index=True,
@@ -575,7 +581,7 @@ doctype("System Usage Log", [
 ], {ADM: "R", DPO: "R", DEV: "r", SM: "R"}, autoname="hash", in_create=1)
 
 doctype("Message Template", [
-    F("template_event", "Select", "Event", sel("receipt", "confirmation", "deferred_confirmation", "withdrawal_confirmation", "otp", "reminder", "renewal", "retention_notice", "breach_notice", "rights_update"), reqd=True, in_list_view=True),
+    F("template_event", "Select", "Event", sel("receipt", "confirmation", "deferred_confirmation", "withdrawal_confirmation", "otp", "reminder", "renewal", "retention_notice", "breach_notice", "rights_update", "access_summary"), reqd=True, in_list_view=True),
     F("channel", "Select", "Channel", sel("sms", "whatsapp", "ivr", "email"), reqd=True, in_list_view=True),
     F("language", "Link", "Language", "Language", reqd=True, in_list_view=True),
     col("c1"),

@@ -33,12 +33,14 @@ def _provider(provider, token):
 	return doc
 
 
-def _request(request_type, channel, phone_hash, text, status=None, principal=None):
+def _request(request_type, channel, phone_hash, text, status=None, principal=None, comm=None):
 	req = frappe.get_doc({"doctype": "Rights Request", "request_type": request_type, "channel": channel,
 	                      "sender_hash": phone_hash, "raw_payload": text, "matched_principal": principal,
 	                      **({"status": status} if status else {})})
 	req.flags.ignore_permissions = True
 	req.insert()
+	if comm:  # thread the inbound message on the request (spec T4)
+		frappe.db.set_value("Communication", comm, {"reference_doctype": "Rights Request", "reference_name": req.name})
 	return req
 
 
@@ -50,17 +52,17 @@ def _latest_grant(principal):
 def handle_sms(provider, sender, text):
 	"""Process one inbound SMS; returns a short machine-readable outcome."""
 	phone_hash = pii.phone_hash(sender)
-	channels.log(provider, "Received", text, phone_hash)
+	comm = channels.log(provider, "Received", text, phone_hash)
 	words = (text or "").translate(DEVANAGARI).strip().split()
 	keyword = words[0].upper() if words else ""
 	arg = words[1] if len(words) > 1 else None
 
 	if keyword == "DATA":
-		return {"outcome": "request", "request": _request("access", "sms", phone_hash, text).name}
+		return {"outcome": "request", "request": _request("access", "sms", phone_hash, text, comm=comm).name}
 	if keyword == "HELP":
-		return {"outcome": "request", "request": _request("grievance", "sms", phone_hash, text).name}
+		return {"outcome": "request", "request": _request("grievance", "sms", phone_hash, text, comm=comm).name}
 	if keyword != "STOP":
-		return {"outcome": "request", "request": _request("grievance", "sms", phone_hash, text).name}
+		return {"outcome": "request", "request": _request("grievance", "sms", phone_hash, text, comm=comm).name}
 
 	principal, purposes, programme = None, None, None
 	if arg and not arg.isdigit():
@@ -69,7 +71,7 @@ def handle_sms(provider, sender, text):
 		found = inbox.principals_for_phone_hash(phone_hash)
 		if len(found) == 1:
 			principal = found[0].name
-	req = _request("withdrawal", "sms", phone_hash, text, principal=principal)
+	req = _request("withdrawal", "sms", phone_hash, text, principal=principal, comm=comm)
 	if not principal:
 		return {"outcome": "unmatched", "request": req.name}
 
@@ -125,10 +127,10 @@ def missed_call(provider=None, token=None, **kwargs):
 	if not sender:
 		frappe.throw("caller missing")
 	phone_hash = pii.phone_hash(sender)
-	channels.log(prov, "Received", "Missed call", phone_hash, channel="missed_call")
+	comm = channels.log(prov, "Received", "Missed call", phone_hash, channel="missed_call")
 	found = inbox.principals_for_phone_hash(phone_hash)
 	req = _request("withdrawal", "missed_call", phone_hash, "Missed call",
-	               principal=found[0].name if len(found) == 1 else None)
+	               principal=found[0].name if len(found) == 1 else None, comm=comm)
 	return {"outcome": "request", "request": req.name}
 
 

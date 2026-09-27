@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import add_days, getdate
 
-from anumati import inbox
+from anumati import inbox, rights
 
 
 class RightsRequest(Document):
@@ -15,3 +15,4 @@ class RightsRequest(Document):
 			days = frappe.db.get_single_value("Anumati Settings", "rights_sla_days") or 30
 			self.sla_due = add_days(getdate(self.received_on), days)
 		inbox.match(self)
+		rights.sync_status_fields(self)

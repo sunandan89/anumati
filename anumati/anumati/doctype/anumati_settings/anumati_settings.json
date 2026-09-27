@@ -15,6 +15,7 @@
   "dpo_phone",
   "default_languages",
   "rights_sla_days",
+  "board_complaint_route",
   "consent_record_retention_years",
   "signing_section",
   "signing_key_id",
@@ -88,6 +89,12 @@
    "fieldname": "rights_sla_days",
    "fieldtype": "Int",
    "label": "Rights request SLA (days)"
+  },
+  {
+   "description": "Shown when a grievance is closed, e.g. the Data Protection Board's online complaint address",
+   "fieldname": "board_complaint_route",
+   "fieldtype": "Small Text",
+   "label": "How to complain to the Board"
   },
   {
    "default": "7",
@@ -176,7 +183,7 @@
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Anumati Settings",
