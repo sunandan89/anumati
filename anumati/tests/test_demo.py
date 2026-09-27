@@ -49,12 +49,31 @@ class TestFieldAppSetup(FrappeTestCase):
 			self.assertTrue(config.enabled)
 			self.assertEqual(config.package_name, demo.PACKAGE)
 
+	def test_sample_data_is_fictional_signed_and_captured_by_the_field_worker(self):
+		first = demo.create_sample_data()
+		again = demo.create_sample_data()
+		self.assertEqual(again["people"], 0, "idempotent")
+		refs = [f"{demo.PROGRAMME}-{p[0]}" for p in demo.SAMPLE_PEOPLE]
+		self.assertEqual(frappe.db.count("Data Principal", {"principal_ref": ("in", refs)}), len(refs))
+		events = frappe.get_all("Consent Event", {"programme": demo.PROGRAMME, "captured_by": demo.FIELD_WORKER},
+		                        ["hash", "signature", "action"])
+		self.assertGreaterEqual(len(events), len(refs))
+		self.assertTrue(all(e.hash and e.signature for e in events))
+		self.assertIn("withdraw", {e.action for e in events})
+		self.assertEqual(frappe.session.user, "Administrator", "the admin session is restored")
+		for ref in refs:
+			doc = frappe.get_doc("Data Principal", {"principal_ref": ref})
+			phone = doc.get_password("phone", raise_exception=False)
+			self.assertTrue(not phone or phone.startswith("555"), "sample numbers can never be real mobiles")
+		self.assertGreaterEqual(first["consents"] + again["consents"], 0)
+
 	def test_only_system_managers_can_run_it(self):
 		in_test = frappe.flags.in_test
 		frappe.flags.in_test = False  # frappe.only_for is a no-op in tests
 		frappe.set_user("Guest")
 		try:
 			self.assertRaises(frappe.PermissionError, demo.setup_field_app)
+			self.assertRaises(frappe.PermissionError, demo.add_sample_data)
 		finally:
 			frappe.set_user("Administrator")
 			frappe.flags.in_test = in_test
