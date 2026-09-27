@@ -1,0 +1,21 @@
+{
+ "doctype": "Print Format",
+ "name": "Consent Receipt",
+ "doc_type": "Consent Event",
+ "module": "Anumati",
+ "standard": "Yes",
+ "custom_format": 1,
+ "print_format_type": "Jinja",
+ "disabled": 0,
+ "html": "{%- set prog = frappe.get_doc(\"Programme\", doc.programme) -%}\n{%- set granted = json.loads(doc.purposes_granted or \"[]\") -%}\n{%- set labels = {\"field_worker\": _(\"Tell any field worker\"), \"slip\": _(\"Tear off and hand in the slip below\"),\n  \"sms\": _(\"SMS STOP to the programme number\"), \"missed_call\": _(\"Give a missed call to the programme number\"),\n  \"ivr\": _(\"Call the helpline\"), \"whatsapp\": _(\"Reply STOP on WhatsApp\"), \"web\": _(\"Use the preference centre\"),\n  \"email\": _(\"Write to the DPO\"), \"community\": _(\"Tell the SHG, panchayat or camp desk\"), \"api\": _(\"Through a partner\"),\n  \"ussd\": _(\"USSD menu\")} -%}\n<style>\n  .an-receipt { font-family: Hind, \"Noto Sans Devanagari\", sans-serif; max-width: 380px; margin: auto; color: #2A2118; }\n  .an-receipt .code { font-family: \"IBM Plex Mono\", monospace; font-size: 30px; letter-spacing: .08em; margin: 6px 0; }\n  .an-receipt .slip { border-top: 2px dashed #B4532A; margin-top: 16px; padding-top: 10px; }\n  .an-receipt .box { display: inline-block; width: 14px; height: 14px; border: 1.5px solid #2A2118; margin-right: 6px; }\n</style>\n<div class=\"an-receipt\">\n  <div class=\"small\">{{ _(\"Consent receipt\") }} · {{ prog.programme_name }}</div>\n  <div class=\"code\">{{ doc.short_code }}</div>\n  <div class=\"small\">{{ doc.get_formatted(\"server_time\") }}</div>\n  <p><b>{{ _(\"You agreed to\") }}</b></p>\n  <ul>\n  {%- for code in granted %}\n    <li>{{ frappe.db.get_value(\"Purpose\", doc.programme ~ \"-\" ~ code, \"purpose_title\") or code }}</li>\n  {%- else %}\n    <li>{{ _(\"Nothing: you said no\") }}</li>\n  {%- endfor %}\n  </ul>\n  <p><b>{{ _(\"To stop at any time\") }}</b></p>\n  <ul>\n  {%- for row in prog.withdrawal_channels if row.show_on_receipt %}\n    <li>{{ labels.get(row.channel, row.channel) }}</li>\n  {%- endfor %}\n  </ul>\n  <p class=\"small\">{{ _(\"Keep this code. You can ask what we hold about you, correct it, or complain at any time.\") }}</p>\n  <div class=\"slip\">\n    <b>{{ _(\"Withdrawal slip\") }}</b> · {{ doc.short_code }}\n    <p><span class=\"box\"></span>{{ _(\"Stop everything optional\") }}</p>\n    <p><span class=\"box\"></span>{{ _(\"Stop only\") }}: ______________________</p>\n    <p>{{ _(\"Thumb or signature\") }}: ______________ &nbsp; {{ _(\"Date\") }}: ________</p>\n  </div>\n</div>",
+ "creation": "2026-09-27 13:00:00.000000",
+ "modified": "2026-09-27 13:00:00.000000",
+ "modified_by": "Administrator",
+ "owner": "Administrator",
+ "print_format_builder": 0,
+ "raw_printing": 0,
+ "show_section_headings": 0,
+ "line_breaks": 0,
+ "align_labels_right": 0,
+ "font_size": 14
+}

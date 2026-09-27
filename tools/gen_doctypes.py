@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-27 12:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-27 13:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -131,6 +131,8 @@ doctype("Anumati Settings", [
     F("dpo_email", "Data", "DPO email", "Email"),
     F("dpo_phone", "Data", "DPO phone", "Phone"),
     F("default_languages", "Table MultiSelect", "Default languages", "Language Row"),
+    F("rights_sla_days", "Int", "Rights request SLA (days)", default="30",
+      description="Default response time for rights requests, pending counsel"),
     F("consent_record_retention_years", "Int", "Consent record retention (years)", default="7",
       description="Default 7 years, pending counsel. Programmes may override."),
     sec("signing_section", "Signing key", collapsible=True,
@@ -292,6 +294,8 @@ doctype("Guardian Link", [
 doctype("Consent Event", [
     F("event_uuid", "Data", "Event UUID", reqd=True, unique=True, in_list_view=True,
       description="Client-generated; sync is idempotent on this"),
+    F("short_code", "Data", "Receipt code", read_only=True, search_index=True, no_copy=True, in_list_view=True,
+      description="Printed on receipts and slips; derived from the signed hash"),
     F("action", "Select", "Action", sel("grant", "withdraw", "refuse", "renew"), reqd=True, in_list_view=True, in_standard_filter=True),
     F("principal", "Link", "Principal", "Data Principal", reqd=True, in_list_view=True),
     F("programme", "Link", "Programme", "Programme", reqd=True, in_standard_filter=True),
@@ -353,24 +357,31 @@ doctype("Verification Attempt", [
 
 # ================================================================ rights, channels, governance
 doctype("Rights Request", [
-    F("request_type", "Select", "Type", sel("withdrawal", "access", "correction", "erasure", "grievance", "nomination"), reqd=True, in_list_view=True, in_standard_filter=True),
-    F("channel", "Select", "Channel", sel(*WITHDRAW_CH), reqd=True, in_list_view=True),
+    F("request_type", "Select", "Type", sel("withdrawal", "access", "correction", "erasure", "grievance", "nomination"), default="grievance", reqd=True, in_list_view=True, in_standard_filter=True),
+    F("channel", "Select", "Channel", sel(*WITHDRAW_CH), default="email", reqd=True, in_list_view=True),
     F("status", "Select", "Status", sel("Open", "Unmatched", "In Progress", "Awaiting Acknowledgement", "Closed", "Rejected"), default="Open", in_list_view=True, in_standard_filter=True),
     F("received_on", "Datetime", "Received on", default="now", reqd=True, description="SLA clock starts here, not at match"),
-    F("sla_due", "Date", "SLA due"),
+    F("sla_due", "Date", "SLA due", description="Received on + the SLA days in Anumati Settings, unless set"),
+    F("subject", "Data", "Subject"),
     col("c1"),
     F("matched_principal", "Link", "Matched principal", "Data Principal"),
     F("match_confidence", "Percent", "Match confidence"),
+    F("candidates", "Small Text", "Possible matches", read_only=True,
+      description="Principal refs sharing the sender's number; pick one and set Matched principal"),
     F("assigned_to", "Link", "Assigned to", "User"),
     F("paper_trail_number", "Data", "Paper-trail number", description="Printed on slips so offline requests reconcile"),
     F("linked_event", "Link", "Resulting consent event", "Consent Event", read_only=True),
+    sec("sender_section", "Sender", collapsible=True),
+    F("raised_by", "Data", "Sender email", "Email", description="Set when the request arrives by email"),
+    F("sender_hash", "Data", "Sender phone hash", read_only=True, search_index=True,
+      description="Salted hash of the sender's number; the number itself is not stored"),
     sec("detail_section", "Details"),
     F("raw_payload", "Long Text", "Raw payload", description="As received from the channel"),
     F("resolution", "Small Text", "Resolution"),
     F("evidence", "Attach", "Evidence"),
 ], {ADM: "F", DPO: "F", OPR: "E", FW: "C", PM: "R", SM: "F"},
     autoname="format:RQ-{#####}", track_changes=1, sort_field="creation", sort_order="DESC",
-    email_append_to=0, has_web_view=0)
+    email_append_to=1, subject_field="subject", sender_field="raised_by", has_web_view=0, title_field="subject")
 
 doctype("Channel Provider", [
     F("provider_name", "Data", "Name", reqd=True, unique=True),
