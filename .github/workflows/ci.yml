@@ -26,6 +26,8 @@ jobs:
         run: |
           python -m compileall -q anumati ci
           find anumati -name '*.json' -print0 | xargs -0 -n1 python -m json.tool > /dev/null
+      - name: Form scripts parse
+        run: find anumati -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: Ledger primitives (no Frappe needed)
         run: |
           pip install -q cryptography

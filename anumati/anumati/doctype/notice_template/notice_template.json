@@ -150,8 +150,19 @@
  ],
  "index_web_pages_for_search": 0,
  "is_submittable": 1,
- "links": [],
- "modified": "2026-09-27 10:00:00.000000",
+ "links": [
+  {
+   "group": "Content",
+   "link_doctype": "Notice Translation",
+   "link_fieldname": "notice"
+  },
+  {
+   "group": "Consent",
+   "link_doctype": "Consent Event",
+   "link_fieldname": "notice"
+  }
+ ],
+ "modified": "2026-09-27 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Template",
