@@ -19,6 +19,7 @@
   "rules_section",
   "allow_processing_before_confirm",
   "confirm_window_days",
+  "sms_receipts",
   "device_cache_ttl_hours",
   "c3",
   "consent_validity_days",
@@ -108,6 +109,13 @@
    "label": "Days before unconfirmed escalates"
   },
   {
+   "default": "1",
+   "description": "Needs an enabled SMS Channel Provider and approved Message Templates",
+   "fieldname": "sms_receipts",
+   "fieldtype": "Check",
+   "label": "Send SMS receipts"
+  },
+  {
    "default": "24",
    "fieldname": "device_cache_ttl_hours",
    "fieldtype": "Int",
@@ -164,7 +172,7 @@
    "link_fieldname": "programme"
   }
  ],
- "modified": "2026-09-27 13:00:00.000000",
+ "modified": "2026-09-27 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Programme",

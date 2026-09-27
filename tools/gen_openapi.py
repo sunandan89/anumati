@@ -94,6 +94,14 @@ PATHS = {
 	BASE + "rights.submit": op("Submit a rights request", body="RightsSubmit"),
 	BASE + "rights.fulfil_withdrawal": op("Carry out a withdrawal request (staff)", query=[("request", True), ("programme", True)]),
 	BASE + "notifications.feed": op("Polling feed mirroring webhooks", query=[("since", True), ("limit", False)], method="get"),
+	BASE + "verification.send_otp": op("Send a one-time code for a consent event (server OTP)", query=[("consent_id", True)]),
+	BASE + "verification.verify_otp": op("Check the code; confirms the consent", query=[("consent_id", True), ("code", True)]),
+	BASE + "channel.inbound_sms": op("SMS gateway callback: keywords STOP / STOP <code> / STOP <n> / DATA / HELP",
+	                                query=[("provider", True), ("token", True), ("sender", True), ("message", True)], public=True),
+	BASE + "channel.missed_call": op("Missed-call callback: opens a withdrawal request",
+	                                query=[("provider", True), ("token", True), ("caller", True)], public=True),
+	BASE + "channel.delivery_report": op("Delivery receipt callback: confirms deferred confirmations",
+	                                    query=[("provider", True), ("token", True), ("request_id", True), ("status", True)], public=True),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

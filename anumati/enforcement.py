@@ -90,3 +90,26 @@ def rebuild(principal: str | None = None):
 	frappe.db.delete("Consent State", filters)
 	for name in frappe.get_all("Consent Event", filters, pluck="name", order_by="chain_seq asc"):
 		apply_event(frappe.get_doc("Consent Event", name))
+
+
+def set_verification(event_name: str, status: str):
+	"""Record a later verification outcome (confirmed / unconfirmed) on the states this event set.
+	The event itself never changes (D4); only the projection does."""
+	principal = frappe.db.get_value("Consent Event", event_name, "principal")
+	for name in frappe.get_all("Consent State", {"last_event": event_name}, pluck="name"):
+		frappe.db.set_value("Consent State", name, {"verification_status": status, "updated": now_datetime()})
+	if principal:
+		invalidate(principal)
+
+
+def expire_unconfirmed():
+	"""Daily: deferred confirmations with no delivery after the programme's window become 'unconfirmed'."""
+	from frappe.utils import add_days
+
+	for att in frappe.get_all("Verification Attempt", {"result": "pending", "verification_method": "deferred"},
+	                          ["name", "consent_event", "sent_at"]):
+		programme = frappe.db.get_value("Consent Event", att.consent_event, "programme")
+		days = frappe.db.get_value("Programme", programme, "confirm_window_days") or 7
+		if att.sent_at and add_days(att.sent_at, days) < now_datetime():
+			frappe.db.set_value("Verification Attempt", att.name, "result", "expired")
+			set_verification(att.consent_event, "unconfirmed")

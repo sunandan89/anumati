@@ -530,6 +530,151 @@
     "summary": "Verify a ledger chain (DPO/Admin)"
    }
   },
+  "/api/v2/method/anumati.api.v1.channel.delivery_report": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "token",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "request_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "Delivery receipt callback: confirms deferred confirmations"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.channel.inbound_sms": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "token",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "sender",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "message",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "SMS gateway callback: keywords STOP / STOP <code> / STOP <n> / DATA / HELP"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.channel.missed_call": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "token",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "caller",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "Missed-call callback: opens a withdrawal request"
+   }
+  },
   "/api/v2/method/anumati.api.v1.consent.check": {
    "get": {
     "parameters": [
@@ -863,6 +1008,66 @@
      }
     },
     "summary": "Submit a rights request"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.verification.send_otp": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "consent_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Send a one-time code for a consent event (server OTP)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.verification.verify_otp": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "consent_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "code",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Check the code; confirms the consent"
    }
   }
  },
