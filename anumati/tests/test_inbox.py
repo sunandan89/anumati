@@ -71,6 +71,26 @@ class TestInbox(FrappeTestCase):
 		self.assertEqual(inbox.principal_for_short_code(art["short_code"]), p.name)
 		self.assertEqual(inbox.principal_for_short_code(art["short_code"][3:].lower()), p.name)
 
+	def test_receipt_code_is_computable_offline_from_the_event_uuid(self):
+		# The field app writes the code on the slip before sync; it must equal the server's.
+		import base64
+		import hashlib
+
+		p = make_principal()
+		art = self.grant(p)
+		expected = "AN-" + base64.b32encode(hashlib.sha256(art["event_uuid"].encode()).digest()[:5]).decode()[:6]
+		self.assertEqual(art["short_code"], expected)
+		self.assertEqual(frappe.db.get_value("Consent Event", art["consent_id"], "short_code"), expected)
+
+	def test_colliding_receipt_codes_resolve_by_phone_or_go_to_a_person(self):
+		a, b = make_principal(phone="9000055551"), make_principal(phone="9000055552")
+		art_a, art_b = self.grant(a), self.grant(b)
+		# Force a collision (the ledger is insert-only, so set the column directly in this test).
+		frappe.db.set_value("Consent Event", art_b["consent_id"], "short_code", art_a["short_code"], update_modified=False)
+		self.assertIsNone(inbox.principal_for_short_code(art_a["short_code"]))
+		self.assertEqual(inbox.principal_for_short_code(art_a["short_code"], pii.phone_hash("9000055552")), b.name)
+		self.assertIsNone(inbox.principal_for_short_code(art_a["short_code"], pii.phone_hash("9000055559")))
+
 	def test_printed_receipt_shows_code_purposes_and_slip_but_no_name(self):
 		p = make_principal(full_name="Radha S. (fictional)")
 		art = self.grant(p)

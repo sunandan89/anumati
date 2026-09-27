@@ -132,7 +132,7 @@ def seal(doc):
 	if doc.meta.has_field("short_code"):
 		from anumati.api.v1.consent import short_code
 
-		doc.short_code = short_code(doc.hash)
+		doc.short_code = short_code(doc.event_uuid)
 
 
 # ------------------------------------------------------------------ admin audit trail

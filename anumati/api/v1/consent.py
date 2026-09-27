@@ -50,7 +50,7 @@ def _artefact(event) -> dict:
 	"""The signed receipt returned to capture clients. Carries no personal data."""
 	return {
 		"consent_id": event.name,
-		"short_code": short_code(event.hash),
+		"short_code": event.short_code or short_code(event.event_uuid),
 		"event_uuid": event.event_uuid,
 		"action": event.action,
 		"chain_seq": event.chain_seq,
@@ -62,11 +62,15 @@ def _artefact(event) -> dict:
 	}
 
 
-def short_code(hash_hex: str) -> str:
-	"""The code printed on receipts and slips, e.g. AN-7K2Q9C (first 30 bits of the signed hash)."""
+def short_code(event_uuid: str) -> str:
+	"""The code printed on receipts and slips, e.g. AN-7K2Q9C: the first 30 bits of sha256(event_uuid) in
+	base32. It depends only on the event_uuid the capture device generates, so an offline field app can
+	write the same code on the slip before the event reaches the server. Codes are short and can collide;
+	lookups resolve a collision by the sender's phone hash or leave it for a person (inbox)."""
 	import base64
+	import hashlib
 
-	return "AN-" + base64.b32encode(bytes.fromhex(hash_hex[:10])).decode()[:6]
+	return "AN-" + base64.b32encode(hashlib.sha256(event_uuid.encode()).digest()[:5]).decode()[:6]
 
 
 def _existing(event_uuid: str):

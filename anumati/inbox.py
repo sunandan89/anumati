@@ -15,17 +15,30 @@ def principals_for_phone_hash(phone_hash: str) -> list[dict]:
 	)
 
 
-def event_for_short_code(code: str) -> tuple[str | None, str | None]:
-	"""Resolve a receipt code (AN-XXXXXX, with or without the prefix) to (principal, programme)."""
+def event_for_short_code(code: str, phone_hash: str | None = None) -> tuple[str | None, str | None]:
+	"""Resolve a receipt code (AN-XXXXXX, with or without the prefix) to (principal, programme).
+
+	Codes are 30 bits, so two people can share one. If they do, the sender's phone hash picks the
+	right person; without it (or if it doesn't settle it) nothing is returned and a person resolves it."""
 	code = (code or "").strip().upper()
 	if code and not code.startswith("AN-"):
 		code = "AN-" + code
-	row = frappe.db.get_value("Consent Event", {"short_code": code}, ["principal", "programme"], as_dict=True) if code else None
-	return (row.principal, row.programme) if row else (None, None)
+	if not code:
+		return (None, None)
+	rows = frappe.get_all("Consent Event", {"short_code": code}, ["principal", "programme"],
+	                      order_by="chain_seq desc")
+	people = {r.principal for r in rows}
+	if len(people) > 1 and phone_hash:
+		mine = set(frappe.get_all("Data Principal", {"name": ("in", list(people)), "phone_hash": phone_hash}, pluck="name"))
+		rows = [r for r in rows if r.principal in mine]
+		people = {r.principal for r in rows}
+	if len(people) != 1:
+		return (None, None)
+	return (rows[0].principal, rows[0].programme)
 
 
-def principal_for_short_code(code: str) -> str | None:
-	return event_for_short_code(code)[0]
+def principal_for_short_code(code: str, phone_hash: str | None = None) -> str | None:
+	return event_for_short_code(code, phone_hash)[0]
 
 
 def match(request):
