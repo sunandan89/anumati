@@ -12,7 +12,8 @@
   "enabled",
   "c1",
   "api_user",
-  "purge_endpoint"
+  "purge_endpoint",
+  "webhook_secret"
  ],
  "fields": [
   {
@@ -55,15 +56,22 @@
    "options": "User"
   },
   {
+   "description": "Optional push; systems can also poll purge.list",
    "fieldname": "purge_endpoint",
    "fieldtype": "Data",
    "label": "Purge endpoint",
    "options": "URL"
+  },
+  {
+   "description": "Signs pushes to the purge endpoint (X-Anumati-Signature)",
+   "fieldname": "webhook_secret",
+   "fieldtype": "Password",
+   "label": "Webhook secret"
   }
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-28 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Source System",

@@ -90,3 +90,25 @@ def close(request, resolution=None, status="Closed"):
 def reply(request, template_event="rights_update"):
 	"""Reply on the thread with an approved template (SMS needs DLT approval)."""
 	return {"communication": rights.reply(request, template_event)}
+
+
+@frappe.whitelist(methods=["POST"])
+def fulfil(request, result, evidence_hash=None):
+	"""A host system confirms it carried out a rights request (spec section 8, gap list v0.2.1).
+	For erasure this completes the calling system's purge rows for that request."""
+	from anumati import channels, propagation
+
+	system = propagation.caller_source_system()
+	if result not in ("completed", "failed", "acknowledged"):
+		frappe.throw(_("result must be completed, failed or acknowledged"))
+	purges = frappe.get_all("Purge Request", {"rights_request": request}, pluck="name")
+	acks = frappe.get_all("Propagation Ack", {"source_system": system, "reference_doctype": "Purge Request",
+	                                          "reference_name": ("in", purges or ["-"])}, pluck="name")
+	for name in acks:
+		propagation.record_ack(frappe.get_doc("Propagation Ack", name), result, evidence_hash=evidence_hash)
+	if not acks:
+		if not frappe.db.exists("Rights Request", request):
+			frappe.throw(_("Unknown request"), frappe.DoesNotExistError)
+		channels.log(None, "Received", _("{0} reports: {1}").format(system, result), None, channel="api",
+		             reference=request, reference_doctype="Rights Request")
+	return {"request": request, "system": system, "updated": len(acks)}

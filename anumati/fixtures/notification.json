@@ -66,5 +66,24 @@
    }
   ],
   "value_changed": "overdue"
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - manual purge needed",
+  "subject": "{{ doc.name }}: erase by hand (no system is linked)",
+  "document_type": "Purge Request",
+  "event": "Value Change",
+  "value_changed": "manual_action",
+  "condition": "doc.manual_action and doc.status != 'Completed'",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>No processor or system is linked to purpose {{ doc.purpose }}. Erase the data by hand before {{ doc.due_on }}, then set the status to Completed.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   }
+  ]
  }
 ]

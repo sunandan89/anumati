@@ -950,6 +950,148 @@
     "summary": "Create or update a principal"
    }
   },
+  "/api/v2/method/anumati.api.v1.processor.confirm": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "evidence_hash",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "deletion_reference",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Partner confirms action with an evidence hash or deletion reference"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.processor.pending": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Withdrawals and erasures routed to the calling processor partner"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.purge.ack": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "evidence_hash",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "completed_at",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Acknowledge or complete a purge request with an evidence hash (T15)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.purge.list": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Open purge requests for the calling Source System (T15)"
+   }
+  },
   "/api/v2/method/anumati.api.v1.rights.add_nominee": {
    "post": {
     "parameters": [
@@ -1040,6 +1182,48 @@
      }
     },
     "summary": "Close or reject a request and tell the principal (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.fulfil": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "result",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "evidence_hash",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "A host system confirms it carried out a rights request (Source System user)"
    }
   },
   "/api/v2/method/anumati.api.v1.rights.fulfil_withdrawal": {

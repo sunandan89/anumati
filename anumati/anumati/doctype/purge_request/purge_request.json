@@ -20,7 +20,9 @@
   "retention_policy",
   "hold_section",
   "legal_hold",
-  "hold_reason"
+  "hold_reason",
+  "systems_section",
+  "manual_action"
  ],
  "fields": [
   {
@@ -106,11 +108,24 @@
    "fieldname": "hold_reason",
    "fieldtype": "Small Text",
    "label": "Reason"
+  },
+  {
+   "fieldname": "systems_section",
+   "fieldtype": "Section Break",
+   "label": "Systems"
+  },
+  {
+   "description": "No system or processor is linked to this purpose: a person must erase the data and complete this request",
+   "fieldname": "manual_action",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Needs manual action",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-28 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Purge Request",

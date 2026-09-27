@@ -56,6 +56,24 @@ Each takes `request` and needs write permission on it; none returns personal dat
 
 Open requests past their SLA date get *Past deadline* each night and notify the DPO and the assignee.
 
+## Processor and system routing — Phase 2b
+When consent is withdrawn or a Purge Request opens, Anumati tells whoever holds that purpose: processors registered for it (Processor › Purposes) and Source Systems that `check`ed it for that person (System Usage Log), plus the systems on the retention policy. Each target gets its own **Propagation Ack** and hears only about the purposes it handles. A purge with no target is flagged *Needs manual action* and the DPO is notified.
+
+**Push (optional).** If the processor has a Webhook URL, or the Source System a Purge endpoint, Anumati POSTs:
+```json
+{"event": "purge.requested", "request_id": "…", "principal_ref": "MHU-004211", "purposes": ["follow"],
+ "action": "hard_purge", "data_category": "Call notes", "programme": "MHU", "deadline": "2026-10-28"}
+```
+(`consent.withdrawn` carries `action: stop_processing`, `consent_id`, `short_code`.) Header `X-Anumati-Signature: sha256=<HMAC-SHA256(secret, raw body)>`. Non-2xx responses are retried after 5, 10, 20… minutes, six tries in all. No names, phones or other personal data are ever sent.
+
+**Pull.**
+- `purge.list(limit?)` (GET, Source System API user): `{requests: [{request_id, principal_ref, purposes, data_category, action, deadline}]}`, oldest deadline first, capped by *Purge list batch limit*.
+- `purge.ack(request_id, status, evidence_hash?, completed_at?)` (POST): `status` = acknowledged | completed | failed. A system can only ack its own rows.
+- `rights.fulfil(request, result, evidence_hash?)` (POST, Source System API user): completes the caller's purge rows for an erasure request, or notes the result on the request's thread.
+- `processor.pending()` / `processor.confirm(request_id, evidence_hash?, deletion_reference?, status?)` (partner portal user on the Processor form): a partner sees only its own rows and must give an evidence hash or a deletion reference to complete one.
+
+A Purge Request becomes *Acknowledged* when any holder acknowledges and *Completed* when all have. Unconfirmed acks turn *Overdue* after *Processor acknowledgement window* days. `notifications.feed` also carries `purge.requested`.
+
 ## notifications.feed (GET)
 `since` (ISO datetime), `limit?` (at most 500) returns `{events: [...], until}`. It mirrors the webhook events (`consent.recorded`, `consent.withdrawn`, `rights.created`, `rights.closed`) for hosts that can't receive webhooks. Pass `until` back as the next `since`. It carries identifiers and purpose codes only.
 

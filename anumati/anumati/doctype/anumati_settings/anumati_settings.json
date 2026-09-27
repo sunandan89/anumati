@@ -16,6 +16,8 @@
   "default_languages",
   "rights_sla_days",
   "board_complaint_route",
+  "propagation_ack_days",
+  "purge_batch_limit",
   "consent_record_retention_years",
   "signing_section",
   "signing_key_id",
@@ -95,6 +97,20 @@
    "fieldname": "board_complaint_route",
    "fieldtype": "Small Text",
    "label": "How to complain to the Board"
+  },
+  {
+   "default": "7",
+   "description": "Withdrawals and erasures not confirmed by a processor or system in this time are marked Overdue",
+   "fieldname": "propagation_ack_days",
+   "fieldtype": "Int",
+   "label": "Processor acknowledgement window (days)"
+  },
+  {
+   "default": "100",
+   "description": "Most rows one purge.list call returns",
+   "fieldname": "purge_batch_limit",
+   "fieldtype": "Int",
+   "label": "Purge list batch limit"
   },
   {
    "default": "7",
@@ -183,7 +199,7 @@
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-28 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Anumati Settings",

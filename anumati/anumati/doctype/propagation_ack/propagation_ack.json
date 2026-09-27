@@ -11,7 +11,12 @@
   "reference_doctype",
   "reference_name",
   "status",
+  "principal",
+  "purposes",
+  "due_on",
   "c1",
+  "attempts",
+  "next_retry",
   "sent_at",
   "acked_at",
   "completed_at",
@@ -53,12 +58,46 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "Pending\nSent\nAcknowledged\nCompleted\nFailed\nOverdue"
   },
   {
+   "fieldname": "principal",
+   "fieldtype": "Link",
+   "label": "Principal",
+   "options": "Data Principal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "purposes",
+   "fieldtype": "Small Text",
+   "label": "Purpose codes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "due_on",
+   "fieldtype": "Date",
+   "label": "Confirm by",
+   "read_only": 1
+  },
+  {
    "fieldname": "c1",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attempts",
+   "fieldtype": "Int",
+   "label": "Delivery attempts",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "next_retry",
+   "fieldtype": "Datetime",
+   "label": "Next retry",
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "fieldname": "sent_at",
@@ -94,7 +133,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-28 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Propagation Ack",

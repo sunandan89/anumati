@@ -34,5 +34,11 @@ def feed(since, limit=100):
 	                        ["name", "request_type", "status", "creation", "modified"], order_by="modified asc", limit=limit):
 		out.append({"event": "rights.closed" if r.status in ("Closed", "Rejected") else "rights.created",
 		            "at": r.modified, "request": r.name, "request_type": r.request_type, "status": r.status})
+	for r in frappe.get_all("Purge Request", {"creation": (">", since), "status": ("!=", "On Hold")},
+	                        ["name", "principal", "purpose", "purge_action", "due_on", "creation"], order_by="creation asc", limit=limit):
+		out.append({"event": "purge.requested", "at": r.creation, "purge_request": r.name,
+		            "principal_ref": frappe.db.get_value("Data Principal", r.principal, "principal_ref"),
+		            "purpose": frappe.db.get_value("Purpose", r.purpose, "code"), "action": r.purge_action,
+		            "deadline": r.due_on})
 	out.sort(key=lambda x: x["at"])
 	return {"events": out[:limit], "until": out[:limit][-1]["at"] if out else now_datetime()}

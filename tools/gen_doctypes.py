@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-28 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-28 12:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -135,6 +135,9 @@ doctype("Anumati Settings", [
       description="Default response time for rights requests, pending counsel"),
     F("board_complaint_route", "Small Text", "How to complain to the Board",
       description="Shown when a grievance is closed, e.g. the Data Protection Board's online complaint address"),
+    F("propagation_ack_days", "Int", "Processor acknowledgement window (days)", default="7",
+      description="Withdrawals and erasures not confirmed by a processor or system in this time are marked Overdue"),
+    F("purge_batch_limit", "Int", "Purge list batch limit", default="100", description="Most rows one purge.list call returns"),
     F("consent_record_retention_years", "Int", "Consent record retention (years)", default="7",
       description="Default 7 years, pending counsel. Programmes may override."),
     sec("signing_section", "Signing key", collapsible=True,
@@ -418,8 +421,9 @@ doctype("Processor", [
     F("dpa_file", "Attach", "DPA document"),
     F("due_diligence_done", "Check", "Privacy due diligence done"),
     sec("integration_section", "Integration"),
-    F("webhook_url", "Data", "Webhook URL", "URL"),
-    F("webhook_secret", "Password", "Webhook secret"),
+    F("webhook_url", "Data", "Webhook URL", "URL", description="Optional. Without it the partner sees requests in the partner portal"),
+    F("webhook_secret", "Password", "Webhook secret", description="Each POST carries X-Anumati-Signature: sha256=HMAC(secret, body)"),
+    F("partner_user", "Link", "Partner portal user", "User", description="Has the Anumati Processor Partner role; sees only this processor's requests"),
     F("purposes", "Table MultiSelect", "Purposes", "Processor Purpose"),
 ], {ADM: "F", DPO: "E", OPR: "R", PRC: "r", SM: "F"}, autoname="field:processor_name", track_changes=1)
 
@@ -428,8 +432,13 @@ doctype("Propagation Ack", [
     F("source_system", "Link", "Source system", "Source System"),
     F("reference_doctype", "Link", "Reference type", "DocType", reqd=True),
     F("reference_name", "Dynamic Link", "Reference", "reference_doctype", reqd=True, in_list_view=True),
-    F("status", "Select", "Status", sel("Pending", "Sent", "Acknowledged", "Completed", "Failed", "Overdue"), default="Pending", in_list_view=True),
+    F("status", "Select", "Status", sel("Pending", "Sent", "Acknowledged", "Completed", "Failed", "Overdue"), default="Pending", in_list_view=True, in_standard_filter=True),
+    F("principal", "Link", "Principal", "Data Principal", read_only=True),
+    F("purposes", "Small Text", "Purpose codes", read_only=True),
+    F("due_on", "Date", "Confirm by", read_only=True),
     col("c1"),
+    F("attempts", "Int", "Delivery attempts", read_only=True, no_copy=True),
+    F("next_retry", "Datetime", "Next retry", read_only=True, no_copy=True),
     F("sent_at", "Datetime", "Sent at"),
     F("acked_at", "Datetime", "Acknowledged at"),
     F("completed_at", "Datetime", "Completed at"),
@@ -495,6 +504,9 @@ doctype("Purge Request", [
     sec("hold_section", "Legal hold"),
     F("legal_hold", "Check", "Legal hold"),
     F("hold_reason", "Small Text", "Reason"),
+    sec("systems_section", "Systems"),
+    F("manual_action", "Check", "Needs manual action", read_only=True, in_standard_filter=True,
+      description="No system or processor is linked to this purpose: a person must erase the data and complete this request"),
 ], {ADM: "F", DPO: "E", OPR: "E", SM: "F"}, autoname="format:PRG-{#####}", track_changes=1,
     description="System acknowledgements are tracked in Propagation Ack. A purpose with no linked system still creates a DPO task.")
 
@@ -569,7 +581,8 @@ doctype("Source System", [
     F("enabled", "Check", "Enabled", default="1"),
     col("c1"),
     F("api_user", "Link", "API user", "User", description="The API key belongs to this user; scopes come from its roles"),
-    F("purge_endpoint", "Data", "Purge endpoint", "URL"),
+    F("purge_endpoint", "Data", "Purge endpoint", "URL", description="Optional push; systems can also poll purge.list"),
+    F("webhook_secret", "Password", "Webhook secret", description="Signs pushes to the purge endpoint (X-Anumati-Signature)"),
 ], {ADM: "F", DEV: "E", DPO: "R", SM: "F"}, autoname="field:system_name", track_changes=1)
 
 doctype("System Usage Log", [

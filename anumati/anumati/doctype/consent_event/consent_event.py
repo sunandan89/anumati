@@ -21,5 +21,10 @@ class ConsentEvent(InsertOnlyDocument):
 	def after_insert(self):
 		# Keep the enforcement projection (Consent State + cache) in step with the ledger.
 		enforcement.apply_event(self)
+		if self.action == "withdraw":
+			# Tell processors and systems that hold the withdrawn purposes (spec C7).
+			from anumati import propagation
+
+			propagation.on_withdrawal(self)
 		# Receipts and confirmations go out only after the event is safely committed.
 		frappe.enqueue("anumati.channels.on_consent_event", event=self.name, enqueue_after_commit=True)

@@ -21,7 +21,7 @@ after_migrate = "anumati.install.after_migrate"
 
 scheduler_events = {
 	# Seal new Version / Deleted Document records into the signed Audit Entry chain.
-	"cron": {"*/10 * * * *": ["anumati.ledger.chain.seal_audit_trail"]},
+	"cron": {"*/10 * * * *": ["anumati.ledger.chain.seal_audit_trail", "anumati.propagation.deliver_pending"]},
 	"daily": ["anumati.ledger.chain.nightly_verify", "anumati.enforcement.expire_unconfirmed",
-	          "anumati.rights.mark_overdue"],
+	          "anumati.rights.mark_overdue", "anumati.propagation.mark_overdue"],
 }
