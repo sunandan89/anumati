@@ -5,6 +5,8 @@ Responses never echo personal data; name and phone go straight into encrypted fi
 import frappe
 from frappe import _
 
+from anumati.api import schema
+
 FIELDS = (
 	"full_name", "phone", "email", "preferred_language", "persona", "date_of_birth", "age_band",
 	"phone_owner_relation", "is_minor", "pwd_guarded", "needs_assistance", "shared_phone", "no_phone",
@@ -14,8 +16,8 @@ FIELDS = (
 @frappe.whitelist(methods=["POST"])
 def upsert(principal_ref, **values):
 	"""Create or update a principal by the host system's reference. Idempotent."""
-	if not principal_ref:
-		frappe.throw(_("principal_ref is required"))
+	schema.validate("PrincipalUpsert", {"principal_ref": principal_ref,
+	                                    **{k: v for k, v in values.items() if k not in ("cmd", "data") and v is not None}})
 	name = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
 	if name:
 		doc = frappe.get_doc("Data Principal", name)

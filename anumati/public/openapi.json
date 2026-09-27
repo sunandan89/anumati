@@ -1,0 +1,884 @@
+{
+ "components": {
+  "schemas": {
+   "Artefact": {
+    "properties": {
+     "action": {
+      "type": "string"
+     },
+     "chain_seq": {
+      "type": "integer"
+     },
+     "consent_id": {
+      "type": "string"
+     },
+     "event_uuid": {
+      "type": "string"
+     },
+     "hash": {
+      "type": "string"
+     },
+     "key_id": {
+      "type": "string"
+     },
+     "server_time": {
+      "type": "string"
+     },
+     "short_code": {
+      "type": "string"
+     },
+     "signature": {
+      "type": "string"
+     },
+     "verification_status": {
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "ConsentRecord": {
+    "additionalProperties": false,
+    "properties": {
+     "action": {
+      "enum": [
+       "grant",
+       "refuse",
+       "renew"
+      ],
+      "type": "string"
+     },
+     "capture_mode": {
+      "enum": [
+       "self_digital",
+       "self_worker_device",
+       "assisted_verbal",
+       "assisted_thumbprint",
+       "assisted_witnessed",
+       "guardian_minor",
+       "guardian_pwd",
+       "paper"
+      ],
+      "type": "string"
+     },
+     "channel": {
+      "enum": [
+       "app",
+       "hosted_page",
+       "connector",
+       "field_worker",
+       "slip",
+       "sms",
+       "missed_call",
+       "ivr",
+       "whatsapp",
+       "web",
+       "email",
+       "community",
+       "api",
+       "ussd"
+      ],
+      "type": "string"
+     },
+     "device_id": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "device_time": {
+      "maxLength": 40,
+      "type": "string"
+     },
+     "event_uuid": {
+      "maxLength": 64,
+      "minLength": 8,
+      "type": "string"
+     },
+     "evidence": {
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "file": {
+         "maxLength": 500,
+         "type": "string"
+        },
+        "kind": {
+         "maxLength": 40,
+         "type": "string"
+        },
+        "sha256": {
+         "pattern": "^[0-9a-f]{64}$",
+         "type": "string"
+        }
+       },
+       "required": [
+        "file"
+       ],
+       "type": "object"
+      },
+      "maxItems": 20,
+      "type": "array"
+     },
+     "gps": {
+      "maxLength": 64,
+      "type": "string"
+     },
+     "guardian_link": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "ip_address": {
+      "maxLength": 64,
+      "type": "string"
+     },
+     "language": {
+      "maxLength": 10,
+      "type": "string"
+     },
+     "notice": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "principal_ref": {
+      "maxLength": 140,
+      "minLength": 1,
+      "type": "string"
+     },
+     "programme": {
+      "maxLength": 140,
+      "minLength": 1,
+      "type": "string"
+     },
+     "purposes_denied": {
+      "items": {
+       "maxLength": 64,
+       "type": "string"
+      },
+      "maxItems": 50,
+      "type": "array"
+     },
+     "purposes_granted": {
+      "items": {
+       "maxLength": 64,
+       "type": "string"
+      },
+      "maxItems": 50,
+      "type": "array"
+     },
+     "source_system": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "verification_method": {
+      "enum": [
+       "server_otp",
+       "device_sms_otp",
+       "reverse_sms",
+       "missed_call",
+       "deferred",
+       "evidence_only"
+      ],
+      "type": "string"
+     },
+     "verification_status": {
+      "enum": [
+       "recorded",
+       "confirmed",
+       "evidence_only"
+      ],
+      "type": "string"
+     },
+     "witness": {
+      "maxLength": 500,
+      "type": "string"
+     }
+    },
+    "required": [
+     "event_uuid",
+     "principal_ref",
+     "programme"
+    ],
+    "type": "object"
+   },
+   "ConsentWithdraw": {
+    "additionalProperties": false,
+    "properties": {
+     "capture_mode": {
+      "enum": [
+       "self_digital",
+       "self_worker_device",
+       "assisted_verbal",
+       "assisted_thumbprint",
+       "assisted_witnessed",
+       "guardian_minor",
+       "guardian_pwd",
+       "paper"
+      ],
+      "type": "string"
+     },
+     "channel": {
+      "enum": [
+       "app",
+       "hosted_page",
+       "connector",
+       "field_worker",
+       "slip",
+       "sms",
+       "missed_call",
+       "ivr",
+       "whatsapp",
+       "web",
+       "email",
+       "community",
+       "api",
+       "ussd"
+      ],
+      "type": "string"
+     },
+     "device_id": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "device_time": {
+      "maxLength": 40,
+      "type": "string"
+     },
+     "event_uuid": {
+      "maxLength": 64,
+      "minLength": 8,
+      "type": "string"
+     },
+     "evidence": {
+      "items": {
+       "additionalProperties": false,
+       "properties": {
+        "file": {
+         "maxLength": 500,
+         "type": "string"
+        },
+        "kind": {
+         "maxLength": 40,
+         "type": "string"
+        },
+        "sha256": {
+         "pattern": "^[0-9a-f]{64}$",
+         "type": "string"
+        }
+       },
+       "required": [
+        "file"
+       ],
+       "type": "object"
+      },
+      "maxItems": 20,
+      "type": "array"
+     },
+     "gps": {
+      "maxLength": 64,
+      "type": "string"
+     },
+     "guardian_link": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "ip_address": {
+      "maxLength": 64,
+      "type": "string"
+     },
+     "language": {
+      "maxLength": 10,
+      "type": "string"
+     },
+     "notice": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "principal_ref": {
+      "maxLength": 140,
+      "minLength": 1,
+      "type": "string"
+     },
+     "programme": {
+      "maxLength": 140,
+      "minLength": 1,
+      "type": "string"
+     },
+     "purposes": {
+      "items": {
+       "maxLength": 64,
+       "type": "string"
+      },
+      "maxItems": 50,
+      "type": "array"
+     },
+     "source_system": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "verification_method": {
+      "enum": [
+       "server_otp",
+       "device_sms_otp",
+       "reverse_sms",
+       "missed_call",
+       "deferred",
+       "evidence_only"
+      ],
+      "type": "string"
+     },
+     "witness": {
+      "maxLength": 500,
+      "type": "string"
+     }
+    },
+    "required": [
+     "event_uuid",
+     "principal_ref",
+     "programme",
+     "channel"
+    ],
+    "type": "object"
+   },
+   "PrincipalUpsert": {
+    "additionalProperties": false,
+    "properties": {
+     "age_band": {
+      "maxLength": 20,
+      "type": "string"
+     },
+     "date_of_birth": {
+      "maxLength": 10,
+      "type": "string"
+     },
+     "email": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "full_name": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "is_minor": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
+     "needs_assistance": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
+     "no_phone": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
+     "persona": {
+      "maxLength": 40,
+      "type": "string"
+     },
+     "phone": {
+      "maxLength": 20,
+      "type": "string"
+     },
+     "phone_owner_relation": {
+      "maxLength": 40,
+      "type": "string"
+     },
+     "preferred_language": {
+      "maxLength": 10,
+      "type": "string"
+     },
+     "principal_ref": {
+      "maxLength": 140,
+      "minLength": 1,
+      "type": "string"
+     },
+     "pwd_guarded": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
+     "shared_phone": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     }
+    },
+    "required": [
+     "principal_ref"
+    ],
+    "type": "object"
+   },
+   "RightsSubmit": {
+    "additionalProperties": false,
+    "properties": {
+     "channel": {
+      "enum": [
+       "app",
+       "hosted_page",
+       "connector",
+       "field_worker",
+       "slip",
+       "sms",
+       "missed_call",
+       "ivr",
+       "whatsapp",
+       "web",
+       "email",
+       "community",
+       "api",
+       "ussd"
+      ],
+      "type": "string"
+     },
+     "paper_trail_number": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "payload": {
+      "maxLength": 5000,
+      "type": "string"
+     },
+     "principal_ref": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "request_type": {
+      "enum": [
+       "withdrawal",
+       "access",
+       "correction",
+       "erasure",
+       "grievance",
+       "nomination"
+      ],
+      "type": "string"
+     }
+    },
+    "required": [
+     "request_type",
+     "channel"
+    ],
+    "type": "object"
+   }
+  },
+  "securitySchemes": {
+   "token": {
+    "in": "header",
+    "name": "Authorization",
+    "type": "apiKey"
+   }
+  }
+ },
+ "info": {
+  "description": "Open-source DPDP consent API. Auth: `Authorization: token <api_key>:<api_secret>`. Scopes are the API user's Frappe roles. Writes are idempotent on event_uuid.",
+  "license": {
+   "name": "AGPL-3.0"
+  },
+  "title": "Anumati API",
+  "version": "1"
+ },
+ "openapi": "3.1.0",
+ "paths": {
+  "/api/v2/method/anumati.api.v1.chain.verify": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "ledger",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Verify a ledger chain (DPO/Admin)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.consent.check": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "principal_ref",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "purpose",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "programme",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Enforcement gate"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.consent.public_keys": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "Tenant signing public keys (public)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.consent.record": {
+   "post": {
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ConsentRecord"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Record a grant, refusal or renewal; returns the signed artefact"
+   },
+   "x-body-wrapper": "event"
+  },
+  "/api/v2/method/anumati.api.v1.consent.state": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "principal_ref",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "programme",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Every purpose's state for one principal"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.consent.verify": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "hash",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "signature",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "Verify an artefact (public)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.consent.withdraw": {
+   "post": {
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ConsentWithdraw"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Withdraw consent (default: every optional purpose granted)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.notice.get_active": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "programme",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "language",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Live notice for a programme"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.notifications.feed": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "since",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Polling feed mirroring webhooks"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.principal.upsert": {
+   "post": {
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PrincipalUpsert"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Create or update a principal"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.fulfil_withdrawal": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "programme",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Carry out a withdrawal request (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.submit": {
+   "post": {
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RightsSubmit"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Submit a rights request"
+   }
+  }
+ },
+ "security": [
+  {
+   "token": []
+  }
+ ],
+ "servers": [
+  {
+   "url": "https://{tenant}",
+   "variables": {
+    "tenant": {
+     "default": "anumati.nvi.frappe.cloud"
+    }
+   }
+  }
+ ]
+}

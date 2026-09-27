@@ -3,6 +3,7 @@
 import frappe
 from frappe import _
 
+from anumati.api import schema
 from anumati.api.v1 import consent
 
 
@@ -10,6 +11,9 @@ from anumati.api.v1 import consent
 def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_number=None):
 	"""A rights request from a host system, connector or field worker (spec section 8)."""
 	frappe.has_permission("Rights Request", "create", throw=True)
+	schema.validate("RightsSubmit", {k: v for k, v in {
+		"request_type": request_type, "channel": channel, "principal_ref": principal_ref, "payload": payload,
+		"paper_trail_number": paper_trail_number}.items() if v is not None})
 	doc = frappe.new_doc("Rights Request")
 	doc.update({"request_type": request_type, "channel": channel, "raw_payload": payload,
 	            "paper_trail_number": paper_trail_number})
