@@ -140,6 +140,112 @@ def create_field_worker(password: str | None = None) -> str:
 	return password
 
 
+SAMPLE_PEOPLE = (
+	# ref suffix, name, language, flags
+	("0001", "Sunita Devi", "hi", {}),
+	("0002", "Meena Kumari", "hi", {"needs_assistance": 1}),
+	("0003", "Radha Sharma", "en", {}),
+	("0004", "Kavita Yadav", "hi", {"shared_phone": 1}),
+	("0005", "Asha Verma", "hi", {"needs_assistance": 1}),
+	("0006", "Pooja Singh", "en", {}),
+	("0007", "Lakshmi Bai", "hi", {"no_phone": 1}),
+	("0008", "Geeta Patel", "hi", {}),
+	("0009", "Rekha Rani", "hi", {"needs_assistance": 1}),
+	("0010", "Anita Kumari", "en", {}),
+	("0011", "Savitri Devi", "hi", {"no_phone": 1}),
+	("0012", "Nirmala Joshi", "hi", {}),
+	("0013", "Priya Das", "hi", {"is_minor": 1}),
+	("0014", "Kiran Mishra", "hi", {}),
+	("0015", "Usha Gupta", "en", {}),
+	("0016", "Shanti Kumari", "hi", {"needs_assistance": 1}),
+	("0017", "Babita Rawat", "hi", {}),
+	("0018", "Sarita Nayak", "hi", {"shared_phone": 1}),
+	("0019", "Jyoti Chauhan", "en", {}),
+	("0020", "Mamta Thakur", "hi", {"is_minor": 1}),
+)
+CAPTURE = ("assisted_thumbprint", "assisted_verbal", "self_worker_device", "assisted_witnessed")
+VERIFY = (("device_sms_otp", "confirmed"), ("deferred", "recorded"), ("evidence_only", "evidence_only"))
+
+
+def create_sample_data() -> dict:
+	"""Twenty fictional beneficiaries of the DEMO programme with consents captured by the test field worker:
+	grants and refusals across capture and verification methods, two minors with guardians, a few
+	withdrawals and rights requests. Names carry "(sample)"; phone numbers start with 555, which no Indian
+	mobile number does, so nothing can ever reach a real person. Idempotent: people who already exist are skipped."""
+	import uuid
+	from datetime import timedelta
+
+	from frappe.utils import now_datetime
+
+	from anumati.api.v1 import consent, principal, rights
+
+	create_demo_programme()
+	if not frappe.db.exists("User", FIELD_WORKER):
+		create_field_worker()
+	optional = [p[0] for p in PURPOSES if not p[3]]
+	made = {"people": 0, "consents": 0, "withdrawals": 0, "requests": 0}
+	admin = frappe.session.user
+	frappe.set_user(FIELD_WORKER)  # capture as the field worker, with a field worker's permissions
+	try:
+		for i, (suffix, name, lang, flags) in enumerate(SAMPLE_PEOPLE):
+			ref = f"{PROGRAMME}-{suffix}"
+			if frappe.db.exists("Data Principal", {"principal_ref": ref}):
+				continue
+			is_minor = flags.get("is_minor")
+			phone = None if flags.get("no_phone") else ("5550000004" if flags.get("shared_phone") else f"55500{i:05d}")
+			principal.upsert(ref, full_name=f"{name} (sample)", phone=phone, preferred_language=lang,
+			                 persona="beneficiary", age_band="under_18" if is_minor else "18_plus", **flags)
+			made["people"] += 1
+			when = now_datetime() - timedelta(days=28 - i, hours=i % 7)
+			granted = ["screen"] + [c for j, c in enumerate(optional) if (i + j) % 3 != 0]
+			if is_minor:
+				granted = [c for c in granted if c != "research"]
+				guardian_ref = f"{ref}-G"
+				principal.upsert(guardian_ref, full_name=f"Guardian of {name} (sample)", preferred_language=lang)
+				link = frappe.get_doc({
+					"doctype": "Guardian Link",
+					"principal": frappe.db.get_value("Data Principal", {"principal_ref": ref}),
+					"guardian": frappe.db.get_value("Data Principal", {"principal_ref": guardian_ref}),
+					"guardian_type": "parent", "relation": "Mother", "verification_method": "document",
+				}).insert()
+			denied = [c for c in optional if c not in granted and not (is_minor and c == "research")]
+			method, status = VERIFY[i % len(VERIFY)]
+			refused_all = i in (6, 16)
+			art = consent.record({
+				"event_uuid": str(uuid.uuid4()), "principal_ref": ref, "programme": PROGRAMME,
+				"action": "refuse" if refused_all else "grant",
+				"purposes_granted": [] if refused_all else granted,
+				"purposes_denied": optional if refused_all else denied,
+				"language": lang, "channel": "app", "device_id": "DEMO-PHONE-01",
+				"device_time": when.strftime("%Y-%m-%d %H:%M:%S"),
+				"capture_mode": "guardian_minor" if is_minor else CAPTURE[i % len(CAPTURE)],
+				"verification_method": "evidence_only" if not phone else method,
+				"verification_status": "evidence_only" if not phone else status,
+				"witness": "ASHA worker (sample)" if flags.get("needs_assistance") else None,
+				"guardian_link": link.name if is_minor else None,
+			})
+			made["consents"] += 1
+			if i in (3, 11, 18):
+				consent.withdraw(ref, PROGRAMME, channel="field_worker", event_uuid=str(uuid.uuid4()),
+				                 device_id="DEMO-PHONE-01",
+				                 device_time=(when + timedelta(days=5)).strftime("%Y-%m-%d %H:%M:%S"))
+				made["withdrawals"] += 1
+			if i in (8, 14):
+				rights.submit("access" if i == 8 else "correction", "field_worker", principal_ref=ref,
+				              payload=f"Asked in person; consent {art['short_code']} (sample)")
+				made["requests"] += 1
+	finally:
+		frappe.set_user(admin)
+	return made
+
+
+@frappe.whitelist(methods=["POST"])
+def add_sample_data():
+	"""Anumati Settings > Add sample data. System Managers only."""
+	frappe.only_for("System Manager")
+	return create_sample_data()
+
+
 @frappe.whitelist(methods=["POST"])
 def setup_field_app():
 	"""Anumati Settings > Set up field app. System Managers only."""

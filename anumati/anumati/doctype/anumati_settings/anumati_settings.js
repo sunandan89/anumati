@@ -31,5 +31,22 @@ frappe.ui.form.on("Anumati Settings", {
 				}
 			);
 		}, __("Actions"));
+		frm.add_custom_button(__("Add sample data"), () => {
+			frappe.confirm(
+				__("Add 20 fictional beneficiaries to the DEMO programme, with consents, withdrawals and requests captured by the test field worker? Nothing is sent to anyone."),
+				() => {
+					frappe.call({ method: "anumati.demo.add_sample_data", freeze: true, freeze_message: __("Adding sample data…") })
+						.then((r) => {
+							const m = r.message || {};
+							frappe.msgprint({
+								title: __("Sample data added"),
+								indicator: "green",
+								message: __("{0} people, {1} consents, {2} withdrawals, {3} requests. See Consent Event, Data Principal and Rights Request.",
+									[m.people || 0, m.consents || 0, m.withdrawals || 0, m.requests || 0]),
+							});
+						});
+				}
+			);
+		}, __("Actions"));
 	},
 });
