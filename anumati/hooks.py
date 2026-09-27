@@ -17,7 +17,7 @@ fixtures = [
 ]
 
 after_install = "anumati.install.after_install"
-after_migrate = "anumati.install.after_migrate"
+after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate"]
 
 scheduler_events = {
 	# Seal new Version / Deleted Document records into the signed Audit Entry chain.
