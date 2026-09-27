@@ -1,0 +1,47 @@
+[
+ {
+  "doctype": "Notification",
+  "name": "Anumati - new rights request",
+  "subject": "New {{ doc.request_type }} request {{ doc.name }} ({{ doc.channel }})",
+  "document_type": "Rights Request",
+  "event": "New",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }} arrived by {{ doc.channel }}. Due by {{ doc.sla_due }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   },
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati Operator"
+   }
+  ]
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - rights request due soon",
+  "subject": "{{ doc.name }} is due on {{ doc.sla_due }}",
+  "document_type": "Rights Request",
+  "event": "Days Before",
+  "date_changed": "sla_due",
+  "days_in_advance": 3,
+  "condition": "doc.status not in ('Closed', 'Rejected')",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }} ({{ doc.request_type }}) is due in 3 days and is still {{ doc.status }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_document_field": "assigned_to"
+   },
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   }
+  ]
+ }
+]

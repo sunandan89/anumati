@@ -129,6 +129,10 @@ def seal(doc):
 	doc.key_id = key_id
 	doc.hash = compute_hash(payload(schema, doc.get), doc.prev_hash)
 	doc.signature = signing.sign(private_b64, doc.hash)
+	if doc.meta.has_field("short_code"):
+		from anumati.api.v1.consent import short_code
+
+		doc.short_code = short_code(doc.hash)
 
 
 # ------------------------------------------------------------------ admin audit trail

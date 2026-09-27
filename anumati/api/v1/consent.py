@@ -49,6 +49,7 @@ def _artefact(event) -> dict:
 	"""The signed receipt returned to capture clients. Carries no personal data."""
 	return {
 		"consent_id": event.name,
+		"short_code": short_code(event.hash),
 		"event_uuid": event.event_uuid,
 		"action": event.action,
 		"chain_seq": event.chain_seq,
@@ -58,6 +59,13 @@ def _artefact(event) -> dict:
 		"server_time": event.server_time,
 		"verification_status": event.verification_status,
 	}
+
+
+def short_code(hash_hex: str) -> str:
+	"""The code printed on receipts and slips, e.g. AN-7K2Q9C (first 30 bits of the signed hash)."""
+	import base64
+
+	return "AN-" + base64.b32encode(bytes.fromhex(hash_hex[:10])).decode()[:6]
 
 
 def _existing(event_uuid: str):
@@ -133,9 +141,14 @@ def record(event):
 def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **extra):
 	"""Withdraw consent. Default scope = every optional purpose currently granted (spec section 6)."""
 	frappe.has_permission("Consent Event", "create", throw=True)
+	return withdraw_for(_principal(principal_ref), programme, channel, event_uuid, purposes, **extra)
+
+
+def withdraw_for(principal, programme, channel, event_uuid, purposes=None, **extra):
+	"""Withdrawal without the capture-permission check. Callers must authorise first (the API above, or a
+	rights request the operator is allowed to work)."""
 	if (existing := _existing(event_uuid)):
 		return existing
-	principal = _principal(principal_ref)
 	programme = _programme(programme)
 	purposes = json.loads(purposes) if isinstance(purposes, str) else purposes
 	if not purposes:
@@ -147,11 +160,20 @@ def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **ext
 		]
 	_check_purposes(programme, principal, [], list(purposes))
 	values = {k: extra.get(k) for k in CAPTURE_FIELDS if extra.get(k) not in (None, "")}
-	return _insert(
-		{**values, "event_uuid": event_uuid, "action": "withdraw", "principal": principal, "programme": programme,
+	values.update(
+		{"event_uuid": event_uuid, "action": "withdraw", "principal": principal, "programme": programme,
 		 "channel": channel, "purposes_granted": [], "purposes_denied": list(purposes),
 		 "verification_status": "recorded", "captured_by": frappe.session.user}
 	)
+	doc = frappe.get_doc({"doctype": "Consent Event", **values})
+	doc.flags.ignore_permissions = True
+	frappe.db.savepoint("anumati_withdraw")
+	try:
+		doc.insert()
+	except frappe.DuplicateEntryError:
+		frappe.db.rollback(save_point="anumati_withdraw")
+		return _existing(event_uuid)
+	return _artefact(doc)
 
 
 def _source_system(user: str):

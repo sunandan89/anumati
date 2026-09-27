@@ -13,6 +13,7 @@ fixtures = [
 	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Publish", "Retire", "Approve", "Send Back"]]]},
 	{"dt": "Workflow", "filters": [["name", "in", ["Notice Publishing", "ROPA Approval"]]]},
 	{"dt": "Custom Field", "filters": [["name", "like", "%-anumati_%"]]},
+	{"dt": "Notification", "filters": [["name", "like", "Anumati - %"]]},
 ]
 
 after_install = "anumati.install.after_install"
