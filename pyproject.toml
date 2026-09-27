@@ -9,7 +9,8 @@ readme = "README.md"
 license = { file = "LICENSE" }
 dynamic = ["version"]
 dependencies = [
-    # frappe and cryptography are provided by the Frappe bench (frappe >= 15, < 16)
+    # frappe and cryptography come with the Frappe bench (frappe >= 15, < 16)
+    "jsonschema>=4.17",
 ]
 
 [build-system]

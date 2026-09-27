@@ -15,7 +15,14 @@ from urllib.parse import quote
 
 import requests
 
-GUEST_ALLOWLIST = {"anumati.api.v1.consent.verify", "anumati.api.v1.consent.public_keys"}
+GUEST_ALLOWLIST = {
+	"anumati.api.v1.consent.verify",
+	"anumati.api.v1.consent.public_keys",
+	# SMS gateway callbacks: each call must carry the Channel Provider inbound secret
+	"anumati.api.v1.channel.inbound_sms",
+	"anumati.api.v1.channel.missed_call",
+	"anumati.api.v1.channel.delivery_report",
+}
 DENIED = {401, 403}
 
 base, site_a, site_b, file_a, file_b, file_inv = sys.argv[1:7]
@@ -55,6 +62,10 @@ for site in (site_a, site_b):
 
 	r = call("GET", site, f"/api/resource/{quote('Consent Event')}/{creds[site]['event']}")
 	expect(r.status_code in DENIED, f"{site} unauthenticated read of a real consent event -> {r.status_code}")
+
+	for cb in ("inbound_sms", "missed_call", "delivery_report"):
+		r = call("POST", site, f"/api/method/anumati.api.v1.channel.{cb}", data={"provider": "x", "token": "wrong", "sender": "9000000000"})
+		expect(r.status_code in DENIED, f"{site} {cb} with a wrong secret -> {r.status_code}")
 
 # 2. guest allowlist
 expect(set(inv["guest"]) == GUEST_ALLOWLIST, f"guest methods changed: {sorted(set(inv['guest']) ^ GUEST_ALLOWLIST)}")

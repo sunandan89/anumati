@@ -15,12 +15,17 @@ def principals_for_phone_hash(phone_hash: str) -> list[dict]:
 	)
 
 
-def principal_for_short_code(code: str) -> str | None:
-	"""Resolve a receipt code (AN-XXXXXX) to the principal of that consent event."""
+def event_for_short_code(code: str) -> tuple[str | None, str | None]:
+	"""Resolve a receipt code (AN-XXXXXX, with or without the prefix) to (principal, programme)."""
 	code = (code or "").strip().upper()
 	if code and not code.startswith("AN-"):
 		code = "AN-" + code
-	return frappe.db.get_value("Consent Event", {"short_code": code}, "principal") if code else None
+	row = frappe.db.get_value("Consent Event", {"short_code": code}, ["principal", "programme"], as_dict=True) if code else None
+	return (row.principal, row.programme) if row else (None, None)
+
+
+def principal_for_short_code(code: str) -> str | None:
+	return event_for_short_code(code)[0]
 
 
 def match(request):

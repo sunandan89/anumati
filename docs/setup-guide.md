@@ -102,3 +102,54 @@ Every merge to `main` shows **Update Available** on the bench group. Click **Dep
 
 - **CI red on a pull request:** open the failing check → the last step's log names the failed gate (e.g. `FAIL: tenant-a key reading tenant-b event -> 200`). Share that line with me.
 - **Frappe Cloud deploy fails:** Deploys tab → the failed deploy → copy the last 30 lines of the log to me. Never paste anything from *Site Config* or any key.
+
+---
+
+## E. SMS with MSG91 (receipts, OTP, STOP keyword, missed calls)
+
+Nothing is sent until all four pieces exist: an MSG91 account, DLT-approved templates, a Channel Provider in Anumati, and approved Message Templates. Until then, capture keeps working and simply sends no SMS.
+
+### E1. MSG91 and DLT (outside Anumati)
+1. Sign up at **msg91.com** and complete KYC.
+2. Register your organisation as a **DLT principal entity** on a telecom DLT portal (e.g. Jio, Vodafone Idea, Airtel), and register a **sender ID** (header, e.g. `AAROHF`).
+3. Register one **content template** per message, per language. The four you need first:
+   - Receipt: `Consent {#var#} for {#var#}: {#var#}. Reply STOP to withdraw.`
+   - Withdrawal confirmation: `Withdrawn: {#var#} ({#var#}).`
+   - OTP: `Your code is {#var#}.`
+   - Deferred confirmation: `You consented on {#var#} to {#var#}. Reply STOP to withdraw.`
+4. In MSG91, create a **Flow** for each approved DLT template and note each flow's **template ID**.
+5. In MSG91 → **API**, copy your **Auth Key**. You'll type it straight into Anumati in E2. Never paste it in chat or email.
+
+### E2. Channel Provider (in your Anumati site)
+1. Search bar → **Channel Provider** → **+ Add**.
+2. **Name** `MSG91`, **Type** `SMS`, **Provider** `MSG91`, tick **Enabled**.
+3. **Sender ID**: your DLT header. **DLT entity ID**: from the DLT portal.
+4. **API key**: paste the MSG91 Auth Key. It's stored encrypted and shows as dots afterwards.
+5. **Inbound webhook secret**: type a long random phrase (20+ characters). SMS callbacks must carry it.
+6. **Save**.
+
+### E3. Message Templates (in Anumati)
+For each message and language: search bar → **Message Template** → **+ Add**:
+- **Event**: `receipt`, `withdrawal_confirmation`, `otp` or `deferred_confirmation`.
+- **Channel** `sms`, **Language** (e.g. `hi`).
+- **DLT template ID**: the MSG91 **flow template ID** from E1 step 4.
+- **Body**: the same text, with these placeholders: `{{ code }}` (receipt code), `{{ programme }}`, `{{ purposes }}`, `{{ date }}`, `{{ otp }}`. They go to MSG91 in this order as var1…var5.
+- Tick **Approved** only once DLT has approved the template. Unapproved templates are never sent.
+
+### E4. Inbound SMS and missed calls (in MSG91)
+MSG91 → **Inbound SMS** (long code or virtual number) → set the callback URL:
+```
+https://<your-site>/api/method/anumati.api.v1.channel.inbound_sms?provider=MSG91&token=<your inbound secret>
+```
+For missed calls, point your missed-call number's webhook to `…/anumati.api.v1.channel.missed_call?provider=MSG91&token=<secret>`. For delivery reports, use `…/anumati.api.v1.channel.delivery_report?provider=MSG91&token=<secret>`.
+
+What people can text to the number (English or Devanagari digits):
+- `STOP`: stop all optional uses. If several people share that phone, it goes to your inbox to resolve.
+- `STOP AN-7K2Q9C`: stop the consent on that receipt.
+- `STOP 2`: stop only the 2nd item on the receipt.
+- `DATA`: ask what you hold. `HELP`: ask for a call-back.
+
+A missed call always opens a withdrawal request in the inbox. A person confirms it with the caller before recording it.
+
+### E5. Per programme
+**Programme → Send SMS receipts** is on by default. Untick it for programmes that shouldn't send SMS.

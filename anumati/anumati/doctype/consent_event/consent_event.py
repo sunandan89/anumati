@@ -1,6 +1,8 @@
 # Copyright (c) 2026, Dhwani RIS and contributors
 # License: AGPL-3.0. See LICENSE
 
+import frappe
+
 from anumati import enforcement
 from anumati.ledger.canonical import digest_text
 from anumati.ledger.insert_only import InsertOnlyDocument
@@ -19,3 +21,5 @@ class ConsentEvent(InsertOnlyDocument):
 	def after_insert(self):
 		# Keep the enforcement projection (Consent State + cache) in step with the ledger.
 		enforcement.apply_event(self)
+		# Receipts and confirmations go out only after the event is safely committed.
+		frappe.enqueue("anumati.channels.on_consent_event", event=self.name, enqueue_after_commit=True)

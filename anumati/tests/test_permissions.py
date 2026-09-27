@@ -15,7 +15,14 @@ import anumati
 
 PTYPES = ("read", "write", "create", "delete", "submit", "cancel", "amend", "report", "export", "import", "print", "email", "share")
 # The only endpoints anyone may call without logging in. Adding one means adding it here, in review.
-GUEST_ALLOWLIST = {"anumati.api.v1.consent.verify", "anumati.api.v1.consent.public_keys"}
+GUEST_ALLOWLIST = {
+	"anumati.api.v1.consent.verify",
+	"anumati.api.v1.consent.public_keys",
+	# SMS gateway callbacks: each call must carry the Channel Provider inbound secret
+	"anumati.api.v1.channel.inbound_sms",
+	"anumati.api.v1.channel.missed_call",
+	"anumati.api.v1.channel.delivery_report",
+}
 TWO_FACTOR_ROLES = {"Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager"}
 
 

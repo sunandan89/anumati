@@ -11,6 +11,7 @@ from frappe.tests.utils import FrappeTestCase
 
 from anumati import enforcement
 from anumati.api.v1 import consent, notice, principal
+from anumati.api.schema import SchemaError
 from anumati.api.v1.consent import ConsentRequestError
 from anumati.tests.utils import ensure_language, make_principal, make_programme, make_purpose
 
@@ -67,7 +68,8 @@ class TestConsentAPI(FrappeTestCase):
 		self.assertRaises(ConsentRequestError, self.grant, principal_ref="NOT-A-REF")
 
 	def test_withdraw_action_is_refused_on_record(self):
-		self.assertRaises(ConsentRequestError, self.grant, action="withdraw")
+		# Refused by the published schema (action enum) before the handler's own check.
+		self.assertRaises((SchemaError, ConsentRequestError), self.grant, action="withdraw")
 
 	# -- withdraw -----------------------------------------------------------
 

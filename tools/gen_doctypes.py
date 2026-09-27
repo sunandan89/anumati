@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-27 13:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-27 14:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -167,6 +167,8 @@ doctype("Programme", [
     F("allow_processing_before_confirm", "Check", "Allow processing before confirmation", default="1",
       description="Never applies to minors"),
     F("confirm_window_days", "Int", "Days before unconfirmed escalates", default="7"),
+    F("sms_receipts", "Check", "Send SMS receipts", default="1",
+      description="Needs an enabled SMS Channel Provider and approved Message Templates"),
     F("device_cache_ttl_hours", "Int", "Device consent cache TTL (hours)", default="24"),
     col("c3"),
     F("consent_validity_days", "Int", "Consent validity (days)", description="0 = no expiry; renewal campaign runs before expiry"),

@@ -13,6 +13,7 @@ from frappe.rate_limiter import rate_limit
 from frappe.utils import now_datetime
 
 from anumati import enforcement
+from anumati.api import schema
 from anumati.ledger import keystore, signing
 
 CAPTURE_FIELDS = (
@@ -103,6 +104,7 @@ def record(event):
 	"""Record a grant, refusal or renewal. Returns the signed artefact; replays return the original."""
 	event = _parse(event)
 	frappe.has_permission("Consent Event", "create", throw=True)
+	schema.validate("ConsentRecord", {k: v for k, v in event.items() if v is not None})
 	if not event.event_uuid:
 		frappe.throw(_("event_uuid is required"), ConsentRequestError)
 	if (existing := _existing(event.event_uuid)):
@@ -141,6 +143,10 @@ def record(event):
 def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **extra):
 	"""Withdraw consent. Default scope = every optional purpose currently granted (spec section 6)."""
 	frappe.has_permission("Consent Event", "create", throw=True)
+	payload = {"principal_ref": principal_ref, "programme": programme, "channel": channel, "event_uuid": event_uuid,
+	           **({"purposes": json.loads(purposes) if isinstance(purposes, str) else purposes} if purposes else {}),
+	           **{k: v for k, v in extra.items() if k not in ("cmd", "data") and v is not None}}
+	schema.validate("ConsentWithdraw", payload)
 	return withdraw_for(_principal(principal_ref), programme, channel, event_uuid, purposes, **extra)
 
 
