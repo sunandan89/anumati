@@ -30,6 +30,17 @@ class TestFieldAppSetup(FrappeTestCase):
 
 		self.assertEqual(check_password(demo.FIELD_WORKER, p2), demo.FIELD_WORKER)
 
+	def test_site_config_password_sets_up_demo_on_migrate(self):
+		from frappe.utils.password import check_password
+
+		frappe.conf.anumati_demo_password = "Demo@test-2026"
+		try:
+			demo.after_migrate()
+		finally:
+			frappe.conf.pop("anumati_demo_password", None)
+		self.assertEqual(check_password(demo.FIELD_WORKER, "Demo@test-2026"), demo.FIELD_WORKER)
+		self.assertTrue(frappe.db.exists("Notice Template", {"programme": demo.PROGRAMME, "status": "Published"}))
+
 	def test_mobile_configuration_is_switched_on_when_mobile_control_is_installed(self):
 		installed = frappe.db.exists("DocType", "Mobile Configuration")
 		self.assertEqual(demo.configure_mobile_app(), bool(installed))

@@ -119,8 +119,9 @@ def _password() -> str:
 	return f"{core[:4]}-{core[4:8]}-{core[8:]}!7a"
 
 
-def create_field_worker() -> str:
-	"""A test field worker. Returns a fresh password (shown once to the admin, never logged)."""
+def create_field_worker(password: str | None = None) -> str:
+	"""A test field worker. Returns its password: the one given, or a fresh random one (shown once to the
+	admin, never logged)."""
 	if frappe.db.exists("User", FIELD_WORKER):
 		user = frappe.get_doc("User", FIELD_WORKER)
 	else:
@@ -132,7 +133,7 @@ def create_field_worker() -> str:
 		user.insert(ignore_permissions=True)
 	roles = ["Anumati Field Worker"] + (["Mobile User"] if frappe.db.exists("Role", "Mobile User") else [])
 	user.add_roles(*roles)
-	password = _password()
+	password = password or _password()
 	user.new_password = password
 	user.enabled = 1
 	user.save(ignore_permissions=True)
@@ -158,8 +159,19 @@ def setup_field_app():
 
 
 def after_migrate():
-	"""Keep Mobile Configuration switched on for Anumati Collect once Mobile Control is installed."""
+	"""On every migrate (each Frappe Cloud deploy or "Migrate" action):
+	- keep Mobile Configuration switched on for Anumati Collect once Mobile Control is installed;
+	- if the site config has `anumati_demo_password` (set in the Frappe Cloud dashboard, never in the repo),
+	  create the DEMO programme and the test field worker with that password. Remove the key to stop."""
 	try:
 		configure_mobile_app()
 	except Exception:
 		frappe.log_error(title="Anumati: could not configure Mobile Control")
+	password = frappe.conf.get("anumati_demo_password")
+	if not password:
+		return
+	try:
+		create_demo_programme()
+		create_field_worker(str(password))
+	except Exception:
+		frappe.log_error(title="Anumati: demo setup from site config failed")
