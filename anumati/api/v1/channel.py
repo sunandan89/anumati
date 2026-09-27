@@ -64,7 +64,7 @@ def handle_sms(provider, sender, text):
 
 	principal, purposes, programme = None, None, None
 	if arg and not arg.isdigit():
-		principal, programme = inbox.event_for_short_code(arg)
+		principal, programme = inbox.event_for_short_code(arg, phone_hash)
 	else:
 		found = inbox.principals_for_phone_hash(phone_hash)
 		if len(found) == 1:

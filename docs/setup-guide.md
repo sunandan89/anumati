@@ -153,3 +153,36 @@ A missed call always opens a withdrawal request in the inbox. A person confirms 
 
 ### E5. Per programme
 **Programme → Send SMS receipts** is on by default. Untick it for programmes that shouldn't send SMS.
+
+---
+
+## F. Field app server side (Anumati Collect)
+
+The app signs in through **Frappe Mobile Control** (`dhwani-ris/frappe-mobile-control`, AGPL). It's a separate app that goes on the same bench. Anumati doesn't depend on it; only the phone does.
+
+### F1. Add Mobile Control to the bench group
+1. Frappe Cloud → your bench group → **Apps** tab → **Add App**.
+2. **Add from GitHub** → paste `https://github.com/dhwani-ris/frappe-mobile-control` (public, so no GitHub permission needed) → branch **develop** → **Validate App** → **Add App**.
+3. **Deploy** (top right) → tick **frappe-mobile-control** and **anumati** → **Deploy**. Wait for **Success**.
+
+### F2. Install it on your site
+1. Bench group → **Sites** → your site → **Apps** tab → **Install App** → **Mobile Control** → **Install**.
+
+### F3. Switch the app on (inside your site)
+1. Search bar → **Mobile Configuration**.
+2. Tick **Enabled**. Leave **Offline Mode Enabled** unticked: Anumati Collect keeps its own encrypted offline store.
+3. **Package Name**: `org.anumati.collect`. **Minimum App Version**: `1.0.0` (raise it later to force old phones to update).
+4. **Save**.
+
+### F4. Create a field worker
+1. Search bar → **User List** → **Add User**. Email or username, first name. **Save**.
+2. On the user → **Roles**: tick **Anumati Field Worker** and **Mobile User** (Mobile User comes from Mobile Control; without it the app refuses to sign in). **Save**.
+3. Set a password: the user form → **Settings / Change Password**, or send the welcome email.
+4. To limit the worker to their programmes: search **User Permission** → **New** → User, *Allow* = **Programme**, *For Value* = the programme → **Save**. Repeat per programme.
+
+### F5. What the app needs from the programme
+- A **published** notice (Notice Template → Publish). The app shows the live notice and its purposes.
+- For Hindi: a **Notice Translation** in `hi` with a named **Reviewer**. Unreviewed translations and machine-made audio are never sent to phones.
+
+### Receipt codes work offline
+The code on the slip (e.g. `AN-7K2Q9C`) is worked out on the phone from the consent's ID, so the worker can write it down before the phone syncs. The server gets the same code. Codes are short, so two people can rarely share one: an SMS `STOP <code>` is then matched by the sender's number, or goes to the inbox for a person to resolve.
