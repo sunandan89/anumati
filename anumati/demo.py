@@ -35,6 +35,11 @@ HINDI = {
 	"label_no_all": "सब के लिए नहीं",
 	"label_manage": "चुनें",
 	"label_save": "आगे बढ़ें",
+	"withdrawal_methods": "रसीद के कोड के साथ SMS में STOP भेजें, मिस्ड कॉल दें, या किसी भी कार्यकर्ता को बताएँ।",
+	"rights_text": "आप अपना डेटा देख, सुधार या हटवा सकती हैं, और किसी को अपनी ओर से काम करने के लिए नामित कर सकती हैं।",
+	"board_complaint_route": "भारत का डेटा संरक्षण बोर्ड",
+	"dpo_contact": "डेटा संरक्षण अधिकारी, डेमो फ़ाउंडेशन (काल्पनिक)",
+	"security_summary": "फ़ोन और सर्वर दोनों पर एन्क्रिप्टेड; हर सहमति पर डिजिटल हस्ताक्षर।",
 }
 
 
@@ -105,11 +110,15 @@ def create_demo_programme() -> str:
 		}).insert()
 		notice = apply_workflow(doc, "Publish").name
 
-	if not frappe.db.exists("Notice Translation", {"notice": notice, "language": "hi"}):
+	existing = frappe.db.get_value("Notice Translation", {"notice": notice, "language": "hi"})
+	if not existing:
 		frappe.get_doc({
 			"doctype": "Notice Translation", "notice": notice, "language": "hi", **HINDI,
 			"machine_translated": 0, "reviewer": frappe.session.user,
 		}).insert()
+	elif not frappe.db.get_value("Notice Translation", existing, "rights_text"):
+		# Earlier demo translations predate the translated Rule 3 fields; fill them in.
+		frappe.db.set_value("Notice Translation", existing, {k: v for k, v in HINDI.items() if k not in ("summary", "full_text")})
 	return notice
 
 

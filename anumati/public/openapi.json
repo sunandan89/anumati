@@ -137,6 +137,26 @@
       "maxLength": 140,
       "type": "string"
      },
+     "notice_completed": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
+     "notice_delivery": {
+      "enum": [
+       "",
+       "recording",
+       "phone_voice",
+       "read_aloud",
+       "read_on_screen"
+      ],
+      "type": "string"
+     },
      "principal_ref": {
       "maxLength": 140,
       "minLength": 1,
@@ -289,6 +309,26 @@
      },
      "notice": {
       "maxLength": 140,
+      "type": "string"
+     },
+     "notice_completed": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
+     "notice_delivery": {
+      "enum": [
+       "",
+       "recording",
+       "phone_voice",
+       "read_aloud",
+       "read_on_screen"
+      ],
       "type": "string"
      },
      "principal_ref": {
@@ -856,6 +896,82 @@
     "summary": "Withdraw consent (default: every optional purpose granted)"
    }
   },
+  "/api/v2/method/anumati.api.v1.device.register": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "device_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "app_version",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "model",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "pending",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Field app check-in; returns whether the phone must wipe itself"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.device.report_lost": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "device",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Mark a phone lost (staff): wipe on next contact, opens a breach incident"
+   }
+  },
   "/api/v2/method/anumati.api.v1.notice.get_active": {
    "get": {
     "parameters": [
@@ -922,6 +1038,48 @@
      }
     },
     "summary": "Polling feed mirroring webhooks"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.principal.for_device": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "programme",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "since",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "People in a programme with their choices, for a field worker's phone"
    }
   },
   "/api/v2/method/anumati.api.v1.principal.upsert": {

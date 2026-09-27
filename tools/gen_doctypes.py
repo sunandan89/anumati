@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-27 14:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-28 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -211,6 +211,7 @@ doctype("Notice Template", [
     sec("content_section", "Notice content"),
     F("summary", "Small Text", "Summary"),
     F("full_text", "Text Editor", "Full text"),
+    F("pictorial_card", "Attach Image", "Pictorial card", description="Shown on the field app's notice screen"),
     sec("rule3_section", "Rule 3 contents", description="Every notice must say all of this"),
     F("withdrawal_methods", "Small Text", "How to withdraw consent"),
     F("rights_text", "Small Text", "How to exercise rights"),
@@ -239,6 +240,14 @@ doctype("Notice Translation", [
     col("c2"),
     F("label_manage", "Data", "Manage"),
     F("label_save", "Data", "Save"),
+    sec("rule3_translation_section", "Rule 3 contents (translated)",
+        description="Leave blank to show the notice's own text"),
+    F("withdrawal_methods", "Small Text", "How to withdraw consent"),
+    F("rights_text", "Small Text", "How to exercise rights"),
+    F("board_complaint_route", "Small Text", "How to complain to the Data Protection Board"),
+    col("c_r3"),
+    F("dpo_contact", "Small Text", "DPO or grievance contact"),
+    F("security_summary", "Small Text", "Summary of security safeguards"),
     sec("media_section", "Audio and picture card"),
     F("audio_file", "Attach", "Audio notice"),
     F("audio_machine_made", "Check", "Audio is machine-made",
@@ -304,6 +313,10 @@ doctype("Consent Event", [
     F("notice", "Link", "Notice", "Notice Template"),
     F("notice_version", "Data", "Notice version"),
     F("language", "Link", "Language", "Language"),
+    F("notice_delivery", "Select", "How the notice was given",
+      sel("", "recording", "phone_voice", "read_aloud", "read_on_screen"), in_standard_filter=True,
+      description="Coaching data, not signed: reviewed recording, phone voice, worker read it, or read on screen"),
+    F("notice_completed", "Check", "Notice heard or read in full", in_standard_filter=True),
     col("c1"),
     F("purposes_granted", "JSON", "Purposes granted"),
     F("purposes_denied", "JSON", "Purposes denied"),
@@ -602,6 +615,13 @@ doctype("Field Device", [
     F("app_version", "Data", "App version"),
     F("last_sync", "Datetime", "Last sync", in_list_view=True),
     F("pending_events", "Int", "Pending events"),
+    F("model", "Data", "Phone model"),
+    sec("lost_section", "Lost or stolen", collapsible=True),
+    F("reported_lost_on", "Datetime", "Reported lost on", read_only=True),
+    F("reported_lost_by", "Link", "Reported lost by", "User", read_only=True),
+    col("c2"),
+    F("wiped_on", "Datetime", "Wipe sent on", read_only=True,
+      description="When the phone was told to wipe itself; it signs out and deletes its data"),
 ], {ADM: "F", PM: "E", FW: "r", SM: "F"}, autoname="field:device_id", track_changes=1)
 
 doctype("Audit Share", [

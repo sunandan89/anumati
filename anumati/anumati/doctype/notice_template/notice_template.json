@@ -18,6 +18,7 @@
   "content_section",
   "summary",
   "full_text",
+  "pictorial_card",
   "rule3_section",
   "withdrawal_methods",
   "rights_text",
@@ -104,6 +105,12 @@
    "label": "Full text"
   },
   {
+   "description": "Shown on the field app's notice screen",
+   "fieldname": "pictorial_card",
+   "fieldtype": "Attach Image",
+   "label": "Pictorial card"
+  },
+  {
    "description": "Every notice must say all of this",
    "fieldname": "rule3_section",
    "fieldtype": "Section Break",
@@ -162,7 +169,7 @@
    "link_fieldname": "notice"
   }
  ],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Template",

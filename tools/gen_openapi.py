@@ -22,7 +22,8 @@ CAPTURE = {
 	"channel": S(enum=CHANNELS), "device_id": S(maxLength=140), "device_time": S(maxLength=40),
 	"ip_address": S(maxLength=64), "gps": S(maxLength=64), "verification_method": S(enum=METHODS),
 	"witness": S(maxLength=500), "evidence": EVIDENCE, "guardian_link": S(maxLength=140),
-	"source_system": S(maxLength=140),
+	"source_system": S(maxLength=140), "notice_delivery": S(enum=["", "recording", "phone_voice", "read_aloud", "read_on_screen"]),
+	"notice_completed": {"enum": [0, 1, True, False, "0", "1"]},
 }
 
 SCHEMAS = {
@@ -102,6 +103,12 @@ PATHS = {
 	                                query=[("provider", True), ("token", True), ("caller", True)], public=True),
 	BASE + "channel.delivery_report": op("Delivery receipt callback: confirms deferred confirmations",
 	                                    query=[("provider", True), ("token", True), ("request_id", True), ("status", True)], public=True),
+	BASE + "principal.for_device": op("People in a programme with their choices, for a field worker's phone",
+	                                 query=[("programme", True), ("since", False), ("limit", False)], method="get"),
+	BASE + "device.register": op("Field app check-in; returns whether the phone must wipe itself",
+	                            query=[("device_id", True), ("app_version", False), ("model", False), ("pending", False)]),
+	BASE + "device.report_lost": op("Mark a phone lost (staff): wipe on next contact, opens a breach incident",
+	                               query=[("device", True)]),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

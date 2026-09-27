@@ -1,0 +1,22 @@
+{
+ "color": "Blue",
+ "creation": "2026-09-28 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Consent Event",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[[\"Consent Event\", \"notice_completed\", \"=\", 1, false], [\"Consent Event\", \"creation\", \"Timespan\", \"this week\", false]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Notice Heard In Full",
+ "modified": "2026-09-28 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Notice Heard In Full",
+ "owner": "Administrator",
+ "show_percentage_stats": 1,
+ "stats_time_interval": "Weekly",
+ "type": "Document Type"
+}

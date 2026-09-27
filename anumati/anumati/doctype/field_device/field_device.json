@@ -12,7 +12,13 @@
   "c1",
   "app_version",
   "last_sync",
-  "pending_events"
+  "pending_events",
+  "model",
+  "lost_section",
+  "reported_lost_on",
+  "reported_lost_by",
+  "c2",
+  "wiped_on"
  ],
  "fields": [
   {
@@ -56,11 +62,46 @@
    "fieldname": "pending_events",
    "fieldtype": "Int",
    "label": "Pending events"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Phone model"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "lost_section",
+   "fieldtype": "Section Break",
+   "label": "Lost or stolen"
+  },
+  {
+   "fieldname": "reported_lost_on",
+   "fieldtype": "Datetime",
+   "label": "Reported lost on",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reported_lost_by",
+   "fieldtype": "Link",
+   "label": "Reported lost by",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "When the phone was told to wipe itself; it signs out and deletes its data",
+   "fieldname": "wiped_on",
+   "fieldtype": "Datetime",
+   "label": "Wipe sent on",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Field Device",

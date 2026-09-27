@@ -21,6 +21,13 @@
   "c2",
   "label_manage",
   "label_save",
+  "rule3_translation_section",
+  "withdrawal_methods",
+  "rights_text",
+  "board_complaint_route",
+  "c_r3",
+  "dpo_contact",
+  "security_summary",
   "media_section",
   "audio_file",
   "audio_machine_made",
@@ -113,6 +120,41 @@
    "label": "Save"
   },
   {
+   "description": "Leave blank to show the notice's own text",
+   "fieldname": "rule3_translation_section",
+   "fieldtype": "Section Break",
+   "label": "Rule 3 contents (translated)"
+  },
+  {
+   "fieldname": "withdrawal_methods",
+   "fieldtype": "Small Text",
+   "label": "How to withdraw consent"
+  },
+  {
+   "fieldname": "rights_text",
+   "fieldtype": "Small Text",
+   "label": "How to exercise rights"
+  },
+  {
+   "fieldname": "board_complaint_route",
+   "fieldtype": "Small Text",
+   "label": "How to complain to the Data Protection Board"
+  },
+  {
+   "fieldname": "c_r3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "dpo_contact",
+   "fieldtype": "Small Text",
+   "label": "DPO or grievance contact"
+  },
+  {
+   "fieldname": "security_summary",
+   "fieldtype": "Small Text",
+   "label": "Summary of security safeguards"
+  },
+  {
    "fieldname": "media_section",
    "fieldtype": "Section Break",
    "label": "Audio and picture card"
@@ -146,7 +188,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Translation",
