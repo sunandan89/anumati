@@ -19,6 +19,7 @@ from anumati.ledger import keystore, signing
 CAPTURE_FIELDS = (
 	"notice", "language", "capture_mode", "channel", "device_id", "device_time", "ip_address", "gps",
 	"verification_method", "witness", "evidence", "guardian_link", "source_system",
+	"notice_delivery", "notice_completed",
 )
 CLIENT_VERIFICATION = ("recorded", "confirmed", "evidence_only")
 

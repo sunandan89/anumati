@@ -14,6 +14,8 @@
   "notice",
   "notice_version",
   "language",
+  "notice_delivery",
+  "notice_completed",
   "c1",
   "purposes_granted",
   "purposes_denied",
@@ -105,6 +107,20 @@
    "fieldtype": "Link",
    "label": "Language",
    "options": "Language"
+  },
+  {
+   "description": "Coaching data, not signed: reviewed recording, phone voice, worker read it, or read on screen",
+   "fieldname": "notice_delivery",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "How the notice was given",
+   "options": "\nrecording\nphone_voice\nread_aloud\nread_on_screen"
+  },
+  {
+   "fieldname": "notice_completed",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Notice heard or read in full"
   },
   {
    "fieldname": "c1",
@@ -286,7 +302,7 @@
    "link_fieldname": "consent_event"
   }
  ],
- "modified": "2026-09-27 14:00:00.000000",
+ "modified": "2026-09-28 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Consent Event",

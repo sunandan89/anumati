@@ -28,19 +28,21 @@ def get_active(programme, language=None):
 	out = {
 		"notice": notice.name, "version": notice.version, "programme": programme,
 		"summary": notice.summary, "full_text": notice.full_text, "purposes": purposes,
-		"cross_border_transfers": notice.cross_border_transfers,
+		"cross_border_transfers": notice.cross_border_transfers, "pictorial_card": notice.pictorial_card,
 		**{k: notice.get(k) for k in RULE3}, "translation": None,
 	}
 	if language:
 		t = frappe.db.get_value(
 			"Notice Translation", {"notice": name, "language": language},
 			["summary", "full_text", "machine_translated", "reviewer", "audio_file", "audio_machine_made",
-			 "audio_reviewed_by", "pictorial_card", *LABELS], as_dict=True,
+			 "audio_reviewed_by", "pictorial_card", *LABELS, *RULE3], as_dict=True,
 		)
 		if t and t.reviewer:
 			out["translation"] = {
 				"language": language, "summary": t.summary, "full_text": t.full_text,
 				"audio_file": t.audio_file if (not t.audio_machine_made or t.audio_reviewed_by) else None,
 				"pictorial_card": t.pictorial_card, **{k: t.get(k) for k in LABELS},
+				# Translated Rule 3 contents; blank ones fall back to the notice's own text on the client.
+				**{k: t.get(k) for k in RULE3 if t.get(k)},
 			}
 	return out

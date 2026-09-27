@@ -194,5 +194,8 @@ On that migrate, the site switches on Mobile Configuration, creates the DEMO pro
 - A **published** notice (Notice Template → Publish). The app shows the live notice and its purposes.
 - For Hindi: a **Notice Translation** in `hi` with a named **Reviewer**. Unreviewed translations and machine-made audio are never sent to phones.
 
+### Phones and lost phones
+Every phone that signs in appears under **Field Device** with its user, app version, last sync and how many records it still holds. If a phone is lost or stolen: open it → **Report lost** → **Yes**. The phone signs out and deletes its data the next time it connects, and a **Breach Incident** (lost device) opens with the number of records it hadn't synced, so the 72-hour clock starts.
+
 ### Receipt codes work offline
 The code on the slip (e.g. `AN-7K2Q9C`) is worked out on the phone from the consent's ID, so the worker can write it down before the phone syncs. The server gets the same code. Codes are short, so two people can rarely share one: an SMS `STOP <code>` is then matched by the sender's number, or goes to the inbox for a person to resolve.
