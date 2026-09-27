@@ -98,3 +98,15 @@ class TestGuestAccess(FrappeTestCase):
 		finally:
 			frappe.set_user("Administrator")
 			frappe.flags.in_test = in_test
+
+
+class TestFormConnections(FrappeTestCase):
+	def test_forms_show_related_records(self):
+		expect = {
+			"Programme": {"Purpose", "Notice Template", "Consent Event"},
+			"Notice Template": {"Notice Translation", "Consent Event"},
+			"Data Principal": {"Consent Event", "Consent State", "Guardian Link", "Rights Request"},
+		}
+		for doctype, linked in expect.items():
+			got = {link.link_doctype for link in frappe.get_meta(doctype).links}
+			self.assertTrue(linked <= got, f"{doctype} connections missing {linked - got}")

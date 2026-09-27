@@ -172,8 +172,34 @@
   }
  ],
  "index_web_pages_for_search": 0,
- "links": [],
- "modified": "2026-09-27 10:00:00.000000",
+ "links": [
+  {
+   "group": "Consent",
+   "link_doctype": "Consent Event",
+   "link_fieldname": "principal"
+  },
+  {
+   "group": "Consent",
+   "link_doctype": "Consent State",
+   "link_fieldname": "principal"
+  },
+  {
+   "group": "Consent",
+   "link_doctype": "Guardian Link",
+   "link_fieldname": "principal"
+  },
+  {
+   "group": "Rights",
+   "link_doctype": "Rights Request",
+   "link_fieldname": "matched_principal"
+  },
+  {
+   "group": "Rights",
+   "link_doctype": "Purge Request",
+   "link_fieldname": "principal"
+  }
+ ],
+ "modified": "2026-09-27 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Data Principal",
