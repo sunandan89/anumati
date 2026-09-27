@@ -150,3 +150,66 @@ def delivery_report(provider=None, token=None, request_id=None, status=None, **k
 
 			enforcement.set_verification(att.consent_event, "confirmed")
 	return {"outcome": "delivered" if delivered else "noted"}
+
+
+# ---------------------------------------------------------------- WhatsApp and voice (Phase 2e/2f, Twilio)
+# Both need the Channel Provider's inbound secret in the URL (as above) and a valid X-Twilio-Signature.
+
+
+def _twiml(inner: str):
+	from werkzeug.wrappers import Response
+
+	return Response(f'<?xml version="1.0" encoding="UTF-8"?><Response>{inner}</Response>', mimetype="text/xml")
+
+
+def _twilio_provider(provider, token):
+	from anumati.channels import twilio
+
+	prov = _provider(provider, token)
+	twilio.check_signature(prov, frappe.request.form.to_dict() if frappe.request else {})
+	return prov
+
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+@rate_limit(limit=600, seconds=60)
+def inbound_whatsapp(provider=None, token=None, **kwargs):
+	"""Twilio WhatsApp webhook: STOP menu (who is this for? → what to stop?), replied with TwiML."""
+	from xml.sax.saxutils import escape
+
+	from anumati.channels import conversation
+
+	prov = _twilio_provider(provider, token)
+	sender = kwargs.get("From")
+	if not sender:
+		frappe.throw("sender missing")
+	phone_hash = pii.phone_hash(sender)
+	text = kwargs.get("Body") or ""
+	comm = channels.log(prov, "Received", text, phone_hash, channel="whatsapp")
+	reply = conversation.handle("whatsapp", phone_hash, text, comm=comm)
+	channels.log(prov, "Sent", reply, phone_hash, channel="whatsapp")
+	return _twiml(f"<Message>{escape(reply)}</Message>")
+
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+@rate_limit(limit=600, seconds=60)
+def ivr(provider=None, token=None, **kwargs):
+	"""Twilio voice webhook: a keypad menu in the caller's language. Press 1 to stop every optional use."""
+	from xml.sax.saxutils import escape, quoteattr
+
+	from anumati.channels import conversation
+
+	prov = _twilio_provider(provider, token)
+	caller = kwargs.get("From") or kwargs.get("Caller")
+	if not caller:
+		frappe.throw("caller missing")
+	phone_hash = pii.phone_hash(caller)
+	digits = kwargs.get("Digits")
+	if digits is None:
+		channels.log(prov, "Received", "Call", phone_hash, channel="ivr")
+		conversation.clear_state(phone_hash)
+	spoken, more = conversation.ivr_prompt(phone_hash, digits)
+	say = "".join(f'<Say language="en-IN">{escape(line)}</Say><Pause length="1"/>' for line in spoken.split("\n"))
+	if more:
+		return _twiml(f'<Gather numDigits="1" method="POST" action={quoteattr(frappe.request.full_path)}>{say}</Gather>'
+		              f'<Say language="en-IN">{escape(_("We did not get a key press. Goodbye."))}</Say>')
+	return _twiml(say + "<Hangup/>")

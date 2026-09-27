@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-28 12:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-28 14:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -397,15 +397,15 @@ doctype("Rights Request", [
 doctype("Channel Provider", [
     F("provider_name", "Data", "Name", reqd=True, unique=True),
     F("provider_type", "Select", "Type", sel("SMS", "WhatsApp", "IVR", "Missed Call", "Email"), reqd=True, in_list_view=True),
-    F("provider", "Select", "Provider", sel("MSG91", "Gupshup", "Glific", "Exotel", "SMTP", "Other"), reqd=True, in_list_view=True),
+    F("provider", "Select", "Provider", sel("MSG91", "Twilio", "Gupshup", "Glific", "Exotel", "SMTP", "Other"), reqd=True, in_list_view=True),
     F("enabled", "Check", "Enabled", default="1", in_list_view=True),
     F("pooled", "Check", "Pooled (Dhwani) account", description="Off = the organisation's own account (BYO)"),
     col("c1"),
     F("sender_id", "Data", "Sender ID / number"),
     F("dlt_entity_id", "Data", "DLT entity ID"),
     sec("credentials_section", "Credentials", description="Stored encrypted. Enter them here, never in chat or email."),
-    F("api_key", "Password", "API key"),
-    F("api_secret", "Password", "API secret"),
+    F("api_key", "Password", "API key", description="Twilio: Account SID"),
+    F("api_secret", "Password", "API secret", description="Twilio: Auth Token (also checks X-Twilio-Signature on inbound calls)"),
     F("webhook_secret", "Password", "Inbound webhook secret", description="Used to check HMAC on inbound callbacks"),
     sec("templates_section", "Templates"),
     F("templates", "Table MultiSelect", "Message templates", "Channel Provider Template"),

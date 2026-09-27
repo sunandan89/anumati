@@ -42,7 +42,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Provider",
-   "options": "MSG91\nGupshup\nGlific\nExotel\nSMTP\nOther",
+   "options": "MSG91\nTwilio\nGupshup\nGlific\nExotel\nSMTP\nOther",
    "reqd": 1
   },
   {
@@ -79,11 +79,13 @@
    "label": "Credentials"
   },
   {
+   "description": "Twilio: Account SID",
    "fieldname": "api_key",
    "fieldtype": "Password",
    "label": "API key"
   },
   {
+   "description": "Twilio: Auth Token (also checks X-Twilio-Signature on inbound calls)",
    "fieldname": "api_secret",
    "fieldtype": "Password",
    "label": "API secret"
@@ -108,7 +110,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 12:00:00.000000",
+ "modified": "2026-09-28 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Channel Provider",

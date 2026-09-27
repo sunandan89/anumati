@@ -120,6 +120,10 @@ PATHS = {
 	                                query=[("provider", True), ("token", True), ("caller", True)], public=True),
 	BASE + "channel.delivery_report": op("Delivery receipt callback: confirms deferred confirmations",
 	                                    query=[("provider", True), ("token", True), ("request_id", True), ("status", True)], public=True),
+	BASE + "channel.inbound_whatsapp": op("Twilio WhatsApp webhook: STOP menu, replies in TwiML (signed by Twilio)",
+	                                     query=[("provider", True), ("token", True)], public=True),
+	BASE + "channel.ivr": op("Twilio voice webhook: keypad menu, press 1 to withdraw (signed by Twilio)",
+	                        query=[("provider", True), ("token", True)], public=True),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

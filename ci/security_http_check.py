@@ -22,6 +22,9 @@ GUEST_ALLOWLIST = {
 	"anumati.api.v1.channel.inbound_sms",
 	"anumati.api.v1.channel.missed_call",
 	"anumati.api.v1.channel.delivery_report",
+	# Twilio WhatsApp and voice webhooks: inbound secret in the URL and a valid X-Twilio-Signature
+	"anumati.api.v1.channel.inbound_whatsapp",
+	"anumati.api.v1.channel.ivr",
 }
 DENIED = {401, 403}
 

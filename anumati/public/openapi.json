@@ -632,6 +632,76 @@
     "summary": "SMS gateway callback: keywords STOP / STOP <code> / STOP <n> / DATA / HELP"
    }
   },
+  "/api/v2/method/anumati.api.v1.channel.inbound_whatsapp": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "token",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "Twilio WhatsApp webhook: STOP menu, replies in TwiML (signed by Twilio)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.channel.ivr": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "token",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "security": [],
+    "summary": "Twilio voice webhook: keypad menu, press 1 to withdraw (signed by Twilio)"
+   }
+  },
   "/api/v2/method/anumati.api.v1.channel.missed_call": {
    "post": {
     "parameters": [

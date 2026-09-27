@@ -10,7 +10,7 @@ from frappe.utils import formatdate, now_datetime
 
 from anumati import pii
 
-PROVIDERS = {"MSG91": "anumati.channels.msg91"}
+PROVIDERS = {"MSG91": "anumati.channels.msg91", "Twilio": "anumati.channels.twilio"}
 
 
 class ChannelError(frappe.ValidationError):
@@ -33,14 +33,17 @@ def template_for(event: str, channel: str, language: str | None):
 	return None
 
 
-def send_sms(principal: str, event: str, context: dict, reference=None, reference_doctype="Consent Event") -> str | None:
-	"""Send one templated SMS to a principal. Returns the Communication name, or None if not sendable
-	(no provider, no approved template, no phone). Never raises for a missing setup: capture must not
-	fail because a receipt could not be sent."""
-	provider = provider_for("SMS")
+def _send_templated(provider_type: str, channel: str, principal: str, event: str, context: dict, reference=None,
+                    reference_doctype="Consent Event") -> str | None:
+	"""Send one approved template to a principal on a channel. Returns the Communication name, or None if
+	not sendable (no provider, no approved template, no phone). Never raises for a missing setup: capture
+	must not fail because a receipt could not be sent."""
+	provider = provider_for(provider_type)
 	doc = frappe.get_doc("Data Principal", principal)
 	phone = doc.get_password("phone", raise_exception=False)
-	template = template_for(event, "sms", doc.preferred_language)
+	# WhatsApp falls back to the approved SMS wording when no WhatsApp template exists yet.
+	template = template_for(event, channel, doc.preferred_language) or (
+		template_for(event, "sms", doc.preferred_language) if channel == "whatsapp" else None)
 	if not (provider and template and phone):
 		return None
 	body = frappe.render_template(template.body, context)
@@ -50,12 +53,20 @@ def send_sms(principal: str, event: str, context: dict, reference=None, referenc
 		message_id = adapter.send(provider, pii.normalise_phone(phone), template, context)
 	except Exception:
 		status = "Error"
-		frappe.log_error(title=f"Anumati SMS send failed ({event})", message=f"provider={provider.name} template={template.name}")
+		frappe.log_error(title=f"Anumati {channel} send failed ({event})", message=f"provider={provider.name} template={template.name}")
 	return log(provider, "Sent", body, pii.phone_hash(phone), template=template.name, status=status,
-	           message_id=message_id, reference=reference, reference_doctype=reference_doctype)
+	           message_id=message_id, reference=reference, reference_doctype=reference_doctype, channel=channel)
 
 
-SENDERS = {"sms": "send_sms"}  # channel -> sender; WhatsApp and email join in Phase 2e/2g
+def send_sms(principal: str, event: str, context: dict, reference=None, reference_doctype="Consent Event") -> str | None:
+	return _send_templated("SMS", "sms", principal, event, context, reference, reference_doctype)
+
+
+def send_whatsapp(principal: str, event: str, context: dict, reference=None, reference_doctype="Consent Event") -> str | None:
+	return _send_templated("WhatsApp", "whatsapp", principal, event, context, reference, reference_doctype)
+
+
+SENDERS = {"sms": "send_sms", "whatsapp": "send_whatsapp"}  # email joins in Phase 2g
 
 
 def send(principal: str, event: str, context: dict, channel=None, reference=None, reference_doctype="Consent Event"):
@@ -79,7 +90,7 @@ def log(provider, direction, body, phone_hash, template=None, status=None, messa
 	comm = frappe.get_doc({
 		"doctype": "Communication",
 		"communication_type": "Communication",
-		"communication_medium": "SMS" if channel == "sms" else "Other",
+		"communication_medium": {"sms": "SMS", "whatsapp": "Chat", "ivr": "Phone", "missed_call": "Phone"}.get(channel, "Other"),
 		"sent_or_received": direction,
 		"subject": f"{channel.upper()} {direction.lower()}",
 		"content": body,
