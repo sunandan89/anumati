@@ -34,7 +34,9 @@ Withdrawals By Channel,Withdrawals by channel
 Withdrawn (30 Days),Withdrawn (30 days)
 access,Data access
 active,Active
+aditya,Aditya
 allow,Allowed
+amit,Amit
 anonymise,Anonymise
 api,Connected system (API)
 app,Field app
@@ -87,6 +89,8 @@ hosted_page,Web page
 in_person,In person
 insert,Created
 ivr,Phone (IVR)
+kabir,Kabir
+kavya,Kavya
 legal_guardian,Legal guardian
 legal_hold,Legal hold
 legal_hold_then_review,"Legal hold, then review"
@@ -102,6 +106,7 @@ material_notice_change,Notice changed
 member,Member
 missed_call,Missed call
 months,Months
+neha,Neha
 neighbour,Neighbour
 no_processing,Stop using their data
 nomination,Nomination
@@ -114,6 +119,9 @@ patient,Patient
 pending,Pending
 phishing,Phishing
 phone_voice,Phone read it aloud
+pooja,Pooja
+priya,Priya
+rahul,Rahul
 ransomware,Ransomware
 re_consent,Re-consent
 read_aloud,Worker read it aloud
@@ -131,11 +139,15 @@ renewal,Renewal
 retention_notice,Data about to be deleted
 reverse_sms,Reply by SMS
 rights_update,Request update
+ritu,Ritu
+rohan,Rohan
 self,Self
 self_digital,"Self, on their own phone"
 self_worker_device,"Self, on the worker's phone"
 server_otp,SMS code from Anumati
+shreya,Shreya
 sibling,Brother or sister
+simran,Simran
 slip,Paper slip
 sms,SMS
 spouse,Spouse

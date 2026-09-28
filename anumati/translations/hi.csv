@@ -196,7 +196,9 @@ Withdrawn (30 Days),सहमति वापसी (30 दिन)
 Yes to all,सब के लिए हाँ
 access,डेटा देखने का अनुरोध
 active,चालू
+aditya,आदित्य
 allow,अनुमति है
+amit,अमित
 anonymise,पहचान हटाएँ
 api,जुड़ा हुआ सिस्टम (API)
 app,फील्ड ऐप
@@ -255,6 +257,8 @@ hosted_page,वेब पेज
 in_person,आमने-सामने
 insert,बनाया
 ivr,फ़ोन (IVR)
+kabir,कबीर
+kavya,काव्या
 legal_guardian,क़ानूनी अभिभावक
 legal_hold,क़ानूनी रोक
 legal_hold_then_review,"क़ानूनी रोक, फिर समीक्षा"
@@ -270,6 +274,7 @@ material_notice_change,सूचना बदली
 member,सदस्य
 missed_call,मिस्ड कॉल
 months,महीने
+neha,नेहा
 neighbour,पड़ोसी
 no_processing,उनका डेटा इस्तेमाल बंद
 nomination,नामांकन
@@ -282,6 +287,9 @@ patient,मरीज़
 pending,बाकी
 phishing,फ़िशिंग
 phone_voice,फ़ोन ने पढ़कर सुनाया
+pooja,पूजा
+priya,प्रिया
+rahul,राहुल
 ransomware,रैनसमवेयर
 re_consent,दोबारा सहमति
 read_aloud,कार्यकर्ता ने पढ़कर सुनाया
@@ -301,11 +309,15 @@ requests need matching to a person,अनुरोधों को व्यक�
 retention_notice,डेटा मिटने वाला
 reverse_sms,SMS से जवाब
 rights_update,अनुरोध पर अपडेट
+ritu,ऋतु
+rohan,रोहन
 self,स्वयं
 self_digital,"स्वयं, अपने फ़ोन पर"
 self_worker_device,"स्वयं, कार्यकर्ता के फ़ोन पर"
 server_otp,अनुमति से SMS कोड
+shreya,श्रेया
 sibling,भाई/बहन
+simran,सिमरन
 slip,पर्ची
 sms,SMS
 spouse,पति/पत्नी

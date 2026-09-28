@@ -188,6 +188,12 @@ CODES = [
     ("delete", "Deleted", "हटाया"),
 ]
 
+# Sarvam voices (Anumati Settings > Voice).
+VOICES = [(v, v.title(), hi) for v, hi in (
+    ("priya", "प्रिया"), ("kavya", "काव्या"), ("neha", "नेहा"), ("ritu", "ऋतु"), ("pooja", "पूजा"),
+    ("simran", "सिमरन"), ("shreya", "श्रेया"), ("rahul", "राहुल"), ("amit", "अमित"), ("rohan", "रोहन"),
+    ("aditya", "आदित्य"), ("kabir", "कबीर"))]
+
 # Capitalised dropdown values (statuses). Frappe already has Hindi for Open, Draft, Closed, Pending, ...
 STATUSES = [
     ("Unmatched", None, "मिलान बाकी"),
@@ -376,7 +382,7 @@ MESSAGES = [
 
 
 def rows():
-    for group in (RECORD_TYPES, CODES, STATUSES, MENU, MESSAGES):
+    for group in (RECORD_TYPES, CODES, VOICES, STATUSES, MENU, MESSAGES):
         yield from group
 
 

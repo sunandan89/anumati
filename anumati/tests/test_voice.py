@@ -93,6 +93,8 @@ class TestVoice(FrappeTestCase):
 		self.assertRaises(frappe.ValidationError, settings.save)
 		if not frappe.db.exists("Processor", "Sarvam AI"):
 			frappe.get_doc({"doctype": "Processor", "processor_name": "Sarvam AI", "country": "India"}).insert()
+		settings = frappe.get_single("Anumati Settings")  # fresh copy after the refused save
+		settings.voice_listen_helper = 1
 		settings.save()
 		self.assertTrue(device.register("VOICE-TEST-1")["voice_helper"])
 		files, errors = frappe.db.count("File"), frappe.db.count("Error Log")
