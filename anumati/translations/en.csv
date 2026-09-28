@@ -1,0 +1,118 @@
+18_plus,18 or over
+Audit Entry,Audit log entry
+Audit Share,Auditor link
+Breach Incident,Breach
+Channel Provider,Messaging account
+Consent Event,Consent record
+Consent State,Current consent
+Data Principal,Beneficiary
+Field Device,Field phone
+Funder Link,Funder sharing
+Guardian Link,Guardian
+Notice Template,Notice
+Propagation Ack,Partner confirmation
+Purge Request,Deletion task
+ROPA Entry,Record of processing
+Retention Policy,Retention rule
+Rights Request,Request
+Source System,Connected system
+System Usage Log,Consent check log
+Verification Attempt,Confirmation attempt
+access,Data access
+allow,Allowed
+anonymise,Anonymise
+ask_processor_to_erase,Ask the partner to erase
+assisted_thumbprint,Assisted: thumbprint
+assisted_verbal,Assisted: said yes (voice)
+assisted_witnessed,Assisted: with a witness
+beneficiary,Beneficiary
+breach_notice,Breach notice
+captured,Captured
+collection,When collected
+committee,Committee
+community,Community meeting
+confirmation,Confirmation
+confirmed,Confirmed
+connector,Connected system
+correction,Correction
+data_leak,Data leak
+deferred,Confirm later by SMS
+deferred_confirmation,Confirm later
+deny,Denied
+device_sms,SMS from the worker's phone
+device_sms_otp,SMS code from the worker's phone
+digilocker,DigiLocker
+erasure,Erasure
+evidence_only,Evidence only (no phone)
+expired,Expired
+family_pwd,Family (person with disability)
+field_visit,Field visit
+field_worker,Field worker
+grant,Agreed
+granted,Agreed
+grievance,Grievance
+guardian_minor,"Guardian, for a child"
+guardian_pwd,"Guardian, for a person with disability"
+hard_purge,Delete completely
+hold_for_review,Hold for review
+hosted_page,Web page
+in_person,In person
+ivr,Phone (IVR)
+legal_guardian,Legal guardian
+legal_hold,Legal hold
+legal_hold_then_review,"Legal hold, then review"
+legal_obligation,Legal obligation
+legal_retention,"Keep, required by law"
+legitimate_use,Legitimate use
+logged_out,Signed out
+lost,Lost
+lost_device,Lost or stolen phone
+majority_transfer,Turning 18
+manual,Started by hand
+material_notice_change,Notice changed
+missed_call,Missed call
+neighbour,Neighbour
+no_processing,Stop using their data
+nomination,Nomination
+not_asked,Not asked
+otp,One-time code
+paper,Paper form
+phishing,Phishing
+phone_voice,Phone read it aloud
+ransomware,Ransomware
+re_consent,Re-consent
+read_aloud,Worker read it aloud
+read_on_screen,Read it on screen
+receipt,Receipt
+recorded,Recorded
+recording,Played the recording
+refuse,Said no to all
+refused,Said no
+relationship_ended,When the programme stops serving them
+relative,Relative
+reminder,Reminder
+renew,Renewed
+renewal,Renewal
+retention_notice,Data about to be deleted
+reverse_sms,Reply by SMS
+rights_update,Request update
+self_digital,"Self, on their own phone"
+self_worker_device,"Self, on the worker's phone"
+server_otp,SMS code from Anumati
+slip,Paper slip
+sms,SMS
+spouse,Spouse
+true_up,Catch-up
+turning_18,Someone turns 18
+unauthorised_access,Unauthorised access
+unconfirmed,Waiting for confirmation
+under_18,Under 18
+ussd,USSD
+validity_expiry,Consent about to expire
+whatsapp,WhatsApp
+wipe_queued,Wipe queued
+wiped,Wiped
+withdraw,Withdrew
+withdrawal,Withdrawal
+withdrawal_confirmation,Withdrawal done
+withdrawn,Withdrawn

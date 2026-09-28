@@ -8,6 +8,7 @@
  "field_order": [
   "purposes_tab",
   "programme",
+  "programme_name",
   "version",
   "status",
   "c1",
@@ -42,11 +43,18 @@
   {
    "fieldname": "programme",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Programme",
    "options": "Programme",
    "reqd": 1
+  },
+  {
+   "fetch_from": "programme.programme_name",
+   "fieldname": "programme_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Programme name",
+   "read_only": 1
   },
   {
    "description": "Semantic version, e.g. 4.0.0",
@@ -199,7 +207,7 @@
    "link_fieldname": "notice"
   }
  ],
- "modified": "2026-09-29 10:00:00.000000",
+ "modified": "2026-09-30 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Template",
@@ -322,6 +330,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "programme",
+ "title_field": "programme_name",
  "track_changes": 1
 }

@@ -216,6 +216,8 @@ After the deploy, the left sidebar has six Anumati sections. Each person sees on
 Admins can read the DPO's records but only the DPO publishes notices and approves records of processing. Field workers use the phone app and see no Desk sections.
 
 Useful places:
+- **Beneficiaries list**: type in the **Name or phone** box at the top. It matches whole words of a name ("Kavita", or "Kavita Yadav", not "Kav"), a complete phone number, a receipt code or an ID. Each row shows the name and the phone with the last three digits hidden; every list page you open is recorded in the access log. Names and phones stay encrypted in the database.
+- Any field where you pick a beneficiary (for example on a request) accepts the same searches.
 - **Today → Requests board**: drag a request between columns to change its status. Red cards are overdue.
 - **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
 - **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.

@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-29 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-30 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -207,7 +207,8 @@ doctype("Purpose", [
 
 doctype("Notice Template", [
     tab("purposes_tab", "Purposes"),
-    F("programme", "Link", "Programme", "Programme", reqd=True, in_list_view=True, in_standard_filter=True),
+    F("programme", "Link", "Programme", "Programme", reqd=True, in_standard_filter=True),
+    F("programme_name", "Data", "Programme name", fetch_from="programme.programme_name", read_only=True, in_list_view=True),
     F("version", "Data", "Version", reqd=True, in_list_view=True, description="Semantic version, e.g. 4.0.0"),
     F("status", "Select", "Status", sel("Draft", "Published", "Retired"), default="Draft", read_only=True, in_list_view=True),
     col("c1"),
@@ -233,7 +234,7 @@ doctype("Notice Template", [
     F("phone_preview", "HTML", "Phone preview"),
     F("amended_from", "Link", "Amended From", "Notice Template", read_only=True, no_copy=True, print_hide=True),
 ], {ADM: "R", DPO: "S", PM: "R", OPR: "R", FW: "r", DEV: "r", SM: "S"},
-    autoname="format:{programme}-v{version}", is_submittable=1, title_field="programme",
+    autoname="format:{programme}-v{version}", is_submittable=1, title_field="programme_name",
     track_changes=1)
 
 doctype("Notice Translation", [
@@ -272,26 +273,28 @@ doctype("Notice Translation", [
 
 doctype("Data Principal", [
     tab("overview_tab", "Overview"),
-    F("principal_ref", "Data", "Principal ref", unique=True, in_list_view=True,
+    F("principal_ref", "Data", "Beneficiary ID", unique=True, in_list_view=True,
       description="ID from the host system, e.g. MHU-004211. Never a name or phone number."),
     F("full_name", "Password", "Name (encrypted)", description="Stored encrypted; not searchable"),
     F("phone", "Password", "Phone (encrypted)"),
     F("phone_hash", "Data", "Phone hash", read_only=True, search_index=True, no_copy=True,
       description="Salted HMAC of the normalised number; used for lookups"),
+    F("name_index", "Small Text", "Name search codes", read_only=True, hidden=True, no_copy=True, print_hide=True,
+      description="One salted code per word of the name, for whole-word search; the name itself stays encrypted"),
     F("email", "Data", "Email", "Email"),
     col("c1"),
-    F("preferred_language", "Link", "Preferred language", "Language", in_list_view=True),
+    F("preferred_language", "Link", "Preferred language", "Language", in_list_view=True, in_standard_filter=True),
     F("persona", "Select", "Persona", sel("beneficiary", "patient", "student", "employee", "member", "other"), default="beneficiary"),
     F("date_of_birth", "Date", "Date of birth"),
     F("age_band", "Select", "Age band", sel("", "under_18", "18_plus", "unknown")),
     F("phone_owner_relation", "Select", "Phone owner", sel("self", "spouse", "parent", "child", "sibling", "relative", "neighbour", "field_worker", "other"), default="self"),
     tab("flags_tab", "Needs & lifecycle"),
     sec("flags_section", "Segment flags"),
-    F("is_minor", "Check", "Minor (under 18)"),
+    F("is_minor", "Check", "Minor (under 18)", in_standard_filter=True),
     F("pwd_guarded", "Check", "Person with disability, lawful guardian"),
     F("needs_assistance", "Check", "Needs help to read the notice"),
     col("c2"),
-    F("shared_phone", "Check", "Shared phone"),
+    F("shared_phone", "Check", "Shared phone", in_standard_filter=True),
     F("no_phone", "Check", "No phone"),
     sec("lifecycle_section", "Lifecycle"),
     F("relationship_ended_on", "Date", "Relationship ended on",
@@ -302,10 +305,11 @@ doctype("Data Principal", [
     sec("nominee_section", "Nominees"),
     F("nominees", "Table", "Nominees", "Nominee"),
 ], {ADM: "F", DPO: "E", OPR: "E", PM: "R", FW: "E", SM: "F"},
-    autoname="hash", title_field="principal_ref", search_fields="principal_ref", track_changes=1)
+    autoname="hash", title_field="principal_ref", search_fields="principal_ref", show_title_field_in_link=1,
+    track_changes=1)
 
 doctype("Guardian Link", [
-    F("principal", "Link", "Principal", "Data Principal", reqd=True, in_list_view=True),
+    F("principal", "Link", "Beneficiary", "Data Principal", reqd=True, in_list_view=True),
     F("guardian", "Link", "Guardian", "Data Principal", reqd=True, in_list_view=True),
     F("guardian_type", "Select", "Guardian type", sel("parent", "legal_guardian", "family_pwd", "court", "committee"), reqd=True, in_list_view=True),
     F("relation", "Data", "Relation"),
@@ -321,13 +325,13 @@ doctype("Consent Event", [
     tab("summary_tab", "Summary"),
     F("summary_html", "HTML", "Summary"),
     sec("record_section", "Record"),
-    F("event_uuid", "Data", "Event UUID", reqd=True, unique=True, in_list_view=True,
+    F("event_uuid", "Data", "Event UUID", reqd=True, unique=True,
       description="Client-generated; sync is idempotent on this"),
     F("short_code", "Data", "Receipt code", read_only=True, search_index=True, no_copy=True, in_list_view=True,
       description="Printed on receipts and slips; derived from the signed hash"),
     F("action", "Select", "Action", sel("grant", "withdraw", "refuse", "renew"), reqd=True, in_list_view=True, in_standard_filter=True),
-    F("principal", "Link", "Principal", "Data Principal", reqd=True, in_list_view=True),
-    F("programme", "Link", "Programme", "Programme", reqd=True, in_standard_filter=True),
+    F("principal", "Link", "Beneficiary", "Data Principal", reqd=True, in_list_view=True),
+    F("programme", "Link", "Programme", "Programme", reqd=True, in_list_view=True, in_standard_filter=True),
     F("notice", "Link", "Notice", "Notice Template"),
     F("notice_version", "Data", "Notice version"),
     F("language", "Link", "Language", "Language"),
@@ -338,9 +342,9 @@ doctype("Consent Event", [
     col("c1"),
     F("purposes_granted", "JSON", "Purposes granted"),
     F("purposes_denied", "JSON", "Purposes denied"),
-    F("capture_mode", "Select", "Capture mode", CAPTURE_MODES),
+    F("capture_mode", "Select", "How consent was given", CAPTURE_MODES, in_standard_filter=True),
     F("channel", "Select", "Channel", EVENT_CH),
-    F("captured_by", "Link", "Captured by", "User"),
+    F("captured_by", "Link", "Recorded by", "User", in_standard_filter=True),
     F("guardian_link", "Link", "Guardian link", "Guardian Link"),
     F("source_system", "Link", "Source system", "Source System"),
     tab("evidence_tab", "Evidence"),
@@ -351,7 +355,7 @@ doctype("Consent Event", [
     F("evidence", "JSON", "Evidence files", description='List of {"file": ..., "sha256": ..., "kind": ...}'),
     col("c2"),
     F("verification_method", "Select", "Verification method", sel("", *VERIFY_METHODS.split("\n"))),
-    F("verification_status", "Select", "Verification status at recording", VERIFY_STATUS, default="recorded",
+    F("verification_status", "Select", "Confirmation when recorded", VERIFY_STATUS, default="recorded",
       description="Later confirmation lives in Verification Attempt and Consent State; this event never changes"),
     tab("device_tab", "Device & time"),
     sec("device_section", "Device and time"),
@@ -364,15 +368,16 @@ doctype("Consent Event", [
     tab("proof_tab", "Proof"),
     *LEDGER,
 ], {ADM: "X", DPO: "X", OPR: "R", PM: "R", FW: "C", SM: "C"},
-    autoname="field:event_uuid", in_create=1, sort_field="creation", sort_order="DESC")
+    autoname="field:event_uuid", in_create=1, sort_field="creation", sort_order="DESC",
+    title_field="short_code", show_title_field_in_link=1, search_fields="short_code,principal")
 
 doctype("Consent State", [
-    F("principal", "Link", "Principal", "Data Principal", reqd=True, in_list_view=True),
-    F("programme", "Link", "Programme", "Programme", reqd=True),
-    F("purpose", "Link", "Purpose", "Purpose", reqd=True, in_list_view=True),
+    F("principal", "Link", "Beneficiary", "Data Principal", reqd=True, in_list_view=True),
+    F("programme", "Link", "Programme", "Programme", reqd=True, in_standard_filter=True),
+    F("purpose", "Link", "Purpose", "Purpose", reqd=True, in_list_view=True, in_standard_filter=True),
     col("c1"),
-    F("status", "Select", "Status", sel("granted", "withdrawn", "refused", "not_asked", "expired"), reqd=True, in_list_view=True),
-    F("verification_status", "Select", "Verification status", VERIFY_STATUS),
+    F("status", "Select", "Status", sel("granted", "withdrawn", "refused", "not_asked", "expired"), reqd=True, in_list_view=True, in_standard_filter=True),
+    F("verification_status", "Select", "Confirmation", VERIFY_STATUS, in_list_view=True, in_standard_filter=True),
     F("last_event", "Link", "Last event", "Consent Event"),
     F("updated", "Datetime", "Updated"),
 ], {ADM: "R", DPO: "R", OPR: "R", PM: "R", FW: "r", DEV: "r", SM: "F"},
@@ -398,14 +403,14 @@ doctype("Rights Request", [
     F("channel", "Select", "Channel", sel(*WITHDRAW_CH), default="email", reqd=True, in_list_view=True),
     F("status", "Select", "Status", sel("Open", "Unmatched", "In Progress", "Awaiting Acknowledgement", "Closed", "Rejected"), default="Open", in_list_view=True, in_standard_filter=True),
     F("received_on", "Datetime", "Received on", default="now", reqd=True, description="SLA clock starts here, not at match"),
-    F("sla_due", "Date", "SLA due", description="Received on + the SLA days in Anumati Settings, unless set"),
+    F("sla_due", "Date", "Due by", in_list_view=True, description="Received on + the SLA days in Anumati Settings, unless set"),
     F("subject", "Data", "Subject"),
     col("c1"),
-    F("matched_principal", "Link", "Matched principal", "Data Principal"),
+    F("matched_principal", "Link", "Beneficiary", "Data Principal", in_standard_filter=True),
     F("match_confidence", "Percent", "Match confidence"),
     F("candidates", "Small Text", "Possible matches", read_only=True,
-      description="Principal refs sharing the sender's number; pick one and set Matched principal"),
-    F("assigned_to", "Link", "Assigned to", "User"),
+      description="Beneficiary IDs sharing the sender's number; use 'Who is this for?' to pick one"),
+    F("assigned_to", "Link", "Assigned to", "User", in_standard_filter=True),
     F("paper_trail_number", "Data", "Paper-trail number", description="Printed on slips so offline requests reconcile"),
     F("linked_event", "Link", "Resulting consent event", "Consent Event", read_only=True),
     sec("sender_section", "Sender", collapsible=True),
@@ -511,14 +516,14 @@ doctype("Data Category", [
 ], {ADM: "F", DPO: "E", PM: "R", OPR: "r", FW: "r", SM: "F"}, autoname="field:category_name")
 
 doctype("Purge Request", [
-    F("principal", "Link", "Principal", "Data Principal", reqd=True, in_list_view=True),
+    F("principal", "Link", "Beneficiary", "Data Principal", reqd=True, in_list_view=True),
     F("purpose", "Link", "Purpose", "Purpose", in_list_view=True),
     F("data_category", "Link", "Data category", "Data Category"),
     F("purge_action", "Select", "Action", sel("hard_purge", "anonymise", "legal_hold"), default="hard_purge", reqd=True),
     F("status", "Select", "Status", sel("Scheduled", "Notified", "Requested", "Acknowledged", "Completed", "On Hold"), default="Scheduled", in_list_view=True),
     col("c1"),
     F("due_on", "Date", "Deadline", reqd=True),
-    F("notified_on", "Datetime", "Principal notified on"),
+    F("notified_on", "Datetime", "Beneficiary told on"),
     F("purged_on", "Datetime", "Purged on"),
     F("rights_request", "Link", "Rights request", "Rights Request"),
     F("retention_policy", "Link", "Retention policy", "Retention Policy"),
@@ -606,7 +611,7 @@ doctype("Source System", [
 
 doctype("System Usage Log", [
     F("source_system", "Link", "Source system", "Source System", in_list_view=True),
-    F("principal", "Link", "Principal", "Data Principal", in_list_view=True),
+    F("principal", "Link", "Beneficiary", "Data Principal", in_list_view=True),
     F("purpose", "Link", "Purpose", "Purpose", in_list_view=True),
     F("checked_at", "Datetime", "Checked at"),
     F("result", "Select", "Result", sel("allow", "deny"), in_list_view=True),

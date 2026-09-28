@@ -25,6 +25,9 @@ fixtures = [
 after_install = "anumati.install.after_install"
 after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate", "anumati.evidence.encrypt_existing"]
 
+# Link fields to a beneficiary also search by whole-word name, full phone number or receipt code.
+standard_queries = {"Data Principal": "anumati.api.v1.principal.link_query"}
+
 # Evidence files (voice, thumbprint, guardian documents) are encrypted on disk right after upload.
 doc_events = {"File": {"after_insert": "anumati.evidence.encrypt_file"}}
 

@@ -72,7 +72,6 @@
    "description": "Client-generated; sync is idempotent on this",
    "fieldname": "event_uuid",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Event UUID",
    "reqd": 1,
    "unique": 1
@@ -100,13 +99,14 @@
    "fieldname": "principal",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Principal",
+   "label": "Beneficiary",
    "options": "Data Principal",
    "reqd": 1
   },
   {
    "fieldname": "programme",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Programme",
    "options": "Programme",
@@ -160,7 +160,8 @@
   {
    "fieldname": "capture_mode",
    "fieldtype": "Select",
-   "label": "Capture mode",
+   "in_standard_filter": 1,
+   "label": "How consent was given",
    "options": "self_digital\nself_worker_device\nassisted_verbal\nassisted_thumbprint\nassisted_witnessed\nguardian_minor\nguardian_pwd\npaper"
   },
   {
@@ -172,7 +173,8 @@
   {
    "fieldname": "captured_by",
    "fieldtype": "Link",
-   "label": "Captured by",
+   "in_standard_filter": 1,
+   "label": "Recorded by",
    "options": "User"
   },
   {
@@ -232,7 +234,7 @@
    "description": "Later confirmation lives in Verification Attempt and Consent State; this event never changes",
    "fieldname": "verification_status",
    "fieldtype": "Select",
-   "label": "Verification status at recording",
+   "label": "Confirmation when recorded",
    "options": "captured\nrecorded\nconfirmed\nunconfirmed\nevidence_only"
   },
   {
@@ -338,7 +340,7 @@
    "link_fieldname": "consent_event"
   }
  ],
- "modified": "2026-09-29 10:00:00.000000",
+ "modified": "2026-09-30 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Consent Event",
@@ -442,8 +444,11 @@
    "write": 0
   }
  ],
+ "search_fields": "short_code,principal",
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "short_code",
  "track_views": 1
 }

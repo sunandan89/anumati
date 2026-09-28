@@ -110,6 +110,12 @@ PATHS = {
 	BASE + "device.report_lost": op("Mark a phone lost (staff): wipe on next contact, opens a breach incident",
 	                               query=[("device", True)]),
 	BASE + "principal.reveal": op("Name and masked phone for a Desk form (logged)", query=[("principal", True)], method="get"),
+	BASE + "principal.search": op("Desk: find beneficiaries by whole-word name, full phone, receipt code or ID (IDs only)",
+	                             query=[("q", True)], method="get"),
+	BASE + "principal.reveal_many": op("Desk list: names and masked phones for the rows on screen (logged)",
+	                                  query=[("principals", True)]),
+	BASE + "principal.link_query": op("Desk link-field search for a beneficiary (IDs only)",
+	                                 query=[("txt", False), ("doctype", True), ("searchfield", False), ("start", False), ("page_len", False), ("filters", False)], method="get"),
 	BASE + "evidence.view": op("Play or view one encrypted evidence file (staff; logged)", query=[("file_url", True)], method="get"),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
