@@ -9,9 +9,13 @@ Agreed By Purpose,उद्देश्य के अनुसार सहम�
 Agreed to,इनके लिए सहमति
 Analytics,विश्लेषण
 Anumati Settings,अनुमति सेटिंग्स
+Approve audio,ऑडियो स्वीकृत करें
 Approved,स्वीकृत
+Approved by {0},{0} ने स्वीकृत किया
 Assessing,जाँच जारी
 Assigned to me,मुझे सौंपे गए
+Audio,ऑडियो
+Audio notice,ऑडियो सूचना
 Audit Entry,ऑडिट लॉग प्रविष्टि
 Audit Share,ऑडिटर लिंक
 Audit log,ऑडिट लॉग
@@ -67,6 +71,7 @@ Guardians,अभिभावक
 Hash chain check FAILED. Tell the DPO now.,हैश शृंखला की जाँच असफल। DPO को अभी बताएँ।
 Hash chain not checked yet (runs every night),हैश शृंखला की जाँच अभी नहीं हुई (हर रात होती है)
 Hash chain verified {0},हैश शृंखला की जाँच {0} हुई
+"Have you listened to the whole recording, and does it say exactly what the notice says?","क्या आपने पूरी रिकॉर्डिंग सुनी है, और क्या वह ठीक वही कहती है जो सूचना में लिखा है?"
 How,कैसे
 How People Consented,लोगों ने सहमति कैसे दी
 How The Notice Was Given,सूचना कैसे दी गई
@@ -76,6 +81,10 @@ How to withdraw consent,सहमति वापस कैसे लें
 Inbox,इनबॉक्स
 Incidents and audit,घटनाएँ और ऑडिट
 Live,चालू
+"Machine-made, not approved: not played in the field","मशीन से बना, स्वीकृत नहीं: फील्ड में नहीं चलेगा"
+Make audio again,ऑडियो फिर से बनाएँ
+Make natural audio,प्राकृतिक आवाज़ में ऑडियो बनाएँ
+Making audio… this can take a minute,ऑडियो बन रहा है… एक मिनट लग सकता है
 Match,मिलाएँ
 Merged,मिला दिया
 Message Template,संदेश टेम्पलेट
@@ -127,6 +136,7 @@ Re-consent campaign,दोबारा सहमति अभियान
 Record views,रिकॉर्ड कब देखे गए
 Record withdrawal,सहमति वापसी दर्ज करें
 Recorded (30 Days),दर्ज (30 दिन)
+Recorded audio,रिकॉर्ड की गई आवाज़
 Recorded by,दर्ज करने वाले
 Records and risk,रिकॉर्ड और जोखिम
 Records of processing,प्रोसेसिंग रिकॉर्ड

@@ -12,6 +12,7 @@ frappe.ui.form.on("Notice Translation", {
 		} else {
 			frm.set_intro(__("Reviewed by {0}", [frm.doc.reviewer]), "green");
 		}
+		anumati_notice_audio(frm);
 	},
 	reviewer(frm) {
 		if (frm.doc.reviewer && !frm.doc.reviewed_on) frm.set_value("reviewed_on", frappe.datetime.get_today());

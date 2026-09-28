@@ -30,6 +30,8 @@ def get_active(programme, language=None):
 		"summary": notice.summary, "full_text": notice.full_text, "purposes": purposes,
 		"cross_border_transfers": notice.cross_border_transfers, "pictorial_card": notice.pictorial_card,
 		**{k: notice.get(k) for k in RULE3}, "translation": None,
+		# Audio of the base notice, once a reviewer approved it (machine-made audio never plays unreviewed).
+		"audio_file": notice.audio_file if (notice.audio_file and (not notice.audio_machine_made or notice.audio_reviewed_by)) else None,
 	}
 	if language:
 		t = frappe.db.get_value(

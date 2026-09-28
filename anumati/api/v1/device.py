@@ -38,7 +38,9 @@ def register(device_id, app_version=None, model=None, pending=0):
 	doc.last_sync = now_datetime()
 	doc.flags.ignore_permissions = True
 	doc.save()
-	return {"status": doc.status, "wipe": wipe}
+	# Tell the app whether to offer the spoken yes/no hint (Anumati Settings; off by default).
+	helper = bool(cint(frappe.db.get_single_value("Anumati Settings", "voice_listen_helper")))
+	return {"status": doc.status, "wipe": wipe, "voice_helper": helper and not wipe}
 
 
 @frappe.whitelist(methods=["POST"])

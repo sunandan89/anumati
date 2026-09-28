@@ -117,6 +117,8 @@ PATHS = {
 	BASE + "principal.link_query": op("Desk link-field search for a beneficiary (IDs only)",
 	                                 query=[("txt", False), ("doctype", True), ("searchfield", False), ("start", False), ("page_len", False), ("filters", False)], method="get"),
 	BASE + "evidence.view": op("Play or view one encrypted evidence file (staff; logged)", query=[("file_url", True)], method="get"),
+	BASE + "voice.hear": op("Field app: what Sarvam heard in a short consent clip, and yes / no / unclear (a hint; nothing stored)",
+	                       body=None, query=[("audio", True), ("language", False), ("filename", False)]),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

@@ -361,6 +361,17 @@ MESSAGES = [
     ("Preview", None, "पूर्वावलोकन"),
     ("Yes to all", None, "सब के लिए हाँ"), ("No to all", None, "सब के लिए ना"),
     ("View guardian document", None, "अभिभावक का दस्तावेज़ देखें"),
+    ("Make natural audio", None, "प्राकृतिक आवाज़ में ऑडियो बनाएँ"),
+    ("Make audio again", None, "ऑडियो फिर से बनाएँ"),
+    ("Approve audio", None, "ऑडियो स्वीकृत करें"),
+    ("Audio", None, "ऑडियो"),
+    ("Audio notice", None, "ऑडियो सूचना"),
+    ("Approved by {0}", None, "{0} ने स्वीकृत किया"),
+    ("Recorded audio", None, "रिकॉर्ड की गई आवाज़"),
+    ("Machine-made, not approved: not played in the field", None, "मशीन से बना, स्वीकृत नहीं: फील्ड में नहीं चलेगा"),
+    ("Making audio… this can take a minute", None, "ऑडियो बन रहा है… एक मिनट लग सकता है"),
+    ("Have you listened to the whole recording, and does it say exactly what the notice says?", None,
+     "क्या आपने पूरी रिकॉर्डिंग सुनी है, और क्या वह ठीक वही कहती है जो सूचना में लिखा है?"),
 ]
 
 

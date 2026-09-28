@@ -1397,6 +1397,48 @@
     },
     "summary": "Check the code; confirms the consent"
    }
+  },
+  "/api/v2/method/anumati.api.v1.voice.hear": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "audio",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "language",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "filename",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Field app: what Sarvam heard in a short consent clip, and yes / no / unclear (a hint; nothing stored)"
+   }
   }
  },
  "security": [

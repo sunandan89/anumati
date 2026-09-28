@@ -22,6 +22,10 @@
   "summary",
   "full_text",
   "pictorial_card",
+  "notice_audio_section",
+  "audio_file",
+  "audio_machine_made",
+  "audio_reviewed_by",
   "rule3_tab",
   "rule3_section",
   "withdrawal_methods",
@@ -134,6 +138,34 @@
    "label": "Pictorial card"
   },
   {
+   "fieldname": "notice_audio_section",
+   "fieldtype": "Section Break",
+   "label": "Audio notice (base language)"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "audio_file",
+   "fieldtype": "Attach",
+   "label": "Audio notice",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "description": "Machine-made audio is never played in the field until a reviewer approves it",
+   "fieldname": "audio_machine_made",
+   "fieldtype": "Check",
+   "label": "Audio is machine-made",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "audio_reviewed_by",
+   "fieldtype": "Link",
+   "label": "Audio approved by",
+   "options": "User",
+   "read_only": 1
+  },
+  {
    "fieldname": "rule3_tab",
    "fieldtype": "Tab Break",
    "label": "Rule 3 checklist"
@@ -207,7 +239,7 @@
    "link_fieldname": "notice"
   }
  ],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-02 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Template",
