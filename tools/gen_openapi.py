@@ -109,6 +109,8 @@ PATHS = {
 	                            query=[("device_id", True), ("app_version", False), ("model", False), ("pending", False)]),
 	BASE + "device.report_lost": op("Mark a phone lost (staff): wipe on next contact, opens a breach incident",
 	                               query=[("device", True)]),
+	BASE + "principal.reveal": op("Name and masked phone for a Desk form (logged)", query=[("principal", True)], method="get"),
+	BASE + "evidence.view": op("Play or view one encrypted evidence file (staff; logged)", query=[("file_url", True)], method="get"),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

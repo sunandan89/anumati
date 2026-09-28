@@ -86,3 +86,26 @@ def for_device(programme, since=None, limit=500):
 			],
 		})
 	return {"people": out, "until": until, "more": len(rows) >= limit * 10 or len(people) >= limit}
+
+
+def mask_phone(phone: str | None) -> str:
+	"""9876543210 -> 9876543XXX: enough to recognise, not enough to call."""
+	digits = "".join(ch for ch in (phone or "") if ch.isdigit())
+	if not digits:
+		return ""
+	keep = max(len(digits) - 3, 0)
+	return digits[:keep] + "X" * (len(digits) - keep)
+
+
+@frappe.whitelist(methods=["GET"])
+def reveal(principal):
+	"""Name and masked phone for Desk forms. Needs read on the Data Principal; each view goes to the Access
+	Log. The full number is never sent to the browser."""
+	doc = frappe.get_doc("Data Principal", principal)
+	doc.check_permission("read")
+	from frappe.core.doctype.access_log.access_log import make_access_log
+
+	make_access_log(doctype="Data Principal", document=doc.name, file_type="name")
+	return {"principal_ref": doc.principal_ref,
+	        "full_name": doc.get_password("full_name", raise_exception=False) or "",
+	        "phone_masked": mask_phone(doc.get_password("phone", raise_exception=False))}
