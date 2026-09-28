@@ -6,3 +6,4 @@
 # Patches added in this section will be executed after doctypes are migrated
 anumati.patches.remove_old_workspace
 anumati.patches.backfill_search_fields
+anumati.patches.rename_demo_programmes

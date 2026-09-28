@@ -11,7 +11,7 @@ def execute():
 		full_name = doc.get_password("full_name", raise_exception=False)
 		if full_name:
 			frappe.db.set_value("Data Principal", name, "name_index", name_index(full_name), update_modified=False)
-	# Notice lists show "Demo Health Camp v1.0.0" instead of the programme code.
+	# Notice lists show "Village Health Camps v1.0.0" instead of the programme code.
 	for row in frappe.get_all("Notice Template", {"programme_name": ("is", "not set")}, ["name", "programme"]):
 		title = frappe.db.get_value("Programme", row.programme, "programme_name")
 		if title:

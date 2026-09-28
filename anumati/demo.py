@@ -2,8 +2,9 @@
 
 Creates, idempotently:
 - Frappe Mobile Control's Mobile Configuration for Anumati Collect (if Mobile Control is installed);
-- a fictional demo programme (DEMO) with four purposes, approved ROPA entries, a published notice and a
-  reviewed Hindi translation, all through the stock Notice Publishing and ROPA Approval workflows;
+- three fictional demo programmes (Village Health Camps = DEMO, After-school Learning Centres = EDU,
+  Women's Self-Help Groups = SHG), each with four purposes, approved ROPA entries, a published notice and
+  a reviewed Hindi translation, all through the stock Notice Publishing and ROPA Approval workflows;
 - a test field worker user with the Anumati Field Worker and Mobile User roles.
 
 Everything here is fictional sample data. Run it as Administrator (the workflows need the DPO role)."""
@@ -28,6 +29,15 @@ PURPOSES = (
 	("research", "Anonymised research", "Test results without names, to plan health services in the district.", 0, 0),
 )
 
+# Rule 3 text shared by every demo notice (the organisation is fictional).
+RULE3 = {
+	"withdrawal_methods": "Reply STOP with your receipt code by SMS, give a missed call, or tell any worker.",
+	"rights_text": "You can see, correct or delete your data, and name someone to act for you.",
+	"board_complaint_route": "Data Protection Board of India",
+	"dpo_contact": "Data Protection Officer, Demo Foundation (fictional)",
+	"security_summary": "Encrypted on the phone and on the server; every consent is signed.",
+}
+
 HINDI = {
 	"summary": "हम आपकी स्वास्थ्य जाँच करते हैं और ज़रूरत हो तो डॉक्टर के पास भेजते हैं।",
 	"full_text": "नाम, उम्र, फ़ोन नंबर और जाँच के नतीजे। 24 महीने तक सुरक्षित रखे जाएँगे।",
@@ -41,6 +51,50 @@ HINDI = {
 	"dpo_contact": "डेटा संरक्षण अधिकारी, डेमो फ़ाउंडेशन (काल्पनिक)",
 	"security_summary": "फ़ोन और सर्वर दोनों पर एन्क्रिप्टेड; हर सहमति पर डिजिटल हस्ताक्षर।",
 }
+
+# Three fictional programmes of the kind NGOs run. DEMO keeps its code (the field app and sample data
+# use it); only its display name changed from the earlier "Demo Health Camp (fictional)".
+PROGRAMMES = (
+	{
+		"code": PROGRAMME, "name": "Village Health Camps", "persona": "beneficiary",
+		"category": "Health readings", "retention": "24 months", "purposes": PURPOSES,
+		"summary": "We screen your health and refer you to a doctor if needed.",
+		"full_text": "Name, age, phone number and test results. Kept safely for 24 months.",
+		"hindi": {"summary": HINDI["summary"], "full_text": HINDI["full_text"]},
+		"verification": ("device_sms_otp", "deferred", "evidence_only"),
+	},
+	{
+		"code": "EDU", "name": "After-school Learning Centres", "persona": "student",
+		"category": "Learning records", "retention": "36 months",
+		"purposes": (
+			("attend", "Attendance and learning records", "Who comes to the centre and how their reading and maths improve.", 1, 1),
+			("parents", "SMS updates to parents", "A short SMS to a parent about attendance and progress.", 0, 1),
+			("photos", "Photos for our reports", "Photos of centre activities, never with the child's name.", 0, 1),
+			("study", "Anonymised learning study", "Scores without names, to improve our teaching.", 0, 0),
+		),
+		"summary": "We run free after-school classes and keep simple records of each child's learning.",
+		"full_text": "Child's name, age, class, school, a parent's phone number and test scores. Kept for 36 months.",
+		"hindi": {"summary": "हम स्कूल के बाद मुफ़्त कक्षाएँ चलाते हैं और हर बच्चे की पढ़ाई का रिकॉर्ड रखते हैं।",
+		          "full_text": "बच्चे का नाम, उम्र, कक्षा, स्कूल, माता/पिता का फ़ोन नंबर और टेस्ट के अंक। 36 महीने तक रखे जाएँगे।"},
+		"verification": ("device_sms_otp", "deferred"),
+	},
+	{
+		"code": "SHG", "name": "Women's Self-Help Groups", "persona": "member",
+		"category": "Savings and loan records", "retention": "60 months",
+		"purposes": (
+			("savings", "Group savings and loan records", "Your savings, loans and repayments in the group's books.", 1, 0),
+			("bank", "Share with the partner bank", "Your name and savings record go to the bank for a group loan.", 0, 0),
+			("training", "Training reminders by SMS", "An SMS before each training session.", 0, 0),
+			("survey", "Anonymised impact survey", "Answers without names, to show what the groups achieve.", 0, 0),
+		),
+		"summary": "We support self-help groups with savings records, bank loans and training.",
+		"full_text": "Name, phone number, group, savings and loan amounts. Kept for 60 months.",
+		"hindi": {"summary": "हम स्वयं सहायता समूहों को बचत रिकॉर्ड, बैंक ऋण और प्रशिक्षण में मदद करते हैं।",
+		          "full_text": "नाम, फ़ोन नंबर, समूह, बचत और ऋण की राशि। 60 महीने तक रखे जाएँगे।"},
+		"verification": ("device_sms_otp", "deferred", "evidence_only"),
+	},
+)
+OLD_NAMES = {"Demo Health Camp (fictional)"}
 
 
 def configure_mobile_app() -> bool:
@@ -68,53 +122,59 @@ def _ensure_language(code, name):
 
 
 def create_demo_programme() -> str:
-	"""The fictional DEMO programme with a published notice. Returns the notice name."""
+	"""The fictional demo programmes, each with approved records of processing, a published notice and a
+	reviewed Hindi translation. Returns the DEMO programme's notice name."""
 	_ensure_language("en", "English")
 	_ensure_language("hi", "Hindi")
-	if not frappe.db.exists("Programme", PROGRAMME):
-		frappe.get_doc({
-			"doctype": "Programme", "code": PROGRAMME, "programme_name": "Demo Health Camp (fictional)",
-			"status": "Live", "languages": [{"language": "en"}, {"language": "hi"}],
-			"verification_methods": [{"verification_method": m} for m in ("device_sms_otp", "deferred", "evidence_only")],
-		}).insert()
-	if not frappe.db.exists("Data Category", "Health readings"):
-		frappe.get_doc({"doctype": "Data Category", "category_name": "Health readings"}).insert()
+	notices = [_programme(spec) for spec in PROGRAMMES]
+	return notices[0]
 
-	for code, title, description, essential, child_allowed in PURPOSES:
-		name = f"{PROGRAMME}-{code}"
+
+def _programme(spec) -> str:
+	code = spec["code"]
+	if not frappe.db.exists("Programme", code):
+		frappe.get_doc({
+			"doctype": "Programme", "code": code, "programme_name": spec["name"], "persona": spec["persona"],
+			"status": "Live", "languages": [{"language": "en"}, {"language": "hi"}],
+			"verification_methods": [{"verification_method": m} for m in spec["verification"]],
+		}).insert()
+	elif frappe.db.get_value("Programme", code, "programme_name") in OLD_NAMES:
+		frappe.db.set_value("Programme", code, "programme_name", spec["name"])
+		for name in frappe.get_all("Notice Template", {"programme": code}, pluck="name"):
+			frappe.db.set_value("Notice Template", name, "programme_name", spec["name"], update_modified=False)
+	if not frappe.db.exists("Data Category", spec["category"]):
+		frappe.get_doc({"doctype": "Data Category", "category_name": spec["category"]}).insert()
+
+	for pcode, title, description, essential, child_allowed in spec["purposes"]:
+		name = f"{code}-{pcode}"
 		if not frappe.db.exists("Purpose", name):
 			frappe.get_doc({
-				"doctype": "Purpose", "programme": PROGRAMME, "code": code, "purpose_title": title,
+				"doctype": "Purpose", "programme": code, "code": pcode, "purpose_title": title,
 				"description": description, "essential": essential, "child_allowed": child_allowed,
 			}).insert()
 		if not frappe.db.exists("ROPA Entry", {"purpose": name, "status": "Approved"}):
 			ropa = frappe.get_doc({
-				"doctype": "ROPA Entry", "purpose": name, "retention": "24 months",
+				"doctype": "ROPA Entry", "purpose": name, "retention": spec["retention"],
 				"safeguards": "Encrypted at rest and in transit; access by role",
-				"data_categories": [{"data_category": "Health readings"}],
+				"data_categories": [{"data_category": spec["category"]}],
 			}).insert()
 			apply_workflow(ropa, "Approve")
 
-	notice = frappe.db.get_value("Notice Template", {"programme": PROGRAMME, "status": "Published"}, "name")
+	notice = frappe.db.get_value("Notice Template", {"programme": code, "status": "Published"}, "name")
 	if not notice:
 		doc = frappe.get_doc({
-			"doctype": "Notice Template", "programme": PROGRAMME, "version": "1.0.0",
-			"summary": "We screen your health and refer you to a doctor if needed.",
-			"full_text": "Name, age, phone number and test results. Kept safely for 24 months.",
-			"purposes": [{"purpose": f"{PROGRAMME}-{p[0]}"} for p in PURPOSES],
-			"withdrawal_methods": "Reply STOP with your receipt code by SMS, give a missed call, or tell any worker.",
-			"rights_text": "You can see, correct or delete your data, and name someone to act for you.",
-			"board_complaint_route": "Data Protection Board of India",
-			"dpo_contact": "Data Protection Officer, Demo Foundation (fictional)",
-			"security_summary": "Encrypted on the phone and on the server; every consent is signed.",
+			"doctype": "Notice Template", "programme": code, "version": "1.0.0",
+			"summary": spec["summary"], "full_text": spec["full_text"],
+			"purposes": [{"purpose": f"{code}-{p[0]}"} for p in spec["purposes"]],
+			**RULE3,
 		}).insert()
 		notice = apply_workflow(doc, "Publish").name
 
 	existing = frappe.db.get_value("Notice Translation", {"notice": notice, "language": "hi"})
 	if not existing:
 		frappe.get_doc({
-			"doctype": "Notice Translation", "notice": notice, "language": "hi", **HINDI,
-			"machine_translated": 0, "reviewer": frappe.session.user,
+			"doctype": "Notice Translation", "notice": notice, "language": "hi",
+			**HINDI, **spec["hindi"], "machine_translated": 0, "reviewer": frappe.session.user,
 		}).insert()
 	elif not frappe.db.get_value("Notice Translation", existing, "rights_text"):
 		# Earlier demo translations predate the translated Rule 3 fields; fill them in.

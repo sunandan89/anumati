@@ -176,7 +176,7 @@ It switches on Mobile Configuration for Anumati Collect, creates the fictional *
 1. Frappe Cloud → **Sites** → your site → **Site Config** tab → **Add Config**.
 2. Key: choose **Custom key**, type `anumati_demo_password`. Value: the password you want for the test field worker (type it here yourself). **Save**.
 3. Site → **Actions** (or **⋯**) → **Migrate** (or deploy the bench group again).
-On that migrate, the site switches on Mobile Configuration, creates the DEMO programme with its published notice, and sets up `fieldworker.demo@example.com` with your password. Delete the key after the pilot so a later migrate doesn't reset the password.
+On that migrate, the site switches on Mobile Configuration, creates three fictional demo programmes (Village Health Camps, After-school Learning Centres, Women's Self-Help Groups) with published notices, and sets up `fieldworker.demo@example.com` with your password. Delete the key after the pilot so a later migrate doesn't reset the password.
 
 ### F3. Switch the app on (inside your site)
 1. Search bar → **Mobile Configuration**.
