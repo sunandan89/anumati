@@ -76,9 +76,15 @@ class TestConsole(FrappeTestCase):
 	def test_charts_compute(self):
 		from frappe.desk.doctype.dashboard_chart.dashboard_chart import get
 
+		from anumati.tests.utils import make_event
+
+		make_event()  # so at least one Group By chart has data; stock charts return None when empty
 		for name in frappe.get_all("Dashboard Chart", filters={"module": "Anumati"}, pluck="name"):
 			data = get(chart_name=name, refresh=1)
-			self.assertIn("labels", data, name)
+			if data is not None:
+				self.assertIn("labels", data, name)
+		data = get(chart_name="How People Consented", refresh=1)
+		self.assertIn("assisted_thumbprint", data["labels"])
 
 	def test_requests_board_covers_every_status(self):
 		board = frappe.get_doc("Kanban Board", "Requests")
