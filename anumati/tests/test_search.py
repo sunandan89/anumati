@@ -108,9 +108,13 @@ class TestReadableDesk(FrappeTestCase):
 		for doctype in ("Data Principal", "Consent Event", "Consent State", "Rights Request", "ROPA Entry",
 		                "Purge Request", "Propagation Ack", "Verification Attempt", "Field Device", "Guardian Link"):
 			self.assertIn(doctype, labels, doctype)
+		with open(os.path.join(frappe.get_app_path("anumati"), "translations", "hi.csv"), encoding="utf-8") as fh:
+			hindi = {row[0] for row in csv.reader(fh) if row}
+		self.assertEqual(set(labels) - hindi, set(), "every English label needs a Hindi one (tools/gen_labels.py)")
 		for doctype in frappe.get_all("DocType", {"module": "Anumati"}, pluck="name"):
 			for f in frappe.get_meta(doctype).fields:
 				if f.fieldtype == "Select":
 					for option in (f.options or "").split("\n"):
-						if "_" in option:
+						if "_" in option or option.islower():
 							self.assertIn(option, labels, f"{doctype}.{f.fieldname}: {option}")
+							self.assertIn(option, hindi, f"{doctype}.{f.fieldname}: {option} (Hindi)")

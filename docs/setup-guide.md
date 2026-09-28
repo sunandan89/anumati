@@ -222,3 +222,6 @@ Useful places:
 - **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
 - **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.
 - **A breach**: the form shows the hours left of the 72-hour deadline. Click **Board told now** when you have told the Board.
+
+### Hindi Desk
+Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **Language** = **Hindi** → **Save**, then reload. Menu sections, record names, dropdown values, statuses, chart labels and the main buttons and messages appear in Hindi. Some field labels on forms stay in English for now. The Hindi labels are a first draft in `tools/gen_labels.py`: have a Hindi-speaking colleague read them before the pilot and send corrections.

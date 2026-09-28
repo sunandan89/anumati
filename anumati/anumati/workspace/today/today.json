@@ -6,7 +6,7 @@
   }
  ],
  "content": "[{\"id\": \"today0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"today1\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Needs Attention\", \"col\": 12}}, {\"id\": \"today2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 3}}, {\"id\": \"today3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"today4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"today5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"today6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"today7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Inbox\", \"col\": 3}}, {\"id\": \"today8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Find a receipt\", \"col\": 3}}, {\"id\": \"today9\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"today10\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"today11\", \"type\": \"card\", \"data\": {\"card_name\": \"Requests\", \"col\": 4}}]",
- "creation": "2026-09-29 10:00:00.000000",
+ "creation": "2026-09-30 10:00:00.000000",
  "custom_blocks": [
   {
    "custom_block_name": "Needs Attention",
@@ -61,7 +61,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-29 10:00:00.000000",
+ "modified": "2026-09-30 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Today",
