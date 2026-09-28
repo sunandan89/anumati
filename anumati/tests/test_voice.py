@@ -153,7 +153,7 @@ class TestVoice(FrappeTestCase):
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
 			done = demo.prepare_demo_voice()
 		self.assertEqual(done["failed"], 0)
-		self.assertGreaterEqual(done["made"], 6)  # 3 programmes x (notice + Hindi translation)
+		self.assertGreaterEqual(done["made"] + done["already"], 6)  # 3 programmes x (notice + Hindi)
 		self.assertEqual(frappe.db.get_value("User", demo.FIELD_WORKER, "gender"), "Male")
 		for spec in demo.PROGRAMMES:
 			out = notice.get_active(spec["code"], language="hi")
@@ -191,3 +191,18 @@ class TestVoice(FrappeTestCase):
 		self.assertFalse(doc.audio_machine_made)
 		self.assertFalse(doc.audio_reviewed_by)
 		self.assertFalse(doc.audio_file_male)
+
+	def test_bundled_demo_audio_matches_the_notice_text_and_needs_no_sarvam(self):
+		for doctype in ("Notice Template", "Notice Translation"):
+			for name in frappe.get_all(doctype, pluck="name"):
+				frappe.db.set_value(doctype, name, {"audio_file": None, "audio_file_male": None, "audio_reviewed_by": None})
+		with patch("anumati.voice.requests.post", side_effect=AssertionError("must not call Sarvam")):
+			attached = demo.attach_bundled_audio()
+		self.assertEqual(attached, 6, "every demo notice and its Hindi translation has a shipped recording")
+		for spec in demo.PROGRAMMES:
+			out = notice.get_active(spec["code"], language="hi")
+			self.assertTrue(out["audio_file"] and out["audio_file_male"], spec["code"])
+			self.assertTrue(out["translation"]["audio_file"] and out["translation"]["audio_file_male"], spec["code"])
+		# A notice whose text was edited never gets a shipped recording of the old text.
+		frappe.db.set_value("Notice Translation", self.translation, {"audio_file": None, "summary": "बदला हुआ सार"})
+		self.assertEqual(demo.attach_bundled_audio(), 0)

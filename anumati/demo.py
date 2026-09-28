@@ -342,6 +342,55 @@ def set_demo_genders():
 		frappe.db.set_value("User", FIELD_WORKER, "gender", "Male")
 
 
+DEMO_NOTE = ("Demo audio approved automatically for this fictional demo programme. Listen to it in the "
+             "Audio notice box; real programmes always need a person to approve their audio.")
+
+
+def _demo_targets():
+	for spec in PROGRAMMES:
+		notice = frappe.db.get_value("Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
+		if notice:
+			yield ("Notice Template", notice)
+			for t in frappe.get_all("Notice Translation", {"notice": notice}, pluck="name"):
+				yield ("Notice Translation", t)
+
+
+def attach_bundled_audio() -> int:
+	"""Demo sites only: attach the demo recordings shipped with the app (tools/gen_demo_audio.py), in the
+	woman's and man's voice, and approve them. No Sarvam call. A clip is used only when this site's notice
+	text is exactly the text it was recorded from, so an edited notice never gets the wrong audio."""
+	import json
+	import os
+
+	from anumati import voice
+
+	if not frappe.db.exists("Programme", PROGRAMME):
+		return 0
+	folder = frappe.get_app_path("anumati", "public", "demo_audio")
+	manifest_path = os.path.join(folder, "manifest.json")
+	if not os.path.exists(manifest_path):
+		return 0
+	with open(manifest_path) as fh:
+		manifest = json.load(fh)
+	attached = 0
+	for doctype, name in _demo_targets():
+		doc = frappe.get_doc(doctype, name)
+		entry = manifest.get(voice.script_hash(voice.notice_script(doc)))
+		if doc.audio_file or not entry:
+			continue
+		urls = {}
+		for gender, field in (("female", "audio_file"), ("male", "audio_file_male")):
+			with open(os.path.join(folder, entry[gender]), "rb") as fh:
+				urls[field] = frappe.get_doc({
+					"doctype": "File", "file_name": entry[gender], "content": fh.read(), "is_private": 1,
+					"attached_to_doctype": doctype, "attached_to_name": name,
+				}).insert(ignore_permissions=True).file_url
+		voice._save(doc, **urls, audio_machine_made=1, audio_reviewed_by="Administrator")
+		doc.add_comment("Comment", _(DEMO_NOTE))
+		attached += 1
+	return attached
+
+
 @frappe.whitelist(methods=["POST"])
 def record_demo_audio():
 	"""Anumati Settings > Record demo audio (Sarvam). Starts recording in the background (about a minute
@@ -368,6 +417,7 @@ def prepare_demo_voice(notify: str | None = None) -> dict:
 	set_demo_genders()
 	from anumati import voice
 
+	done["already"] += attach_bundled_audio()  # shipped recordings first: free and instant
 	try:
 		voice._key()
 	except voice.VoiceError:
@@ -385,9 +435,7 @@ def prepare_demo_voice(notify: str | None = None) -> dict:
 			try:
 				voice.generate_notice_audio(doctype, name)
 				voice.approve_notice_audio(doctype, name)
-				frappe.get_doc(doctype, name).add_comment("Comment", _(
-					"Demo audio made and approved automatically for this fictional demo programme. Listen to it "
-					"in the Audio notice box; real programmes always need a person to approve their audio."))
+				frappe.get_doc(doctype, name).add_comment("Comment", _(DEMO_NOTE))
 				if not frappe.flags.in_test:
 					frappe.db.commit()  # keep each paid recording even if a later one fails
 				done["made"] += 1
@@ -422,9 +470,11 @@ def after_migrate():
 		frappe.log_error(title="Anumati: could not configure Mobile Control")
 	# Demo voice set-up calls Sarvam, so it runs from the hourly scheduler, never during a deploy.
 	try:
-		set_demo_genders() if frappe.db.exists("Programme", PROGRAMME) else None
+		if frappe.db.exists("Programme", PROGRAMME):
+			set_demo_genders()
+			attach_bundled_audio()  # recordings shipped with the app; no Sarvam call during a deploy
 	except Exception:
-		frappe.log_error(title="Anumati: could not set the demo field worker's gender")
+		frappe.log_error(title="Anumati: could not set up the demo field worker or demo audio")
 	password = frappe.conf.get("anumati_demo_password")
 	if not password:
 		return
