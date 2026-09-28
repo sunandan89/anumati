@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"setup0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"setup1\", \"type\": \"card\", \"data\": {\"card_name\": \"Organisation\", \"col\": 4}}, {\"id\": \"setup2\", \"type\": \"card\", \"data\": {\"card_name\": \"Messaging\", \"col\": 4}}, {\"id\": \"setup3\", \"type\": \"card\", \"data\": {\"card_name\": \"Connected systems\", \"col\": 4}}]",
- "creation": "2026-09-30 10:00:00.000000",
+ "creation": "2026-10-01 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -117,7 +117,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-01 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Setup",

@@ -1,16 +1,28 @@
 {
  "charts": [
   {
+   "chart_name": "Verification Pipeline",
+   "label": "Verification Pipeline"
+  },
+  {
+   "chart_name": "Withdrawals By Channel",
+   "label": "Withdrawals By Channel"
+  },
+  {
    "chart_name": "Consent Events Per Week",
    "label": "Consent Events Per Week"
   }
  ],
- "content": "[{\"id\": \"today0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"today1\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Needs Attention\", \"col\": 12}}, {\"id\": \"today2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 3}}, {\"id\": \"today3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"today4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"today5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"today6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"today7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Inbox\", \"col\": 3}}, {\"id\": \"today8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Find a receipt\", \"col\": 3}}, {\"id\": \"today9\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"today10\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"today11\", \"type\": \"card\", \"data\": {\"card_name\": \"Requests\", \"col\": 4}}]",
- "creation": "2026-09-30 10:00:00.000000",
+ "content": "[{\"id\": \"today0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"today1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Recorded (30 Days)\", \"col\": 4}}, {\"id\": \"today2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Confirmed\", \"col\": 4}}, {\"id\": \"today3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Evidence Only\", \"col\": 4}}, {\"id\": \"today4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Waiting To Sync\", \"col\": 4}}, {\"id\": \"today5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawn (30 Days)\", \"col\": 4}}, {\"id\": \"today6\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 4}}, {\"id\": \"today7\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Verification Pipeline\", \"col\": 4}}, {\"id\": \"today8\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Withdrawals By Channel\", \"col\": 4}}, {\"id\": \"today9\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Needs Attention\", \"col\": 4}}, {\"id\": \"today10\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Programmes At A Glance\", \"col\": 12}}, {\"id\": \"today11\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"today12\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Inbox\", \"col\": 3}}, {\"id\": \"today13\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Find a receipt\", \"col\": 3}}, {\"id\": \"today14\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"today15\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"today16\", \"type\": \"card\", \"data\": {\"card_name\": \"Requests\", \"col\": 4}}]",
+ "creation": "2026-10-01 10:00:00.000000",
  "custom_blocks": [
   {
    "custom_block_name": "Needs Attention",
    "label": "Needs Attention"
+  },
+  {
+   "custom_block_name": "Programmes At A Glance",
+   "label": "Programmes At A Glance"
   }
  ],
  "docstatus": 0,
@@ -61,26 +73,34 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-01 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Today",
  "number_cards": [
   {
+   "label": "Recorded (30 Days)",
+   "number_card_name": "Recorded (30 Days)"
+  },
+  {
+   "label": "Confirmed",
+   "number_card_name": "Confirmed"
+  },
+  {
+   "label": "Evidence Only",
+   "number_card_name": "Evidence Only"
+  },
+  {
+   "label": "Waiting To Sync",
+   "number_card_name": "Waiting To Sync"
+  },
+  {
+   "label": "Withdrawn (30 Days)",
+   "number_card_name": "Withdrawn (30 Days)"
+  },
+  {
    "label": "Open Rights Requests",
    "number_card_name": "Open Rights Requests"
-  },
-  {
-   "label": "Overdue Requests",
-   "number_card_name": "Overdue Requests"
-  },
-  {
-   "label": "Consents This Week",
-   "number_card_name": "Consents This Week"
-  },
-  {
-   "label": "Withdrawals This Week",
-   "number_card_name": "Withdrawals This Week"
   }
  ],
  "owner": "Administrator",

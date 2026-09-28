@@ -1,11 +1,11 @@
 {
- "chart_name": "How The Notice Was Given",
+ "chart_name": "Verification Pipeline",
  "chart_type": "Custom",
- "color": "#3E6B3A",
+ "color": "#7C8FD6",
  "creation": "2026-10-01 10:00:00.000000",
  "docstatus": 0,
  "doctype": "Dashboard Chart",
- "document_type": "Consent Event",
+ "document_type": "Consent State",
  "dynamic_filters_json": "[]",
  "filters_json": "[]",
  "idx": 0,
@@ -14,11 +14,11 @@
  "modified": "2026-10-01 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
- "name": "How The Notice Was Given",
+ "name": "Verification Pipeline",
  "number_of_groups": 0,
  "owner": "Administrator",
  "source": "Anumati Breakdown",
  "timeseries": 0,
- "type": "Donut",
+ "type": "Bar",
  "use_report_chart": 0
 }

@@ -1,7 +1,7 @@
 {
- "chart_name": "How The Notice Was Given",
+ "chart_name": "Withdrawals By Channel",
  "chart_type": "Custom",
- "color": "#3E6B3A",
+ "color": "#B4532A",
  "creation": "2026-10-01 10:00:00.000000",
  "docstatus": 0,
  "doctype": "Dashboard Chart",
@@ -14,11 +14,11 @@
  "modified": "2026-10-01 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
- "name": "How The Notice Was Given",
+ "name": "Withdrawals By Channel",
  "number_of_groups": 0,
  "owner": "Administrator",
  "source": "Anumati Breakdown",
  "timeseries": 0,
- "type": "Donut",
+ "type": "Bar",
  "use_report_chart": 0
 }

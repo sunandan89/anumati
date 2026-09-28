@@ -10,21 +10,28 @@ Consent State,Current consent
 Consents By Field Worker,Consents by field worker
 Consents By Language,Consents by language
 Data Principal,Beneficiary
+Evidence Only,Evidence only
 Field Device,Field phone
 Funder Link,Funder sharing
 Guardian Link,Guardian
 How People Consented,How people consented
 How The Notice Was Given,How the notice was given
 Notice Template,Notice
+Programmes At A Glance,Programmes at a glance
 Propagation Ack,Partner confirmation
 Purge Request,Deletion task
 ROPA Entry,Record of processing
+Recorded (30 Days),Recorded (30 days)
 Requests By Type,Requests by type
 Retention Policy,Retention rule
 Rights Request,Request
 Source System,Connected system
 System Usage Log,Consent check log
 Verification Attempt,Confirmation attempt
+Verification Pipeline,Verification pipeline
+Waiting To Sync,Waiting to sync
+Withdrawals By Channel,Withdrawals by channel
+Withdrawn (30 Days),Withdrawn (30 days)
 access,Data access
 active,Active
 allow,Allowed

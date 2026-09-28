@@ -16,7 +16,7 @@ fixtures = [
 	{"dt": "Notification", "filters": [["name", "like", "Anumati - %"]]},
 	# Desk console (tools/gen_desk.py): Needs attention block, Requests board, saved filters,
 	# and DPO read access to the stock Access Log / View Log.
-	{"dt": "Custom HTML Block", "filters": [["name", "in", ["Needs Attention"]]]},
+	{"dt": "Custom HTML Block", "filters": [["name", "in", ["Needs Attention", "Programmes At A Glance"]]]},
 	{"dt": "Kanban Board", "filters": [["name", "in", ["Requests"]]]},
 	{"dt": "List Filter", "filters": [["name", "like", "anumati-%"]]},
 	{"dt": "Custom DocPerm", "filters": [["name", "like", "anumati-%"]]},
