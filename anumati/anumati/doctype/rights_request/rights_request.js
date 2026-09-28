@@ -4,9 +4,9 @@
 frappe.ui.form.on("Rights Request", {
 	refresh(frm) {
 		if (frm.doc.status === "Unmatched" && frm.doc.candidates) {
-			frm.set_intro(__("Shared number: possible people are {0}. Call back or check the slip, then set Matched principal.", [frappe.utils.escape_html(frm.doc.candidates)]), "orange");
+			frm.set_intro(__("Shared number: possible people are {0}. Call back or check the slip, then use Who is this for?", [frappe.utils.escape_html(frm.doc.candidates)]), "orange");
 		} else if (frm.doc.status === "Unmatched") {
-			frm.set_intro(__("Not matched yet. Find the person by their receipt code or ID, then set Matched principal."), "orange");
+			frm.set_intro(__("Not matched yet. Find the person by their receipt code or ID, then use Who is this for?"), "orange");
 		}
 		if (!frm.is_new() && frm.doc.status === "Unmatched" && frm.doc.candidates && frm.perm[0] && frm.perm[0].write) {
 			frm.add_custom_button(__("Who is this for?"), () => pick_person(frm)).addClass("btn-primary");

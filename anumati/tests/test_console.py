@@ -76,15 +76,34 @@ class TestConsole(FrappeTestCase):
 	def test_charts_compute(self):
 		from frappe.desk.doctype.dashboard_chart.dashboard_chart import get
 
+		from anumati.charts import BREAKDOWNS, breakdown
 		from anumati.tests.utils import make_event
 
-		make_event()  # so at least one Group By chart has data; stock charts return None when empty
+		make_event()  # so the breakdowns have data; charts return None when empty
 		for name in frappe.get_all("Dashboard Chart", filters={"module": "Anumati"}, pluck="name"):
-			data = get(chart_name=name, refresh=1)
+			chart = frappe.get_doc("Dashboard Chart", name)
+			if chart.chart_type == "Custom":
+				self.assertEqual(chart.source, "Anumati Breakdown", name)
+				self.assertEqual(chart.document_type, BREAKDOWNS[name][0], name)
+				data = breakdown(chart_name=name)
+			else:
+				data = get(chart_name=name, refresh=1)
 			if data is not None:
 				self.assertIn("labels", data, name)
-		data = get(chart_name="How People Consented", refresh=1)
-		self.assertIn("assisted_thumbprint", data["labels"])
+		self.assertTrue(frappe.db.exists("Dashboard Chart Source", "Anumati Breakdown"))
+
+	def test_chart_labels_are_words_in_the_viewers_language(self):
+		from anumati.charts import breakdown
+		from anumati.tests.utils import make_event
+
+		make_event()
+		self.assertIn("Assisted: thumbprint", breakdown(chart_name="How People Consented")["labels"])
+		lang = frappe.local.lang
+		frappe.local.lang = "hi"
+		try:
+			self.assertIn("मदद से: अंगूठे का निशान", breakdown(chart_name="How People Consented")["labels"])
+		finally:
+			frappe.local.lang = lang
 
 	def test_requests_board_covers_every_status(self):
 		board = frappe.get_doc("Kanban Board", "Requests")

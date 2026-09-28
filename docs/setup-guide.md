@@ -176,7 +176,7 @@ It switches on Mobile Configuration for Anumati Collect, creates the fictional *
 1. Frappe Cloud → **Sites** → your site → **Site Config** tab → **Add Config**.
 2. Key: choose **Custom key**, type `anumati_demo_password`. Value: the password you want for the test field worker (type it here yourself). **Save**.
 3. Site → **Actions** (or **⋯**) → **Migrate** (or deploy the bench group again).
-On that migrate, the site switches on Mobile Configuration, creates the DEMO programme with its published notice, and sets up `fieldworker.demo@example.com` with your password. Delete the key after the pilot so a later migrate doesn't reset the password.
+On that migrate, the site switches on Mobile Configuration, creates three fictional demo programmes (Village Health Camps, After-school Learning Centres, Women's Self-Help Groups) with published notices, and sets up `fieldworker.demo@example.com` with your password. Delete the key after the pilot so a later migrate doesn't reset the password.
 
 ### F3. Switch the app on (inside your site)
 1. Search bar → **Mobile Configuration**.
@@ -216,7 +216,12 @@ After the deploy, the left sidebar has six Anumati sections. Each person sees on
 Admins can read the DPO's records but only the DPO publishes notices and approves records of processing. Field workers use the phone app and see no Desk sections.
 
 Useful places:
+- **Beneficiaries list**: type in the **Name or phone** box at the top. It matches whole words of a name ("Kavita", or "Kavita Yadav", not "Kav"), a complete phone number, a receipt code or an ID. Each row shows the name and the phone with the last three digits hidden; every list page you open is recorded in the access log. Names and phones stay encrypted in the database.
+- Any field where you pick a beneficiary (for example on a request) accepts the same searches.
 - **Today → Requests board**: drag a request between columns to change its status. Red cards are overdue.
 - **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
 - **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.
 - **A breach**: the form shows the hours left of the 72-hour deadline. Click **Board told now** when you have told the Board.
+
+### Hindi Desk
+Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **Language** = **Hindi** → **Save**, then reload. Menu sections, record names, dropdown values, statuses, chart labels and the main buttons and messages appear in Hindi. Some field labels on forms stay in English for now. The Hindi labels are a first draft in `tools/gen_labels.py`: have a Hindi-speaking colleague read them before the pilot and send corrections.

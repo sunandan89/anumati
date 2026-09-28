@@ -11,5 +11,8 @@ frappe.listview_settings["Rights Request"] = {
 	},
 	onload(listview) {
 		listview.page.add_inner_button(__("Requests board"), () => frappe.set_route("List", "Rights Request", "Kanban", "Requests"));
+		listview.page.add_inner_button(__("Assigned to me"), () => {
+			listview.filter_area.clear(false).then(() => listview.filter_area.add([["Rights Request", "assigned_to", "=", frappe.session.user]]));
+		});
 	},
 };

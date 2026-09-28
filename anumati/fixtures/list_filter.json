@@ -6,7 +6,7 @@
   "reference_doctype": "Consent Event",
   "for_user": "",
   "filters": "[[\"Consent Event\", \"creation\", \"Timespan\", \"this week\", false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -15,7 +15,7 @@
   "reference_doctype": "Consent Event",
   "for_user": "",
   "filters": "[[\"Consent Event\", \"action\", \"=\", \"withdraw\", false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -24,7 +24,7 @@
   "reference_doctype": "Consent Event",
   "for_user": "",
   "filters": "[[\"Consent Event\", \"action\", \"=\", \"refuse\", false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -33,7 +33,7 @@
   "reference_doctype": "Consent Event",
   "for_user": "",
   "filters": "[[\"Consent Event\", \"capture_mode\", \"in\", [\"guardian_minor\", \"guardian_pwd\"], false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -42,7 +42,7 @@
   "reference_doctype": "Consent Event",
   "for_user": "",
   "filters": "[[\"Consent Event\", \"notice_completed\", \"=\", 0, false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -51,7 +51,7 @@
   "reference_doctype": "Consent State",
   "for_user": "",
   "filters": "[[\"Consent State\", \"verification_status\", \"=\", \"unconfirmed\", false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -60,7 +60,7 @@
   "reference_doctype": "Data Principal",
   "for_user": "",
   "filters": "[[\"Data Principal\", \"is_minor\", \"=\", 1, false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -69,7 +69,7 @@
   "reference_doctype": "Data Principal",
   "for_user": "",
   "filters": "[[\"Data Principal\", \"shared_phone\", \"=\", 1, false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -78,7 +78,7 @@
   "reference_doctype": "Data Principal",
   "for_user": "",
   "filters": "[[\"Data Principal\", \"needs_assistance\", \"=\", 1, false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -87,7 +87,7 @@
   "reference_doctype": "Rights Request",
   "for_user": "",
   "filters": "[[\"Rights Request\", \"status\", \"=\", \"Unmatched\", false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -96,7 +96,7 @@
   "reference_doctype": "Rights Request",
   "for_user": "",
   "filters": "[[\"Rights Request\", \"request_type\", \"=\", \"withdrawal\", false], [\"Rights Request\", \"status\", \"not in\", [\"Closed\", \"Rejected\"], false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -105,6 +105,6 @@
   "reference_doctype": "Field Device",
   "for_user": "",
   "filters": "[[\"Field Device\", \"status\", \"in\", [\"lost\", \"wipe_queued\", \"wiped\"], false]]",
-  "modified": "2026-09-29 10:00:00.000000"
+  "modified": "2026-09-30 10:00:00.000000"
  }
 ]

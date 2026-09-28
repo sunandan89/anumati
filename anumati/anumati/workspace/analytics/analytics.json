@@ -30,7 +30,7 @@
   }
  ],
  "content": "[{\"id\": \"analyt0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Month\", \"col\": 3}}, {\"id\": \"analyt1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Month\", \"col\": 3}}, {\"id\": \"analyt2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Refused This Month\", \"col\": 3}}, {\"id\": \"analyt3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Notice Heard In Full\", \"col\": 3}}, {\"id\": \"analyt4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"analyt5\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Agreed By Purpose\", \"col\": 6}}, {\"id\": \"analyt6\", \"type\": \"chart\", \"data\": {\"chart_name\": \"How People Consented\", \"col\": 6}}, {\"id\": \"analyt7\", \"type\": \"chart\", \"data\": {\"chart_name\": \"How The Notice Was Given\", \"col\": 6}}, {\"id\": \"analyt8\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consents By Language\", \"col\": 6}}, {\"id\": \"analyt9\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consents By Field Worker\", \"col\": 6}}, {\"id\": \"analyt10\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Requests By Type\", \"col\": 6}}]",
- "creation": "2026-09-29 10:00:00.000000",
+ "creation": "2026-09-30 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -41,7 +41,7 @@
  "is_hidden": 0,
  "label": "Analytics",
  "links": [],
- "modified": "2026-09-29 10:00:00.000000",
+ "modified": "2026-09-30 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Analytics",

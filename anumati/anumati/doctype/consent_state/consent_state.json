@@ -21,13 +21,14 @@
    "fieldname": "principal",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Principal",
+   "label": "Beneficiary",
    "options": "Data Principal",
    "reqd": 1
   },
   {
    "fieldname": "programme",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Programme",
    "options": "Programme",
    "reqd": 1
@@ -36,6 +37,7 @@
    "fieldname": "purpose",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Purpose",
    "options": "Purpose",
    "reqd": 1
@@ -48,6 +50,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "granted\nwithdrawn\nrefused\nnot_asked\nexpired",
    "reqd": 1
@@ -55,7 +58,9 @@
   {
    "fieldname": "verification_status",
    "fieldtype": "Select",
-   "label": "Verification status",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Confirmation",
    "options": "captured\nrecorded\nconfirmed\nunconfirmed\nevidence_only"
   },
   {
@@ -73,7 +78,7 @@
  "in_create": 1,
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-29 10:00:00.000000",
+ "modified": "2026-09-30 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Consent State",

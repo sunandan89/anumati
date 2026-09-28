@@ -10,7 +10,7 @@ import json, os
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")
 FIX = os.path.join(REPO, "anumati", "fixtures")
-TS = "2026-09-29 10:00:00.000000"
+TS = "2026-09-30 10:00:00.000000"
 
 ADM, DPO, OPR, PM, SM = "Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager", "System Manager"
 
@@ -79,8 +79,11 @@ def chart(name, doctype, kind="Bar", group_by=None, filters=(), timeseries=False
         doc.update(chart_type="Count", based_on="creation", timeseries=1, time_interval="Weekly",
                    timespan="Last Quarter", number_of_groups=0)
     else:
-        doc.update(chart_type="Group By", group_by_type="Count", group_by_based_on=group_by,
-                   number_of_groups=10, timeseries=0)
+        # Same counts as a stock Group By chart, but through the stock custom source "Anumati Breakdown"
+        # (anumati/charts.py) so labels read as words, in the viewer's language. Its BREAKDOWNS table
+        # holds the group-by field and filters; document_type stays set so chart permissions apply.
+        doc.update(chart_type="Custom", source="Anumati Breakdown", timeseries=0, filters_json="[]",
+                   number_of_groups=0)
     write("dashboard_chart", name, doc)
     return name
 

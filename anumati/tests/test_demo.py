@@ -19,6 +19,23 @@ class TestFieldAppSetup(FrappeTestCase):
 		self.assertIsNotNone(out["translation"], "the demo Hindi translation is reviewed, so it is served")
 		self.assertEqual(out["translation"]["label_yes_all"], "सब के लिए हाँ")
 
+	def test_three_realistic_programmes_each_with_a_published_hindi_notice(self):
+		demo.create_demo_programme()
+		for spec in demo.PROGRAMMES:
+			self.assertEqual(frappe.db.get_value("Programme", spec["code"], "programme_name"), spec["name"])
+			out = notice.get_active(spec["code"], language="hi")
+			self.assertEqual(len(out["purposes"]), 4, spec["code"])
+			self.assertIsNotNone(out["translation"], spec["code"])
+		self.assertEqual(frappe.db.get_value("Programme", "DEMO", "programme_name"), "Village Health Camps")
+
+	def test_old_demo_name_is_renamed(self):
+		demo.create_demo_programme()
+		frappe.db.set_value("Programme", "DEMO", "programme_name", "Demo Health Camp (fictional)")
+		demo.create_demo_programme()
+		self.assertEqual(frappe.db.get_value("Programme", "DEMO", "programme_name"), "Village Health Camps")
+		name = frappe.db.get_value("Notice Template", {"programme": "DEMO"}, "name")
+		self.assertEqual(frappe.db.get_value("Notice Template", name, "programme_name"), "Village Health Camps")
+
 	def test_field_worker_gets_roles_and_a_fresh_password(self):
 		p1 = demo.create_field_worker()
 		p2 = demo.create_field_worker()

@@ -109,3 +109,78 @@ def reveal(principal):
 	return {"principal_ref": doc.principal_ref,
 	        "full_name": doc.get_password("full_name", raise_exception=False) or "",
 	        "phone_masked": mask_phone(doc.get_password("phone", raise_exception=False))}
+
+
+# ---------------------------------------------------------------- Desk search (names stay encrypted)
+def match(q: str, limit: int = 50) -> list[str]:
+	"""Beneficiary names (record IDs) for a search: a full phone number, a receipt code, a beneficiary ID,
+	or whole words of a name (every word must match). Nothing personal is stored or returned in clear."""
+	from anumati import inbox, pii
+
+	q = (q or "").strip()
+	if not q:
+		return []
+	perm = {"merged_into": ("is", "not set")}
+	digits = pii.normalise_phone(q)
+	if len(digits) >= 10 and len(digits) >= len(q.replace(" ", "")) - 3:
+		return frappe.get_list("Data Principal", {**perm, "phone_hash": pii.phone_hash(digits)}, pluck="name", limit=limit)
+	found = frappe.get_list("Data Principal", {**perm, "principal_ref": q}, pluck="name", limit=limit)
+	if found:
+		return found
+	if q.upper().startswith("AN-") or (len(q) == 6 and q.isalnum() and not q.isalpha()):
+		who = inbox.principal_for_short_code(q)
+		if who and frappe.has_permission("Data Principal", "read", doc=who):
+			return [who]
+	words = pii.name_words(q)
+	if not words:
+		return []
+	filters = [["Data Principal", "name_index", "like", f"% {pii.name_token(w)} %"] for w in words]
+	filters.append(["Data Principal", "merged_into", "is", "not set"])
+	return frappe.get_list("Data Principal", filters=filters, pluck="name", limit=limit, order_by="modified desc")
+
+
+@frappe.whitelist(methods=["GET"])
+def search(q):
+	"""Desk: find beneficiaries by whole-word name, full phone number, receipt code or ID.
+	Returns record IDs only; the list then shows names through reveal_many (logged)."""
+	frappe.has_permission("Data Principal", "read", throw=True)
+	return {"principals": match(q)}
+
+
+@frappe.whitelist(methods=["POST"])
+def reveal_many(principals):
+	"""Desk list: name and masked phone for the rows on screen (at most 100). Needs read on each record;
+	every record shown gets an Access Log entry. The full number never reaches the browser."""
+	from frappe.core.doctype.access_log.access_log import make_access_log
+
+	from anumati.api.v1.evidence import STAFF_ROLES
+
+	if not STAFF_ROLES & set(frappe.get_roles()):  # Desk staff only; the field app uses for_device
+		raise frappe.PermissionError
+	names = frappe.parse_json(principals) if isinstance(principals, str) else principals
+	if not isinstance(names, list) or len(names) > 100:
+		frappe.throw(_("Send a list of at most 100 beneficiaries."))
+	out = {}
+	for name in names:
+		if not isinstance(name, str) or not frappe.has_permission("Data Principal", "read", doc=name):
+			continue
+		doc = frappe.get_doc("Data Principal", name)
+		make_access_log(doctype="Data Principal", document=doc.name, file_type="list")
+		out[name] = {"full_name": doc.get_password("full_name", raise_exception=False) or "",
+		             "phone_masked": mask_phone(doc.get_password("phone", raise_exception=False))}
+	return out
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def link_query(doctype, txt, searchfield, start, page_len, filters, **kwargs):
+	"""Link fields to a Beneficiary (e.g. on a request) search by name, phone, receipt code or ID too.
+	Shows the beneficiary ID only, so picking someone does not reveal names."""
+	txt = (txt or "").strip()
+	or_filters = [["Data Principal", "principal_ref", "like", f"%{txt}%"]]
+	hits = match(txt) if len(txt) >= 2 else []
+	if hits:
+		or_filters.append(["Data Principal", "name", "in", hits])
+	return frappe.get_list("Data Principal", filters=filters or {}, or_filters=or_filters,
+	                       fields=["name", "principal_ref"], limit_start=start, limit_page_length=page_len,
+	                       order_by="modified desc", as_list=True)

@@ -27,7 +27,7 @@
    "fieldname": "principal",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Principal",
+   "label": "Beneficiary",
    "options": "Data Principal",
    "reqd": 1
   },
@@ -73,7 +73,7 @@
   {
    "fieldname": "notified_on",
    "fieldtype": "Datetime",
-   "label": "Principal notified on"
+   "label": "Beneficiary told on"
   },
   {
    "fieldname": "purged_on",
@@ -110,7 +110,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-29 10:00:00.000000",
+ "modified": "2026-09-30 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Purge Request",
