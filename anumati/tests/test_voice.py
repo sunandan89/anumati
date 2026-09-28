@@ -130,6 +130,8 @@ class TestVoice(FrappeTestCase):
 	def test_phone_is_told_which_voice_to_play(self):
 		female = user_with_role("Anumati Field Worker")
 		male = "voice.male.worker@example.com"
+		if not frappe.db.exists("Gender", "Male"):  # created by the setup wizard on real sites
+			frappe.get_doc({"doctype": "Gender", "gender": "Male"}).insert()
 		if not frappe.db.exists("User", male):
 			frappe.get_doc({"doctype": "User", "email": male, "first_name": "Ravi", "gender": "Male",
 			                "send_welcome_email": 0, "roles": [{"role": "Anumati Field Worker"}]}).insert()
