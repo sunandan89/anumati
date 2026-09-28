@@ -1,0 +1,58 @@
+[
+ {
+  "doctype": "Kanban Board",
+  "name": "Requests",
+  "kanban_board_name": "Requests",
+  "reference_doctype": "Rights Request",
+  "field_name": "status",
+  "private": 0,
+  "show_labels": 1,
+  "filters": "[]",
+  "fields": "[\"request_type\", \"channel\", \"sla_due\", \"assigned_to\"]",
+  "columns": [
+   {
+    "doctype": "Kanban Board Column",
+    "column_name": "Open",
+    "status": "Active",
+    "indicator": "Blue",
+    "order": "[]"
+   },
+   {
+    "doctype": "Kanban Board Column",
+    "column_name": "Unmatched",
+    "status": "Active",
+    "indicator": "Red",
+    "order": "[]"
+   },
+   {
+    "doctype": "Kanban Board Column",
+    "column_name": "In Progress",
+    "status": "Active",
+    "indicator": "Orange",
+    "order": "[]"
+   },
+   {
+    "doctype": "Kanban Board Column",
+    "column_name": "Awaiting Acknowledgement",
+    "status": "Active",
+    "indicator": "Purple",
+    "order": "[]"
+   },
+   {
+    "doctype": "Kanban Board Column",
+    "column_name": "Closed",
+    "status": "Active",
+    "indicator": "Green",
+    "order": "[]"
+   },
+   {
+    "doctype": "Kanban Board Column",
+    "column_name": "Rejected",
+    "status": "Active",
+    "indicator": "Gray",
+    "order": "[]"
+   }
+  ],
+  "modified": "2026-09-29 10:00:00.000000"
+ }
+]

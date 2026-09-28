@@ -6,12 +6,14 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "overview_tab",
   "code",
   "programme_name",
   "status",
   "c1",
   "persona",
   "languages",
+  "capture_tab",
   "capture_section",
   "capture_modes",
   "c2",
@@ -24,10 +26,16 @@
   "c3",
   "consent_validity_days",
   "consent_record_retention_years",
+  "withdrawal_tab",
   "withdrawal_section",
   "withdrawal_channels"
  ],
  "fields": [
+  {
+   "fieldname": "overview_tab",
+   "fieldtype": "Tab Break",
+   "label": "Overview"
+  },
   {
    "description": "Short, stable identifier used in APIs, e.g. MHU",
    "fieldname": "code",
@@ -70,9 +78,15 @@
    "options": "Language Row"
   },
   {
+   "fieldname": "capture_tab",
+   "fieldtype": "Tab Break",
+   "label": "Capture & verification"
+  },
+  {
+   "description": "Only the ticked ways show in the field app",
    "fieldname": "capture_section",
    "fieldtype": "Section Break",
-   "label": "Capture and verification"
+   "label": "How people can consent, and how it is checked"
   },
   {
    "fieldname": "capture_modes",
@@ -138,9 +152,15 @@
    "label": "Consent record retention (years)"
   },
   {
+   "fieldname": "withdrawal_tab",
+   "fieldtype": "Tab Break",
+   "label": "Withdrawal channels"
+  },
+  {
+   "description": "Withdrawing must be as easy as giving consent",
    "fieldname": "withdrawal_section",
    "fieldtype": "Section Break",
-   "label": "Withdrawal channels"
+   "label": "Ways to withdraw"
   },
   {
    "fieldname": "withdrawal_channels",
@@ -170,9 +190,14 @@
    "group": "Consent",
    "link_doctype": "Campaign",
    "link_fieldname": "programme"
+  },
+  {
+   "group": "Integration",
+   "link_doctype": "Source System",
+   "link_fieldname": "programme"
   }
  ],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Programme",

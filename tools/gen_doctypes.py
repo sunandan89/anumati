@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-28 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-09-29 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -69,6 +69,9 @@ def sec(name, label=None, **kw):
 
 def col(name):
     return F(name, "Column Break")
+
+def tab(name, label):
+    return F(name, "Tab Break", label)
 
 RO = dict(read_only=True, no_copy=True)
 LEDGER = [
@@ -153,13 +156,16 @@ doctype("Anumati Settings", [
 ], {ADM: "W", DPO: "r", SM: "W"}, issingle=1)
 
 doctype("Programme", [
+    tab("overview_tab", "Overview"),
     F("code", "Data", "Code", reqd=True, unique=True, description="Short, stable identifier used in APIs, e.g. MHU"),
     F("programme_name", "Data", "Programme name", reqd=True, in_list_view=True),
     F("status", "Select", "Status", sel("Draft", "Live", "Paused"), default="Draft", in_list_view=True, in_standard_filter=True),
     col("c1"),
     F("persona", "Select", "Persona", sel("beneficiary", "patient", "student", "employee", "member", "other"), default="beneficiary"),
     F("languages", "Table MultiSelect", "Languages", "Language Row"),
-    sec("capture_section", "Capture and verification"),
+    tab("capture_tab", "Capture & verification"),
+    sec("capture_section", "How people can consent, and how it is checked",
+        description="Only the ticked ways show in the field app"),
     F("capture_modes", "Table", "Capture modes", "Programme Capture Mode"),
     col("c2"),
     F("verification_methods", "Table", "Verification methods", "Programme Verification Method"),
@@ -173,7 +179,8 @@ doctype("Programme", [
     col("c3"),
     F("consent_validity_days", "Int", "Consent validity (days)", description="0 = no expiry; renewal campaign runs before expiry"),
     F("consent_record_retention_years", "Int", "Consent record retention (years)", default="7"),
-    sec("withdrawal_section", "Withdrawal channels"),
+    tab("withdrawal_tab", "Withdrawal channels"),
+    sec("withdrawal_section", "Ways to withdraw", description="Withdrawing must be as easy as giving consent"),
     F("withdrawal_channels", "Table", "Withdrawal channels", "Programme Withdrawal Channel"),
 ], {ADM: "F", PM: "E", DPO: "R", OPR: "R", FW: "r", DEV: "r", SM: "F"},
     autoname="field:code", title_field="programme_name", search_fields="programme_name,status",
@@ -194,11 +201,12 @@ doctype("Purpose", [
     sec("data_section", "Data and retention"),
     F("data_categories", "Table MultiSelect", "Data categories", "Data Category Row"),
     F("retention_policy", "Link", "Retention policy", "Retention Policy"),
-], {ADM: "F", DPO: "E", PM: "E", OPR: "R", FW: "r", DEV: "r", SM: "F"},
+], {ADM: "F", DPO: "E", PM: "R", OPR: "R", FW: "r", DEV: "r", SM: "F"},
     autoname="format:{programme}-{code}", title_field="purpose_title", show_title_field_in_link=1,
     search_fields="purpose_title,programme")
 
 doctype("Notice Template", [
+    tab("purposes_tab", "Purposes"),
     F("programme", "Link", "Programme", "Programme", reqd=True, in_list_view=True, in_standard_filter=True),
     F("version", "Data", "Version", reqd=True, in_list_view=True, description="Semantic version, e.g. 4.0.0"),
     F("status", "Select", "Status", sel("Draft", "Published", "Retired"), default="Draft", read_only=True, in_list_view=True),
@@ -208,10 +216,12 @@ doctype("Notice Template", [
     sec("purposes_section", "Purposes"),
     F("purposes", "Table", "Purposes", "Notice Purpose", reqd=True),
     F("processors", "Table", "Processors and recipients", "Notice Processor"),
+    tab("content_tab", "Notice content"),
     sec("content_section", "Notice content"),
     F("summary", "Small Text", "Summary"),
     F("full_text", "Text Editor", "Full text"),
     F("pictorial_card", "Attach Image", "Pictorial card", description="Shown on the field app's notice screen"),
+    tab("rule3_tab", "Rule 3 checklist"),
     sec("rule3_section", "Rule 3 contents", description="Every notice must say all of this"),
     F("withdrawal_methods", "Small Text", "How to withdraw consent"),
     F("rights_text", "Small Text", "How to exercise rights"),
@@ -219,6 +229,8 @@ doctype("Notice Template", [
     col("c2"),
     F("dpo_contact", "Small Text", "DPO or grievance contact"),
     F("security_summary", "Small Text", "Summary of security safeguards"),
+    tab("preview_tab", "Phone preview"),
+    F("phone_preview", "HTML", "Phone preview"),
     F("amended_from", "Link", "Amended From", "Notice Template", read_only=True, no_copy=True, print_hide=True),
 ], {ADM: "R", DPO: "S", PM: "R", OPR: "R", FW: "r", DEV: "r", SM: "S"},
     autoname="format:{programme}-v{version}", is_submittable=1, title_field="programme",
@@ -259,6 +271,7 @@ doctype("Notice Translation", [
     autoname="format:{notice}-{language}", track_changes=1)
 
 doctype("Data Principal", [
+    tab("overview_tab", "Overview"),
     F("principal_ref", "Data", "Principal ref", unique=True, in_list_view=True,
       description="ID from the host system, e.g. MHU-004211. Never a name or phone number."),
     F("full_name", "Password", "Name (encrypted)", description="Stored encrypted; not searchable"),
@@ -272,6 +285,7 @@ doctype("Data Principal", [
     F("date_of_birth", "Date", "Date of birth"),
     F("age_band", "Select", "Age band", sel("", "under_18", "18_plus", "unknown")),
     F("phone_owner_relation", "Select", "Phone owner", sel("self", "spouse", "parent", "child", "sibling", "relative", "neighbour", "field_worker", "other"), default="self"),
+    tab("flags_tab", "Needs & lifecycle"),
     sec("flags_section", "Segment flags"),
     F("is_minor", "Check", "Minor (under 18)"),
     F("pwd_guarded", "Check", "Person with disability, lawful guardian"),
@@ -284,7 +298,8 @@ doctype("Data Principal", [
       description="Cessation: starts retention clocks that run from 'relationship ended'"),
     col("c3"),
     F("merged_into", "Link", "Merged into", "Data Principal", read_only=True),
-    sec("nominee_section", "Nominees", collapsible=True),
+    tab("nominee_tab", "Nominees"),
+    sec("nominee_section", "Nominees"),
     F("nominees", "Table", "Nominees", "Nominee"),
 ], {ADM: "F", DPO: "E", OPR: "E", PM: "R", FW: "E", SM: "F"},
     autoname="hash", title_field="principal_ref", search_fields="principal_ref", track_changes=1)
@@ -303,6 +318,9 @@ doctype("Guardian Link", [
 ], {ADM: "F", DPO: "E", OPR: "E", FW: "E", PM: "R", SM: "F"}, autoname="hash", track_changes=1)
 
 doctype("Consent Event", [
+    tab("summary_tab", "Summary"),
+    F("summary_html", "HTML", "Summary"),
+    sec("record_section", "Record"),
     F("event_uuid", "Data", "Event UUID", reqd=True, unique=True, in_list_view=True,
       description="Client-generated; sync is idempotent on this"),
     F("short_code", "Data", "Receipt code", read_only=True, search_index=True, no_copy=True, in_list_view=True,
@@ -325,6 +343,7 @@ doctype("Consent Event", [
     F("captured_by", "Link", "Captured by", "User"),
     F("guardian_link", "Link", "Guardian link", "Guardian Link"),
     F("source_system", "Link", "Source system", "Source System"),
+    tab("evidence_tab", "Evidence"),
     sec("evidence_section", "Evidence"),
     F("witness", "Password", "Witness (encrypted)", description="Name and relation; stored encrypted"),
     F("witness_digest", "Data", "Witness digest", read_only=True, no_copy=True,
@@ -334,6 +353,7 @@ doctype("Consent Event", [
     F("verification_method", "Select", "Verification method", sel("", *VERIFY_METHODS.split("\n"))),
     F("verification_status", "Select", "Verification status at recording", VERIFY_STATUS, default="recorded",
       description="Later confirmation lives in Verification Attempt and Consent State; this event never changes"),
+    tab("device_tab", "Device & time"),
     sec("device_section", "Device and time"),
     F("device_id", "Data", "Device ID"),
     F("device_time", "Datetime", "Device time"),
@@ -341,6 +361,7 @@ doctype("Consent Event", [
     col("c3"),
     F("ip_address", "Data", "IP address", description="Optional; offline captures have none"),
     F("gps", "Data", "GPS (lat,long)"),
+    tab("proof_tab", "Proof"),
     *LEDGER,
 ], {ADM: "X", DPO: "X", OPR: "R", PM: "R", FW: "C", SM: "C"},
     autoname="field:event_uuid", in_create=1, sort_field="creation", sort_order="DESC")
@@ -372,6 +393,7 @@ doctype("Verification Attempt", [
 
 # ================================================================ rights, channels, governance
 doctype("Rights Request", [
+    tab("request_tab", "Request"),
     F("request_type", "Select", "Type", sel("withdrawal", "access", "correction", "erasure", "grievance", "nomination"), default="grievance", reqd=True, in_list_view=True, in_standard_filter=True),
     F("channel", "Select", "Channel", sel(*WITHDRAW_CH), default="email", reqd=True, in_list_view=True),
     F("status", "Select", "Status", sel("Open", "Unmatched", "In Progress", "Awaiting Acknowledgement", "Closed", "Rejected"), default="Open", in_list_view=True, in_standard_filter=True),
@@ -390,6 +412,7 @@ doctype("Rights Request", [
     F("raised_by", "Data", "Sender email", "Email", description="Set when the request arrives by email"),
     F("sender_hash", "Data", "Sender phone hash", read_only=True, search_index=True,
       description="Salted hash of the sender's number; the number itself is not stored"),
+    tab("detail_tab", "Details"),
     sec("detail_section", "Details"),
     F("raw_payload", "Long Text", "Raw payload", description="As received from the channel"),
     F("resolution", "Small Text", "Resolution"),
@@ -428,7 +451,7 @@ doctype("Processor", [
     F("webhook_url", "Data", "Webhook URL", "URL"),
     F("webhook_secret", "Password", "Webhook secret"),
     F("purposes", "Table MultiSelect", "Purposes", "Processor Purpose"),
-], {ADM: "F", DPO: "E", OPR: "R", PRC: "r", SM: "F"}, autoname="field:processor_name", track_changes=1)
+], {ADM: "F", DPO: "E", PM: "R", OPR: "R", PRC: "r", SM: "F"}, autoname="field:processor_name", track_changes=1)
 
 doctype("Propagation Ack", [
     F("processor", "Link", "Processor", "Processor", in_list_view=True),
@@ -485,7 +508,7 @@ doctype("Data Category", [
     F("category_name", "Data", "Name", reqd=True, unique=True),
     F("is_sensitive", "Check", "Sensitive", in_list_view=True),
     F("description", "Small Text", "Description"),
-], {ADM: "F", DPO: "E", PM: "E", OPR: "r", FW: "r", SM: "F"}, autoname="field:category_name")
+], {ADM: "F", DPO: "E", PM: "R", OPR: "r", FW: "r", SM: "F"}, autoname="field:category_name")
 
 doctype("Purge Request", [
     F("principal", "Link", "Principal", "Data Principal", reqd=True, in_list_view=True),
@@ -529,6 +552,7 @@ doctype("ROPA Entry", [
 ], {ADM: "R", DPO: "F", PM: "R", AUD: "r", SM: "F"}, autoname="hash", title_field="purpose", track_changes=1)
 
 doctype("Breach Incident", [
+    tab("incident_tab", "Incident"),
     F("breach_type", "Select", "What kind", sel("data_leak", "lost_device", "phishing", "ransomware", "unauthorised_access"), reqd=True, in_list_view=True),
     F("detected_on", "Datetime", "Discovered", reqd=True, in_list_view=True),
     F("programme", "Link", "Programme", "Programme"),
@@ -539,6 +563,7 @@ doctype("Breach Incident", [
     F("purposes_affected", "Table MultiSelect", "Purposes affected", "Breach Purpose"),
     sec("detail_section", "What happened"),
     F("description", "Small Text", "Description"),
+    tab("steps_tab", "72-hour steps"),
     sec("steps_section", "Steps (72-hour clock)"),
     F("contained_on", "Datetime", "Contained"),
     F("risk_assessed_on", "Datetime", "Risk assessed"),
@@ -622,7 +647,7 @@ doctype("Field Device", [
     col("c2"),
     F("wiped_on", "Datetime", "Wipe sent on", read_only=True,
       description="When the phone was told to wipe itself; it signs out and deletes its data"),
-], {ADM: "F", PM: "E", FW: "r", SM: "F"}, autoname="field:device_id", track_changes=1)
+], {ADM: "F", PM: "E", DPO: "R", FW: "r", SM: "F"}, autoname="field:device_id", track_changes=1)
 
 doctype("Audit Share", [
     F("period_from", "Date", "Period from", reqd=True),
@@ -671,7 +696,8 @@ class {cls}(Document):
 # Connections shown on the form dashboard (stock Frappe "Document Links").
 LINKS = {
     "Programme": [("Setup", "Purpose", "programme"), ("Setup", "Notice Template", "programme"),
-                  ("Consent", "Consent Event", "programme"), ("Consent", "Campaign", "programme")],
+                  ("Consent", "Consent Event", "programme"), ("Consent", "Campaign", "programme"),
+                  ("Integration", "Source System", "programme")],
     "Purpose": [("Governance", "ROPA Entry", "purpose"), ("Governance", "Purge Request", "purpose")],
     "Notice Template": [("Content", "Notice Translation", "notice"), ("Consent", "Consent Event", "notice")],
     "Data Principal": [("Consent", "Consent Event", "principal"), ("Consent", "Consent State", "principal"),
@@ -679,6 +705,7 @@ LINKS = {
                        ("Rights", "Purge Request", "principal")],
     "Consent Event": [("Verification", "Verification Attempt", "consent_event")],
     "Processor": [("Routing", "Propagation Ack", "processor")],
+    "Field Device": [("Incidents", "Breach Incident", "field_device")],
 }
 
 NO_VERSION = {"Consent Event", "Audit Entry", "Consent State", "System Usage Log", "Verification Attempt"}

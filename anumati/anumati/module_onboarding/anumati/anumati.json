@@ -1,0 +1,44 @@
+{
+ "allow_roles": [
+  {
+   "role": "Anumati Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "creation": "2026-09-29 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Module Onboarding",
+ "documentation_url": "https://github.com/sunandan89/anumati/blob/main/docs/setup-guide.md",
+ "idx": 0,
+ "is_complete": 0,
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Anumati",
+ "owner": "Administrator",
+ "steps": [
+  {
+   "step": "Organisation and DPO"
+  },
+  {
+   "step": "First programme"
+  },
+  {
+   "step": "Purposes and records of processing"
+  },
+  {
+   "step": "Publish the notice in English and Hindi"
+  },
+  {
+   "step": "Add field workers"
+  },
+  {
+   "step": "Connect SMS (optional for the pilot)"
+  }
+ ],
+ "subtitle": "Six steps, about 20 minutes. Each opens the right form.",
+ "success_message": "Anumati is set up. Field workers can sign in to the app.",
+ "title": "Set up Anumati"
+}

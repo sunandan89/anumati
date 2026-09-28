@@ -32,7 +32,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Data Category",
@@ -74,7 +74,7 @@
   {
    "amend": 0,
    "cancel": 0,
-   "create": 1,
+   "create": 0,
    "delete": 0,
    "email": 0,
    "export": 0,
@@ -85,7 +85,7 @@
    "role": "Anumati Programme Manager",
    "share": 0,
    "submit": 0,
-   "write": 1
+   "write": 0
   },
   {
    "amend": 0,

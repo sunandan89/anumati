@@ -6,6 +6,9 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "summary_tab",
+  "summary_html",
+  "record_section",
   "event_uuid",
   "short_code",
   "action",
@@ -24,6 +27,7 @@
   "captured_by",
   "guardian_link",
   "source_system",
+  "evidence_tab",
   "evidence_section",
   "witness",
   "witness_digest",
@@ -31,6 +35,7 @@
   "c2",
   "verification_method",
   "verification_status",
+  "device_tab",
   "device_section",
   "device_id",
   "device_time",
@@ -38,6 +43,7 @@
   "c3",
   "ip_address",
   "gps",
+  "proof_tab",
   "chain_section",
   "chain_seq",
   "key_id",
@@ -47,6 +53,21 @@
   "signature"
  ],
  "fields": [
+  {
+   "fieldname": "summary_tab",
+   "fieldtype": "Tab Break",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "summary_html",
+   "fieldtype": "HTML",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "record_section",
+   "fieldtype": "Section Break",
+   "label": "Record"
+  },
   {
    "description": "Client-generated; sync is idempotent on this",
    "fieldname": "event_uuid",
@@ -167,6 +188,11 @@
    "options": "Source System"
   },
   {
+   "fieldname": "evidence_tab",
+   "fieldtype": "Tab Break",
+   "label": "Evidence"
+  },
+  {
    "fieldname": "evidence_section",
    "fieldtype": "Section Break",
    "label": "Evidence"
@@ -210,6 +236,11 @@
    "options": "captured\nrecorded\nconfirmed\nunconfirmed\nevidence_only"
   },
   {
+   "fieldname": "device_tab",
+   "fieldtype": "Tab Break",
+   "label": "Device & time"
+  },
+  {
    "fieldname": "device_section",
    "fieldtype": "Section Break",
    "label": "Device and time"
@@ -244,6 +275,11 @@
    "fieldname": "gps",
    "fieldtype": "Data",
    "label": "GPS (lat,long)"
+  },
+  {
+   "fieldname": "proof_tab",
+   "fieldtype": "Tab Break",
+   "label": "Proof"
   },
   {
    "collapsible": 1,
@@ -302,7 +338,7 @@
    "link_fieldname": "consent_event"
   }
  ],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Consent Event",

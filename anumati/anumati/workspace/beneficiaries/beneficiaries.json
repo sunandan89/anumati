@@ -1,0 +1,162 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"benefi0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"benefi2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Waiting For Confirmation\", \"col\": 3}}, {\"id\": \"benefi3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"benefi4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Consents\", \"col\": 3}}, {\"id\": \"benefi6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Waiting for confirmation\", \"col\": 3}}, {\"id\": \"benefi7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Guardians\", \"col\": 3}}, {\"id\": \"benefi8\", \"type\": \"card\", \"data\": {\"card_name\": \"People\", \"col\": 4}}, {\"id\": \"benefi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Consent records\", \"col\": 4}}]",
+ "creation": "2026-09-29 10:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 1,
+ "icon": "users",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Beneficiaries",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "People",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Beneficiary",
+   "link_count": 0,
+   "link_to": "Data Principal",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Guardian",
+   "link_count": 0,
+   "link_to": "Guardian Link",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Consent records",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Consent",
+   "link_count": 0,
+   "link_to": "Consent Event",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Current consent per purpose",
+   "link_count": 0,
+   "link_to": "Consent State",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Confirmation attempt",
+   "link_count": 0,
+   "link_to": "Verification Attempt",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Beneficiaries",
+ "number_cards": [
+  {
+   "label": "Beneficiaries",
+   "number_card_name": "Beneficiaries"
+  },
+  {
+   "label": "Consents This Week",
+   "number_card_name": "Consents This Week"
+  },
+  {
+   "label": "Waiting For Confirmation",
+   "number_card_name": "Waiting For Confirmation"
+  },
+  {
+   "label": "Withdrawals This Week",
+   "number_card_name": "Withdrawals This Week"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Anumati Operator"
+  },
+  {
+   "role": "Anumati Programme Manager"
+  },
+  {
+   "role": "Anumati DPO"
+  },
+  {
+   "role": "Anumati Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 2.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Beneficiaries",
+   "link_to": "Data Principal",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Consents",
+   "link_to": "Consent Event",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "format": "{} waiting",
+   "label": "Waiting for confirmation",
+   "link_to": "Consent State",
+   "stats_filter": "[[\"Consent State\", \"verification_status\", \"=\", \"unconfirmed\"]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Purple",
+   "doc_view": "List",
+   "label": "Guardians",
+   "link_to": "Guardian Link",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Beneficiaries"
+}

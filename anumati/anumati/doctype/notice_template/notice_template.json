@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "purposes_tab",
   "programme",
   "version",
   "status",
@@ -15,10 +16,12 @@
   "purposes_section",
   "purposes",
   "processors",
+  "content_tab",
   "content_section",
   "summary",
   "full_text",
   "pictorial_card",
+  "rule3_tab",
   "rule3_section",
   "withdrawal_methods",
   "rights_text",
@@ -26,9 +29,16 @@
   "c2",
   "dpo_contact",
   "security_summary",
+  "preview_tab",
+  "phone_preview",
   "amended_from"
  ],
  "fields": [
+  {
+   "fieldname": "purposes_tab",
+   "fieldtype": "Tab Break",
+   "label": "Purposes"
+  },
   {
    "fieldname": "programme",
    "fieldtype": "Link",
@@ -90,6 +100,11 @@
    "options": "Notice Processor"
   },
   {
+   "fieldname": "content_tab",
+   "fieldtype": "Tab Break",
+   "label": "Notice content"
+  },
+  {
    "fieldname": "content_section",
    "fieldtype": "Section Break",
    "label": "Notice content"
@@ -109,6 +124,11 @@
    "fieldname": "pictorial_card",
    "fieldtype": "Attach Image",
    "label": "Pictorial card"
+  },
+  {
+   "fieldname": "rule3_tab",
+   "fieldtype": "Tab Break",
+   "label": "Rule 3 checklist"
   },
   {
    "description": "Every notice must say all of this",
@@ -146,6 +166,16 @@
    "label": "Summary of security safeguards"
   },
   {
+   "fieldname": "preview_tab",
+   "fieldtype": "Tab Break",
+   "label": "Phone preview"
+  },
+  {
+   "fieldname": "phone_preview",
+   "fieldtype": "HTML",
+   "label": "Phone preview"
+  },
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -169,7 +199,7 @@
    "link_fieldname": "notice"
   }
  ],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Template",

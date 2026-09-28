@@ -261,11 +261,9 @@
    "read"
   ],
   "Anumati Programme Manager": [
-   "create",
    "print",
    "read",
-   "report",
-   "write"
+   "report"
   ],
   "System Manager": [
    "create",
@@ -340,6 +338,11 @@
    "report",
    "share",
    "write"
+  ],
+  "Anumati DPO": [
+   "print",
+   "read",
+   "report"
   ],
   "Anumati Field Worker": [
    "read"
@@ -614,6 +617,11 @@
   "Anumati Processor Partner": [
    "read"
   ],
+  "Anumati Programme Manager": [
+   "print",
+   "read",
+   "report"
+  ],
   "System Manager": [
    "create",
    "delete",
@@ -777,11 +785,9 @@
    "report"
   ],
   "Anumati Programme Manager": [
-   "create",
    "print",
    "read",
-   "report",
-   "write"
+   "report"
   ],
   "System Manager": [
    "create",

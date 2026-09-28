@@ -1,0 +1,87 @@
+{
+ "charts": [
+  {
+   "chart_name": "Consent Events Per Week",
+   "label": "Consent Events Per Week"
+  },
+  {
+   "chart_name": "Agreed By Purpose",
+   "label": "Agreed By Purpose"
+  },
+  {
+   "chart_name": "How People Consented",
+   "label": "How People Consented"
+  },
+  {
+   "chart_name": "How The Notice Was Given",
+   "label": "How The Notice Was Given"
+  },
+  {
+   "chart_name": "Consents By Language",
+   "label": "Consents By Language"
+  },
+  {
+   "chart_name": "Consents By Field Worker",
+   "label": "Consents By Field Worker"
+  },
+  {
+   "chart_name": "Requests By Type",
+   "label": "Requests By Type"
+  }
+ ],
+ "content": "[{\"id\": \"analyt0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Month\", \"col\": 3}}, {\"id\": \"analyt1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Month\", \"col\": 3}}, {\"id\": \"analyt2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Refused This Month\", \"col\": 3}}, {\"id\": \"analyt3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Notice Heard In Full\", \"col\": 3}}, {\"id\": \"analyt4\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"analyt5\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Agreed By Purpose\", \"col\": 6}}, {\"id\": \"analyt6\", \"type\": \"chart\", \"data\": {\"chart_name\": \"How People Consented\", \"col\": 6}}, {\"id\": \"analyt7\", \"type\": \"chart\", \"data\": {\"chart_name\": \"How The Notice Was Given\", \"col\": 6}}, {\"id\": \"analyt8\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consents By Language\", \"col\": 6}}, {\"id\": \"analyt9\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consents By Field Worker\", \"col\": 6}}, {\"id\": \"analyt10\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Requests By Type\", \"col\": 6}}]",
+ "creation": "2026-09-29 10:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 1,
+ "icon": "dashboard",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Analytics",
+ "links": [],
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Analytics",
+ "number_cards": [
+  {
+   "label": "Consents This Month",
+   "number_card_name": "Consents This Month"
+  },
+  {
+   "label": "Withdrawals This Month",
+   "number_card_name": "Withdrawals This Month"
+  },
+  {
+   "label": "Refused This Month",
+   "number_card_name": "Refused This Month"
+  },
+  {
+   "label": "Notice Heard In Full",
+   "number_card_name": "Notice Heard In Full"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Anumati Programme Manager"
+  },
+  {
+   "role": "Anumati DPO"
+  },
+  {
+   "role": "Anumati Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 4.0,
+ "shortcuts": [],
+ "title": "Analytics"
+}

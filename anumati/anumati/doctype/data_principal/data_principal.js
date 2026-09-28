@@ -12,6 +12,7 @@ frappe.ui.form.on("Data Principal", {
 				const parts = [p.full_name, p.phone_masked].filter(Boolean).map(frappe.utils.escape_html);
 				if (parts.length) frm.dashboard.set_headline(`<b>${parts[0]}</b>${parts[1] ? " · " + parts[1] : ""}`);
 			});
+			anumati_consent_chips(frm);
 		}
 		if (frm.doc.merged_into) {
 			frm.set_intro(__("Merged into {0}; its history now lives there.", [frm.doc.merged_into]), "blue");
@@ -29,3 +30,25 @@ frappe.ui.form.on("Data Principal", {
 		}
 	},
 });
+
+// Current consent per purpose, as coloured chips above the tabs (from Consent State, read-only).
+const CHIP = { granted: "green", withdrawn: "red", refused: "gray", expired: "gray", not_asked: "gray" };
+
+function anumati_consent_chips(frm) {
+	if (!frappe.model.can_read("Consent State")) return;
+	frappe.db.get_list("Consent State", {
+		filters: { principal: frm.doc.name },
+		fields: ["purpose", "status", "verification_status"],
+		limit: 100,
+	}).then((rows) => {
+		if (!rows.length) return;
+		const esc = frappe.utils.escape_html;
+		const chips = rows.map((r) => {
+			const waiting = r.status === "granted" && r.verification_status === "unconfirmed";
+			const tone = waiting ? "orange" : CHIP[r.status] || "gray";
+			const note = waiting ? __("waiting for confirmation") : __(r.status.replace(/_/g, " "));
+			return `<span class="indicator-pill ${tone}" style="margin:0 6px 6px 0" title="${esc(note)}">${esc(r.purpose)} · ${esc(note)}</span>`;
+		}).join("");
+		frm.dashboard.add_section(`<div style="display:flex;flex-wrap:wrap">${chips}</div>`, __("Consent today"));
+	});
+}

@@ -1,0 +1,143 @@
+{
+ "charts": [
+  {
+   "chart_name": "Consent Events Per Week",
+   "label": "Consent Events Per Week"
+  }
+ ],
+ "content": "[{\"id\": \"today0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"today1\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Needs Attention\", \"col\": 12}}, {\"id\": \"today2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 3}}, {\"id\": \"today3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"today4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"today5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"today6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"today7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Inbox\", \"col\": 3}}, {\"id\": \"today8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Find a receipt\", \"col\": 3}}, {\"id\": \"today9\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"today10\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"today11\", \"type\": \"card\", \"data\": {\"card_name\": \"Requests\", \"col\": 4}}]",
+ "creation": "2026-09-29 10:00:00.000000",
+ "custom_blocks": [
+  {
+   "custom_block_name": "Needs Attention",
+   "label": "Needs Attention"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 1,
+ "icon": "home",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Today",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Requests",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Rights Request",
+   "link_count": 0,
+   "link_to": "Rights Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purge Request",
+   "link_count": 0,
+   "link_to": "Purge Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Propagation Ack",
+   "link_count": 0,
+   "link_to": "Propagation Ack",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Today",
+ "number_cards": [
+  {
+   "label": "Open Rights Requests",
+   "number_card_name": "Open Rights Requests"
+  },
+  {
+   "label": "Overdue Requests",
+   "number_card_name": "Overdue Requests"
+  },
+  {
+   "label": "Consents This Week",
+   "number_card_name": "Consents This Week"
+  },
+  {
+   "label": "Withdrawals This Week",
+   "number_card_name": "Withdrawals This Week"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Anumati Operator"
+  },
+  {
+   "role": "Anumati Programme Manager"
+  },
+  {
+   "role": "Anumati DPO"
+  },
+  {
+   "role": "Anumati Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Orange",
+   "label": "Requests board",
+   "stats_filter": "[]",
+   "type": "URL",
+   "url": "/app/rights-request/view/kanban/Requests"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "format": "{} open",
+   "label": "Inbox",
+   "link_to": "Rights Request",
+   "stats_filter": "[[\"Rights Request\", \"status\", \"not in\", [\"Closed\", \"Rejected\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Find a receipt",
+   "link_to": "Consent Event",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Beneficiaries",
+   "link_to": "Data Principal",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Today"
+}

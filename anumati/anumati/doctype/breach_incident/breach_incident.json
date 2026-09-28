@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "incident_tab",
   "breach_type",
   "detected_on",
   "programme",
@@ -16,6 +17,7 @@
   "purposes_affected",
   "detail_section",
   "description",
+  "steps_tab",
   "steps_section",
   "contained_on",
   "risk_assessed_on",
@@ -28,6 +30,11 @@
   "closed_on"
  ],
  "fields": [
+  {
+   "fieldname": "incident_tab",
+   "fieldtype": "Tab Break",
+   "label": "Incident"
+  },
   {
    "fieldname": "breach_type",
    "fieldtype": "Select",
@@ -90,6 +97,11 @@
    "label": "Description"
   },
   {
+   "fieldname": "steps_tab",
+   "fieldtype": "Tab Break",
+   "label": "72-hour steps"
+  },
+  {
    "fieldname": "steps_section",
    "fieldtype": "Section Break",
    "label": "Steps (72-hour clock)"
@@ -142,7 +154,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Breach Incident",

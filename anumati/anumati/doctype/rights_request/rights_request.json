@@ -7,6 +7,7 @@
  "email_append_to": 1,
  "engine": "InnoDB",
  "field_order": [
+  "request_tab",
   "request_type",
   "channel",
   "status",
@@ -23,12 +24,18 @@
   "sender_section",
   "raised_by",
   "sender_hash",
+  "detail_tab",
   "detail_section",
   "raw_payload",
   "resolution",
   "evidence"
  ],
  "fields": [
+  {
+   "fieldname": "request_tab",
+   "fieldtype": "Tab Break",
+   "label": "Request"
+  },
   {
    "default": "grievance",
    "fieldname": "request_type",
@@ -139,6 +146,11 @@
    "search_index": 1
   },
   {
+   "fieldname": "detail_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details"
+  },
+  {
    "fieldname": "detail_section",
    "fieldtype": "Section Break",
    "label": "Details"
@@ -163,7 +175,7 @@
  "has_web_view": 0,
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Rights Request",
