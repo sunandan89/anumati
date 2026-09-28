@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-09-30 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-03 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -153,6 +153,19 @@ doctype("Anumati Settings", [
     col("chain_status_col"),
     F("consent_anchor", "Small Text", "Consent chain checkpoint", read_only=True),
     F("audit_anchor", "Small Text", "Audit chain checkpoint", read_only=True),
+    sec("voice_section", "Natural voice (Sarvam AI)", collapsible=True,
+        description="Sarvam AI, an Indian company, turns notices into natural speech and can help recognise a spoken yes or no. Put the API key in the site config as sarvam_api_key, or in the field below."),
+    F("sarvam_api_key", "Password", "Sarvam API key", description="Leave empty to use sarvam_api_key from the site config"),
+    F("voice_female", "Select", "Woman's voice", sel("kavya", "priya", "neha", "ritu", "pooja", "simran", "shreya"),
+      default="kavya", description="Played by women field workers"),
+    F("voice_male", "Select", "Man's voice", sel("rahul", "amit", "rohan", "aditya", "kabir"),
+      default="rahul", description="Played by men field workers (set Gender on the worker's User)"),
+    F("voice_pace", "Float", "Speaking pace", default="0.9", description="1.0 is normal speed; slower is easier for older listeners"),
+    col("voice_col"),
+    F("voice_notice_audio", "Check", "Generate natural notice audio", default="1",
+      description="Only the notice text is sent to Sarvam, never anyone's personal data. Audio is played in the field only after a reviewer approves it."),
+    F("voice_listen_helper", "Check", "Help recognise a spoken yes or no",
+      description="When a worker records someone saying yes, the clip is sent to Sarvam to suggest 'yes', 'no' or 'unclear'. The worker still decides; nothing is stored. Sends the person's voice to Sarvam, so first add Sarvam AI as a Processor with a signed data processing agreement and list it in your notices."),
 ], {ADM: "W", DPO: "r", SM: "W"}, issingle=1)
 
 doctype("Programme", [
@@ -222,6 +235,12 @@ doctype("Notice Template", [
     F("summary", "Small Text", "Summary"),
     F("full_text", "Text Editor", "Full text"),
     F("pictorial_card", "Attach Image", "Pictorial card", description="Shown on the field app's notice screen"),
+    sec("notice_audio_section", "Audio notice (base language)"),
+    F("audio_file", "Attach", "Audio notice (woman's voice)", allow_on_submit=True, read_only=True),
+    F("audio_file_male", "Attach", "Audio notice (man's voice)", allow_on_submit=True, read_only=True),
+    F("audio_machine_made", "Check", "Audio is machine-made", allow_on_submit=True, read_only=True,
+      description="Machine-made audio is never played in the field until a reviewer approves it"),
+    F("audio_reviewed_by", "Link", "Audio approved by", "User", allow_on_submit=True, read_only=True),
     tab("rule3_tab", "Rule 3 checklist"),
     sec("rule3_section", "Rule 3 contents", description="Every notice must say all of this"),
     F("withdrawal_methods", "Small Text", "How to withdraw consent"),
@@ -262,7 +281,8 @@ doctype("Notice Translation", [
     F("dpo_contact", "Small Text", "DPO or grievance contact"),
     F("security_summary", "Small Text", "Summary of security safeguards"),
     sec("media_section", "Audio and picture card"),
-    F("audio_file", "Attach", "Audio notice"),
+    F("audio_file", "Attach", "Audio notice (woman's voice)"),
+    F("audio_file_male", "Attach", "Audio notice (man's voice)", read_only=True),
     F("audio_machine_made", "Check", "Audio is machine-made",
       description="Machine-made audio is never played in the field until a reviewer approves it"),
     F("audio_reviewed_by", "Link", "Audio reviewed by", "User"),

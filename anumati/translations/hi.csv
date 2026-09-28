@@ -9,9 +9,13 @@ Agreed By Purpose,उद्देश्य के अनुसार सहम�
 Agreed to,इनके लिए सहमति
 Analytics,विश्लेषण
 Anumati Settings,अनुमति सेटिंग्स
+Approve audio,ऑडियो स्वीकृत करें
 Approved,स्वीकृत
+Approved by {0},{0} ने स्वीकृत किया
 Assessing,जाँच जारी
 Assigned to me,मुझे सौंपे गए
+Audio,ऑडियो
+Audio notice,ऑडियो सूचना
 Audit Entry,ऑडिट लॉग प्रविष्टि
 Audit Share,ऑडिटर लिंक
 Audit log,ऑडिट लॉग
@@ -67,6 +71,8 @@ Guardians,अभिभावक
 Hash chain check FAILED. Tell the DPO now.,हैश शृंखला की जाँच असफल। DPO को अभी बताएँ।
 Hash chain not checked yet (runs every night),हैश शृंखला की जाँच अभी नहीं हुई (हर रात होती है)
 Hash chain verified {0},हैश शृंखला की जाँच {0} हुई
+"Have you listened to both recordings in full, and do they say exactly what the notice says?","क्या आपने दोनों रिकॉर्डिंग पूरी सुनी हैं, और क्या वे ठीक वही कहती हैं जो सूचना में लिखा है?"
+"Have you listened to the whole recording, and does it say exactly what the notice says?","क्या आपने पूरी रिकॉर्डिंग सुनी है, और क्या वह ठीक वही कहती है जो सूचना में लिखा है?"
 How,कैसे
 How People Consented,लोगों ने सहमति कैसे दी
 How The Notice Was Given,सूचना कैसे दी गई
@@ -76,6 +82,11 @@ How to withdraw consent,सहमति वापस कैसे लें
 Inbox,इनबॉक्स
 Incidents and audit,घटनाएँ और ऑडिट
 Live,चालू
+"Machine-made, not approved: not played in the field","मशीन से बना, स्वीकृत नहीं: फील्ड में नहीं चलेगा"
+Make audio again,ऑडियो फिर से बनाएँ
+Make natural audio,प्राकृतिक आवाज़ में ऑडियो बनाएँ
+Making audio… this can take a minute,ऑडियो बन रहा है… एक मिनट लग सकता है
+Man's voice,पुरुष की आवाज़
 Match,मिलाएँ
 Merged,मिला दिया
 Message Template,संदेश टेम्पलेट
@@ -124,10 +135,13 @@ ROPA Entry,प्रोसेसिंग रिकॉर्ड
 Re-consent,दोबारा सहमति
 Re-consent campaign,दोबारा सहमति अभियान
 "Receipt code, e.g. AN-7K2Q9C","रसीद कोड, जैसे AN-7K2Q9C"
+Record demo audio (Sarvam),डेमो ऑडियो रिकॉर्ड करें (Sarvam)
 Record views,रिकॉर्ड कब देखे गए
 Record withdrawal,सहमति वापसी दर्ज करें
 Recorded (30 Days),दर्ज (30 दिन)
+Recorded audio,रिकॉर्ड की गई आवाज़
 Recorded by,दर्ज करने वाले
+Recording started. You'll get a message when it's done.,रिकॉर्डिंग शुरू हो गई। पूरी होने पर संदेश मिलेगा।
 Records and risk,रिकॉर्ड और जोखिम
 Records of processing,प्रोसेसिंग रिकॉर्ड
 Records of processing and DPIA,प्रोसेसिंग रिकॉर्ड और DPIA
@@ -157,6 +171,7 @@ Signature is valid,हस्ताक्षर सही है
 Signed out,साइन आउट
 Significant Data Fiduciary,महत्वपूर्ण डेटा फ़िड्यूशियरी
 Source System,जुड़ा हुआ सिस्टम
+Starting…,शुरू हो रहा है…
 Summary of security safeguards,सुरक्षा उपायों का सार
 System Usage Log,सहमति जाँच लॉग
 Team,टीम
@@ -183,10 +198,13 @@ Withdrawals By Channel,माध्यम के अनुसार सहमत
 Withdrawals This Month,इस महीने सहमति वापसी
 Withdrawals This Week,इस हफ़्ते सहमति वापसी
 Withdrawn (30 Days),सहमति वापसी (30 दिन)
+Woman's voice,महिला की आवाज़
 Yes to all,सब के लिए हाँ
 access,डेटा देखने का अनुरोध
 active,चालू
+aditya,आदित्य
 allow,अनुमति है
+amit,अमित
 anonymise,पहचान हटाएँ
 api,जुड़ा हुआ सिस्टम (API)
 app,फील्ड ऐप
@@ -245,6 +263,8 @@ hosted_page,वेब पेज
 in_person,आमने-सामने
 insert,बनाया
 ivr,फ़ोन (IVR)
+kabir,कबीर
+kavya,काव्या
 legal_guardian,क़ानूनी अभिभावक
 legal_hold,क़ानूनी रोक
 legal_hold_then_review,"क़ानूनी रोक, फिर समीक्षा"
@@ -260,6 +280,7 @@ material_notice_change,सूचना बदली
 member,सदस्य
 missed_call,मिस्ड कॉल
 months,महीने
+neha,नेहा
 neighbour,पड़ोसी
 no_processing,उनका डेटा इस्तेमाल बंद
 nomination,नामांकन
@@ -272,6 +293,9 @@ patient,मरीज़
 pending,बाकी
 phishing,फ़िशिंग
 phone_voice,फ़ोन ने पढ़कर सुनाया
+pooja,पूजा
+priya,प्रिया
+rahul,राहुल
 ransomware,रैनसमवेयर
 re_consent,दोबारा सहमति
 read_aloud,कार्यकर्ता ने पढ़कर सुनाया
@@ -291,11 +315,15 @@ requests need matching to a person,अनुरोधों को व्यक�
 retention_notice,डेटा मिटने वाला
 reverse_sms,SMS से जवाब
 rights_update,अनुरोध पर अपडेट
+ritu,ऋतु
+rohan,रोहन
 self,स्वयं
 self_digital,"स्वयं, अपने फ़ोन पर"
 self_worker_device,"स्वयं, कार्यकर्ता के फ़ोन पर"
 server_otp,अनुमति से SMS कोड
+shreya,श्रेया
 sibling,भाई/बहन
+simran,सिमरन
 slip,पर्ची
 sms,SMS
 spouse,पति/पत्नी

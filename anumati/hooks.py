@@ -25,6 +25,9 @@ fixtures = [
 after_install = "anumati.install.after_install"
 after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate", "anumati.evidence.encrypt_existing"]
 
+# Shared form helper for notice audio (Notice and Notice Translation forms).
+app_include_js = ["/assets/anumati/js/notice_audio.js"]
+
 # Link fields to a beneficiary also search by whole-word name, full phone number or receipt code.
 standard_queries = {"Data Principal": "anumati.api.v1.principal.link_query"}
 

@@ -225,3 +225,19 @@ Useful places:
 
 ### Hindi Desk
 Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **Language** = **Hindi** → **Save**, then reload. Menu sections, record names, dropdown values, statuses, chart labels and the main buttons and messages appear in Hindi. Some field labels on forms stay in English for now. The Hindi labels are a first draft in `tools/gen_labels.py`: have a Hindi-speaking colleague read them before the pilot and send corrections.
+
+## H. Natural voice with Sarvam AI
+
+**Notice audio (only the notice text leaves the site).**
+1. Frappe Cloud → your site → **Config** → **Add key**: `sarvam_api_key` = your Sarvam key → **Save**. (Or Anumati Settings → *Natural voice* → Sarvam API key.)
+2. Anumati Settings → *Natural voice*: pick the **Woman's voice** (default Kavya), **Man's voice** (default Rahul) and **Speaking pace**. Set **Gender** on each field worker's User so their phone plays the matching voice → **Save**.
+3. Open a published **Notice** (English) or a **Notice Translation** (e.g. Hindi) → **Audio** → **Make natural audio**. Wait about a minute.
+4. Listen to the whole recording in the *Audio notice* box. If it says exactly what the notice says: **Audio** → **Approve audio** (DPO or Admin). Only approved audio is sent to phones; on the next sync the field app plays it instead of the phone's own voice.
+
+**Spoken yes/no hint (the person's voice is sent to Sarvam — switch on only after these steps).**
+1. Sign a data processing agreement with Sarvam AI.
+2. **Processor** → **New**: name `Sarvam AI`, country India, attach the agreement → **Save**. Add it to each programme's notice under *Processors and recipients* and publish the new version.
+3. Anumati Settings → tick **Help recognise a spoken yes or no** → **Save**.
+When a worker records someone's "haan", the app shows what Sarvam heard and "Sounds like yes / no / not clear". The worker still decides; the clip and the words are not stored anywhere by Anumati.
+
+**Demo site shortcut.** On a site with the fictional demo programmes, Anumati Settings → **Actions** → **Record demo audio (Sarvam)** records every demo notice and its Hindi translation in both voices and approves them (demo only). It takes a few minutes and shows a message when done; press it again to fill any gaps. Nothing is ever recorded on its own.

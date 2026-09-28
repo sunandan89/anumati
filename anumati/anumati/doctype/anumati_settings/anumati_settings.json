@@ -28,7 +28,15 @@
   "last_chain_status",
   "chain_status_col",
   "consent_anchor",
-  "audit_anchor"
+  "audit_anchor",
+  "voice_section",
+  "sarvam_api_key",
+  "voice_female",
+  "voice_male",
+  "voice_pace",
+  "voice_col",
+  "voice_notice_audio",
+  "voice_listen_helper"
  ],
  "fields": [
   {
@@ -171,12 +179,65 @@
    "fieldtype": "Small Text",
    "label": "Audit chain checkpoint",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "description": "Sarvam AI, an Indian company, turns notices into natural speech and can help recognise a spoken yes or no. Put the API key in the site config as sarvam_api_key, or in the field below.",
+   "fieldname": "voice_section",
+   "fieldtype": "Section Break",
+   "label": "Natural voice (Sarvam AI)"
+  },
+  {
+   "description": "Leave empty to use sarvam_api_key from the site config",
+   "fieldname": "sarvam_api_key",
+   "fieldtype": "Password",
+   "label": "Sarvam API key"
+  },
+  {
+   "default": "kavya",
+   "description": "Played by women field workers",
+   "fieldname": "voice_female",
+   "fieldtype": "Select",
+   "label": "Woman's voice",
+   "options": "kavya\npriya\nneha\nritu\npooja\nsimran\nshreya"
+  },
+  {
+   "default": "rahul",
+   "description": "Played by men field workers (set Gender on the worker's User)",
+   "fieldname": "voice_male",
+   "fieldtype": "Select",
+   "label": "Man's voice",
+   "options": "rahul\namit\nrohan\naditya\nkabir"
+  },
+  {
+   "default": "0.9",
+   "description": "1.0 is normal speed; slower is easier for older listeners",
+   "fieldname": "voice_pace",
+   "fieldtype": "Float",
+   "label": "Speaking pace"
+  },
+  {
+   "fieldname": "voice_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Only the notice text is sent to Sarvam, never anyone's personal data. Audio is played in the field only after a reviewer approves it.",
+   "fieldname": "voice_notice_audio",
+   "fieldtype": "Check",
+   "label": "Generate natural notice audio"
+  },
+  {
+   "description": "When a worker records someone saying yes, the clip is sent to Sarvam to suggest 'yes', 'no' or 'unclear'. The worker still decides; nothing is stored. Sends the person's voice to Sarvam, so first add Sarvam AI as a Processor with a signed data processing agreement and list it in your notices.",
+   "fieldname": "voice_listen_helper",
+   "fieldtype": "Check",
+   "label": "Help recognise a spoken yes or no"
   }
  ],
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-03 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Anumati Settings",

@@ -28,6 +28,7 @@ frappe.ui.form.on("Notice Template", {
 	refresh(frm) {
 		show_readiness(frm);
 		if (frm.is_new()) return;
+		anumati_notice_audio(frm);
 		preview(frm, frm.fields_dict.phone_preview);
 		frm.add_custom_button(__("Preview"), () => preview(frm));
 		frm.add_custom_button(

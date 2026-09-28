@@ -31,6 +31,13 @@ frappe.ui.form.on("Anumati Settings", {
 				}
 			);
 		}, __("Actions"));
+		frm.add_custom_button(__("Record demo audio (Sarvam)"), () => {
+			frappe.confirm(
+				__("Record every demo notice (English and Hindi) in the woman's and the man's voice with Sarvam AI, and approve them for the fictional demo programmes? Only notice text is sent. It takes a few minutes; you'll get a message here when it's done. Notices that already have audio are skipped."),
+				() => frappe.call({ method: "anumati.demo.record_demo_audio", freeze: true, freeze_message: __("Starting…") })
+					.then(() => frappe.show_alert({ message: __("Recording started. You'll get a message when it's done."), indicator: "blue" }, 8))
+			);
+		}, __("Actions"));
 		frm.add_custom_button(__("Add sample data"), () => {
 			frappe.confirm(
 				__("Add 20 fictional beneficiaries to the DEMO programme, with consents, withdrawals and requests captured by the test field worker? Nothing is sent to anyone."),

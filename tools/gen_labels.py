@@ -188,6 +188,12 @@ CODES = [
     ("delete", "Deleted", "हटाया"),
 ]
 
+# Sarvam voices (Anumati Settings > Voice).
+VOICES = [(v, v.title(), hi) for v, hi in (
+    ("priya", "प्रिया"), ("kavya", "काव्या"), ("neha", "नेहा"), ("ritu", "ऋतु"), ("pooja", "पूजा"),
+    ("simran", "सिमरन"), ("shreya", "श्रेया"), ("rahul", "राहुल"), ("amit", "अमित"), ("rohan", "रोहन"),
+    ("aditya", "आदित्य"), ("kabir", "कबीर"))]
+
 # Capitalised dropdown values (statuses). Frappe already has Hindi for Open, Draft, Closed, Pending, ...
 STATUSES = [
     ("Unmatched", None, "मिलान बाकी"),
@@ -361,11 +367,29 @@ MESSAGES = [
     ("Preview", None, "पूर्वावलोकन"),
     ("Yes to all", None, "सब के लिए हाँ"), ("No to all", None, "सब के लिए ना"),
     ("View guardian document", None, "अभिभावक का दस्तावेज़ देखें"),
+    ("Make natural audio", None, "प्राकृतिक आवाज़ में ऑडियो बनाएँ"),
+    ("Record demo audio (Sarvam)", None, "डेमो ऑडियो रिकॉर्ड करें (Sarvam)"),
+    ("Recording started. You'll get a message when it's done.", None, "रिकॉर्डिंग शुरू हो गई। पूरी होने पर संदेश मिलेगा।"),
+    ("Starting…", None, "शुरू हो रहा है…"),
+    ("Woman's voice", None, "महिला की आवाज़"),
+    ("Man's voice", None, "पुरुष की आवाज़"),
+    ("Have you listened to both recordings in full, and do they say exactly what the notice says?", None,
+     "क्या आपने दोनों रिकॉर्डिंग पूरी सुनी हैं, और क्या वे ठीक वही कहती हैं जो सूचना में लिखा है?"),
+    ("Make audio again", None, "ऑडियो फिर से बनाएँ"),
+    ("Approve audio", None, "ऑडियो स्वीकृत करें"),
+    ("Audio", None, "ऑडियो"),
+    ("Audio notice", None, "ऑडियो सूचना"),
+    ("Approved by {0}", None, "{0} ने स्वीकृत किया"),
+    ("Recorded audio", None, "रिकॉर्ड की गई आवाज़"),
+    ("Machine-made, not approved: not played in the field", None, "मशीन से बना, स्वीकृत नहीं: फील्ड में नहीं चलेगा"),
+    ("Making audio… this can take a minute", None, "ऑडियो बन रहा है… एक मिनट लग सकता है"),
+    ("Have you listened to the whole recording, and does it say exactly what the notice says?", None,
+     "क्या आपने पूरी रिकॉर्डिंग सुनी है, और क्या वह ठीक वही कहती है जो सूचना में लिखा है?"),
 ]
 
 
 def rows():
-    for group in (RECORD_TYPES, CODES, STATUSES, MENU, MESSAGES):
+    for group in (RECORD_TYPES, CODES, VOICES, STATUSES, MENU, MESSAGES):
         yield from group
 
 

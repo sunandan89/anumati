@@ -333,6 +333,84 @@ def setup_field_app():
 	}
 
 
+def set_demo_genders():
+	"""The demo field worker (Ravi) is a man, so his phone plays the man's recording."""
+	for gender in ("Male", "Female"):
+		if not frappe.db.exists("Gender", gender):
+			frappe.get_doc({"doctype": "Gender", "gender": gender}).insert(ignore_permissions=True)
+	if frappe.db.exists("User", FIELD_WORKER) and not frappe.db.get_value("User", FIELD_WORKER, "gender"):
+		frappe.db.set_value("User", FIELD_WORKER, "gender", "Male")
+
+
+@frappe.whitelist(methods=["POST"])
+def record_demo_audio():
+	"""Anumati Settings > Record demo audio (Sarvam). Starts recording in the background (about a minute
+	per notice) and tells the person who pressed it when it is done."""
+	frappe.only_for(["System Manager", "Anumati Admin"])
+	if not frappe.db.exists("Programme", PROGRAMME):
+		frappe.throw(_("There are no demo programmes on this site. Run Set up field app first."))
+	from anumati import voice
+
+	voice._key()  # a clear message now if the Sarvam key is missing
+	frappe.enqueue("anumati.demo.prepare_demo_voice", queue="long", timeout=1800, notify=frappe.session.user,
+	               job_id="anumati-demo-voice", deduplicate=True)
+	return {"started": True}
+
+
+def prepare_demo_voice(notify: str | None = None) -> dict:
+	"""Demo sites only (the fictional DEMO programme exists): record every demo notice and its Hindi
+	translation in the woman's and man's voice and approve them, so the demo works end to end. Real
+	programmes are never touched: their audio is made and approved by a person in Desk. Skips anything
+	that already has audio, so pressing the button again only fills gaps."""
+	done = {"made": 0, "already": 0, "failed": 0}
+	if not frappe.db.exists("Programme", PROGRAMME):
+		return done
+	set_demo_genders()
+	from anumati import voice
+
+	try:
+		voice._key()
+	except voice.VoiceError:
+		return done  # no key yet
+	for spec in PROGRAMMES:
+		notice = frappe.db.get_value("Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
+		if not notice:
+			continue
+		targets = [("Notice Template", notice)] + [
+			("Notice Translation", t) for t in frappe.get_all("Notice Translation", {"notice": notice}, pluck="name")]
+		for doctype, name in targets:
+			if frappe.db.get_value(doctype, name, "audio_file"):
+				done["already"] += 1
+				continue
+			try:
+				voice.generate_notice_audio(doctype, name)
+				voice.approve_notice_audio(doctype, name)
+				frappe.get_doc(doctype, name).add_comment("Comment", _(
+					"Demo audio made and approved automatically for this fictional demo programme. Listen to it "
+					"in the Audio notice box; real programmes always need a person to approve their audio."))
+				if not frappe.flags.in_test:
+					frappe.db.commit()  # keep each paid recording even if a later one fails
+				done["made"] += 1
+			except Exception:
+				if not frappe.flags.in_test:
+					frappe.db.rollback()
+				frappe.log_error(title="Anumati: demo notice audio could not be made")
+				done["failed"] += 1
+				break  # stop at the first failure; pressing the button again retries
+		else:
+			continue
+		break
+	if notify:
+		ok = not done["failed"]
+		frappe.publish_realtime("msgprint", {
+			"title": _("Demo audio ready") if ok else _("Demo audio stopped"),
+			"indicator": "green" if ok else "orange",
+			"message": _("{0} notices recorded and approved, {1} already had audio.").format(done["made"], done["already"])
+			+ ("" if ok else " " + _("Sarvam could not record one of them; see Error Log, then press the button again.")),
+		}, user=notify)
+	return done
+
+
 def after_migrate():
 	"""On every migrate (each Frappe Cloud deploy or "Migrate" action):
 	- keep Mobile Configuration switched on for Anumati Collect once Mobile Control is installed;
@@ -342,6 +420,11 @@ def after_migrate():
 		configure_mobile_app()
 	except Exception:
 		frappe.log_error(title="Anumati: could not configure Mobile Control")
+	# Demo voice set-up calls Sarvam, so it runs from the hourly scheduler, never during a deploy.
+	try:
+		set_demo_genders() if frappe.db.exists("Programme", PROGRAMME) else None
+	except Exception:
+		frappe.log_error(title="Anumati: could not set the demo field worker's gender")
 	password = frappe.conf.get("anumati_demo_password")
 	if not password:
 		return
