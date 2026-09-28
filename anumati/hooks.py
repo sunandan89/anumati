@@ -17,7 +17,10 @@ fixtures = [
 ]
 
 after_install = "anumati.install.after_install"
-after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate"]
+after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate", "anumati.evidence.encrypt_existing"]
+
+# Evidence files (voice, thumbprint, guardian documents) are encrypted on disk right after upload.
+doc_events = {"File": {"after_insert": "anumati.evidence.encrypt_file"}}
 
 scheduler_events = {
 	# Seal new Version / Deleted Document records into the signed Audit Entry chain.
