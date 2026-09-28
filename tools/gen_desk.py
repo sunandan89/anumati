@@ -10,7 +10,7 @@ import json, os
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")
 FIX = os.path.join(REPO, "anumati", "fixtures")
-TS = "2026-09-30 10:00:00.000000"
+TS = "2026-10-01 10:00:00.000000"
 
 ADM, DPO, OPR, PM, SM = "Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager", "System Manager"
 
@@ -38,10 +38,11 @@ def fixture(name, rows):
 
 
 # ---------------------------------------------------------------- number cards
-def card(label, doctype, filters=(), dynamic=(), color="Blue", stats=False):
+def card(label, doctype, filters=(), dynamic=(), color="Blue", stats=False, total_of=None):
     write("number_card", label, {
         "doctype": "Number Card", "label": label, "type": "Document Type", "document_type": doctype,
-        "function": "Count", "color": color, "is_public": 1, "is_standard": 1,
+        "function": "Sum" if total_of else "Count", **({"aggregate_function_based_on": total_of} if total_of else {}),
+        "color": color, "is_public": 1, "is_standard": 1,
         "filters_json": json.dumps([[doctype, *f, False] for f in filters]),
         "dynamic_filters_json": json.dumps([[doctype, *f] for f in dynamic]),
         "show_percentage_stats": 1 if stats else 0, "stats_time_interval": "Weekly",
@@ -67,6 +68,12 @@ CARDS = {
     "breaches": card("Open Breaches", "Breach Incident", [["status", "!=", "Closed"]], color="Red"),
     "unreviewed": card("Translations Not Reviewed", "Notice Translation", [["reviewer", "is", "not set"]], color="Orange"),
     "people": card("Beneficiaries", "Data Principal", [], color="Blue"),
+    # Today's "consent posture" row (prototype NGO console dashboard)
+    "recorded_30": card("Recorded (30 Days)", "Consent Event", [["creation", "Timespan", "last month"]], color="Blue", stats=True),
+    "confirmed": card("Confirmed", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "confirmed"]], color="Green"),
+    "evidence_only": card("Evidence Only", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "evidence_only"]], color="Purple"),
+    "to_sync": card("Waiting To Sync", "Field Device", [["status", "=", "active"]], color="Orange", total_of="pending_events"),
+    "withdrawn_30": card("Withdrawn (30 Days)", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "last month"]], color="Red"),
 }
 
 
@@ -96,6 +103,8 @@ CHARTS = {
     "by_worker": chart("Consents By Field Worker", "Consent Event", group_by="captured_by", filters=[["action", "=", "grant"]], color="#B4532A"),
     "by_language": chart("Consents By Language", "Consent Event", group_by="language", filters=[["action", "=", "grant"]]),
     "requests_by_type": chart("Requests By Type", "Rights Request", group_by="request_type", color="#B4532A"),
+    "pipeline": chart("Verification Pipeline", "Consent State", group_by="verification_status", filters=[["status", "=", "granted"]], color="#7C8FD6"),
+    "withdrawals_by_channel": chart("Withdrawals By Channel", "Consent Event", group_by="channel", filters=[["action", "=", "withdraw"]], color="#B4532A"),
 }
 
 
@@ -120,6 +129,13 @@ const items = [
 	  filters: { reviewer: ["is", "not set"] } },
 ];
 const list = root_element.querySelector(".anumati-attention-list");
+// Nightly hash-chain check (Anumati Settings), for the DPO and Admin.
+const chain = frappe.model.can_read("Anumati Settings")
+	? Promise.all([
+		frappe.db.get_single_value("Anumati Settings", "last_chain_check"),
+		frappe.db.get_single_value("Anumati Settings", "last_chain_status"),
+	]).catch(() => [null, null])
+	: Promise.resolve(null);
 const readable = items.filter((i) => frappe.model.can_read(i.dt));
 Promise.all(readable.map((i) => frappe.db.count(i.dt, { filters: i.filters }).catch(() => 0))).then((counts) => {
 	list.innerHTML = "";
@@ -138,6 +154,17 @@ Promise.all(readable.map((i) => frappe.db.count(i.dt, { filters: i.filters }).ca
 		list.appendChild(row);
 	});
 	if (!list.children.length) list.innerHTML = `<div class="anumati-attention-none">${__("Nothing needs attention right now.")}</div>`;
+	chain.then((c) => {
+		if (!c) return;
+		const [when, status] = c;
+		const row = document.createElement("div");
+		const failed = (status || "").includes("FAILED");
+		row.className = "anumati-attention-row " + (failed ? "red" : when ? "green" : "amber");
+		row.textContent = failed ? __("Hash chain check FAILED. Tell the DPO now.")
+			: when ? __("Hash chain verified {0}", [frappe.datetime.prettyDate(when)])
+			: __("Hash chain not checked yet (runs every night)");
+		list.appendChild(row);
+	});
 });
 """
 ATTENTION_HTML = """<div class="anumati-attention">
@@ -152,7 +179,66 @@ ATTENTION_CSS = """.anumati-attention { padding: 4px 2px; }
 .anumati-attention-row:hover { text-decoration: none; background: var(--control-bg); }
 .anumati-attention-row.red { border-left-color: var(--red-500); }
 .anumati-attention-row.amber { border-left-color: var(--yellow-500); }
+.anumati-attention-row.green { border-left-color: var(--green-500); }
 .anumati-attention-none { color: var(--text-muted); padding: 8px 0; }"""
+
+PROGRAMMES_BLOCK = "Programmes At A Glance"
+PROGRAMMES_HTML = """<div class="anumati-prog">
+<div class="anumati-prog-title">Programmes</div>
+<table><thead><tr><th>Programme</th><th>Live notice</th><th>Languages</th><th class="num">Recorded</th><th class="num">Confirmed</th><th>Status</th></tr></thead>
+<tbody><tr><td colspan="6" class="muted">…</td></tr></tbody></table>
+</div>"""
+PROGRAMMES_SCRIPT = r"""
+// One row per programme: live notice (and any draft), notice languages, consents recorded, share of
+// current consents confirmed, status. Counts only. Shown to anyone who can read programmes and consents.
+const body = root_element.querySelector("tbody");
+const esc = (s) => frappe.utils.escape_html(s == null ? "" : String(s));
+if (!frappe.model.can_read("Programme") || !frappe.model.can_read("Consent Event")) {
+	root_element.querySelector(".anumati-prog").style.display = "none";
+} else {
+	frappe.db.get_list("Programme", { fields: ["name", "programme_name", "status"], order_by: "modified desc", limit: 20 }).then(async (progs) => {
+		const readable = frappe.model.can_read("Consent State");
+		const rows = await Promise.all(progs.map(async (p) => {
+			const [notices, recorded, confirmed, granted] = await Promise.all([
+				frappe.db.get_list("Notice Template", { filters: { programme: p.name, status: ["in", ["Published", "Draft"]] }, fields: ["name", "version", "status"], limit: 5 }),
+				frappe.db.count("Consent Event", { filters: { programme: p.name } }),
+				readable ? frappe.db.count("Consent State", { filters: { programme: p.name, status: "granted", verification_status: "confirmed" } }) : 0,
+				readable ? frappe.db.count("Consent State", { filters: { programme: p.name, status: "granted" } }) : 0,
+			]);
+			const live = notices.find((n) => n.status === "Published");
+			const draft = notices.find((n) => n.status === "Draft");
+			let langs = [];
+			if (live && frappe.model.can_read("Notice Translation")) {
+				const tr = await frappe.db.get_list("Notice Translation", { filters: { notice: live.name }, fields: ["language"], limit: 20 });
+				langs = ["English"].concat(tr.map((t) => t.language === "hi" ? "हिन्दी" : t.language === "mr" ? "मराठी" : t.language));
+			}
+			return { p, live, draft, langs, recorded, pct: granted ? Math.round((100 * confirmed) / granted) + "%" : "—" };
+		}));
+		body.innerHTML = rows.length ? rows.map(({ p, live, draft, langs, recorded, pct }) => `
+			<tr data-name="${esc(p.name)}">
+				<td><b>${esc(p.programme_name || p.name)}</b></td>
+				<td>${live ? "v" + esc(live.version) : `<span class="muted">${__("None")}</span>`}${draft ? ` <span class="pill amber">v${esc(draft.version)} ${__("draft")}</span>` : ""}</td>
+				<td>${esc(langs.join(", ")) || '<span class="muted">—</span>'}</td>
+				<td class="num">${recorded.toLocaleString("en-IN")}</td>
+				<td class="num">${pct}</td>
+				<td><span class="pill ${p.status === "Live" ? "green" : "grey"}">${esc(__(p.status))}</span></td>
+			</tr>`).join("") : `<tr><td colspan="6" class="muted">${__("No programmes yet.")}</td></tr>`;
+		body.querySelectorAll("tr[data-name]").forEach((tr) => tr.addEventListener("click", () => frappe.set_route("Form", "Programme", tr.dataset.name)));
+	});
+}
+"""
+PROGRAMMES_CSS = """.anumati-prog-title { font-weight: 600; font-size: var(--text-lg); margin-bottom: 8px; }
+.anumati-prog table { width: 100%; border-collapse: collapse; font-size: var(--text-md); }
+.anumati-prog th { text-align: left; font-weight: 500; color: var(--text-muted); padding: 8px 10px; border-bottom: 1px solid var(--border-color); }
+.anumati-prog td { padding: 10px; border-bottom: 1px solid var(--border-color); }
+.anumati-prog tr[data-name] { cursor: pointer; }
+.anumati-prog tr[data-name]:hover td { background: var(--subtle-fg); }
+.anumati-prog .num { text-align: right; }
+.anumati-prog .muted { color: var(--text-muted); }
+.anumati-prog .pill { padding: 2px 10px; border-radius: 999px; font-size: var(--text-sm); font-weight: 500; }
+.anumati-prog .pill.green { background: var(--green-100); color: var(--green-700); }
+.anumati-prog .pill.amber { background: var(--yellow-100); color: var(--yellow-700); }
+.anumati-prog .pill.grey { background: var(--gray-100); color: var(--gray-700); }"""
 
 REQUESTS_BOARD = "Requests"
 KANBAN_COLUMNS = [("Open", "Blue"), ("Unmatched", "Red"), ("In Progress", "Orange"),
@@ -244,14 +330,17 @@ class WS:
         self._block("onboarding", {"onboarding_name": ONBOARDING, "col": 12})
         return self
 
-    def attention(self):
-        self._block("custom_block", {"custom_block_name": NEEDS_ATTENTION, "col": 12})
-        self.custom.append({"custom_block_name": NEEDS_ATTENTION, "label": NEEDS_ATTENTION})
+    def attention(self, col=12):
+        return self.block(NEEDS_ATTENTION, col)
+
+    def block(self, name, col=12):
+        self._block("custom_block", {"custom_block_name": name, "col": col})
+        self.custom.append({"custom_block_name": name, "label": name})
         return self
 
-    def numbers(self, *labels):
+    def numbers(self, *labels, col=3):
         for label in labels:
-            self._block("number_card", {"number_card_name": label, "col": 3})
+            self._block("number_card", {"number_card_name": label, "col": col})
             self.cards.append({"label": label, "number_card_name": label})
         return self
 
@@ -309,8 +398,11 @@ BOARD_URL = "/app/rights-request/view/kanban/" + REQUESTS_BOARD
 def workspaces():
     r = WORKSPACES
     (WS("Today", 1, "home", r["Today"])
-        .onboarding().attention()
-        .numbers(CARDS["open_requests"], CARDS["overdue"], CARDS["consents_week"], CARDS["withdrawals_week"])
+        .onboarding()
+        .numbers(CARDS["recorded_30"], CARDS["confirmed"], CARDS["evidence_only"], col=4)
+        .numbers(CARDS["to_sync"], CARDS["withdrawn_30"], CARDS["open_requests"], col=4)
+        .chart(CHARTS["pipeline"], 4).chart(CHARTS["withdrawals_by_channel"], 4).attention(4)
+        .block(PROGRAMMES_BLOCK)
         .shortcut("Requests board", url=BOARD_URL, color="Orange")
         .shortcut("Inbox", "Rights Request", color="Orange", stats=[["Rights Request", "status", "not in", ["Closed", "Rejected"]]], fmt="{} open")
         .shortcut("Find a receipt", "Consent Event", color="Green")
@@ -369,6 +461,9 @@ def fixtures():
     fixture("custom_html_block", [{
         "doctype": "Custom HTML Block", "name": NEEDS_ATTENTION, "private": 0,
         "html": ATTENTION_HTML, "script": ATTENTION_SCRIPT.strip() + "\n", "style": ATTENTION_CSS, "roles": [],
+    }, {
+        "doctype": "Custom HTML Block", "name": PROGRAMMES_BLOCK, "private": 0,
+        "html": PROGRAMMES_HTML, "script": PROGRAMMES_SCRIPT.strip() + "\n", "style": PROGRAMMES_CSS, "roles": [],
     }])
     fixture("kanban_board", [{
         "doctype": "Kanban Board", "name": REQUESTS_BOARD, "kanban_board_name": REQUESTS_BOARD,

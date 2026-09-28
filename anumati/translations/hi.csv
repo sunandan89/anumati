@@ -30,6 +30,7 @@ Channel Provider,मैसेजिंग खाता
 Check signature,हस्ताक्षर जाँचें
 Completed,पूरा
 Confirmation attempt,पुष्टि का प्रयास
+Confirmed,पुष्टि हुई
 Connected systems,जुड़े हुए सिस्टम
 Consent,सहमति
 Consent Event,सहमति रिकॉर्ड
@@ -50,6 +51,7 @@ Data Fiduciary,डेटा फ़िड्यूशियरी
 Data Principal,लाभार्थी
 Data Processor,डेटा प्रोसेसर
 Due today,आज तक
+Evidence Only,सिर्फ़ सबूत
 "Evidence is in the Evidence tab. Hash, signature and chain position are in the Proof tab. This record can never be edited; a change of mind is a new record.","सबूत 'सबूत' टैब में है। हैश, हस्ताक्षर और शृंखला 'प्रमाण' टैब में हैं। यह रिकॉर्ड कभी बदला नहीं जा सकता; राय बदलने पर नया रिकॉर्ड बनता है।"
 Field Device,फील्ड फ़ोन
 Field app,फील्ड ऐप
@@ -62,6 +64,9 @@ Granted,सहमति दी
 Guardian,अभिभावक
 Guardian Link,अभिभावक
 Guardians,अभिभावक
+Hash chain check FAILED. Tell the DPO now.,हैश शृंखला की जाँच असफल। DPO को अभी बताएँ।
+Hash chain not checked yet (runs every night),हैश शृंखला की जाँच अभी नहीं हुई (हर रात होती है)
+Hash chain verified {0},हैश शृंखला की जाँच {0} हुई
 How,कैसे
 How People Consented,लोगों ने सहमति कैसे दी
 How The Notice Was Given,सूचना कैसे दी गई
@@ -82,8 +87,10 @@ Name or phone,नाम या फ़ोन
 Needs attention,ध्यान दें
 "No one found. Names match whole words, and phone numbers must be complete.","कोई नहीं मिला। नाम पूरे शब्द से मिलता है, और फ़ोन नंबर पूरा होना चाहिए।"
 No phone,फ़ोन नहीं
+No programmes yet.,अभी कोई कार्यक्रम नहीं।
 No to all,सब के लिए ना
 None,कोई नहीं
+Not recorded,दर्ज नहीं
 Not synced,सिंक नहीं
 Nothing needs attention right now.,अभी किसी चीज़ पर ध्यान देने की ज़रूरत नहीं।
 Notice,सूचना
@@ -109,6 +116,7 @@ Preview,पूर्वावलोकन
 Processor,डेटा प्रोसेसर (साझेदार)
 Programme,कार्यक्रम
 Programmes,कार्यक्रम
+Programmes At A Glance,कार्यक्रम एक नज़र में
 Propagation Ack,साझेदार की पुष्टि
 Purge Request,डेटा मिटाने का काम
 Purpose,उद्देश्य
@@ -118,6 +126,7 @@ Re-consent campaign,दोबारा सहमति अभियान
 "Receipt code, e.g. AN-7K2Q9C","रसीद कोड, जैसे AN-7K2Q9C"
 Record views,रिकॉर्ड कब देखे गए
 Record withdrawal,सहमति वापसी दर्ज करें
+Recorded (30 Days),दर्ज (30 दिन)
 Recorded by,दर्ज करने वाले
 Records and risk,रिकॉर्ड और जोखिम
 Records of processing,प्रोसेसिंग रिकॉर्ड
@@ -158,18 +167,22 @@ Translations Not Reviewed,समीक्षा बाकी अनुवाद
 Unmatched,मिलान बाकी
 Unmatched Requests,मिलान बाकी अनुरोध
 Verification Attempt,पुष्टि का प्रयास
+Verification Pipeline,पुष्टि की स्थिति
 Verified by,पुष्टि
 View guardian document,अभिभावक का दस्तावेज़ देखें
 Waiting,बाकी
 Waiting For Confirmation,पुष्टि बाकी
+Waiting To Sync,सिंक बाकी
 Waiting for confirmation,पुष्टि बाकी
 Who is this for?,यह किसके लिए है?
 Wipe queued,मिटाना बाकी
 Wiped,मिटा दिया
 Withdrawal,सहमति वापसी
 Withdrawal recorded: {0},सहमति वापसी दर्ज: {0}
+Withdrawals By Channel,माध्यम के अनुसार सहमति वापसी
 Withdrawals This Month,इस महीने सहमति वापसी
 Withdrawals This Week,इस हफ़्ते सहमति वापसी
+Withdrawn (30 Days),सहमति वापसी (30 दिन)
 Yes to all,सब के लिए हाँ
 access,डेटा देखने का अनुरोध
 active,चालू
@@ -207,6 +220,7 @@ device_sms,कार्यकर्ता के फ़ोन से SMS
 device_sms_otp,कार्यकर्ता के फ़ोन से SMS कोड
 digilocker,डिजीलॉकर
 document,दस्तावेज़
+draft,मसौदा
 due {0},{0} तक
 email,ईमेल
 employee,कर्मचारी

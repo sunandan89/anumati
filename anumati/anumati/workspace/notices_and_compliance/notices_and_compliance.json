@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"notice0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Breaches\", \"col\": 3}}, {\"id\": \"notice1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Translations Not Reviewed\", \"col\": 3}}, {\"id\": \"notice2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"notice3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Notices\", \"col\": 3}}, {\"id\": \"notice4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Breaches\", \"col\": 3}}, {\"id\": \"notice5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Records of processing\", \"col\": 3}}, {\"id\": \"notice6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Audit log\", \"col\": 3}}, {\"id\": \"notice7\", \"type\": \"card\", \"data\": {\"card_name\": \"Notices\", \"col\": 4}}, {\"id\": \"notice8\", \"type\": \"card\", \"data\": {\"card_name\": \"Records and risk\", \"col\": 4}}, {\"id\": \"notice9\", \"type\": \"card\", \"data\": {\"card_name\": \"Incidents and audit\", \"col\": 4}}]",
- "creation": "2026-09-30 10:00:00.000000",
+ "creation": "2026-10-01 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -177,7 +177,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-01 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notices and Compliance",

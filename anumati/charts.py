@@ -16,7 +16,11 @@ BREAKDOWNS = {
 	"Consents By Field Worker": ("Consent Event", "captured_by", [["action", "=", "grant"]]),
 	"Consents By Language": ("Consent Event", "language", [["action", "=", "grant"]]),
 	"Requests By Type": ("Rights Request", "request_type", []),
+	"Verification Pipeline": ("Consent State", "verification_status", [["status", "=", "granted"]]),
+	"Withdrawals By Channel": ("Consent Event", "channel", [["action", "=", "withdraw"]]),
 }
+# Charts that read as a sequence keep this order instead of largest first.
+ORDER = {"Verification Pipeline": ["captured", "recorded", "unconfirmed", "confirmed", "evidence_only"]}
 LINK_TITLE = {"Purpose": "purpose_title", "Language": "language_name", "User": "full_name"}
 
 
@@ -41,5 +45,8 @@ def breakdown(chart_name=None, chart=None, no_cache=None, filters=None, from_dat
 						   limit_page_length=20)
 	if not rows:
 		return None
+	if chart_name in ORDER:
+		rank = {v: i for i, v in enumerate(ORDER[chart_name])}
+		rows.sort(key=lambda r: rank.get(r.value, len(rank)))
 	return {"labels": [_label(doctype, field, r.value) for r in rows],
 			"datasets": [{"name": _(chart_name), "values": [r.count for r in rows]}]}

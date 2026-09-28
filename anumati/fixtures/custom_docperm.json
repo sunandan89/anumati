@@ -21,7 +21,7 @@
   "if_owner": 0,
   "set_user_permissions": 0,
   "select": 0,
-  "modified": "2026-09-30 10:00:00.000000"
+  "modified": "2026-10-01 10:00:00.000000"
  },
  {
   "doctype": "Custom DocPerm",
@@ -45,7 +45,7 @@
   "if_owner": 0,
   "set_user_permissions": 0,
   "select": 0,
-  "modified": "2026-09-30 10:00:00.000000"
+  "modified": "2026-10-01 10:00:00.000000"
  },
  {
   "doctype": "Custom DocPerm",
@@ -69,7 +69,7 @@
   "if_owner": 0,
   "set_user_permissions": 0,
   "select": 0,
-  "modified": "2026-09-30 10:00:00.000000"
+  "modified": "2026-10-01 10:00:00.000000"
  },
  {
   "doctype": "Custom DocPerm",
@@ -93,6 +93,6 @@
   "if_owner": 0,
   "set_user_permissions": 0,
   "select": 0,
-  "modified": "2026-09-30 10:00:00.000000"
+  "modified": "2026-10-01 10:00:00.000000"
  }
 ]

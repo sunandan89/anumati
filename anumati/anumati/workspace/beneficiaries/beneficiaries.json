@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"benefi0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"benefi2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Waiting For Confirmation\", \"col\": 3}}, {\"id\": \"benefi3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"benefi4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Consents\", \"col\": 3}}, {\"id\": \"benefi6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Waiting for confirmation\", \"col\": 3}}, {\"id\": \"benefi7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Guardians\", \"col\": 3}}, {\"id\": \"benefi8\", \"type\": \"card\", \"data\": {\"card_name\": \"People\", \"col\": 4}}, {\"id\": \"benefi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Consent records\", \"col\": 4}}]",
- "creation": "2026-09-30 10:00:00.000000",
+ "creation": "2026-10-01 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -79,7 +79,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-01 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Beneficiaries",
