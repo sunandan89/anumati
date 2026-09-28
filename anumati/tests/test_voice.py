@@ -141,3 +141,27 @@ class TestVoice(FrappeTestCase):
 				self.assertEqual(device.register(f"VOICE-{want}")["voice"], want)
 			finally:
 				frappe.set_user("Administrator")
+
+	def test_demo_site_gets_recorded_approved_notices_and_a_male_demo_worker(self):
+		demo.create_field_worker()
+		frappe.db.set_value("User", demo.FIELD_WORKER, "gender", None)
+		for doctype in ("Notice Template", "Notice Translation"):  # start from no audio, whatever ran before
+			for name in frappe.get_all(doctype, pluck="name"):
+				frappe.db.set_value(doctype, name, {"audio_file": None, "audio_file_male": None, "audio_reviewed_by": None})
+		SPEAKERS.clear()
+		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
+			demo.prepare_demo_voice()
+		self.assertEqual(frappe.db.get_value("User", demo.FIELD_WORKER, "gender"), "Male")
+		for spec in demo.PROGRAMMES:
+			out = notice.get_active(spec["code"], language="hi")
+			self.assertTrue(out["audio_file"] and out["audio_file_male"], spec["code"])
+			self.assertTrue(out["translation"]["audio_file_male"], spec["code"])
+		made = len(SPEAKERS)
+		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
+			demo.prepare_demo_voice()
+		self.assertEqual(len(SPEAKERS), made, "nothing is recorded twice")
+
+	def test_demo_voice_does_nothing_without_a_key(self):
+		frappe.conf.pop("sarvam_api_key", None)
+		with patch("anumati.voice.requests.post", side_effect=AssertionError("must not call Sarvam")):
+			demo.prepare_demo_voice()
