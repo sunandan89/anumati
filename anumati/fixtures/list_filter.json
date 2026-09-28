@@ -1,0 +1,110 @@
+[
+ {
+  "doctype": "List Filter",
+  "name": "anumati-consent_event-consents_this_week",
+  "filter_name": "Consents this week",
+  "reference_doctype": "Consent Event",
+  "for_user": "",
+  "filters": "[[\"Consent Event\", \"creation\", \"Timespan\", \"this week\", false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-consent_event-withdrawals",
+  "filter_name": "Withdrawals",
+  "reference_doctype": "Consent Event",
+  "for_user": "",
+  "filters": "[[\"Consent Event\", \"action\", \"=\", \"withdraw\", false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-consent_event-refused_all",
+  "filter_name": "Refused all",
+  "reference_doctype": "Consent Event",
+  "for_user": "",
+  "filters": "[[\"Consent Event\", \"action\", \"=\", \"refuse\", false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-consent_event-guardian_consents",
+  "filter_name": "Guardian consents",
+  "reference_doctype": "Consent Event",
+  "for_user": "",
+  "filters": "[[\"Consent Event\", \"capture_mode\", \"in\", [\"guardian_minor\", \"guardian_pwd\"], false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-consent_event-notice_not_heard_in_full",
+  "filter_name": "Notice not heard in full",
+  "reference_doctype": "Consent Event",
+  "for_user": "",
+  "filters": "[[\"Consent Event\", \"notice_completed\", \"=\", 0, false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-consent_state-waiting_for_confirmation",
+  "filter_name": "Waiting for confirmation",
+  "reference_doctype": "Consent State",
+  "for_user": "",
+  "filters": "[[\"Consent State\", \"verification_status\", \"=\", \"unconfirmed\", false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-data_principal-minors",
+  "filter_name": "Minors",
+  "reference_doctype": "Data Principal",
+  "for_user": "",
+  "filters": "[[\"Data Principal\", \"is_minor\", \"=\", 1, false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-data_principal-shared_phone",
+  "filter_name": "Shared phone",
+  "reference_doctype": "Data Principal",
+  "for_user": "",
+  "filters": "[[\"Data Principal\", \"shared_phone\", \"=\", 1, false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-data_principal-needs_help_to_read",
+  "filter_name": "Needs help to read",
+  "reference_doctype": "Data Principal",
+  "for_user": "",
+  "filters": "[[\"Data Principal\", \"needs_assistance\", \"=\", 1, false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-rights_request-unmatched",
+  "filter_name": "Unmatched",
+  "reference_doctype": "Rights Request",
+  "for_user": "",
+  "filters": "[[\"Rights Request\", \"status\", \"=\", \"Unmatched\", false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-rights_request-open_withdrawals",
+  "filter_name": "Open withdrawals",
+  "reference_doctype": "Rights Request",
+  "for_user": "",
+  "filters": "[[\"Rights Request\", \"request_type\", \"=\", \"withdrawal\", false], [\"Rights Request\", \"status\", \"not in\", [\"Closed\", \"Rejected\"], false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ },
+ {
+  "doctype": "List Filter",
+  "name": "anumati-field_device-lost_or_wiped",
+  "filter_name": "Lost or wiped",
+  "reference_doctype": "Field Device",
+  "for_user": "",
+  "filters": "[[\"Field Device\", \"status\", \"in\", [\"lost\", \"wipe_queued\", \"wiped\"], false]]",
+  "modified": "2026-09-29 10:00:00.000000"
+ }
+]

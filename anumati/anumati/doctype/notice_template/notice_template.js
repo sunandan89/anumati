@@ -28,6 +28,7 @@ frappe.ui.form.on("Notice Template", {
 	refresh(frm) {
 		show_readiness(frm);
 		if (frm.is_new()) return;
+		preview(frm, frm.fields_dict.phone_preview);
 		frm.add_custom_button(__("Preview"), () => preview(frm));
 		frm.add_custom_button(
 			__("Translation"),
@@ -67,7 +68,8 @@ async function show_readiness(frm) {
 	}
 }
 
-async function preview(frm) {
+// Preview in a dialog (button) or inline in the "Phone preview" tab (target = that HTML field).
+async function preview(frm, target) {
 	const names = (frm.doc.purposes || []).map((row) => row.purpose).filter(Boolean);
 	const [purposes, translations] = await Promise.all([
 		frappe.db.get_list("Purpose", {
@@ -83,17 +85,19 @@ async function preview(frm) {
 		}),
 	]);
 	const versions = [{ language: __("Base text"), summary: frm.doc.summary, reviewer: "base" }].concat(translations);
-	const dialog = new frappe.ui.Dialog({
+	let chosen = versions[0].language;
+	const dialog = target ? null : new frappe.ui.Dialog({
 		title: __("Preview: {0}", [frm.doc.name]),
 		fields: [
 			{ fieldtype: "Select", fieldname: "language", label: __("Language"),
 			  options: versions.map((v) => v.language), default: versions[0].language,
-			  onchange: () => render() },
+			  onchange: () => { chosen = dialog.get_value("language"); render(); } },
 			{ fieldtype: "HTML", fieldname: "phone" },
 		],
 	});
+	const $out = target ? target.$wrapper : dialog.fields_dict.phone.$wrapper;
 	const render = () => {
-		const v = versions.find((x) => x.language === dialog.get_value("language")) || versions[0];
+		const v = versions.find((x) => x.language === chosen) || versions[0];
 		const warn = v.reviewer ? "" :
 			`<div class="text-warning small">${__("Machine-made or not reviewed: the field app will not show this language yet.")}</div>`;
 		const items = purposes.map((p) =>
@@ -101,8 +105,10 @@ async function preview(frm) {
 				<b>${esc(p.purpose_title)}</b>${p.essential ? ` <span class="text-muted small">(${__("always on")})</span>` : ""}
 				<div class="small text-muted">${esc(p.description)}</div></div>`).join("");
 		const yes = esc(v.label_yes_all || __("Yes to all")), no = esc(v.label_no_all || __("No to all"));
-		dialog.fields_dict.phone.$wrapper.html(
-			`<div style="max-width:340px;margin:auto;border:8px solid #2A2118;border-radius:28px;padding:14px">
+		const tabs = !target ? "" : `<div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px">${versions.map((x) =>
+			`<button type="button" class="btn btn-xs ${x.language === v.language ? "btn-primary" : "btn-default"} anumati-lang" data-lang="${esc(x.language)}">${esc(x.language)}</button>`).join("")}</div>`;
+		$out.html(
+			`${tabs}<div style="max-width:340px;margin:auto;border:8px solid #2A2118;border-radius:28px;padding:14px">
 				${warn}<p>${esc(v.summary)}</p>${items}
 				<div style="display:flex;gap:8px;margin-top:10px">
 					<button class="btn btn-default btn-sm" style="flex:1">${no}</button>
@@ -112,6 +118,13 @@ async function preview(frm) {
 			</div>`
 		);
 	};
-	dialog.show();
+	if (target) {
+		$out.off("click.anumati").on("click.anumati", ".anumati-lang", (e) => {
+			chosen = $(e.currentTarget).attr("data-lang");
+			render();
+		});
+	} else {
+		dialog.show();
+	}
 	render();
 }

@@ -1,0 +1,253 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"notice0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Breaches\", \"col\": 3}}, {\"id\": \"notice1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Translations Not Reviewed\", \"col\": 3}}, {\"id\": \"notice2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"notice3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Notices\", \"col\": 3}}, {\"id\": \"notice4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Breaches\", \"col\": 3}}, {\"id\": \"notice5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Records of processing\", \"col\": 3}}, {\"id\": \"notice6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Audit log\", \"col\": 3}}, {\"id\": \"notice7\", \"type\": \"card\", \"data\": {\"card_name\": \"Notices\", \"col\": 4}}, {\"id\": \"notice8\", \"type\": \"card\", \"data\": {\"card_name\": \"Records and risk\", \"col\": 4}}, {\"id\": \"notice9\", \"type\": \"card\", \"data\": {\"card_name\": \"Incidents and audit\", \"col\": 4}}]",
+ "creation": "2026-09-29 10:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 1,
+ "icon": "lock",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Notices and Compliance",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Notices",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Notice",
+   "link_count": 0,
+   "link_to": "Notice Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Translation",
+   "link_count": 0,
+   "link_to": "Notice Translation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purpose",
+   "link_count": 0,
+   "link_to": "Purpose",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Message Template",
+   "link_count": 0,
+   "link_to": "Message Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Records and risk",
+   "link_count": 5,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Records of processing and DPIA",
+   "link_count": 0,
+   "link_to": "ROPA Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Data Category",
+   "link_count": 0,
+   "link_to": "Data Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Retention Policy",
+   "link_count": 0,
+   "link_to": "Retention Policy",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Processor",
+   "link_count": 0,
+   "link_to": "Processor",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purge Request",
+   "link_count": 0,
+   "link_to": "Purge Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Incidents and audit",
+   "link_count": 5,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Breach",
+   "link_count": 0,
+   "link_to": "Breach Incident",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Audit log",
+   "link_count": 0,
+   "link_to": "Audit Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Access log (names and evidence)",
+   "link_count": 0,
+   "link_to": "Access Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Record views",
+   "link_count": 0,
+   "link_to": "View Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Audit Share",
+   "link_count": 0,
+   "link_to": "Audit Share",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Notices and Compliance",
+ "number_cards": [
+  {
+   "label": "Open Breaches",
+   "number_card_name": "Open Breaches"
+  },
+  {
+   "label": "Translations Not Reviewed",
+   "number_card_name": "Translations Not Reviewed"
+  },
+  {
+   "label": "Overdue Requests",
+   "number_card_name": "Overdue Requests"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Anumati Programme Manager"
+  },
+  {
+   "role": "Anumati DPO"
+  },
+  {
+   "role": "Anumati Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 5.0,
+ "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Notices",
+   "link_to": "Notice Template",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "format": "{} open",
+   "label": "Breaches",
+   "link_to": "Breach Incident",
+   "stats_filter": "[[\"Breach Incident\", \"status\", \"!=\", \"Closed\"]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "label": "Records of processing",
+   "link_to": "ROPA Entry",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Audit log",
+   "link_to": "Audit Entry",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Notices and Compliance"
+}

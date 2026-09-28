@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "overview_tab",
   "principal_ref",
   "full_name",
   "phone",
@@ -17,6 +18,7 @@
   "date_of_birth",
   "age_band",
   "phone_owner_relation",
+  "flags_tab",
   "flags_section",
   "is_minor",
   "pwd_guarded",
@@ -28,10 +30,16 @@
   "relationship_ended_on",
   "c3",
   "merged_into",
+  "nominee_tab",
   "nominee_section",
   "nominees"
  ],
  "fields": [
+  {
+   "fieldname": "overview_tab",
+   "fieldtype": "Tab Break",
+   "label": "Overview"
+  },
   {
    "description": "ID from the host system, e.g. MHU-004211. Never a name or phone number.",
    "fieldname": "principal_ref",
@@ -103,6 +111,11 @@
    "options": "self\nspouse\nparent\nchild\nsibling\nrelative\nneighbour\nfield_worker\nother"
   },
   {
+   "fieldname": "flags_tab",
+   "fieldtype": "Tab Break",
+   "label": "Needs & lifecycle"
+  },
+  {
    "fieldname": "flags_section",
    "fieldtype": "Section Break",
    "label": "Segment flags"
@@ -159,7 +172,11 @@
    "read_only": 1
   },
   {
-   "collapsible": 1,
+   "fieldname": "nominee_tab",
+   "fieldtype": "Tab Break",
+   "label": "Nominees"
+  },
+  {
    "fieldname": "nominee_section",
    "fieldtype": "Section Break",
    "label": "Nominees"
@@ -199,7 +216,7 @@
    "link_fieldname": "principal"
   }
  ],
- "modified": "2026-09-28 10:00:00.000000",
+ "modified": "2026-09-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Data Principal",

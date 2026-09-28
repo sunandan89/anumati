@@ -1,0 +1,22 @@
+{
+ "color": "Red",
+ "creation": "2026-09-29 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Breach Incident",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[[\"Breach Incident\", \"status\", \"!=\", \"Closed\", false]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Open Breaches",
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Open Breaches",
+ "owner": "Administrator",
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Weekly",
+ "type": "Document Type"
+}

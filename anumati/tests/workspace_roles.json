@@ -1,0 +1,38 @@
+{
+ "Analytics": [
+  "Anumati Programme Manager",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Beneficiaries": [
+  "Anumati Operator",
+  "Anumati Programme Manager",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Notices and Compliance": [
+  "Anumati Programme Manager",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Programmes": [
+  "Anumati Programme Manager",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Setup": [
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Today": [
+  "Anumati Operator",
+  "Anumati Programme Manager",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ]
+}

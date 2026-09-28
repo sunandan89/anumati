@@ -199,3 +199,24 @@ Every phone that signs in appears under **Field Device** with its user, app vers
 
 ### Receipt codes work offline
 The code on the slip (e.g. `AN-7K2Q9C`) is worked out on the phone from the consent's ID, so the worker can write it down before the phone syncs. The server gets the same code. Codes are short, so two people can rarely share one: an SMS `STOP <code>` is then matched by the sender's number, or goes to the inbox for a person to resolve.
+
+## G. The Desk menu: who sees what
+
+After the deploy, the left sidebar has six Anumati sections. Each person sees only the sections for their role. What they can open or change inside a section is still set by the permissions on each record type.
+
+| Section | What's in it | Operator | Programme Manager | DPO | Admin |
+|---|---|:-:|:-:|:-:|:-:|
+| **Today** | Needs attention, requests board, key numbers, Getting started (admins, until done) | ✓ | ✓ | ✓ | ✓ |
+| **Beneficiaries** | Beneficiaries, consents, guardians, receipt lookup | ✓ | ✓ | ✓ | ✓ |
+| **Programmes** | Programmes, re-consent campaigns, field phones | | ✓ | view | ✓ |
+| **Analytics** | Counts and charts, never names | | ✓ | ✓ | ✓ |
+| **Notices and Compliance** | Notices and translations, purposes, records of processing and DPIA, retention, processors, breaches, audit log, access log | | view | ✓ | view |
+| **Setup** | Organisation, team, SMS and messaging, message templates, connected systems | | | | ✓ |
+
+Admins can read the DPO's records but only the DPO publishes notices and approves records of processing. Field workers use the phone app and see no Desk sections.
+
+Useful places:
+- **Today → Requests board**: drag a request between columns to change its status. Red cards are overdue.
+- **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
+- **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.
+- **A breach**: the form shows the hours left of the 72-hour deadline. Click **Board told now** when you have told the Board.

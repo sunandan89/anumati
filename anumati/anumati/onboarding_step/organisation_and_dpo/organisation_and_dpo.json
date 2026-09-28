@@ -1,0 +1,22 @@
+{
+ "action": "Update Settings",
+ "action_label": "Open",
+ "creation": "2026-09-29 10:00:00.000000",
+ "description": "Legal name, the DPO's contact and default languages. These print on every notice.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 0,
+ "is_complete": 0,
+ "is_single": 1,
+ "is_skipped": 0,
+ "modified": "2026-09-29 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Organisation and DPO",
+ "owner": "Administrator",
+ "reference_document": "Anumati Settings",
+ "show_form_tour": 0,
+ "show_full_form": 1,
+ "title": "Organisation and DPO",
+ "validate_action": 0
+}
