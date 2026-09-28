@@ -10,6 +10,7 @@
 Plain HTTPS to api.sarvam.ai; the key comes from the site config (sarvam_api_key) or Anumati Settings."""
 
 import base64
+import hashlib
 import re
 
 import frappe
@@ -103,14 +104,25 @@ def notice_script(doc) -> str:
 	"""What the recording says: the summary, what is collected, each purpose (base notice only; a
 	translation's own text covers them), and the Rule 3 contents."""
 	notice = frappe.get_doc("Notice Template", doc.notice) if doc.doctype == "Notice Translation" else doc
-	lines = [doc.summary, strip_html(doc.full_text or "")]
+	purposes = []
 	if doc.doctype == "Notice Template":
-		for row in doc.purposes:
-			title, description, essential = frappe.db.get_value(
-				"Purpose", row.purpose, ["purpose_title", "description", "essential"])
-			lines.append(f"{title}{' (always needed)' if essential else ''}: {description or ''}")
-	lines += [doc.get(k) or notice.get(k) for k in RULE3]
+		purposes = [frappe.db.get_value("Purpose", row.purpose, ["purpose_title", "description", "essential"])
+		            for row in doc.purposes]
+	return compose_script(doc.summary, strip_html(doc.full_text or ""), purposes,
+	                      [doc.get(k) or notice.get(k) for k in RULE3])
+
+
+def compose_script(summary, full_text, purposes, rule3) -> str:
+	"""The recording's text. Also used by tools/gen_demo_audio.py, so bundled demo audio matches exactly."""
+	lines = [summary, full_text]
+	lines += [f"{title}{' (always needed)' if essential else ''}: {description or ''}"
+	          for title, description, essential in purposes]
+	lines += list(rule3)
 	return "\n".join(line.strip() for line in lines if line and line.strip())
+
+
+def script_hash(script: str) -> str:
+	return hashlib.sha256(script.encode()).hexdigest()
 
 
 def _language(doc) -> str:
