@@ -40,7 +40,10 @@ def register(device_id, app_version=None, model=None, pending=0):
 	doc.save()
 	# Tell the app whether to offer the spoken yes/no hint (Anumati Settings; off by default).
 	helper = bool(cint(frappe.db.get_single_value("Anumati Settings", "voice_listen_helper")))
-	return {"status": doc.status, "wipe": wipe, "voice_helper": helper and not wipe}
+	# The worker's gender (stock User field) picks the woman's or man's recording of the notice.
+	gender = (frappe.db.get_value("User", frappe.session.user, "gender") or "").lower()
+	return {"status": doc.status, "wipe": wipe, "voice_helper": helper and not wipe,
+	        "voice": "male" if gender == "male" else "female"}
 
 
 @frappe.whitelist(methods=["POST"])

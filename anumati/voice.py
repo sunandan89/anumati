@@ -72,6 +72,14 @@ def chunks(text: str, size: int = CHUNK) -> list[str]:
 	return parts
 
 
+VOICES = {"female": ("voice_female", "kavya"), "male": ("voice_male", "rahul")}
+
+
+def speaker_for(gender: str) -> str:
+	field, default = VOICES[gender]
+	return settings().get(field) or default
+
+
 def speak(text: str, language: str, speaker: str | None = None, pace: float | None = None) -> bytes:
 	"""MP3 of the text, in one piece (MP3 frames can simply be joined)."""
 	code = LANGUAGES.get((language or "en").split("-")[0])
@@ -82,7 +90,7 @@ def speak(text: str, language: str, speaker: str | None = None, pace: float | No
 	for part in chunks(text):
 		out = _post("text-to-speech", json={
 			"text": part, "language_code": code, "model": TTS_MODEL, "output_audio_codec": "mp3",
-			"speaker": speaker or s.voice_speaker or "priya", "pace": flt(pace or s.voice_pace or 1.0),
+			"speaker": speaker or speaker_for("female"), "pace": flt(pace or s.voice_pace or 1.0),
 		})
 		audio += base64.b64decode(out["audios"][0])
 	return audio
@@ -127,13 +135,20 @@ def generate_notice_audio(doctype, name):
 	if flag is not None and not cint(flag):  # on by default, including sites set up before the setting
 		frappe.throw(_("Natural notice audio is switched off in Anumati Settings."))
 	doc = _check(doctype, name)
-	audio = speak(notice_script(doc), _language(doc))
-	f = frappe.get_doc({
-		"doctype": "File", "file_name": f"{frappe.scrub(name)}-{_language(doc)}-voice.mp3", "content": audio,
-		"is_private": 1, "attached_to_doctype": doctype, "attached_to_name": name,
-	}).insert(ignore_permissions=True)
-	_save(doc, audio_file=f.file_url, audio_machine_made=1, audio_reviewed_by=None)
-	return {"audio_file": f.file_url}
+	script, language = notice_script(doc), _language(doc)
+	urls = {}
+	# One recording in a woman's voice and one in a man's: the phone plays the one matching the worker.
+	for gender, field in (("female", "audio_file"), ("male", "audio_file_male")):
+		speaker = speaker_for(gender)
+		f = frappe.get_doc({
+			"doctype": "File", "file_name": f"{frappe.scrub(name)}-{language}-{speaker}.mp3",
+			"content": speak(script, language, speaker), "is_private": 1,
+			"attached_to_doctype": doctype, "attached_to_name": name,
+		}).insert(ignore_permissions=True)
+		urls[field] = f.file_url
+	# A new recording always needs a fresh approval, covering both voices.
+	_save(doc, **urls, audio_machine_made=1, audio_reviewed_by=None)
+	return urls
 
 
 def _save(doc, **values):

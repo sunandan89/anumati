@@ -31,7 +31,8 @@
   "audit_anchor",
   "voice_section",
   "sarvam_api_key",
-  "voice_speaker",
+  "voice_female",
+  "voice_male",
   "voice_pace",
   "voice_col",
   "voice_notice_audio",
@@ -193,12 +194,20 @@
    "label": "Sarvam API key"
   },
   {
-   "default": "priya",
-   "description": "Used when generating notice audio",
-   "fieldname": "voice_speaker",
+   "default": "kavya",
+   "description": "Played by women field workers",
+   "fieldname": "voice_female",
    "fieldtype": "Select",
-   "label": "Voice",
-   "options": "priya\nkavya\nneha\nritu\npooja\nsimran\nshreya\nrahul\namit\nrohan\naditya\nkabir"
+   "label": "Woman's voice",
+   "options": "kavya\npriya\nneha\nritu\npooja\nsimran\nshreya"
+  },
+  {
+   "default": "rahul",
+   "description": "Played by men field workers (set Gender on the worker's User)",
+   "fieldname": "voice_male",
+   "fieldtype": "Select",
+   "label": "Man's voice",
+   "options": "rahul\namit\nrohan\naditya\nkabir"
   },
   {
    "default": "0.9",
@@ -228,7 +237,7 @@
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-02 10:00:00.000000",
+ "modified": "2026-10-03 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Anumati Settings",

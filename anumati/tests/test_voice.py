@@ -25,9 +25,13 @@ class FakeResponse:
 		return self.payload
 
 
+SPEAKERS = []
+
+
 def fake_sarvam(url, **kwargs):
 	if url.endswith("text-to-speech"):
 		assert "Kavita" not in json.dumps(kwargs.get("json"))  # notice text only
+		SPEAKERS.append(kwargs["json"]["speaker"])
 		return FakeResponse({"audios": [base64.b64encode(MP3).decode()]})
 	return FakeResponse({"transcript": "हाँ जी, ठीक है", "language_code": "hi-IN"})
 
@@ -60,12 +64,21 @@ class TestVoice(FrappeTestCase):
 			out = voice.generate_notice_audio("Notice Translation", self.translation)
 		doc = frappe.get_doc("Notice Translation", self.translation)
 		self.assertEqual(doc.audio_file, out["audio_file"])
+		self.assertEqual(doc.audio_file_male, out["audio_file_male"])
+		self.assertIn("kavya", SPEAKERS)
+		self.assertIn("rahul", SPEAKERS)
 		self.assertTrue(doc.audio_machine_made)
 		self.assertFalse(doc.audio_reviewed_by)
 		programme = frappe.db.get_value("Notice Template", self.notice, "programme")
 		self.assertIsNone(notice.get_active(programme, language="hi")["translation"]["audio_file"])
+		self.assertIsNone(notice.get_active(programme, language="hi")["translation"]["audio_file_male"])
 		voice.approve_notice_audio("Notice Translation", self.translation)
-		self.assertEqual(notice.get_active(programme, language="hi")["translation"]["audio_file"], out["audio_file"])
+		served = notice.get_active(programme, language="hi")["translation"]
+		self.assertEqual((served["audio_file"], served["audio_file_male"]), (out["audio_file"], out["audio_file_male"]))
+		# Making it again needs a fresh approval.
+		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
+			voice.generate_notice_audio("Notice Translation", self.translation)
+		self.assertIsNone(notice.get_active(programme, language="hi")["translation"]["audio_file"])
 
 	def test_published_notice_gets_base_audio_after_approval(self):
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
@@ -113,3 +126,16 @@ class TestVoice(FrappeTestCase):
 	def test_missing_key_explains_what_to_do(self):
 		frappe.conf.pop("sarvam_api_key", None)
 		self.assertRaises(voice.VoiceError, voice.speak, "नमस्ते", "hi")
+
+	def test_phone_is_told_which_voice_to_play(self):
+		female = user_with_role("Anumati Field Worker")
+		male = "voice.male.worker@example.com"
+		if not frappe.db.exists("User", male):
+			frappe.get_doc({"doctype": "User", "email": male, "first_name": "Ravi", "gender": "Male",
+			                "send_welcome_email": 0, "roles": [{"role": "Anumati Field Worker"}]}).insert()
+		for user, want in ((female, "female"), (male, "male")):
+			frappe.set_user(user)
+			try:
+				self.assertEqual(device.register(f"VOICE-{want}")["voice"], want)
+			finally:
+				frappe.set_user("Administrator")

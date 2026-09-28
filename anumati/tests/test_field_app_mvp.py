@@ -46,7 +46,7 @@ class TestFieldAppMVP(FrappeTestCase):
 
 	def test_lost_phone_is_told_to_wipe_once_and_opens_an_incident(self):
 		dev = f"DEV-{uuid.uuid4().hex[:6]}"
-		self.assertEqual(device.register(dev, app_version="1.0.0", pending=3), {"status": "active", "wipe": False, "voice_helper": False})
+		self.assertEqual(device.register(dev, app_version="1.0.0", pending=3), {"status": "active", "wipe": False, "voice_helper": False, "voice": "female"})
 		out = device.report_lost(dev)
 		self.assertTrue(out["incident"])
 		self.assertEqual(frappe.db.get_value("Breach Incident", out["incident"], "principals_affected"), 3)

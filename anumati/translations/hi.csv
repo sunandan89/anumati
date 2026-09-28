@@ -71,6 +71,7 @@ Guardians,अभिभावक
 Hash chain check FAILED. Tell the DPO now.,हैश शृंखला की जाँच असफल। DPO को अभी बताएँ।
 Hash chain not checked yet (runs every night),हैश शृंखला की जाँच अभी नहीं हुई (हर रात होती है)
 Hash chain verified {0},हैश शृंखला की जाँच {0} हुई
+"Have you listened to both recordings in full, and do they say exactly what the notice says?","क्या आपने दोनों रिकॉर्डिंग पूरी सुनी हैं, और क्या वे ठीक वही कहती हैं जो सूचना में लिखा है?"
 "Have you listened to the whole recording, and does it say exactly what the notice says?","क्या आपने पूरी रिकॉर्डिंग सुनी है, और क्या वह ठीक वही कहती है जो सूचना में लिखा है?"
 How,कैसे
 How People Consented,लोगों ने सहमति कैसे दी
@@ -85,6 +86,7 @@ Live,चालू
 Make audio again,ऑडियो फिर से बनाएँ
 Make natural audio,प्राकृतिक आवाज़ में ऑडियो बनाएँ
 Making audio… this can take a minute,ऑडियो बन रहा है… एक मिनट लग सकता है
+Man's voice,पुरुष की आवाज़
 Match,मिलाएँ
 Merged,मिला दिया
 Message Template,संदेश टेम्पलेट
@@ -193,6 +195,7 @@ Withdrawals By Channel,माध्यम के अनुसार सहमत
 Withdrawals This Month,इस महीने सहमति वापसी
 Withdrawals This Week,इस हफ़्ते सहमति वापसी
 Withdrawn (30 Days),सहमति वापसी (30 दिन)
+Woman's voice,महिला की आवाज़
 Yes to all,सब के लिए हाँ
 access,डेटा देखने का अनुरोध
 active,चालू

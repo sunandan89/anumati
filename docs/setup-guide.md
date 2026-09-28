@@ -230,7 +230,7 @@ Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **La
 
 **Notice audio (only the notice text leaves the site).**
 1. Frappe Cloud → your site → **Config** → **Add key**: `sarvam_api_key` = your Sarvam key → **Save**. (Or Anumati Settings → *Natural voice* → Sarvam API key.)
-2. Anumati Settings → *Natural voice*: pick the **Voice** and **Speaking pace** → **Save**.
+2. Anumati Settings → *Natural voice*: pick the **Woman's voice** (default Kavya), **Man's voice** (default Rahul) and **Speaking pace**. Set **Gender** on each field worker's User so their phone plays the matching voice → **Save**.
 3. Open a published **Notice** (English) or a **Notice Translation** (e.g. Hindi) → **Audio** → **Make natural audio**. Wait about a minute.
 4. Listen to the whole recording in the *Audio notice* box. If it says exactly what the notice says: **Audio** → **Approve audio** (DPO or Admin). Only approved audio is sent to phones; on the next sync the field app plays it instead of the phone's own voice.
 

@@ -24,6 +24,7 @@
   "pictorial_card",
   "notice_audio_section",
   "audio_file",
+  "audio_file_male",
   "audio_machine_made",
   "audio_reviewed_by",
   "rule3_tab",
@@ -146,7 +147,14 @@
    "allow_on_submit": 1,
    "fieldname": "audio_file",
    "fieldtype": "Attach",
-   "label": "Audio notice",
+   "label": "Audio notice (woman's voice)",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "audio_file_male",
+   "fieldtype": "Attach",
+   "label": "Audio notice (man's voice)",
    "read_only": 1
   },
   {
@@ -239,7 +247,7 @@
    "link_fieldname": "notice"
   }
  ],
- "modified": "2026-10-02 10:00:00.000000",
+ "modified": "2026-10-03 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Template",

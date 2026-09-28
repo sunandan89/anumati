@@ -30,6 +30,7 @@
   "security_summary",
   "media_section",
   "audio_file",
+  "audio_file_male",
   "audio_machine_made",
   "audio_reviewed_by",
   "c3",
@@ -162,7 +163,13 @@
   {
    "fieldname": "audio_file",
    "fieldtype": "Attach",
-   "label": "Audio notice"
+   "label": "Audio notice (woman's voice)"
+  },
+  {
+   "fieldname": "audio_file_male",
+   "fieldtype": "Attach",
+   "label": "Audio notice (man's voice)",
+   "read_only": 1
   },
   {
    "description": "Machine-made audio is never played in the field until a reviewer approves it",
@@ -188,7 +195,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-02 10:00:00.000000",
+ "modified": "2026-10-03 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Translation",
