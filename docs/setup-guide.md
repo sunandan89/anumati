@@ -239,3 +239,5 @@ Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **La
 2. **Processor** → **New**: name `Sarvam AI`, country India, attach the agreement → **Save**. Add it to each programme's notice under *Processors and recipients* and publish the new version.
 3. Anumati Settings → tick **Help recognise a spoken yes or no** → **Save**.
 When a worker records someone's "haan", the app shows what Sarvam heard and "Sounds like yes / no / not clear". The worker still decides; the clip and the words are not stored anywhere by Anumati.
+
+**Demo site shortcut.** On a site with the fictional demo programmes, Anumati Settings → **Actions** → **Record demo audio (Sarvam)** records every demo notice and its Hindi translation in both voices and approves them (demo only). It takes a few minutes and shows a message when done; press it again to fill any gaps. Nothing is ever recorded on its own.

@@ -151,7 +151,9 @@ class TestVoice(FrappeTestCase):
 				frappe.db.set_value(doctype, name, {"audio_file": None, "audio_file_male": None, "audio_reviewed_by": None})
 		SPEAKERS.clear()
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
-			demo.prepare_demo_voice()
+			done = demo.prepare_demo_voice()
+		self.assertEqual(done["failed"], 0)
+		self.assertGreaterEqual(done["made"], 6)  # 3 programmes x (notice + Hindi translation)
 		self.assertEqual(frappe.db.get_value("User", demo.FIELD_WORKER, "gender"), "Male")
 		for spec in demo.PROGRAMMES:
 			out = notice.get_active(spec["code"], language="hi")
@@ -166,6 +168,11 @@ class TestVoice(FrappeTestCase):
 		frappe.conf.pop("sarvam_api_key", None)
 		with patch("anumati.voice.requests.post", side_effect=AssertionError("must not call Sarvam")):
 			demo.prepare_demo_voice()
+		self.assertRaises(voice.VoiceError, demo.record_demo_audio)  # the button explains what is missing
+
+	def test_nothing_records_on_its_own(self):
+		# Sarvam is paid per use: recording happens only when someone presses a button.
+		self.assertNotIn("prepare_demo_voice", json.dumps(frappe.get_hooks("scheduler_events") or {}))
 
 	def test_a_very_long_sentence_keeps_its_place(self):
 		text = "Short summary. " + "x" * 4500 + " End."
