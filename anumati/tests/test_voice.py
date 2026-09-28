@@ -56,6 +56,7 @@ class TestVoice(FrappeTestCase):
 
 	def test_spoken_yes_no_or_unclear(self):
 		for heard, want in (("haan ji", "yes"), ("हाँ जी, ठीक है", "yes"), ("nahi chahiye", "no"), ("नहीं", "no"),
+		                    ("I don't agree", "unclear"), ("not okay", "unclear"), ("never", "no"),
 		                    ("haan, koi dikkat nahi", "unclear"), ("", "unclear"), ("kya?", "unclear")):
 			self.assertEqual(voice.meaning(heard), want, heard)
 
@@ -165,3 +166,21 @@ class TestVoice(FrappeTestCase):
 		frappe.conf.pop("sarvam_api_key", None)
 		with patch("anumati.voice.requests.post", side_effect=AssertionError("must not call Sarvam")):
 			demo.prepare_demo_voice()
+
+	def test_a_very_long_sentence_keeps_its_place(self):
+		text = "Short summary. " + "x" * 4500 + " End."
+		parts = voice.chunks(text)
+		self.assertEqual(parts[0], "Short summary.")
+		self.assertTrue(all(len(p) <= voice.CHUNK for p in parts))
+		self.assertEqual("".join(parts).replace(" ", ""), text.replace(" ", ""))
+
+	def test_hand_attached_recording_is_a_person_recording_and_drops_the_old_approval(self):
+		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
+			voice.generate_notice_audio("Notice Translation", self.translation)
+		voice.approve_notice_audio("Notice Translation", self.translation)
+		doc = frappe.get_doc("Notice Translation", self.translation)
+		doc.audio_file = "/private/files/recorded-by-our-team.mp3"
+		doc.save()
+		self.assertFalse(doc.audio_machine_made)
+		self.assertFalse(doc.audio_reviewed_by)
+		self.assertFalse(doc.audio_file_male)

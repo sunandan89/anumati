@@ -69,11 +69,11 @@ CARDS = {
     "unreviewed": card("Translations Not Reviewed", "Notice Translation", [["reviewer", "is", "not set"]], color="Orange"),
     "people": card("Beneficiaries", "Data Principal", [], color="Blue"),
     # Today's "consent posture" row (prototype NGO console dashboard)
-    "recorded_30": card("Recorded (30 Days)", "Consent Event", [["creation", "Timespan", "last month"]], color="Blue", stats=True),
+    "recorded_30": card("Recorded (30 Days)", "Consent Event", [["creation", "Timespan", "last 30 days"]], color="Blue", stats=True),
     "confirmed": card("Confirmed", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "confirmed"]], color="Green"),
     "evidence_only": card("Evidence Only", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "evidence_only"]], color="Purple"),
     "to_sync": card("Waiting To Sync", "Field Device", [["status", "=", "active"]], color="Orange", total_of="pending_events"),
-    "withdrawn_30": card("Withdrawn (30 Days)", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "last month"]], color="Red"),
+    "withdrawn_30": card("Withdrawn (30 Days)", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "last 30 days"]], color="Red"),
 }
 
 

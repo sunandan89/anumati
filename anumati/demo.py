@@ -356,6 +356,8 @@ def prepare_demo_voice():
 		voice._key()
 	except voice.VoiceError:
 		return  # no key yet
+	if frappe.cache.get_value("anumati:demo_voice_failed"):
+		return  # failed recently: wait a day rather than paying for retries every hour
 	for spec in PROGRAMMES:
 		notice = frappe.db.get_value("Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
 		if not notice:
@@ -377,7 +379,8 @@ def prepare_demo_voice():
 				if not frappe.flags.in_test:
 					frappe.db.rollback()
 				frappe.log_error(title="Anumati: demo notice audio could not be made")
-				return  # try again next hour
+				frappe.cache.set_value("anumati:demo_voice_failed", 1, expires_in_sec=24 * 3600)
+				return
 
 
 def after_migrate():

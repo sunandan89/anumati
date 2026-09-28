@@ -60,6 +60,9 @@ def chunks(text: str, size: int = CHUNK) -> list[str]:
 	"""Split at sentence ends (., ।, ?, !) so no request is longer than the model allows."""
 	parts, current = [], ""
 	for sentence in re.split(r"(?<=[.।?!])\s+", text.strip()):
+		if len(sentence) > size and current:
+			parts.append(current)  # keep the order: what came before goes first
+			current = ""
 		while len(sentence) > size:
 			parts.append(sentence[:size])
 			sentence = sentence[size:]
@@ -136,14 +139,15 @@ def generate_notice_audio(doctype, name):
 		frappe.throw(_("Natural notice audio is switched off in Anumati Settings."))
 	doc = _check(doctype, name)
 	script, language = notice_script(doc), _language(doc)
-	urls = {}
 	# One recording in a woman's voice and one in a man's: the phone plays the one matching the worker.
-	for gender, field in (("female", "audio_file"), ("male", "audio_file_male")):
-		speaker = speaker_for(gender)
+	# Both are made before anything is saved, so a failed call leaves no half-finished files behind.
+	voices = [(field, speaker_for(gender)) for gender, field in (("female", "audio_file"), ("male", "audio_file_male"))]
+	audio = {field: speak(script, language, speaker) for field, speaker in voices}
+	urls = {}
+	for field, speaker in voices:
 		f = frappe.get_doc({
 			"doctype": "File", "file_name": f"{frappe.scrub(name)}-{language}-{speaker}.mp3",
-			"content": speak(script, language, speaker), "is_private": 1,
-			"attached_to_doctype": doctype, "attached_to_name": name,
+			"content": audio[field], "is_private": 1, "attached_to_doctype": doctype, "attached_to_name": name,
 		}).insert(ignore_permissions=True)
 		urls[field] = f.file_url
 	# A new recording always needs a fresh approval, covering both voices.
@@ -156,6 +160,7 @@ def _save(doc, **values):
 	the document history, which the audit chain seals; permissions were checked in _check."""
 	doc.update(values)
 	doc.flags.ignore_permissions = True
+	doc.flags.anumati_voice = True  # tells the translation's validate this is not a hand-made upload
 	doc.save()
 
 
@@ -174,7 +179,8 @@ YES = {"haan", "haa", "han", "ha", "haanji", "hanji", "ji", "jee", "theek", "thi
        "manjoor", "bilkul", "zaroor", "jarur", "yes", "ok", "okay", "agree",
        "हाँ", "हां", "हा", "जी", "ठीक", "सही", "मंजूर", "मंज़ूर", "बिल्कुल", "बिलकुल", "ज़रूर", "जरूर",
        "ओके", "यस", "हाँजी", "हांजी"}
-NO = {"nahi", "nahin", "nai", "na", "naa", "mat", "no", "nope", "disagree",
+NO = {"nahi", "nahin", "nai", "na", "naa", "mat", "no", "nope", "disagree", "not", "don", "dont", "never",
+      "refuse",
       "नहीं", "नही", "ना", "मत", "नो", "नहि"}
 
 
