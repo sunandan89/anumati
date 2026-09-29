@@ -76,6 +76,7 @@ class TestVoice(FrappeTestCase):
 		voice.approve_notice_audio("Notice Translation", self.translation)
 		served = notice.get_active(programme, language="hi")["translation"]
 		self.assertEqual((served["audio_file"], served["audio_file_male"]), (out["audio_file"], out["audio_file_male"]))
+		self.assertEqual(served["audio_machine_made"], 1, "the phone credits the machine voice")
 		# Making it again needs a fresh approval.
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
 			voice.generate_notice_audio("Notice Translation", self.translation)
@@ -191,6 +192,8 @@ class TestVoice(FrappeTestCase):
 		self.assertFalse(doc.audio_machine_made)
 		self.assertFalse(doc.audio_reviewed_by)
 		self.assertFalse(doc.audio_file_male)
+		programme = frappe.db.get_value("Notice Template", self.notice, "programme")
+		self.assertEqual(notice.get_active(programme, language="hi")["translation"]["audio_machine_made"], 0)
 
 	def test_bundled_demo_audio_matches_the_notice_text_and_needs_no_sarvam(self):
 		for doctype in ("Notice Template", "Notice Translation"):
