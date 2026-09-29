@@ -53,4 +53,7 @@ def get_active(programme, language=None):
 
 def _audio(doc) -> dict:
 	approved = not doc.get("audio_machine_made") or doc.get("audio_reviewed_by")
-	return {k: (doc.get(k) if approved else None) for k in ("audio_file", "audio_file_male")}
+	out = {k: (doc.get(k) if approved else None) for k in ("audio_file", "audio_file_male")}
+	# Lets the phone credit the voice (Sarvam AI) under a machine-made recording.
+	out["audio_machine_made"] = 1 if approved and doc.get("audio_machine_made") and doc.get("audio_file") else 0
+	return out
