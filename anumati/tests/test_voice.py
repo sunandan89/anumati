@@ -89,6 +89,8 @@ class TestVoice(FrappeTestCase):
 		self.assertIsNone(notice.get_active(programme)["audio_file"])
 		voice.approve_notice_audio("Notice Template", self.notice)
 		self.assertTrue(notice.get_active(programme)["audio_file"])
+		self.assertEqual(notice.get_active(programme)["audio_machine_made"], 1, "English consent credits Sarvam too")
+		self.assertEqual(notice.get_active(programme, language="en")["audio_machine_made"], 1)
 		self.assertEqual(frappe.db.get_value("Notice Template", self.notice, "docstatus"), 1)
 
 	def test_field_workers_cannot_make_or_approve_base_audio(self):
