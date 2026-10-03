@@ -33,13 +33,27 @@ def template_for(event: str, channel: str, language: str | None):
 	return None
 
 
+def contact_phone(doc) -> str | None:
+	"""The number messages about this person go to: for a child, or an adult with a lawful guardian, the
+	guardian's (from their latest Guardian Link) because the guardian decided; otherwise their own."""
+	own = doc.get_password("phone", raise_exception=False)
+	guarded = (doc.is_minor and not doc.get("renewal_due")) or doc.pwd_guarded
+	if guarded or not own:
+		guardian = frappe.db.get_value("Guardian Link", {"principal": doc.name}, "guardian", order_by="creation desc")
+		if guardian:
+			theirs = frappe.get_doc("Data Principal", guardian).get_password("phone", raise_exception=False)
+			if theirs:
+				return theirs
+	return own
+
+
 def send_sms(principal: str, event: str, context: dict, reference=None) -> str | None:
 	"""Send one templated SMS to a principal. Returns the Communication name, or None if not sendable
 	(no provider, no approved template, no phone). Never raises for a missing setup: capture must not
 	fail because a receipt could not be sent."""
 	provider = provider_for("SMS")
 	doc = frappe.get_doc("Data Principal", principal)
-	phone = doc.get_password("phone", raise_exception=False)
+	phone = contact_phone(doc)
 	template = template_for(event, "sms", doc.preferred_language)
 	if not (provider and template and phone):
 		return None

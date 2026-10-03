@@ -223,3 +223,18 @@ class TestJourneys(FrappeTestCase):
 		counts = {r["answer"]: r["people"] for r in data}
 		self.assertGreaterEqual(counts["Homemaker"], 5)
 		self.assertEqual(counts["Salaried job"], "fewer than 5")
+
+	# -- messages to guardians -------------------------------------------------
+
+	def test_messages_about_a_child_go_to_the_guardians_phone_and_their_number_finds_the_child(self):
+		from anumati import channels, inbox, pii
+
+		child = make_principal(is_minor=1)
+		guardian = make_principal(phone="5550001234")
+		frappe.get_doc({"doctype": "Guardian Link", "principal": child.name, "guardian": guardian.name,
+		                "guardian_type": "parent", "verification_method": "device_sms_otp"}).insert()
+		self.assertEqual(channels.contact_phone(frappe.get_doc("Data Principal", child.name)), "5550001234")
+		adult = make_principal(phone="5550005678")
+		self.assertEqual(channels.contact_phone(adult), "5550005678")
+		found = {p.name for p in inbox.principals_for_phone_hash(pii.phone_hash("5550001234"))}
+		self.assertEqual(found, {guardian.name, child.name})

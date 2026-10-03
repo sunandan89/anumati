@@ -19,7 +19,7 @@ For a connector or host app, create a User with the right role, generate its API
   "device_id": "FW-104", "device_time": "2026-09-20 11:20:00", "verification_method": "device_sms_otp",
   "verification_status": "recorded", "witness": "…", "evidence": [{"file": "…", "sha256": "…"}]}}
 ```
-Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, signature, key_id, server_time, verification_status}`. Replaying the same `event_uuid` returns the original artefact. Rules: purposes must belong to the programme; minors need a `guardian_link` and can't be granted purposes marked "not for minors"; `action` is grant | refuse | renew.
+Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, signature, key_id, server_time, verification_status}`. Replaying the same `event_uuid` returns the original artefact. Rules: purposes must belong to the programme; a child needs a `guardian_link` for that child and can't be granted purposes marked "not for minors"; a guardian other than a parent needs the order number (`authority_ref`) on the link; an adult who can't decide alone (`pwd_guarded`) needs a guardian appointed by a court or the Local Level Committee (`committee`, `court` or `legal_guardian`) with the order number; someone who needs help reading (`needs_assistance`) needs a `witness` when they agree; a child who has turned 18 consents for themself (no guardian), which makes them an adult record; `action` is grant | refuse | renew.
 
 ## consent.withdraw (POST)
 `principal_ref, programme, channel, event_uuid, purposes?` plus any capture fields. With no `purposes`, it withdraws every optional purpose currently granted (spec section 6). Idempotent on `event_uuid`.
@@ -34,10 +34,16 @@ Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, s
 Verify an artefact's hash and signature without seeing personal data. `public_keys` lists this tenant's signing keys.
 
 ## principal.upsert (POST)
-`principal_ref` plus any of `full_name, phone, email, preferred_language, persona, date_of_birth, age_band, phone_owner_relation, is_minor, pwd_guarded, needs_assistance, shared_phone, no_phone`. Returns `{principal_ref, created}` and never echoes personal data.
+`principal_ref` plus any of `full_name, phone, email, preferred_language, persona, date_of_birth, birth_year, age_band, phone_owner_relation, is_minor, pwd_guarded, needs_assistance, shared_phone, no_phone`, and `profile` (answers to the programme's extra questions, `{code: answer}`; a choice is stored as its English value) with `programme`. A `birth_year` or `date_of_birth` sets the day the person turns 18; from then `consent.check` answers `renewal_due` until they consent themselves. Returns `{principal_ref, created}` and never echoes personal data.
 
 ## notice.get_active (GET)
-`programme, language?` returns the live notice with its purposes, Rule 3 contents and cross-border line. The translation is included only if a reviewer signed it off; machine-made audio is only served once reviewed.
+`programme, language?` returns the live notice with its purposes (each with `needs_phone`: not offered to someone without a phone), Rule 3 contents and cross-border line, and `profile_questions`: the extra questions the programme switched on and the notice mentions, in the requested language (`code, question, answer_type, options [{value, label}], required, sensitive`). A reviewed translation carries `purposes`: the uses' names and descriptions in that language. The translation is included only if a reviewer signed it off; machine-made audio is only served once reviewed.
+
+## notifications.guardian_needed (POST)
+`programme` tells the programme's coordinators (Programme Managers) in their Desk notifications that a field worker met an adult who can't decide alone and has no lawful guardian yet, so no consent was taken. Carries no personal data.
+
+## Messages to guardians
+Receipts, confirmation requests and withdrawal confirmations for a child, or an adult with a lawful guardian, go to the guardian's phone (from the latest Guardian Link). "STOP" or a missed call from a guardian's phone also finds the people they consented for.
 
 ## rights.submit (POST)
 `request_type` (withdrawal | access | correction | erasure | grievance | nomination), `channel`, `principal_ref?`, `payload?`, `paper_trail_number?` returns `{request, status, sla_due}`. The SLA clock starts at receipt.

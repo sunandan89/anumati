@@ -13,6 +13,7 @@
   "c1",
   "authority_ref",
   "evidence",
+  "id_document",
   "verification_method",
   "verified_on",
   "valid_until"
@@ -59,9 +60,16 @@
    "mandatory_depends_on": "eval:doc.guardian_type!='parent'"
   },
   {
+   "description": "Photo of the appointment order, when one was taken",
    "fieldname": "evidence",
    "fieldtype": "Attach",
-   "label": "Evidence"
+   "label": "Order or document photo"
+  },
+  {
+   "description": "Optional; the proof when the guardian has no phone",
+   "fieldname": "id_document",
+   "fieldtype": "Attach",
+   "label": "Guardian's ID photo"
   },
   {
    "fieldname": "verification_method",

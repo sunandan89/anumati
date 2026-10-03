@@ -10,9 +10,19 @@ import frappe
 def principals_for_phone_hash(phone_hash: str) -> list[dict]:
 	if not phone_hash:
 		return []
-	return frappe.get_all(
+	owners = frappe.get_all(
 		"Data Principal", {"phone_hash": phone_hash, "merged_into": ("is", "not set")}, ["name", "principal_ref"]
 	)
+	# A parent's or guardian's number also finds the people they consented for (a child has no phone of
+	# their own in the field app), so "STOP" or a missed call from the guardian reaches the right record.
+	wards = frappe.get_all("Guardian Link", {"guardian": ("in", [o.name for o in owners] or ["-"])}, pluck="principal")
+	seen = {o.name for o in owners}
+	for ward in frappe.get_all("Data Principal", {"name": ("in", wards or ["-"]), "merged_into": ("is", "not set")},
+	                           ["name", "principal_ref"]):
+		if ward.name not in seen:
+			owners.append(ward)
+			seen.add(ward.name)
+	return owners
 
 
 def event_for_short_code(code: str, phone_hash: str | None = None) -> tuple[str | None, str | None]:
@@ -29,7 +39,7 @@ def event_for_short_code(code: str, phone_hash: str | None = None) -> tuple[str 
 	                      order_by="chain_seq desc")
 	people = {r.principal for r in rows}
 	if len(people) > 1 and phone_hash:
-		mine = set(frappe.get_all("Data Principal", {"name": ("in", list(people)), "phone_hash": phone_hash}, pluck="name"))
+		mine = {p.name for p in principals_for_phone_hash(phone_hash)} & people
 		rows = [r for r in rows if r.principal in mine]
 		people = {r.principal for r in rows}
 	if len(people) != 1:

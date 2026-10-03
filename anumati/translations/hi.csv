@@ -9,6 +9,7 @@ Agreed By Purpose,उद्देश्य के अनुसार सहम�
 Agreed to,इनके लिए सहमति
 Analytics,विश्लेषण
 Anumati Settings,अनुमति सेटिंग्स
+Appointment order,नियुक्ति आदेश
 Approve audio,ऑडियो स्वीकृत करें
 Approved,स्वीकृत
 Approved by {0},{0} ने स्वीकृत किया
@@ -67,6 +68,7 @@ Funder Link,फंडर के साथ साझा
 Granted,सहमति दी
 Guardian,अभिभावक
 Guardian Link,अभिभावक
+Guardian's ID,अभिभावक का पहचान पत्र
 Guardians,अभिभावक
 Hash chain check FAILED. Tell the DPO now.,हैश शृंखला की जाँच असफल। DPO को अभी बताएँ।
 Hash chain not checked yet (runs every night),हैश शृंखला की जाँच अभी नहीं हुई (हर रात होती है)
@@ -170,6 +172,7 @@ Setup,सेटअप
 Shared phone,साझा फ़ोन
 Signature check failed,हस्ताक्षर की जाँच असफल
 Signature is valid,हस्ताक्षर सही है
+Signature or thumbprint,हस्ताक्षर या अँगूठे का निशान
 Signed out,साइन आउट
 Significant Data Fiduciary,महत्वपूर्ण डेटा फ़िड्यूशियरी
 Source System,जुड़ा हुआ सिस्टम
@@ -179,6 +182,7 @@ System Usage Log,सहमति जाँच लॉग
 Team,टीम
 This record is number {0} on the signed chain (key {1}). It has not been changed since it was recorded.,यह रिकॉर्ड हस्ताक्षरित शृंखला में नंबर {0} है (कुंजी {1})। दर्ज होने के बाद से इसमें कोई बदलाव नहीं हुआ।
 This record's signature does not verify. Tell the DPO.,इस रिकॉर्ड का हस्ताक्षर सही नहीं है। DPO को बताएँ।
+Thumbprint,अँगूठे का निशान
 Today,आज
 Translations Not Reviewed,समीक्षा बाकी अनुवाद
 Unmatched,मिलान बाकी
@@ -186,7 +190,9 @@ Unmatched Requests,मिलान बाकी अनुरोध
 Verification Attempt,पुष्टि का प्रयास
 Verification Pipeline,पुष्टि की स्थिति
 Verified by,पुष्टि
-View guardian document,अभिभावक का दस्तावेज़ देखें
+View guardian's ID,अभिभावक का पहचान पत्र देखें
+View order or document,आदेश या दस्तावेज़ देखें
+Voice: their “haan”,आवाज़: उनकी “हाँ”
 Waiting,बाकी
 Waiting For Confirmation,पुष्टि बाकी
 Waiting To Sync,सिंक बाकी
@@ -261,6 +267,7 @@ guardian_minor,"अभिभावक, बच्चे के लिए"
 guardian_pwd,"अभिभावक, दिव्यांग व्यक्ति के लिए"
 hard_purge,पूरी तरह मिटाएँ
 heard in full,पूरी सुनी
+hidden for people without a phone,"जिनके पास फ़ोन नहीं, उनसे नहीं पूछा जाता"
 hold_for_review,समीक्षा के लिए रोकें
 hosted_page,वेब पेज
 in_person,आमने-सामने

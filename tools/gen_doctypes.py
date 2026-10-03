@@ -392,7 +392,8 @@ doctype("Guardian Link", [
     F("authority_ref", "Data", "Order number", mandatory_depends_on="eval:doc.guardian_type!='parent'",
       description="Number of the order that appointed the guardian (Local Level Committee, court or other authority). "
                   "Needed for every guardian except a parent"),
-    F("evidence", "Attach", "Evidence"),
+    F("evidence", "Attach", "Order or document photo", description="Photo of the appointment order, when one was taken"),
+    F("id_document", "Attach", "Guardian's ID photo", description="Optional; the proof when the guardian has no phone"),
     F("verification_method", "Select", "Verification method", sel("device_sms_otp", "server_otp", "digilocker", "document", "witness")),
     F("verified_on", "Datetime", "Verified on"),
     F("valid_until", "Date", "Valid until", description="For minors: 18th birthday plus grace period"),
