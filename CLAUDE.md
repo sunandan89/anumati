@@ -30,3 +30,15 @@ Other repos later: `anumati_collect` (Flutter on `frappe_mobile_sdk`), `anumati_
 ## Current phase
 
 Phase 0 — Foundations (spec section 11).
+
+## Product guide
+
+An external Product Guide (a Claude Doc: https://claude.ai/code/artifact/836382eb-bbce-410a-a3c3-7b99230a74bf) is refreshed every weekday from what is merged to `main`. Keep it accurate by ending every pull request description with a section:
+
+```
+## Product guide
+- <what changed for users, in plain words; or "No user-facing change">
+- Status: Pilot | Phase 2 | Later
+```
+
+Plain language, no code names, fictional sample names only.
