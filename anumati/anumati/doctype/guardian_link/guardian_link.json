@@ -52,9 +52,11 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "Number of the order that appointed the guardian (Local Level Committee, court or other authority). Needed for every guardian except a parent",
    "fieldname": "authority_ref",
    "fieldtype": "Data",
-   "label": "Order or authority reference"
+   "label": "Order number",
+   "mandatory_depends_on": "eval:doc.guardian_type!='parent'"
   },
   {
    "fieldname": "evidence",

@@ -89,8 +89,8 @@ class TestJourneys(FrappeTestCase):
 
 	def test_other_guardian_of_a_child_needs_the_order_number(self):
 		child = make_principal(is_minor=1)
-		bare = self.link(child, guardian_type="legal_guardian")
-		self.assertRaises(ConsentRequestError, self.grant, child.principal_ref, capture_mode="guardian_minor", guardian_link=bare)
+		# Desk and API alike: a Guardian Link other than a parent can't even be saved without the order.
+		self.assertRaises(frappe.MandatoryError, self.link, child, guardian_type="legal_guardian")
 		ordered = self.link(child, guardian_type="legal_guardian", authority_ref="GO-123/2026 (sample)")
 		self.assertTrue(self.grant(child.principal_ref, capture_mode="guardian_minor", guardian_link=ordered)["hash"])
 
@@ -106,8 +106,11 @@ class TestJourneys(FrappeTestCase):
 		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, capture_mode="guardian_pwd")
 		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, capture_mode="guardian_pwd",
 		                  guardian_link=self.link(p, guardian_type="parent", authority_ref="X-1"))
-		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, capture_mode="guardian_pwd",
-		                  guardian_link=self.link(p, guardian_type="committee"))
+		self.assertRaises(frappe.MandatoryError, self.link, p, guardian_type="committee")
+		# A link saved before the order rule (no number) is still refused at consent.
+		old = self.link(p, guardian_type="committee", authority_ref="X")
+		frappe.db.set_value("Guardian Link", old, "authority_ref", "")
+		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, capture_mode="guardian_pwd", guardian_link=old)
 		art = self.grant(p.principal_ref, capture_mode="guardian_pwd",
 		                 guardian_link=self.link(p, guardian_type="committee", relation="Sibling",
 		                                         authority_ref="LLC/2026/0412 (sample)"))
