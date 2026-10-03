@@ -125,6 +125,8 @@ Person,व्यक्ति
 Phones Not Synced,सिंक नहीं हुए फ़ोन
 Preview,पूर्वावलोकन
 Processor,डेटा प्रोसेसर (साझेदार)
+Profile Answer Totals,अतिरिक्त सवाल: कुल संख्या
+Profile Question,अतिरिक्त सवाल
 Programme,कार्यक्रम
 Programmes,कार्यक्रम
 Programmes At A Glance,कार्यक्रम एक नज़र में
@@ -218,6 +220,7 @@ breaches are open (72-hour clock),डेटा उल्लंघन खुल�
 cancel,रद्द किया
 captured,दर्ज
 child,संतान
+choice,एक चुनें
 collection,इकट्ठा करते समय से
 committee,समिति
 community,सामुदायिक बैठक
@@ -285,6 +288,7 @@ neighbour,पड़ोसी
 no_processing,उनका डेटा इस्तेमाल बंद
 nomination,नामांकन
 not_asked,पूछा नहीं गया
+number,संख्या
 other,अन्य
 otp,एक बार का कोड
 paper,काग़ज़ का फ़ॉर्म
@@ -329,6 +333,7 @@ sms,SMS
 spouse,पति/पत्नी
 student,विद्यार्थी
 submit,जमा किया
+text,छोटा जवाब
 translations are waiting for review,अनुवादों की समीक्षा बाकी है
 true_up,छूटे लोगों से सहमति
 turning_18,कोई 18 साल का हुआ
@@ -349,6 +354,7 @@ withdrawal,सहमति वापसी
 withdrawal_confirmation,सहमति वापसी पूरी
 withdrawn,वापस ली गई
 witness,गवाह
+year,साल
 years,साल
 {0} days left,{0} दिन बाकी
 {0} hours left to tell the Data Protection Board (deadline {1}),डेटा संरक्षण बोर्ड को बताने के लिए {0} घंटे बाकी (अंतिम समय {1})

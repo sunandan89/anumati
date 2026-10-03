@@ -17,6 +17,8 @@ Guardian Link,Guardian
 How People Consented,How people consented
 How The Notice Was Given,How the notice was given
 Notice Template,Notice
+Profile Answer Totals,Extra questions: totals
+Profile Question,Extra question
 Programmes At A Glance,Programmes at a glance
 Propagation Ack,Partner confirmation
 Purge Request,Deletion task
@@ -49,6 +51,7 @@ breach_notice,Breach notice
 cancel,Cancelled
 captured,Captured
 child,Child
+choice,Choose one
 collection,When collected
 committee,Committee
 community,Community meeting
@@ -111,6 +114,7 @@ neighbour,Neighbour
 no_processing,Stop using their data
 nomination,Nomination
 not_asked,Not asked
+number,Number
 other,Other
 otp,One-time code
 paper,Paper form
@@ -153,6 +157,7 @@ sms,SMS
 spouse,Spouse
 student,Student
 submit,Submitted
+text,Short answer
 true_up,Catch-up
 turning_18,Someone turns 18
 unauthorised_access,Unauthorised access
@@ -171,4 +176,5 @@ withdrawal,Withdrawal
 withdrawal_confirmation,Withdrawal done
 withdrawn,Withdrawn
 witness,Witness
+year,Year
 years,Years
