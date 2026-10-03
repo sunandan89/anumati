@@ -21,6 +21,8 @@
   "c2",
   "label_manage",
   "label_save",
+  "purposes_translation_section",
+  "purposes",
   "rule3_translation_section",
   "withdrawal_methods",
   "rights_text",
@@ -121,6 +123,18 @@
    "label": "Save"
   },
   {
+   "description": "The names and descriptions of the uses, shown on the choices screen in this language. Leave a row out to show the English text.",
+   "fieldname": "purposes_translation_section",
+   "fieldtype": "Section Break",
+   "label": "Uses (translated)"
+  },
+  {
+   "fieldname": "purposes",
+   "fieldtype": "Table",
+   "label": "Uses",
+   "options": "Notice Purpose Translation"
+  },
+  {
    "description": "Leave blank to show the notice's own text",
    "fieldname": "rule3_translation_section",
    "fieldtype": "Section Break",
@@ -195,7 +209,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-03 10:00:00.000000",
+ "modified": "2026-10-04 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notice Translation",

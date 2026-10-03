@@ -28,7 +28,10 @@
   "consent_record_retention_years",
   "withdrawal_tab",
   "withdrawal_section",
-  "withdrawal_channels"
+  "withdrawal_channels",
+  "profile_tab",
+  "profile_section",
+  "profile_questions"
  ],
  "fields": [
   {
@@ -167,6 +170,23 @@
    "fieldtype": "Table",
    "label": "Withdrawal channels",
    "options": "Programme Withdrawal Channel"
+  },
+  {
+   "fieldname": "profile_tab",
+   "fieldtype": "Tab Break",
+   "label": "Extra questions"
+  },
+  {
+   "description": "Asked on the phone after the notice and choices. None are asked until you add them here. A question can be added only once the published notice mentions it (see each question's 'Notice must mention'). Reports show totals only.",
+   "fieldname": "profile_section",
+   "fieldtype": "Section Break",
+   "label": "Questions about the person"
+  },
+  {
+   "fieldname": "profile_questions",
+   "fieldtype": "Table",
+   "label": "Questions to ask",
+   "options": "Programme Profile Question"
   }
  ],
  "index_web_pages_for_search": 0,
@@ -197,7 +217,7 @@
    "link_fieldname": "programme"
   }
  ],
- "modified": "2026-10-03 10:00:00.000000",
+ "modified": "2026-10-04 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Programme",

@@ -3,6 +3,10 @@
 
 from frappe.model.document import Document
 
+from anumati import profile
+
 
 class Programme(Document):
-	pass
+	def validate(self):
+		# Extra questions about the person only once the published notice tells people about them.
+		profile.validate_programme(self)

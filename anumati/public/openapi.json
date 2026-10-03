@@ -384,6 +384,15 @@
       "maxLength": 20,
       "type": "string"
      },
+     "birth_year": {
+      "maximum": 2100,
+      "minimum": 1900,
+      "pattern": "^(19|20)[0-9]{2}$",
+      "type": [
+       "integer",
+       "string"
+      ]
+     },
      "date_of_birth": {
       "maxLength": 10,
       "type": "string"
@@ -445,6 +454,25 @@
      "principal_ref": {
       "maxLength": 140,
       "minLength": 1,
+      "type": "string"
+     },
+     "profile": {
+      "additionalProperties": {
+       "maxLength": 140,
+       "type": [
+        "string",
+        "integer",
+        "null"
+       ]
+      },
+      "maxProperties": 40,
+      "propertyNames": {
+       "pattern": "^[a-z0-9_]{1,64}$"
+      },
+      "type": "object"
+     },
+     "programme": {
+      "maxLength": 140,
       "type": "string"
      },
      "pwd_guarded": {
@@ -1064,6 +1092,32 @@
      }
     },
     "summary": "Polling feed mirroring webhooks"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.notifications.guardian_needed": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "programme",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Field app: tell the programme's coordinators that an adult who can't decide alone has no lawful guardian yet (no personal data)"
    }
   },
   "/api/v2/method/anumati.api.v1.principal.for_device": {

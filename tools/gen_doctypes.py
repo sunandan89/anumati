@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-10-03 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-04 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -121,6 +121,28 @@ child("Audit Share Access", [
     F("accessed_at", "Datetime", "Accessed at", in_list_view=True, read_only=True),
     F("ip_address", "Data", "IP address", in_list_view=True, read_only=True),
 ])
+child("Notice Purpose Translation", [
+    F("purpose", "Link", "Purpose", "Purpose", reqd=True, in_list_view=True),
+    F("purpose_title", "Data", "Title (translated)", in_list_view=True),
+    F("description", "Small Text", "Description (translated)", in_list_view=True),
+])
+child("Profile Question Label", [
+    F("language", "Link", "Language", "Language", reqd=True, in_list_view=True),
+    F("question", "Data", "Question (translated)", reqd=True, in_list_view=True),
+    F("options", "Small Text", "Choices (translated)", in_list_view=True,
+      description="One per line, in the same order as the English choices"),
+])
+child("Programme Profile Question", [
+    F("question", "Link", "Question", "Profile Question", reqd=True, in_list_view=True),
+    F("required", "Check", "Answer required", in_list_view=True,
+      description="Off: the person may skip it"),
+    F("is_sensitive", "Check", "Sensitive", fetch_from="question.is_sensitive", read_only=True, in_list_view=True),
+])
+child("Profile Answer", [
+    F("programme", "Link", "Asked for", "Programme", in_list_view=True),
+    F("question", "Link", "Question", "Profile Question", reqd=True, in_list_view=True),
+    F("answer", "Data", "Answer", in_list_view=True),
+])
 child("Retention System", [F("source_system", "Link", "System told", "Source System", reqd=True, in_list_view=True)])
 
 # ================================================================ core
@@ -195,6 +217,10 @@ doctype("Programme", [
     tab("withdrawal_tab", "Withdrawal channels"),
     sec("withdrawal_section", "Ways to withdraw", description="Withdrawing must be as easy as giving consent"),
     F("withdrawal_channels", "Table", "Withdrawal channels", "Programme Withdrawal Channel"),
+    tab("profile_tab", "Extra questions"),
+    sec("profile_section", "Questions about the person",
+        description="Asked on the phone after the notice and choices. None are asked until you add them here. A question can be added only once the published notice mentions it (see each question's 'Notice must mention'). Reports show totals only."),
+    F("profile_questions", "Table", "Questions to ask", "Programme Profile Question"),
 ], {ADM: "F", PM: "E", DPO: "R", OPR: "R", FW: "r", DEV: "r", SM: "F"},
     autoname="field:code", title_field="programme_name", search_fields="programme_name,status",
     show_title_field_in_link=1)
@@ -209,6 +235,8 @@ doctype("Purpose", [
     F("is_sensitive", "Check", "Sensitive"),
     F("child_allowed", "Check", "Allowed for minors", default="1",
       description="Off hides this purpose for minors (no profiling of children)"),
+    F("needs_phone", "Check", "Needs the person's phone",
+      description="E.g. calls or SMS reminders. Hidden in the field app when the person has no phone"),
     F("legal_basis", "Select", "Legal basis", sel("consent", "legitimate_use", "legal_obligation"), default="consent"),
     F("dpia_required", "Check", "DPIA required"),
     sec("data_section", "Data and retention"),
@@ -217,6 +245,22 @@ doctype("Purpose", [
 ], {ADM: "F", DPO: "E", PM: "R", OPR: "R", FW: "r", DEV: "r", SM: "F"},
     autoname="format:{programme}-{code}", title_field="purpose_title", show_title_field_in_link=1,
     search_fields="purpose_title,programme")
+
+doctype("Profile Question", [
+    F("code", "Data", "Code", reqd=True, unique=True, description="Short, stable identifier, e.g. occupation"),
+    F("question", "Data", "Question", reqd=True, in_list_view=True),
+    F("answer_type", "Select", "Answer", sel("number", "year", "choice", "text"), default="choice", in_list_view=True),
+    F("options", "Small Text", "Choices", description="One per line (for Answer = choice)", depends_on="eval:doc.answer_type=='choice'"),
+    col("c1"),
+    F("is_sensitive", "Check", "Sensitive", in_list_view=True, in_standard_filter=True,
+      description="Caste, religion, health, disability and the like. Ask only when the work truly needs it"),
+    F("notice_term", "Data", "Notice must mention", reqd=True,
+      description="Word or phrase the published notice must contain before a programme can ask this, e.g. occupation"),
+    F("is_standard", "Check", "From the library", read_only=True),
+    sec("labels_section", "Other languages"),
+    F("labels", "Table", "Translations", "Profile Question Label"),
+], {ADM: "F", DPO: "E", PM: "E", OPR: "R", FW: "r", DEV: "r", SM: "F"},
+    autoname="field:code", title_field="question", show_title_field_in_link=1, search_fields="question")
 
 doctype("Notice Template", [
     tab("purposes_tab", "Purposes"),
@@ -272,6 +316,9 @@ doctype("Notice Translation", [
     col("c2"),
     F("label_manage", "Data", "Manage"),
     F("label_save", "Data", "Save"),
+    sec("purposes_translation_section", "Uses (translated)",
+        description="The names and descriptions of the uses, shown on the choices screen in this language. Leave a row out to show the English text."),
+    F("purposes", "Table", "Uses", "Notice Purpose Translation"),
     sec("rule3_translation_section", "Rule 3 contents (translated)",
         description="Leave blank to show the notice's own text"),
     F("withdrawal_methods", "Small Text", "How to withdraw consent"),
@@ -306,6 +353,9 @@ doctype("Data Principal", [
     F("preferred_language", "Link", "Preferred language", "Language", in_list_view=True, in_standard_filter=True),
     F("persona", "Select", "Persona", sel("beneficiary", "patient", "student", "employee", "member", "other"), default="beneficiary"),
     F("date_of_birth", "Date", "Date of birth"),
+    F("birth_year", "Int", "Year of birth", description="Enough for children: consent is renewed by the person at 18"),
+    F("adult_on", "Date", "Turns 18 by", read_only=True, no_copy=True,
+      description="From the date of birth, or 31 December of the year they turn 18"),
     F("age_band", "Select", "Age band", sel("", "under_18", "18_plus", "unknown")),
     F("phone_owner_relation", "Select", "Phone owner", sel("self", "spouse", "parent", "child", "sibling", "relative", "neighbour", "field_worker", "other"), default="self"),
     tab("flags_tab", "Needs & lifecycle"),
@@ -316,11 +366,16 @@ doctype("Data Principal", [
     col("c2"),
     F("shared_phone", "Check", "Shared phone", in_standard_filter=True),
     F("no_phone", "Check", "No phone"),
+    F("renewal_due", "Check", "Turned 18: renew consent", read_only=True, in_standard_filter=True,
+      description="Set on the day a child turns 18. Their guardian's consent stops counting until they consent themselves"),
     sec("lifecycle_section", "Lifecycle"),
     F("relationship_ended_on", "Date", "Relationship ended on",
       description="Cessation: starts retention clocks that run from 'relationship ended'"),
     col("c3"),
     F("merged_into", "Link", "Merged into", "Data Principal", read_only=True),
+    tab("profile_tab", "About the person"),
+    sec("profile_section", "Answers to extra questions", description="Reports show totals only"),
+    F("profile_answers", "Table", "Answers", "Profile Answer"),
     tab("nominee_tab", "Nominees"),
     sec("nominee_section", "Nominees"),
     F("nominees", "Table", "Nominees", "Nominee"),

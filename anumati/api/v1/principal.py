@@ -2,20 +2,28 @@
 
 Responses never echo personal data; name and phone go straight into encrypted fields."""
 
+import json
+
 import frappe
 from frappe import _
 
+from anumati import profile
 from anumati.api import schema
 
 FIELDS = (
 	"full_name", "phone", "email", "preferred_language", "persona", "date_of_birth", "age_band",
-	"phone_owner_relation", "is_minor", "pwd_guarded", "needs_assistance", "shared_phone", "no_phone",
+	"phone_owner_relation", "is_minor", "pwd_guarded", "needs_assistance", "shared_phone", "no_phone", "birth_year",
 )
 
 
 @frappe.whitelist(methods=["POST"])
 def upsert(principal_ref, **values):
-	"""Create or update a principal by the host system's reference. Idempotent."""
+	"""Create or update a principal by the host system's reference. Idempotent.
+
+	`profile` carries answers to the programme's extra questions ({code: answer}); `programme` says which
+	programme asked them."""
+	if isinstance(values.get("profile"), str):
+		values["profile"] = json.loads(values["profile"] or "{}")
 	schema.validate("PrincipalUpsert", {"principal_ref": principal_ref,
 	                                    **{k: v for k, v in values.items() if k not in ("cmd", "data") and v is not None}})
 	name = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
@@ -27,6 +35,8 @@ def upsert(principal_ref, **values):
 		doc = frappe.new_doc("Data Principal")
 		doc.principal_ref = principal_ref
 	doc.update({k: values[k] for k in FIELDS if k in values})
+	if values.get("profile"):
+		profile.save_answers(doc, values.get("programme"), values["profile"])
 	doc.save()
 	frappe.cache.delete_value(f"anumati:principal:{principal_ref}")
 	return {"principal_ref": doc.principal_ref, "created": not name}
