@@ -634,6 +634,55 @@
    "write"
   ]
  },
+ "Profile Question": {
+  "Anumati Admin": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Developer": [
+   "read"
+  ],
+  "Anumati Field Worker": [
+   "read"
+  ],
+  "Anumati Operator": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati Programme Manager": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
  "Programme": {
   "Anumati Admin": [
    "create",

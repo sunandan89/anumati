@@ -53,6 +53,11 @@ SCHEMAS = {
 			"date_of_birth": S(maxLength=10), "age_band": S(maxLength=20), "phone_owner_relation": S(maxLength=40),
 			**{f: {"enum": [0, 1, True, False, "0", "1"]} for f in
 			   ("is_minor", "pwd_guarded", "needs_assistance", "shared_phone", "no_phone")},
+			"birth_year": {"type": ["integer", "string"], "pattern": "^(19|20)[0-9]{2}$", "minimum": 1900, "maximum": 2100},
+			"programme": S(maxLength=140),
+			"profile": {"type": "object", "maxProperties": 40,
+			            "propertyNames": {"pattern": "^[a-z0-9_]{1,64}$"},
+			            "additionalProperties": {"type": ["string", "integer", "null"], "maxLength": 140}},
 		},
 	},
 	"RightsSubmit": {
@@ -119,6 +124,8 @@ PATHS = {
 	BASE + "evidence.view": op("Play or view one encrypted evidence file (staff; logged)", query=[("file_url", True)], method="get"),
 	BASE + "voice.hear": op("Field app: what Sarvam heard in a short consent clip, and yes / no / unclear (a hint; nothing stored)",
 	                       body=None, query=[("audio", True), ("language", False), ("filename", False)]),
+	BASE + "notifications.guardian_needed": op("Field app: tell the programme's coordinators that an adult who can't decide alone "
+	                                          "has no lawful guardian yet (no personal data)", query=[("programme", True)]),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

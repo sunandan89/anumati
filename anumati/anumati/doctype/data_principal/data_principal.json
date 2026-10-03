@@ -17,6 +17,8 @@
   "preferred_language",
   "persona",
   "date_of_birth",
+  "birth_year",
+  "adult_on",
   "age_band",
   "phone_owner_relation",
   "flags_tab",
@@ -27,10 +29,14 @@
   "c2",
   "shared_phone",
   "no_phone",
+  "renewal_due",
   "lifecycle_section",
   "relationship_ended_on",
   "c3",
   "merged_into",
+  "profile_tab",
+  "profile_section",
+  "profile_answers",
   "nominee_tab",
   "nominee_section",
   "nominees"
@@ -110,6 +116,20 @@
    "label": "Date of birth"
   },
   {
+   "description": "Enough for children: consent is renewed by the person at 18",
+   "fieldname": "birth_year",
+   "fieldtype": "Int",
+   "label": "Year of birth"
+  },
+  {
+   "description": "From the date of birth, or 31 December of the year they turn 18",
+   "fieldname": "adult_on",
+   "fieldtype": "Date",
+   "label": "Turns 18 by",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
    "fieldname": "age_band",
    "fieldtype": "Select",
    "label": "Age band",
@@ -164,6 +184,14 @@
    "label": "No phone"
   },
   {
+   "description": "Set on the day a child turns 18. Their guardian's consent stops counting until they consent themselves",
+   "fieldname": "renewal_due",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Turned 18: renew consent",
+   "read_only": 1
+  },
+  {
    "fieldname": "lifecycle_section",
    "fieldtype": "Section Break",
    "label": "Lifecycle"
@@ -184,6 +212,23 @@
    "label": "Merged into",
    "options": "Data Principal",
    "read_only": 1
+  },
+  {
+   "fieldname": "profile_tab",
+   "fieldtype": "Tab Break",
+   "label": "About the person"
+  },
+  {
+   "description": "Reports show totals only",
+   "fieldname": "profile_section",
+   "fieldtype": "Section Break",
+   "label": "Answers to extra questions"
+  },
+  {
+   "fieldname": "profile_answers",
+   "fieldtype": "Table",
+   "label": "Answers",
+   "options": "Profile Answer"
   },
   {
    "fieldname": "nominee_tab",
@@ -230,7 +275,7 @@
    "link_fieldname": "principal"
   }
  ],
- "modified": "2026-10-03 10:00:00.000000",
+ "modified": "2026-10-04 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Data Principal",

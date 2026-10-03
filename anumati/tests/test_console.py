@@ -59,7 +59,8 @@ class TestConsole(FrappeTestCase):
 				self.assertTrue(frappe.db.exists("Custom HTML Block", block.custom_block_name))
 			for link in ws.links:
 				if link.type == "Link" and link.link_to not in OPTIONAL_DOCTYPES:
-					self.assertTrue(frappe.db.exists("DocType", link.link_to), f"{name}: {link.link_to}")
+					kind = "Report" if link.link_type == "Report" else "DocType"
+					self.assertTrue(frappe.db.exists(kind, link.link_to), f"{name}: {link.link_to}")
 			for sc in ws.shortcuts:
 				if sc.type == "DocType":
 					self.assertTrue(frappe.db.exists("DocType", sc.link_to), f"{name}: {sc.link_to}")

@@ -75,15 +75,11 @@ async function preview(frm, target) {
 	const [purposes, translations] = await Promise.all([
 		frappe.db.get_list("Purpose", {
 			filters: { name: ["in", names.length ? names : ["-"]] },
-			fields: ["name", "purpose_title", "description", "essential"],
+			fields: ["name", "purpose_title", "description", "essential", "needs_phone"],
 			limit: 100,
 		}),
-		frappe.db.get_list("Notice Translation", {
-			filters: { notice: frm.doc.name },
-			fields: ["language", "summary", "reviewer", "machine_translated",
-				"label_yes_all", "label_no_all", "label_save"],
-			limit: 50,
-		}),
+		frappe.db.get_list("Notice Translation", { filters: { notice: frm.doc.name }, fields: ["name"], limit: 50 })
+			.then((rows) => Promise.all(rows.map((r) => frappe.db.get_doc("Notice Translation", r.name)))),
 	]);
 	const versions = [{ language: __("Base text"), summary: frm.doc.summary, reviewer: "base" }].concat(translations);
 	let chosen = versions[0].language;
@@ -101,10 +97,16 @@ async function preview(frm, target) {
 		const v = versions.find((x) => x.language === chosen) || versions[0];
 		const warn = v.reviewer ? "" :
 			`<div class="text-warning small">${__("Machine-made or not reviewed: the field app will not show this language yet.")}</div>`;
-		const items = purposes.map((p) =>
-			`<div style="border:1px solid var(--border-color);border-radius:10px;padding:8px 10px;margin:6px 0">
-				<b>${esc(p.purpose_title)}</b>${p.essential ? ` <span class="text-muted small">(${__("always on")})</span>` : ""}
-				<div class="small text-muted">${esc(p.description)}</div></div>`).join("");
+		// The phone shows each use in the notice's language when the translation names it.
+		const named = {};
+		(v.purposes || []).forEach((r) => { named[r.purpose] = r; });
+		const items = purposes.map((p) => {
+			const t = named[p.name] || {};
+			const extra = [p.essential ? __("always on") : "", p.needs_phone ? __("hidden for people without a phone") : ""].filter(Boolean);
+			return `<div style="border:1px solid var(--border-color);border-radius:10px;padding:8px 10px;margin:6px 0">
+				<b>${esc(t.purpose_title || p.purpose_title)}</b>${extra.length ? ` <span class="text-muted small">(${extra.join(", ")})</span>` : ""}
+				<div class="small text-muted">${esc(t.description || p.description)}</div></div>`;
+		}).join("");
 		const yes = esc(v.label_yes_all || __("Yes to all")), no = esc(v.label_no_all || __("No to all"));
 		const tabs = !target ? "" : `<div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px">${versions.map((x) =>
 			`<button type="button" class="btn btn-xs ${x.language === v.language ? "btn-primary" : "btn-default"} anumati-lang" data-lang="${esc(x.language)}">${esc(x.language)}</button>`).join("")}</div>`;

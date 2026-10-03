@@ -113,3 +113,14 @@ def expire_unconfirmed():
 		if att.sent_at and add_days(att.sent_at, days) < now_datetime():
 			frappe.db.set_value("Verification Attempt", att.name, "result", "expired")
 			set_verification(att.consent_event, "unconfirmed")
+
+
+def flag_new_adults():
+	"""Daily: children who turned 18 today or earlier. Their guardian's consent stops counting
+	(consent.check answers "renewal_due") until they consent themselves."""
+	from frappe.utils import today
+
+	for name in frappe.get_all("Data Principal", {"is_minor": 1, "renewal_due": 0, "adult_on": ("<=", today())}, pluck="name"):
+		frappe.get_doc("Data Principal", name).db_set("renewal_due", 1)
+		frappe.clear_document_cache("Data Principal", name)
+		invalidate(name)

@@ -95,6 +95,25 @@ PROGRAMMES = (
 	},
 )
 OLD_NAMES = {"Demo Health Camp (fictional)"}
+# Uses that need the person's own phone; the field app hides them for someone without one.
+NEEDS_PHONE = {"DEMO-follow", "EDU-parents", "SHG-training"}
+# Reviewed Hindi names of the uses, shown on the choices screen when the notice is in Hindi.
+HINDI_PURPOSES = {
+	"DEMO-screen": ("स्वास्थ्य जाँच", "बीपी, शुगर और खून की कमी की जाँच, और ज़रूरत हो तो डॉक्टर के पास भेजना।"),
+	"DEMO-follow": ("फ़ॉलो-अप कॉल", "कैंप के बाद स्वास्थ्य कार्यकर्ता हाल पूछने के लिए फ़ोन करेंगे।"),
+	"DEMO-photos": ("फ़ोटो और कहानियाँ", "हमारी रिपोर्ट के लिए कैंप की फ़ोटो, कभी नाम के साथ नहीं।"),
+	"DEMO-research": ("बिना नाम का शोध", "ज़िले में स्वास्थ्य सेवाओं की योजना के लिए बिना नाम के जाँच के नतीजे।"),
+	"EDU-attend": ("हाज़िरी और पढ़ाई का रिकॉर्ड", "कौन केंद्र आता है और उसकी पढ़ाई और गणित कैसे सुधरते हैं।"),
+	"EDU-parents": ("माता-पिता को SMS", "हाज़िरी और प्रगति के बारे में माता-पिता को छोटा SMS।"),
+	"EDU-photos": ("रिपोर्ट के लिए फ़ोटो", "केंद्र की गतिविधियों की फ़ोटो, कभी बच्चे के नाम के साथ नहीं।"),
+	"EDU-study": ("बिना नाम का अध्ययन", "पढ़ाना बेहतर करने के लिए बिना नाम के अंक।"),
+	"SHG-savings": ("समूह की बचत और ऋण का रिकॉर्ड", "समूह की किताबों में आपकी बचत, ऋण और वापसी।"),
+	"SHG-bank": ("साझेदार बैंक को देना", "समूह ऋण के लिए आपका नाम और बचत का रिकॉर्ड बैंक को जाएगा।"),
+	"SHG-training": ("प्रशिक्षण की SMS याद", "हर प्रशिक्षण से पहले एक SMS।"),
+	"SHG-survey": ("बिना नाम का असर सर्वे", "समूहों ने क्या हासिल किया, यह दिखाने के लिए बिना नाम के जवाब।"),
+}
+# The demo health programme asks one extra question, age, which its notice already lists.
+DEMO_QUESTIONS = (("age", 1),)
 
 
 def configure_mobile_app() -> bool:
@@ -151,7 +170,10 @@ def _programme(spec) -> str:
 			frappe.get_doc({
 				"doctype": "Purpose", "programme": code, "code": pcode, "purpose_title": title,
 				"description": description, "essential": essential, "child_allowed": child_allowed,
+				"needs_phone": 1 if name in NEEDS_PHONE else 0,
 			}).insert()
+		elif name in NEEDS_PHONE and not frappe.db.get_value("Purpose", name, "needs_phone"):
+			frappe.db.set_value("Purpose", name, "needs_phone", 1)
 		if not frappe.db.exists("ROPA Entry", {"purpose": name, "status": "Approved"}):
 			ropa = frappe.get_doc({
 				"doctype": "ROPA Entry", "purpose": name, "retention": spec["retention"],
@@ -170,16 +192,42 @@ def _programme(spec) -> str:
 		}).insert()
 		notice = apply_workflow(doc, "Publish").name
 
+	labels = [{"purpose": f"{code}-{p[0]}", "purpose_title": HINDI_PURPOSES[f"{code}-{p[0]}"][0],
+	           "description": HINDI_PURPOSES[f"{code}-{p[0]}"][1]}
+	          for p in spec["purposes"] if f"{code}-{p[0]}" in HINDI_PURPOSES]
 	existing = frappe.db.get_value("Notice Translation", {"notice": notice, "language": "hi"})
 	if not existing:
 		frappe.get_doc({
 			"doctype": "Notice Translation", "notice": notice, "language": "hi",
-			**HINDI, **spec["hindi"], "machine_translated": 0, "reviewer": frappe.session.user,
+			**HINDI, **spec["hindi"], "machine_translated": 0, "reviewer": frappe.session.user, "purposes": labels,
 		}).insert()
-	elif not frappe.db.get_value("Notice Translation", existing, "rights_text"):
-		# Earlier demo translations predate the translated Rule 3 fields; fill them in.
-		frappe.db.set_value("Notice Translation", existing, {k: v for k, v in HINDI.items() if k not in ("summary", "full_text")})
+	else:
+		if not frappe.db.get_value("Notice Translation", existing, "rights_text"):
+			# Earlier demo translations predate the translated Rule 3 fields; fill them in.
+			frappe.db.set_value("Notice Translation", existing, {k: v for k, v in HINDI.items() if k not in ("summary", "full_text")})
+		translation = frappe.get_doc("Notice Translation", existing)
+		if not translation.purposes:
+			# Earlier demo translations predate translated use names.
+			translation.set("purposes", labels)
+			translation.save()
+	if code == PROGRAMME:
+		_demo_questions()
 	return notice
+
+
+def _demo_questions():
+	"""Switch on the demo programme's extra question once. If someone later switches it off, it stays off."""
+	if frappe.db.get_default("anumati_demo_questions"):
+		return
+	from anumati import profile
+
+	profile.ensure_library()
+	doc = frappe.get_doc("Programme", PROGRAMME)
+	if not doc.profile_questions:
+		for question, required in DEMO_QUESTIONS:
+			doc.append("profile_questions", {"question": question, "required": required})
+		doc.save()
+	frappe.db.set_default("anumati_demo_questions", "1")
 
 
 def _password() -> str:

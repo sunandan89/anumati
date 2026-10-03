@@ -83,7 +83,8 @@ def _existing(event_uuid: str):
 def _check_purposes(programme: str, principal: str, granted: list, denied: list):
 	if set(granted) & set(denied):
 		frappe.throw(_("A purpose cannot be both granted and denied"), ConsentRequestError)
-	is_minor = frappe.db.get_value("Data Principal", principal, "is_minor")
+	person = frappe.db.get_value("Data Principal", principal, ["is_minor", "renewal_due"], as_dict=True)
+	is_minor = person.is_minor and not person.renewal_due
 	for code in granted + denied:
 		row = frappe.db.get_value("Purpose", enforcement.purpose_name(programme, code), ["child_allowed"], as_dict=True)
 		if not row:
@@ -125,8 +126,7 @@ def record(event):
 		granted, denied = [], denied or granted
 	_check_purposes(programme, principal, granted, denied)
 
-	if frappe.db.get_value("Data Principal", principal, "is_minor") and not event.guardian_link:
-		frappe.throw(_("A minor's consent needs a verified guardian_link (spec C1)"), ConsentRequestError)
+	person = _check_who(principal, action, event)
 	values = {k: event.get(k) for k in CAPTURE_FIELDS if event.get(k) not in (None, "")}
 	if values.get("notice"):
 		notice = frappe.db.get_value("Notice Template", values["notice"], ["programme", "version", "docstatus"], as_dict=True)
@@ -137,11 +137,51 @@ def record(event):
 	if status not in CLIENT_VERIFICATION:
 		frappe.throw(_("verification_status must be one of {0}").format(", ".join(CLIENT_VERIFICATION)), ConsentRequestError)
 
-	return _insert(
+	out = _insert(
 		{**values, "event_uuid": event.event_uuid, "action": action, "principal": principal, "programme": programme,
 		 "purposes_granted": granted, "purposes_denied": denied, "verification_status": status,
 		 "captured_by": frappe.session.user}
 	)
+	if person.renewal_due and not event.guardian_link and action in ("grant", "renew"):
+		# A child who turned 18 has now consented themselves: they are an adult record from here on.
+		doc = frappe.get_doc("Data Principal", principal)
+		doc.db_set({"renewal_due": 0, "is_minor": 0})
+		frappe.clear_document_cache("Data Principal", principal)
+		enforcement.invalidate(principal)
+	return out
+
+
+GUARDIAN_FOR_ADULT = ("legal_guardian", "court", "committee", "family_pwd")
+
+
+def _check_who(principal: str, action: str, event):
+	"""Who may consent, and what each journey must carry (the field app enforces the same rules):
+	- a child under 18 (still a child on record): a guardian link; a guardian other than a parent needs the
+	  order number that appointed them;
+	- an adult who can't decide alone (pwd_guarded): a lawful guardian link with the order number;
+	- an adult who needs help to read the notice, consenting for themselves: a witness.
+	A child who turned 18 (renewal_due) consents for themselves, so no guardian is needed."""
+	person = frappe.db.get_value("Data Principal", principal,
+	                             ["is_minor", "pwd_guarded", "needs_assistance", "renewal_due"], as_dict=True)
+	child = person.is_minor and not person.renewal_due
+	if child or person.pwd_guarded:
+		if not event.guardian_link:
+			frappe.throw(_("A child's consent needs a verified guardian_link (spec C1)") if child else
+			             _("An adult who can't decide alone needs a lawful guardian_link"), ConsentRequestError)
+		link = frappe.db.get_value("Guardian Link", event.guardian_link, ["principal", "guardian_type", "authority_ref"],
+		                           as_dict=True)
+		if not link or link.principal != principal:
+			frappe.throw(_("guardian_link must be a Guardian Link for this person"), ConsentRequestError)
+		if (person.pwd_guarded and not child) or link.guardian_type != "parent":
+			if not (link.authority_ref or "").strip():
+				frappe.throw(_("This guardian needs the number of the order that appointed them (authority_ref)"),
+				             ConsentRequestError)
+			if not child and link.guardian_type not in GUARDIAN_FOR_ADULT:
+				frappe.throw(_("Only a guardian appointed by a court or the Local Level Committee can consent for an adult"),
+				             ConsentRequestError)
+	elif person.needs_assistance and action in ("grant", "renew") and not (event.witness or "").strip():
+		frappe.throw(_("Someone who needs help to read the notice needs a witness"), ConsentRequestError)
+	return person
 
 
 @frappe.whitelist(methods=["POST"])
@@ -211,6 +251,9 @@ def check(principal_ref, purpose, programme=None):
 		before_confirm = frappe.get_cached_value("Programme", programme_name, "allow_processing_before_confirm")
 		if minor or not before_confirm:
 			allow, status = False, "awaiting_confirmation"
+	if status == "granted" and frappe.get_cached_value("Data Principal", principal, "renewal_due"):
+		# Turned 18 since a guardian consented: ask the person themselves.
+		allow, status = False, "renewal_due"
 	checked_at = now_datetime()
 	if principal:
 		from frappe.deferred_insert import deferred_insert

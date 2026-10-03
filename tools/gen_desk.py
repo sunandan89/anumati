@@ -367,8 +367,11 @@ class WS:
                            "hidden": 0, "is_query_report": 0, "onboard": 0})
         for d in doctypes:
             dt, label_ = d if isinstance(d, tuple) else (d, d)
-            self.links.append({"type": "Link", "label": label_, "link_to": dt, "link_type": "DocType",
-                               "link_count": 0, "hidden": 0, "is_query_report": 0, "onboard": 0})
+            # "Report:<name>" links a report instead of a DocType list.
+            report = dt.startswith("Report:")
+            self.links.append({"type": "Link", "label": label_, "link_to": dt.removeprefix("Report:"),
+                               "link_type": "Report" if report else "DocType", "link_count": 0, "hidden": 0,
+                               "is_query_report": 1 if report else 0, "onboard": 0})
         return self
 
     def emit(self):
@@ -417,7 +420,10 @@ def workspaces():
         .shortcut("Waiting for confirmation", "Consent State", color="Orange",
                   stats=[["Consent State", "verification_status", "=", "unconfirmed"]], fmt="{} waiting")
         .shortcut("Guardians", "Guardian Link", color="Purple")
-        .card("People", ("Data Principal", "Beneficiary"), ("Guardian Link", "Guardian"))
+        .shortcut("Turned 18: renew consent", "Data Principal", color="Orange",
+                  stats=[["Data Principal", "renewal_due", "=", 1]], fmt="{} to renew")
+        .card("People", ("Data Principal", "Beneficiary"), ("Guardian Link", "Guardian"),
+              ("Report:Profile Answer Totals", "About the people (totals)"))
         .card("Consent records", ("Consent Event", "Consent"), ("Consent State", "Current consent per purpose"),
               ("Verification Attempt", "Confirmation attempt"))
         .emit())
@@ -426,7 +432,9 @@ def workspaces():
         .shortcut("Programmes", "Programme", color="Green")
         .shortcut("Re-consent", "Campaign", color="Orange")
         .shortcut("Field phones", "Field Device", color="Blue")
-        .card("Programmes", "Programme", ("Campaign", "Re-consent campaign"))
+        .shortcut("Extra questions", "Profile Question", color="Purple")
+        .card("Programmes", "Programme", ("Campaign", "Re-consent campaign"),
+              ("Profile Question", "Extra questions library"), ("Report:Profile Answer Totals", "Extra questions: totals"))
         .card("Field team", ("Field Device", "Field phone"))
         .emit())
     (WS("Analytics", 4, "dashboard", r["Analytics"])

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\": \"benefi0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"benefi2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Waiting For Confirmation\", \"col\": 3}}, {\"id\": \"benefi3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"benefi4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Consents\", \"col\": 3}}, {\"id\": \"benefi6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Waiting for confirmation\", \"col\": 3}}, {\"id\": \"benefi7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Guardians\", \"col\": 3}}, {\"id\": \"benefi8\", \"type\": \"card\", \"data\": {\"card_name\": \"People\", \"col\": 4}}, {\"id\": \"benefi9\", \"type\": \"card\", \"data\": {\"card_name\": \"Consent records\", \"col\": 4}}]",
+ "content": "[{\"id\": \"benefi0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"benefi2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Waiting For Confirmation\", \"col\": 3}}, {\"id\": \"benefi3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawals This Week\", \"col\": 3}}, {\"id\": \"benefi4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"benefi5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Consents\", \"col\": 3}}, {\"id\": \"benefi6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Waiting for confirmation\", \"col\": 3}}, {\"id\": \"benefi7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Guardians\", \"col\": 3}}, {\"id\": \"benefi8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Turned 18: renew consent\", \"col\": 3}}, {\"id\": \"benefi9\", \"type\": \"card\", \"data\": {\"card_name\": \"People\", \"col\": 4}}, {\"id\": \"benefi10\", \"type\": \"card\", \"data\": {\"card_name\": \"Consent records\", \"col\": 4}}]",
  "creation": "2026-10-01 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -16,7 +16,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "People",
-   "link_count": 2,
+   "link_count": 3,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -37,6 +37,16 @@
    "link_count": 0,
    "link_to": "Guardian Link",
    "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "About the people (totals)",
+   "link_count": 0,
+   "link_to": "Profile Answer Totals",
+   "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   },
@@ -155,6 +165,15 @@
    "label": "Guardians",
    "link_to": "Guardian Link",
    "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "format": "{} to renew",
+   "label": "Turned 18: renew consent",
+   "link_to": "Data Principal",
+   "stats_filter": "[[\"Data Principal\", \"renewal_due\", \"=\", 1]]",
    "type": "DocType"
   }
  ],

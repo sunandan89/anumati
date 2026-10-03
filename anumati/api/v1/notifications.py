@@ -5,6 +5,7 @@ For hosts that cannot receive webhooks. Carries identifiers and purpose codes on
 import json
 
 import frappe
+from frappe import _
 from frappe.utils import get_datetime, now_datetime
 
 EVENT_FOR_ACTION = {"grant": "consent.recorded", "renew": "consent.recorded", "refuse": "consent.recorded",
@@ -36,3 +37,31 @@ def feed(since, limit=100):
 		            "at": r.modified, "request": r.name, "request_type": r.request_type, "status": r.status})
 	out.sort(key=lambda x: x["at"])
 	return {"events": out[:limit], "until": out[:limit][-1]["at"] if out else now_datetime()}
+
+
+@frappe.whitelist(methods=["POST"])
+def guardian_needed(programme):
+	"""Field app: a worker met an adult who can't decide alone and has no guardian appointed by a court or
+	the Local Level Committee, so no consent was taken and nothing about the person was saved. Tells the
+	programme's coordinators (Programme Managers) so they can help the family apply. No personal data."""
+	frappe.has_permission("Consent Event", "create", throw=True)
+	if not frappe.db.exists("Programme", programme):
+		frappe.throw(_("Unknown programme {0}").format(programme), frappe.DoesNotExistError)
+	name = frappe.db.get_value("Programme", programme, "programme_name")
+	worker = frappe.utils.get_fullname(frappe.session.user)
+	managers = {u for u in frappe.get_all("Has Role", {"role": "Anumati Programme Manager", "parenttype": "User"},
+	                                      pluck="parent") if frappe.db.get_value("User", u, "enabled")}
+	allowed = set(frappe.get_all("User Permission", {"allow": "Programme", "for_value": programme}, pluck="user"))
+	restricted = set(frappe.get_all("User Permission", {"allow": "Programme"}, pluck="user"))
+	# A coordinator restricted to other programmes is not told about this one.
+	to = [u for u in managers if u in allowed or u not in restricted]
+	for user in to:
+		frappe.get_doc({
+			"doctype": "Notification Log", "for_user": user, "type": "Alert", "document_type": "Programme",
+			"document_name": programme, "from_user": frappe.session.user,
+			"subject": _("{0} met an adult who needs a lawful guardian before consent ({1})").format(worker, name),
+			"email_content": _("No consent was taken and nothing about the person was saved. The family can apply to "
+			                   "the Local Level Committee (National Trust) or a court for a guardian. Ask {0} which "
+			                   "family it was.").format(worker),
+		}).insert(ignore_permissions=True)
+	return {"told": len(to)}

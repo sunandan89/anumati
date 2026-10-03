@@ -43,7 +43,14 @@ frappe.ui.form.on("Consent Event", {
 			if (!e || !e.file) return;
 			const url = "/api/method/anumati.api.v1.evidence.view?file_url=" + encodeURIComponent(e.file);
 			const kind = (e.kind || "").toLowerCase();
-			const label = frappe.utils.escape_html(kind || __("Evidence"));
+			const names = {
+				audio: __("Voice: their “haan”"),
+				thumbprint: __("Thumbprint"),
+				signature: __("Signature or thumbprint"),
+				guardian_document: __("Guardian's ID"),
+				guardian_order: __("Appointment order"),
+			};
+			const label = frappe.utils.escape_html(names[kind] || kind || __("Evidence"));
 			const $item = $('<div style="border:1px solid var(--border-color);border-radius:8px;padding:8px"></div>');
 			$item.append(`<div class="text-muted small" style="margin-bottom:6px">${label}</div>`);
 			if (kind === "audio" || /\.(m4a|aac|mp3|wav|ogg)$/i.test(e.file)) {
