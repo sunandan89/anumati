@@ -6,7 +6,6 @@ import json
 
 import frappe
 from frappe import _
-from frappe.rate_limiter import rate_limit
 from frappe.utils import get_datetime, now_datetime
 
 EVENT_FOR_ACTION = {"grant": "consent.recorded", "renew": "consent.recorded", "refuse": "consent.recorded",
@@ -41,7 +40,6 @@ def feed(since, limit=100):
 
 
 @frappe.whitelist(methods=["POST"])
-@rate_limit(limit=30, seconds=3600)
 def guardian_needed(programme):
 	"""Field app: a worker met an adult who can't decide alone and has no guardian appointed by a court or
 	the Local Level Committee, so no consent was taken and nothing about the person was saved. Tells the

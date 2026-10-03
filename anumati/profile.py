@@ -88,7 +88,9 @@ def notice_text(notice: str) -> str:
 
 
 def mentions(text: str, term: str) -> bool:
-	return bool(term) and term.strip().lower() in text
+	"""Whole words only, so "age" is not found in "village" or "message"."""
+	term = (term or "").strip().lower()
+	return bool(term) and re.search(r"(?<!\w)" + re.escape(term) + r"(?!\w)", text) is not None
 
 
 def validate_programme(doc):
@@ -145,18 +147,21 @@ def for_notice(programme: str, notice: str, language: str | None = None) -> list
 
 
 def save_answers(doc, programme: str | None, answers: dict):
-	"""Put a person's answers on their Data Principal (replacing earlier answers to the same questions)."""
+	"""Put a person's answers on their Data Principal (replacing earlier answers to the same questions).
+
+	Answers come from phones that may have captured offline days ago, against an older list of
+	questions or choices. One out-of-date answer must never stop the consent itself from syncing, so:
+	a question that no longer exists, or a number that isn't one, is skipped; a choice that is no longer
+	on the list is kept as given (it was on the list the person was shown)."""
 	if not answers:
 		return
 	for code, value in answers.items():
 		q = frappe.db.get_value("Profile Question", code, ["answer_type", "options"], as_dict=True)
 		if not q:
-			frappe.throw(_("Unknown question {0}").format(code), frappe.ValidationError)
-		value = "" if value is None else str(value).strip()
+			continue
+		value = "" if value is None else str(value).strip()[:140]
 		if value and q.answer_type in ("number", "year") and not value.isdigit():
-			frappe.throw(_("{0} needs a number").format(code), frappe.ValidationError)
-		if value and q.answer_type == "choice" and value not in [o.strip() for o in (q.options or "").split("\n")]:
-			frappe.throw(_("{0} is not one of the choices for {1}").format(value, code), frappe.ValidationError)
+			continue
 		doc.set("profile_answers", [a for a in doc.get("profile_answers") or [] if a.question != code])
 		if value:
 			doc.append("profile_answers", {"programme": programme, "question": code, "answer": value})

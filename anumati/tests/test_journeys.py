@@ -111,6 +111,10 @@ class TestJourneys(FrappeTestCase):
 		old = self.link(p, guardian_type="committee", authority_ref="X")
 		frappe.db.set_value("Guardian Link", old, "authority_ref", "")
 		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, capture_mode="guardian_pwd", guardian_link=old)
+		# ...but staff can still edit that old link in Desk (e.g. its validity date).
+		doc = frappe.get_doc("Guardian Link", old)
+		doc.valid_until = "2030-12-31"
+		doc.save()
 		art = self.grant(p.principal_ref, capture_mode="guardian_pwd",
 		                 guardian_link=self.link(p, guardian_type="committee", relation="Sibling",
 		                                         authority_ref="LLC/2026/0412 (sample)"))
@@ -179,9 +183,21 @@ class TestJourneys(FrappeTestCase):
 		principal.upsert(ref, programme=PROG, profile={"age": "42"})
 		doc.reload()
 		self.assertEqual(len(doc.profile_answers), 2)
-		self.assertRaises(frappe.ValidationError, principal.upsert, ref, profile={"occupation": "Astronaut"})
-		self.assertRaises(frappe.ValidationError, principal.upsert, ref, profile={"age": "forty"})
+		# An out-of-date answer never stops the consent syncing: a renamed choice is kept as given, a
+		# non-number or a removed question is skipped.
+		principal.upsert(ref, programme=PROG, profile={"occupation": "Old choice name", "age": "forty", "gone": "x"})
+		doc.reload()
+		self.assertEqual({a.question: a.answer for a in doc.profile_answers}, {"age": "42", "occupation": "Old choice name"})
 		self.assertRaises(SchemaError, principal.upsert, ref, profile={"Bad Code!": "1"})
+
+	def test_question_codes_are_safe_for_the_phone_and_notice_terms_match_whole_words(self):
+		q = frappe.get_doc({"doctype": "Profile Question", "code": "Ration-Card Type", "question": "Ration card type (sample)",
+		                    "answer_type": "text", "notice_term": "ration card"}).insert()
+		self.assertEqual(q.name, "ration_card_type")
+		self.assertRaises(frappe.ValidationError, frappe.get_doc({
+			"doctype": "Profile Question", "code": "कोड", "question": "x", "answer_type": "text", "notice_term": "x"}).insert)
+		self.assertTrue(profile.mentions("name, age and phone", "age"))
+		self.assertFalse(profile.mentions("village health camp", "age"))
 
 	# -- birth year and renewal at 18 -------------------------------------------
 

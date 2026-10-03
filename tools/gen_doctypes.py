@@ -389,7 +389,7 @@ doctype("Guardian Link", [
     F("guardian_type", "Select", "Guardian type", sel("parent", "legal_guardian", "family_pwd", "court", "committee"), reqd=True, in_list_view=True),
     F("relation", "Data", "Relation"),
     col("c1"),
-    F("authority_ref", "Data", "Order number", mandatory_depends_on="eval:doc.guardian_type!='parent'",
+    F("authority_ref", "Data", "Order number",
       description="Number of the order that appointed the guardian (Local Level Committee, court or other authority). "
                   "Needed for every guardian except a parent"),
     F("evidence", "Attach", "Order or document photo", description="Photo of the appointment order, when one was taken"),

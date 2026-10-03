@@ -56,8 +56,7 @@
    "description": "Number of the order that appointed the guardian (Local Level Committee, court or other authority). Needed for every guardian except a parent",
    "fieldname": "authority_ref",
    "fieldtype": "Data",
-   "label": "Order number",
-   "mandatory_depends_on": "eval:doc.guardian_type!='parent'"
+   "label": "Order number"
   },
   {
    "description": "Photo of the appointment order, when one was taken",
