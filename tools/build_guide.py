@@ -7,6 +7,7 @@ Run from the repo root: python3 tools/build_guide.py (needs `pip install markdow
 import html
 import os
 import re
+import shutil
 
 import markdown
 
@@ -73,6 +74,8 @@ def render(text: str) -> str:
 
 def main():
     os.makedirs(OUT, exist_ok=True)
+    # Wireframe images the guide shows, next to the pages.
+    shutil.copytree(os.path.join(SRC, "wireframes"), os.path.join(OUT, "wireframes"), dirs_exist_ok=True)
     for name, out in PAGES:
         with open(os.path.join(SRC, name), encoding="utf-8") as fh:
             text = fh.read()

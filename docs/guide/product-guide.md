@@ -10,11 +10,12 @@ Anumati helps NGOs take, prove and honour consent under India's DPDP Act 2023, i
 2. [Who uses it](#who-uses-it)
 3. [What Phase 1 gives each person](#what-phase-1-gives-each-person)
 4. [Taking consent in the field](#taking-consent-in-the-field)
-5. [After consent](#after-consent)
-6. [Web console journeys](#web-console-journeys)
-7. [Roadmap: Phase 2 and Phase 3](#roadmap-phase-2-and-phase-3)
-8. [Setup still needed](#setup-still-needed)
-9. [Glossary](#glossary)
+5. [Screens, journey by journey](#screens-journey-by-journey)
+6. [After consent](#after-consent)
+7. [Web console journeys](#web-console-journeys)
+8. [Roadmap: Phase 2 and Phase 3](#roadmap-phase-2-and-phase-3)
+9. [Setup still needed](#setup-still-needed)
+10. [Glossary](#glossary)
 
 ## The three parts
 
@@ -59,8 +60,8 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | --- | --- |
 | Sign in with organisation address, user and password | One-time set-up per phone; then a PIN locks the app |
 | Choose programme | Village Health Camps, After-school Learning Centres, Women's Self-Help Groups in the demo |
-| **Take new consent** in 3 screens | Who is consenting → notice and choices → confirm and save (guardians: who → guardian → notice and save) |
-| Notice in Hindi or English | A reviewed recording (natural voice by Sarvam AI) or the phone's own voice; choices unlock only after it has played |
+| **Take new consent** in 3 screens | Who is consenting → notice and choices → confirm and save (guardians: who → guardian → notice and save). A programme with extra questions adds **About the person** as a 4th screen (Village Health Camps asks Age), where guardians then save |
+| Notice in Hindi or English | A reviewed recording (natural voice by Sarvam AI, woman's or man's voice to match the worker), or the phone's own voice; with neither, the worker reads it aloud and taps "I have read the whole notice to them". Choices unlock only after that |
 | Uses in the person's language | Use names show in Hindi when the notice is in Hindi |
 | Uses that need a phone hidden | For someone without a phone, uses like "follow-up calls" are not offered |
 | Proof that fits the person | SMS code, voice "haan", signature or thumbprint photo, witness: see the [proof table](#proof-and-witness) |
@@ -71,25 +72,25 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | Server-sent code | After Save, online: the server texts a code to the person's phone; the worker never sees it |
 | **Log withdrawal or request** | In person, paper slip or letter: stop all optional uses, stop one use, see or correct data, delete data, complaint |
 | **Ask for one more purpose** | A later visit: only the new use is asked; past choices are not asked again |
-| **Find beneficiary** | Offline search by name, ID or receipt code; shows each use's status |
+| **Find beneficiary** | Offline search by name or ID (and by receipt code for consents taken on this phone); shows each use's status; tapping a person opens the withdrawal screen |
 | Offline first | Everything is saved on the phone (encrypted) and syncs when online; no duplicates even if sync is cut off |
-| Lost phone | Admin marks it lost; the phone wipes itself on its next contact |
+| App lock and lost phone | The app locks after 5 minutes away or on restart; 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
 
 ### Beneficiary and guardian
 
 - Hears the whole notice before choosing; every optional use starts **off**; "Yes to all" and "No to all" carry equal weight.
 - Gets a receipt code and can withdraw any time: tell any field worker, show the paper slip, or (once an inbound number is set up) SMS `STOP <code>` or give a missed call.
-- A child's guardian gets the messages, and a guardian's phone number also finds the child's record.
+- A child's guardian gets the messages. `STOP <code>` from the guardian's phone withdraws that consent; a plain `STOP` or a missed call from it goes to the inbox for staff to match, because it could mean the guardian or the child.
 
 ### Programme manager, DPO, operator, admin (web console)
 
 | Area | Phase 1 features |
 | --- | --- |
-| **Today** dashboard | Consents in the last 30 days, confirmed vs recorded, waiting to sync, withdrawals, open requests, "Needs attention" list |
-| **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stay encrypted); consent history per person; guardians; "Turned 18: renew consent" list |
-| **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, withdrawal channels, field phones |
+| **Today** dashboard | Consent records in the last 30 days, confirmed uses, evidence-only uses, records waiting to sync on phones, withdrawals, open requests, "Needs attention" list (overdue requests, chain check) |
+| **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stored encrypted; the list shows names and masked phones, and every view is logged); consent history per person; guardians; "Turned 18: renew consent" list |
+| **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
 | **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log, audit log |
-| **Requests inbox** | Every withdrawal or rights request with a due date (30 days by default), a board view, one-click "Record withdrawal" |
+| **Requests inbox** | Every withdrawal or rights request with a due date (30 days by default; overdue shown in red in the list), a board view, **Record withdrawal** (pick the programme, optionally the uses); staff are notified of new requests and 3 days before the due date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
 | **Access logs** | Every view of a name, phone or evidence file is logged |
@@ -139,8 +140,8 @@ If the programme has switched on extra questions, an **About the person** screen
 | --- | --- | --- | --- |
 | **A. Reads, has a phone** | Who → Notice and choices → Confirm | SMS code (from the server, or the worker's phone plus voice "haan") | No |
 | **B. Needs help reading, or no phone** | Who → Notice and choices → Confirm | Voice "haan" or thumbprint / signature photo (at least one) | Yes, if the notice was read to them |
-| **C. Parent for a child** | Who → Parent's details → Notice, choices and Save | SMS code to the parent; ID photo only if the parent has no phone | No |
-| **D. Guardian for an adult who can't decide alone** | Who → Guardian's details → Notice, choices and Save | Order number (required), SMS code to the guardian; order and ID photos optional | No |
+| **C. Parent for a child** | Who → Parent's details → Notice, choices and Save | SMS code to the parent; ID photo required only if no mobile is given | No |
+| **D. Guardian for an adult who can't decide alone** | Who → Guardian's details → Notice, choices and Save | Order number (required), SMS code to the guardian; order photo optional; ID photo required only if no mobile is given | No |
 
 ### Proof and witness
 
@@ -152,6 +153,8 @@ If the programme has switched on extra questions, an **About the person** screen
 | Needs help | No | Voice "haan" or thumbprint | Yes |
 | Parent or guardian | Guardian's phone | SMS code to the guardian | No |
 | Parent or guardian | No phone | Photo of the guardian's ID | No |
+
+When the code goes from the **worker's phone** (no internet, SMS not set up yet, or the programme's choice), the person's or guardian's **voice "haan" is always required** with it, because the worker sees that code. Codes from the server are **confirmed** when they match; worker's-phone codes stay **recorded**.
 
 A witness is asked only when someone else read the notice to the person, because an independent person then confirms it was read fairly.
 
@@ -189,8 +192,56 @@ A person with a disability who **can** decide with support consents for themself
 
 ### Children and turning 18
 
+- A child's consent is never used before it is confirmed (a server code that matched, a delivered confirm-later SMS, or evidence only). Connected systems asking `consent.check` get "awaiting confirmation" until then.
+
 - Purposes marked "not allowed for children" (for example anonymised research) are never offered for a child.
-- The child's **year of birth** is recorded. The server works out when they turn 18; a daily job flags them, and their guardian's consent stops counting ("renewal due") until they consent themselves. The field action for this renewal is in Phase 2.
+- The child's **year of birth** is recorded. The server works out when they turn 18 (31 December of the year they turn 18); a daily job flags them, and their guardian's consent stops counting ("renewal due") until they consent themselves. The field action for this renewal is in Phase 2.
+
+## Screens, journey by journey
+
+Wireframes of the field app with its own wording (fictional names). They are drawn to match the built screens (not screenshots) and regenerated with `tools/guide_wireframes.py` whenever a screen changes. Step labels show "of 3"; in a programme with extra questions (like Village Health Camps) they show "of 4", and guardians save on the About the person screen.
+
+### Home
+
+| Home |
+| --- |
+| <img src="wireframes/home.png" width="200" alt="Home: records waiting to sync, programme, four actions"> |
+
+### Journey A: the person reads and has a phone
+
+| 1. Who is giving consent? | 2. Notice and choices | 3. Confirm and save (online) | After Save: code from the server |
+| --- | --- | --- | --- |
+| <img src="wireframes/a1-who.png" width="200" alt="Screen 1 for the person themself"> | <img src="wireframes/a2-notice.png" width="200" alt="Notice and choices, choices unlocked"> | <img src="wireframes/a3-confirm-online.png" width="200" alt="Confirm: tick and Save"> | <img src="wireframes/a4-receipt-code.png" width="200" alt="Receipt with the server-sent code panel"> |
+
+No internet, or the programme set to "Worker's phone": the Confirm screen asks for the code from the worker's phone **and** the voice "haan" before Save.
+
+| 3. Confirm and save (offline / worker's phone) |
+| --- |
+| <img src="wireframes/a5-confirm-offline.png" width="200" alt="Confirm offline: SMS code from the worker's phone plus voice, both needed"> |
+
+### Journey B: needs help reading, or no phone
+
+| 1. Who (needs help, no phone, Hindi) | 2. Notice in Hindi | 3. Confirm with witness | Reads but no phone |
+| --- | --- | --- | --- |
+| <img src="wireframes/b1-who-help.png" width="200" alt="Screen 1, needs help and no phone"> | <img src="wireframes/b2-notice-hindi.png" width="200" alt="Hindi notice with Hindi use names; follow-up calls hidden"> | <img src="wireframes/b3-confirm-witness.png" width="200" alt="Voice saved, witness name"> | <img src="wireframes/b4-reads-no-phone.png" width="200" alt="Voice or signature photo, no witness"> |
+
+### Journey C: parent for a child
+
+| 1. Who (child) | 2. Parent's details | 2. Parent's details (offline) | 3. Notice, choices and Save |
+| --- | --- | --- | --- |
+| <img src="wireframes/c1-who-child.png" width="200" alt="Child's name and year of birth"> | <img src="wireframes/c2-parent.png" width="200" alt="Mother, Father or Other guardian; code after Save"> | <img src="wireframes/c4-parent-offline.png" width="200" alt="Code from the worker's phone plus the parent's voice"> | <img src="wireframes/c3-notice-save.png" width="200" alt="Guardian saves on the notice screen; research not offered"> |
+
+### Journey D: guardian for an adult who can't decide alone
+
+| 2. Guardian's details | No order yet |
+| --- | --- |
+| <img src="wireframes/d2-guardian.png" width="200" alt="Appointed by, order number, relation, guardian"> | <img src="wireframes/d3-no-order.png" width="200" alt="Consent can't be taken; inform coordinator"> |
+
+### Extra questions and withdrawal
+
+| About the person | Log withdrawal or request |
+| --- | --- |
+| <img src="wireframes/e1-about.png" width="200" alt="Extra questions after the choices"> | <img src="wireframes/f1-withdraw.png" width="200" alt="How it arrived, find the person, what they want"> |
 
 ## After consent
 
@@ -199,6 +250,7 @@ A person with a disability who **can** decide with support consents for themself
 1. The app shows the receipt code to write on the slip.
 2. With the MSG91 route online, the worker taps **Send code**; the code goes to the person's (or guardian's) phone; they read it out; the consent becomes **confirmed**.
 3. Optional: **Send receipt by SMS** opens the worker's SMS app with the receipt text.
+4. With SMS set up and **Send SMS receipts** on (the default), the server also texts a receipt, a withdrawal confirmation, or for **confirm later** a message that confirms the consent once it is delivered. Not delivered within 7 days (programme setting) → the consent shows as unconfirmed under **Waiting for confirmation**.
 
 ### Sync
 
@@ -220,15 +272,15 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 | --- | --- | --- |
 | Told to a field worker | Yes | "Log withdrawal or request" on the phone; a withdrawal takes effect on the phone at once |
 | Paper slip or letter | Yes | Same screen, with the slip number |
-| SMS `STOP` / `STOP <code>` | Built; needs an inbound number | Withdraws optional uses; ambiguous ones go to the inbox |
+| SMS `STOP` / `STOP <code>` / `STOP <n>` | Built; needs an inbound number | Withdraws all optional uses, that consent, or use number n; ambiguous ones go to the inbox. `DATA` opens an access request; anything else a complaint |
 | Missed call | Built; needs a missed-call number | Opens a withdrawal request in the inbox |
-| Staff in the web console | Yes | "Record withdrawal" on the request: one signed withdrawal, request closed |
+| Staff in the web console | Yes | "Record withdrawal" on the request (choose the programme): one signed withdrawal, request closed |
 
 ```mermaid
 flowchart LR
   A["Request arrives"] --> B{"Matched to<br/>a person?"}
   B -- "Yes" --> C["Inbox: open, due in 30 days"]
-  B -- "No" --> U["Unmatched: staff pick<br/>'Who is this for?'"]
+  B -- "No" --> U["Staff set the person<br/>(Who is this for? when<br/>the number is shared)"]
   U --> C
   C -- "withdrawal" --> W["Record withdrawal<br/>(signed) → closed"]
   C -- "access / correction / erasure /<br/>complaint" --> M["Staff act and close<br/>(automation: Phase 2)"]
@@ -236,7 +288,7 @@ flowchart LR
 
 ### Add a use later
 
-When a programme adds a new use, the worker opens **Ask for one more purpose**, picks the person, reads only the new part of the notice, and records Yes or No. Past decisions are shown and not asked again. Proof follows the same SMS code rules; a witness is asked if the person needs help reading.
+When a programme adds a new use, the worker opens **Ask for one more purpose**, picks the person, reads only the new part of the notice, and records Yes or No. Past decisions are shown and not asked again. With a phone, the code follows the same routes (server code after Save, or the worker's phone plus voice); with no phone, the voice "haan" is the proof; a witness is asked if the person needs help reading. A child, or anyone who consented through a guardian, needs a new consent with the guardian instead.
 
 ## Web console journeys
 
@@ -258,21 +310,21 @@ flowchart TD
 Rules the console enforces:
 
 - A notice can't be published until every purpose has an approved record of processing and all Rule 3 contents are filled in.
-- A machine-made translation or recording is never shown in the field until a person reviews it.
+- A translation is never shown in the field until a reviewer is set on it, and a machine-made recording until it is approved.
 - An extra question can be switched on only if the published notice mentions it (for example "occupation"). Sensitive ones (caste, religion, disability, pregnancy) show a warning.
 - A guardian other than a parent can't be saved without the order number.
 
 ### Work the requests inbox
 
-1. Open **Today** or **Requests board**; overdue requests are highlighted.
-2. Open a request; if unmatched, use **Who is this for?** to pick the person.
+1. Open **Today** (Needs attention lists overdue requests), the **Requests** list (overdue in red) or the **Requests board**.
+2. Open a request. If no person is set, fill **Beneficiary**; for SMS or missed calls from a shared number, **Who is this for?** offers the people on that number.
 3. Withdrawal: **Record withdrawal**. Other types: act, write the resolution, close.
 
 ### Reports and audit
 
 - Analytics charts update from live data.
 - **Extra questions: totals** shows counts only, never one person's answers; counts under 5 show as "fewer than 5".
-- **Chain verify** checks that no consent record has been changed.
+- The **chain** is checked every night (result in Needs attention and Anumati Settings); each consent record has a **Check signature** button.
 - Access log and record views show who opened names, phones or evidence.
 
 ## Roadmap: Phase 2 and Phase 3
@@ -315,7 +367,7 @@ flowchart LR
 | Item | Who | Status |
 | --- | --- | --- |
 | Deploy the latest code on Frappe Cloud | Admin | After every merge |
-| MSG91 Auth key in the site config (`msg91_auth_key`) | MSG91 account owner | Pending; until then codes go from the worker's phone with a voice "haan" |
+| MSG91 Auth key in the site config (`msg91_auth_key`) | MSG91 account owner | Pending; until then the app sends codes from the worker's phone with a voice "haan" by itself |
 | Real user accounts; remove the demo password | Admin | Before the pilot |
 | MSG91 receipt templates (6 texts drafted) | MSG91 account owner | Optional |
 | Inbound number for SMS STOP and missed calls | Admin | Optional |

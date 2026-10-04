@@ -33,6 +33,16 @@ def template_for(event: str, channel: str, language: str | None):
 	return None
 
 
+def can_send_codes(language: str | None = None) -> bool:
+	"""The server can text one-time codes: an enabled SMS account with a key, and an approved OTP template.
+	When it can't (e.g. MSG91 not set up yet), the field app sends codes from the worker's phone with the
+	voice 'haan' instead."""
+	provider = provider_for("SMS")
+	if not provider or not template_for("otp", "sms", language):
+		return False
+	return bool(provider.get_password("api_key", raise_exception=False) or frappe.conf.get("msg91_auth_key"))
+
+
 def contact_phone(doc) -> str | None:
 	"""The number messages about this person go to: for a child, or an adult with a lawful guardian, the
 	guardian's (from their latest Guardian Link) because the guardian decided; otherwise their own."""

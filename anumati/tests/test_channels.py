@@ -225,3 +225,11 @@ class TestChannels(FrappeTestCase):
 			self.grant(p, verification_method=method, verification_status="confirmed",
 			           evidence=[{"file": "/private/files/haan-sample.m4a", "kind": "audio"}])
 			self.assertEqual(consent.state(p.principal_ref, programme=PROG)[0]["verification_status"], "recorded", method)
+
+	def test_notice_tells_the_app_whether_the_server_can_send_codes(self):
+		self.assertTrue(channels.can_send_codes("en"))
+		frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 0)
+		try:
+			self.assertFalse(channels.can_send_codes("en"), "no SMS account: the app uses the worker's phone")
+		finally:
+			frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 1)
