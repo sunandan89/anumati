@@ -10,11 +10,12 @@ Anumati helps NGOs take, prove and honour consent under India's DPDP Act 2023, i
 2. [Who uses it](#who-uses-it)
 3. [What Phase 1 gives each person](#what-phase-1-gives-each-person)
 4. [Taking consent in the field](#taking-consent-in-the-field)
-5. [After consent](#after-consent)
-6. [Web console journeys](#web-console-journeys)
-7. [Roadmap: Phase 2 and Phase 3](#roadmap-phase-2-and-phase-3)
-8. [Setup still needed](#setup-still-needed)
-9. [Glossary](#glossary)
+5. [Screens, journey by journey](#screens-journey-by-journey)
+6. [After consent](#after-consent)
+7. [Web console journeys](#web-console-journeys)
+8. [Roadmap: Phase 2 and Phase 3](#roadmap-phase-2-and-phase-3)
+9. [Setup still needed](#setup-still-needed)
+10. [Glossary](#glossary)
 
 ## The three parts
 
@@ -191,6 +192,52 @@ A person with a disability who **can** decide with support consents for themself
 
 - Purposes marked "not allowed for children" (for example anonymised research) are never offered for a child.
 - The child's **year of birth** is recorded. The server works out when they turn 18; a daily job flags them, and their guardian's consent stops counting ("renewal due") until they consent themselves. The field action for this renewal is in Phase 2.
+
+## Screens, journey by journey
+
+Wireframes of the field app with its own wording (fictional names). They are drawn from the built app and regenerated with `tools/guide_wireframes.py` whenever a screen changes.
+
+### Home
+
+| Home |
+| --- |
+| <img src="wireframes/home.png" width="200" alt="Home: records waiting to sync, programme, four actions"> |
+
+### Journey A: the person reads and has a phone
+
+| 1. Who is giving consent? | 2. Notice and choices | 3. Confirm and save (online) | After Save: code from the server |
+| --- | --- | --- | --- |
+| <img src="wireframes/a1-who.png" width="200" alt="Screen 1 for the person themself"> | <img src="wireframes/a2-notice.png" width="200" alt="Notice and choices, choices unlocked"> | <img src="wireframes/a3-confirm-online.png" width="200" alt="Confirm: tick and Save"> | <img src="wireframes/a4-receipt-code.png" width="200" alt="Receipt with the server-sent code panel"> |
+
+No internet, or the programme set to "Worker's phone": the Confirm screen asks for the code from the worker's phone **and** the voice "haan" before Save.
+
+| 3. Confirm and save (offline / worker's phone) |
+| --- |
+| <img src="wireframes/a5-confirm-offline.png" width="200" alt="Confirm offline: SMS code from the worker's phone plus voice, both needed"> |
+
+### Journey B: needs help reading, or no phone
+
+| 1. Who (needs help, no phone, Hindi) | 2. Notice in Hindi | 3. Confirm with witness | Reads but no phone |
+| --- | --- | --- | --- |
+| <img src="wireframes/b1-who-help.png" width="200" alt="Screen 1, needs help and no phone"> | <img src="wireframes/b2-notice-hindi.png" width="200" alt="Hindi notice with Hindi use names; follow-up calls hidden"> | <img src="wireframes/b3-confirm-witness.png" width="200" alt="Voice saved, witness name"> | <img src="wireframes/b4-reads-no-phone.png" width="200" alt="Voice or signature photo, no witness"> |
+
+### Journey C: parent for a child
+
+| 1. Who (child) | 2. Parent's details | 2. Parent's details (offline) | 3. Notice, choices and Save |
+| --- | --- | --- | --- |
+| <img src="wireframes/c1-who-child.png" width="200" alt="Child's name and year of birth"> | <img src="wireframes/c2-parent.png" width="200" alt="Mother, Father or Other guardian; code after Save"> | <img src="wireframes/c4-parent-offline.png" width="200" alt="Code from the worker's phone plus the parent's voice"> | <img src="wireframes/c3-notice-save.png" width="200" alt="Guardian saves on the notice screen; research not offered"> |
+
+### Journey D: guardian for an adult who can't decide alone
+
+| 2. Guardian's details | No order yet |
+| --- | --- |
+| <img src="wireframes/d2-guardian.png" width="200" alt="Appointed by, order number, relation, guardian"> | <img src="wireframes/d3-no-order.png" width="200" alt="Consent can't be taken; inform coordinator"> |
+
+### Extra questions and withdrawal
+
+| About the person | Log withdrawal or request |
+| --- | --- |
+| <img src="wireframes/e1-about.png" width="200" alt="Extra questions after the choices"> | <img src="wireframes/f1-withdraw.png" width="200" alt="How it arrived, find the person, what they want"> |
 
 ## After consent
 
