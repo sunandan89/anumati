@@ -203,7 +203,33 @@ def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **ext
 	           **({"purposes": json.loads(purposes) if isinstance(purposes, str) else purposes} if purposes else {}),
 	           **{k: v for k, v in extra.items() if k not in ("cmd", "data") and v is not None}}
 	schema.validate("ConsentWithdraw", payload)
-	return withdraw_for(_principal(principal_ref), programme, channel, event_uuid, purposes, **extra)
+	paper_trail = extra.pop("paper_trail_number", None)
+	principal = _principal(principal_ref)
+	artefact = withdraw_for(principal, programme, channel, event_uuid, purposes, **extra)
+	if channel in FIELD_CHANNELS:
+		_field_request(principal, channel, artefact, paper_trail)
+	return artefact
+
+
+# Withdrawals a field worker carries out on the spot (in person, paper slip or letter).
+FIELD_CHANNELS = ("field_worker", "slip")
+
+
+def _field_request(principal, channel, artefact, paper_trail=None):
+	"""Keep a closed withdrawal request in the inbox, so every withdrawal, however it arrived, is listed
+	there with who logged it and the slip number (spec section 6). Once per event, so a re-sent sync
+	does not add a second one."""
+	if frappe.db.exists("Rights Request", {"linked_event": artefact["consent_id"]}):
+		return
+	doc = frappe.get_doc({
+		"doctype": "Rights Request", "request_type": "withdrawal", "channel": channel, "status": "Closed",
+		"matched_principal": principal, "linked_event": artefact["consent_id"],
+		"paper_trail_number": paper_trail or None,
+		"resolution": _("Withdrawn in the field by {0}: consent event {1} ({2}).").format(
+			frappe.session.user, artefact["consent_id"], artefact["short_code"]),
+	})
+	doc.flags.ignore_permissions = True
+	doc.insert()
 
 
 def withdraw_for(principal, programme, channel, event_uuid, purposes=None, **extra):

@@ -42,7 +42,8 @@ SCHEMAS = {
 		"required": ["event_uuid", "principal_ref", "programme", "channel"],
 		"properties": {
 			"event_uuid": S(minLength=8, maxLength=64), "principal_ref": S(minLength=1, maxLength=140),
-			"programme": S(minLength=1, maxLength=140), "purposes": CODES, **CAPTURE,
+			"programme": S(minLength=1, maxLength=140), "purposes": CODES, "paper_trail_number": S(maxLength=140),
+			**CAPTURE,
 		},
 	},
 	"PrincipalUpsert": {
@@ -65,7 +66,7 @@ SCHEMAS = {
 		"properties": {
 			"request_type": S(enum=["withdrawal", "access", "correction", "erasure", "grievance", "nomination"]),
 			"channel": S(enum=CHANNELS), "principal_ref": S(maxLength=140), "payload": S(maxLength=5000),
-			"paper_trail_number": S(maxLength=140),
+			"paper_trail_number": S(maxLength=140), "consent_code": S(maxLength=20),
 		},
 	},
 	"Artefact": {"type": "object", "properties": {k: S() for k in (

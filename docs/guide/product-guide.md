@@ -73,7 +73,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | Server-sent code | After Save, online: the server texts a code to the person's phone; the worker never sees it |
 | **Log withdrawal or request** | In person, paper slip or letter: stop all optional uses, stop one use, see or correct data, delete data, complaint |
 | **Ask for one more purpose** | A later visit: only the new use is asked; past choices are not asked again |
-| **Find beneficiary** | Offline search by name or ID (and by receipt code for consents taken on this phone); shows each use's status; tapping a person opens the withdrawal screen |
+| **Find beneficiary** | Offline search by name, ID or receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone); shows each use's status; tapping a person opens the withdrawal screen |
 | Offline first | Everything is saved on the phone (encrypted) and syncs when online; no duplicates even if sync is cut off |
 | App lock and lost phone | The app locks after 5 minutes away or on restart; 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
 
@@ -271,11 +271,30 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 
 | How it arrives | Phase 1 | What happens |
 | --- | --- | --- |
-| Told to a field worker | Yes | "Log withdrawal or request" on the phone; a withdrawal takes effect on the phone at once |
-| Paper slip or letter | Yes | Same screen, with the slip number |
+| Told to a field worker | Yes | "Log withdrawal or request" on the phone; a withdrawal takes effect on the phone at once, and after sync it is signed and listed in the inbox as a closed request |
+| Paper slip or letter | Yes | Same screen, with the slip number, which is kept on the inbox request |
 | SMS `STOP` / `STOP <code>` / `STOP <n>` | Built; needs an inbound number | Withdraws all optional uses, that consent, or use number n; ambiguous ones go to the inbox. `DATA` opens an access request; anything else a complaint |
 | Missed call | Built; needs a missed-call number | Opens a withdrawal request in the inbox |
 | Staff in the web console | Yes | "Record withdrawal" on the request (choose the programme): one signed withdrawal, request closed |
+
+#### Withdrawal in the field app
+
+```mermaid
+flowchart TD
+  A["Log withdrawal or request<br/>In person / Paper slip / Letter"] --> F["Search: name, ID or receipt code"]
+  F -- "Found on the phone" --> W{"What do they want?"}
+  F -- "Not on the phone" --> R["Saved as a request with the code<br/>→ inbox; the code finds the person"]
+  W -- "Stop all optional uses /<br/>Stop only one use" --> L["Uses switch off on the phone at once"]
+  W -- "See or correct / Delete /<br/>Complaint" --> Q["Request → inbox, due in 30 days"]
+  L -- "sync" --> S["Signed withdrawal on the server:<br/>consent check says no;<br/>closed request in the inbox<br/>with the slip number"]
+  S --> M["SMS withdrawal confirmation<br/>(once SMS is set up)"]
+```
+
+- Essential uses can't be stopped this way; the person asks to **delete** their data instead, and staff handle it.
+- If no optional use is on, there is nothing to stop and Save stays off.
+- The phone knows everyone in the programme it has downloaded, so a slip enrolled on another phone is still found by its receipt code (the person's latest one).
+
+#### Requests in the inbox
 
 ```mermaid
 flowchart LR
@@ -320,6 +339,8 @@ Rules the console enforces:
 1. Open **Today** (Needs attention lists overdue requests), the **Requests** list (overdue in red) or the **Requests board**.
 2. Open a request. If no person is set, fill **Beneficiary**; for SMS or missed calls from a shared number, **Who is this for?** offers the people on that number.
 3. Withdrawal: **Record withdrawal**. Other types: act, write the resolution, close.
+
+Withdrawals done on a field phone arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 
 ### Reports and audit
 

@@ -3,17 +3,19 @@
 import frappe
 from frappe import _
 
+from anumati import inbox
 from anumati.api import schema
 from anumati.api.v1 import consent
 
 
 @frappe.whitelist(methods=["POST"])
-def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_number=None):
-	"""A rights request from a host system, connector or field worker (spec section 8)."""
+def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_number=None, consent_code=None):
+	"""A rights request from a host system, connector or field worker (spec section 8). A receipt code
+	(`consent_code`, from the person's slip) finds the person when `principal_ref` is not known."""
 	frappe.has_permission("Rights Request", "create", throw=True)
 	schema.validate("RightsSubmit", {k: v for k, v in {
 		"request_type": request_type, "channel": channel, "principal_ref": principal_ref, "payload": payload,
-		"paper_trail_number": paper_trail_number}.items() if v is not None})
+		"paper_trail_number": paper_trail_number, "consent_code": consent_code}.items() if v is not None})
 	doc = frappe.new_doc("Rights Request")
 	doc.update({"request_type": request_type, "channel": channel, "raw_payload": payload,
 	            "paper_trail_number": paper_trail_number})
@@ -21,6 +23,8 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 		doc.matched_principal = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
 		if not doc.matched_principal:
 			frappe.throw(_("Unknown principal_ref {0}").format(principal_ref))
+	elif consent_code:
+		doc.matched_principal = inbox.principal_for_short_code(consent_code)
 	doc.insert()
 	return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
 
