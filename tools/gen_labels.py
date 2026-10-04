@@ -127,6 +127,9 @@ CODES = [
     ("family_pwd", "Family (person with disability)", "परिवार (दिव्यांग व्यक्ति)"),
     ("court", "Court", "अदालत"),
     ("committee", "Committee", "समिति"),
+    ("MSG91 when online", None, "इंटरनेट हो तो MSG91"),
+    ("Worker's phone", None, "कार्यकर्ता का फ़ोन"),
+    ("How SMS codes are sent", None, "SMS कोड कैसे भेजे जाएँ"),
     # extra questions: kind of answer
     ("number", "Number", "संख्या"),
     ("year", "Year", "साल"),

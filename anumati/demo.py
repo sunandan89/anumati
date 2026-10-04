@@ -61,7 +61,7 @@ PROGRAMMES = (
 		"summary": "We screen your health and refer you to a doctor if needed.",
 		"full_text": "Name, age, phone number and test results. Kept safely for 24 months.",
 		"hindi": {"summary": HINDI["summary"], "full_text": HINDI["full_text"]},
-		"verification": ("device_sms_otp", "deferred", "evidence_only"),
+		"verification": ("server_otp", "deferred", "evidence_only"),
 	},
 	{
 		"code": "EDU", "name": "After-school Learning Centres", "persona": "student",
@@ -76,7 +76,7 @@ PROGRAMMES = (
 		"full_text": "Child's name, age, class, school, a parent's phone number and test scores. Kept for 36 months.",
 		"hindi": {"summary": "हम स्कूल के बाद मुफ़्त कक्षाएँ चलाते हैं और हर बच्चे की पढ़ाई का रिकॉर्ड रखते हैं।",
 		          "full_text": "बच्चे का नाम, उम्र, कक्षा, स्कूल, माता/पिता का फ़ोन नंबर और टेस्ट के अंक। 36 महीने तक रखे जाएँगे।"},
-		"verification": ("device_sms_otp", "deferred"),
+		"verification": ("server_otp", "deferred"),
 	},
 	{
 		"code": "SHG", "name": "Women's Self-Help Groups", "persona": "member",
@@ -91,10 +91,14 @@ PROGRAMMES = (
 		"full_text": "Name, phone number, group, savings and loan amounts. Kept for 60 months.",
 		"hindi": {"summary": "हम स्वयं सहायता समूहों को बचत रिकॉर्ड, बैंक ऋण और प्रशिक्षण में मदद करते हैं।",
 		          "full_text": "नाम, फ़ोन नंबर, समूह, बचत और ऋण की राशि। 60 महीने तक रखे जाएँगे।"},
-		"verification": ("device_sms_otp", "deferred", "evidence_only"),
+		"verification": ("server_otp", "deferred", "evidence_only"),
 	},
 )
 OLD_NAMES = {"Demo Health Camp (fictional)"}
+# Dhwani's approved MSG91 OTP template (SendOTP, header DHWRIS): "Your OTP is ##OTP## . Keep it confidential.
+# -Dhwani RIS". Anumati makes the code and MSG91 only delivers it. Template IDs are not secrets.
+DHWANI_OTP_TEMPLATE = "6241664b1def1c059c532112"
+DHWANI_SENDER = "DHWRIS"
 # Uses that need the person's own phone; the field app hides them for someone without one.
 NEEDS_PHONE = {"DEMO-follow", "EDU-parents", "SHG-training"}
 # Reviewed Hindi names of the uses, shown on the choices screen when the notice is in Hindi.
@@ -212,7 +216,30 @@ def _programme(spec) -> str:
 			translation.save()
 	if code == PROGRAMME:
 		_demo_questions()
+	# Codes come from the server (the worker never sees them); add it to programmes made before.
+	if not frappe.db.exists("Programme Verification Method", {"parent": code, "verification_method": "server_otp"}):
+		prog = frappe.get_doc("Programme", code)
+		prog.append("verification_methods", {"verification_method": "server_otp"})
+		prog.save()
+	_sms_setup()
 	return notice
+
+
+def _sms_setup():
+	"""Server-sent codes through Dhwani's MSG91 account: the approved OTP template, and the messaging
+	account once `msg91_auth_key` is in the site config (set in the Frappe Cloud dashboard, never in the
+	repo). Without the key nothing is sent and the app falls back to confirm-later."""
+	if not frappe.db.exists("Message Template", "otp-sms-en"):
+		frappe.get_doc({
+			"doctype": "Message Template", "template_event": "otp", "channel": "sms", "language": "en",
+			"body": "Your OTP is ##OTP## . Keep it confidential. -Dhwani RIS", "approved": 1,
+			"dlt_template_id": DHWANI_OTP_TEMPLATE, "send_via": "SendOTP",
+		}).insert(ignore_permissions=True)
+	if frappe.conf.get("msg91_auth_key") and not frappe.db.exists("Channel Provider", {"provider_type": "SMS"}):
+		frappe.get_doc({
+			"doctype": "Channel Provider", "provider_name": "MSG91 (Dhwani)", "provider_type": "SMS",
+			"provider": "MSG91", "enabled": 1, "pooled": 1, "sender_id": DHWANI_SENDER,
+		}).insert(ignore_permissions=True)
 
 
 def _demo_questions():
@@ -281,7 +308,7 @@ SAMPLE_PEOPLE = (
 	("0020", "Mamta Thakur", "hi", {"is_minor": 1}),
 )
 CAPTURE = ("assisted_thumbprint", "assisted_verbal", "self_worker_device", "assisted_witnessed")
-VERIFY = (("device_sms_otp", "confirmed"), ("deferred", "recorded"), ("evidence_only", "evidence_only"))
+VERIFY = (("server_otp", "confirmed"), ("deferred", "recorded"), ("evidence_only", "evidence_only"))
 
 
 def create_sample_data() -> dict:
@@ -294,6 +321,7 @@ def create_sample_data() -> dict:
 
 	from frappe.utils import now_datetime
 
+	from anumati import enforcement
 	from anumati.api.v1 import consent, principal, rights
 
 	create_demo_programme()
@@ -341,6 +369,12 @@ def create_sample_data() -> dict:
 				"witness": "ASHA worker (sample)" if flags.get("needs_assistance") else None,
 				"guardian_link": link.name if is_minor else None,
 			})
+			if phone and method == "server_otp":
+				# Sample of a code the person read back (a real one is confirmed by verification.verify_otp).
+				frappe.get_doc({"doctype": "Verification Attempt", "consent_event": art["consent_id"],
+				                "verification_method": "server_otp", "channel": "sms", "sent_at": when,
+				                "result": "confirmed", "delivered_at": when}).insert(ignore_permissions=True)
+				enforcement.set_verification(art["consent_id"], "confirmed")
 			made["consents"] += 1
 			if i in (3, 11, 18):
 				consent.withdraw(ref, PROGRAMME, channel="field_worker", event_uuid=str(uuid.uuid4()),

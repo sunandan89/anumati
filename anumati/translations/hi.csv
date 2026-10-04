@@ -77,6 +77,7 @@ Hash chain verified {0},हैश शृंखला की जाँच {0} ह
 "Have you listened to the whole recording, and does it say exactly what the notice says?","क्या आपने पूरी रिकॉर्डिंग सुनी है, और क्या वह ठीक वही कहती है जो सूचना में लिखा है?"
 How,कैसे
 How People Consented,लोगों ने सहमति कैसे दी
+How SMS codes are sent,SMS कोड कैसे भेजे जाएँ
 How The Notice Was Given,सूचना कैसे दी गई
 How to complain to the Data Protection Board,डेटा संरक्षण बोर्ड से शिकायत कैसे करें
 How to exercise rights,अपने अधिकारों का उपयोग कैसे करें
@@ -84,6 +85,7 @@ How to withdraw consent,सहमति वापस कैसे लें
 Inbox,इनबॉक्स
 Incidents and audit,घटनाएँ और ऑडिट
 Live,चालू
+MSG91 when online,इंटरनेट हो तो MSG91
 "Machine-made, not approved: not played in the field","मशीन से बना, स्वीकृत नहीं: फील्ड में नहीं चलेगा"
 Make audio again,ऑडियो फिर से बनाएँ
 Make natural audio,प्राकृतिक आवाज़ में ऑडियो बनाएँ
@@ -207,6 +209,7 @@ Withdrawals This Month,इस महीने सहमति वापसी
 Withdrawals This Week,इस हफ़्ते सहमति वापसी
 Withdrawn (30 Days),सहमति वापसी (30 दिन)
 Woman's voice,महिला की आवाज़
+Worker's phone,कार्यकर्ता का फ़ोन
 Yes to all,सब के लिए हाँ
 access,डेटा देखने का अनुरोध
 active,चालू

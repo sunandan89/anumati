@@ -166,3 +166,62 @@ class TestChannels(FrappeTestCase):
 		content = frappe.db.get_value("Communication", {"anumati_consent_event": art["consent_id"]}, "content")
 		self.assertNotIn("Gauri", content)
 		self.assertEqual(json.loads(json.dumps(content)), content)
+
+	# -- server-sent codes (the worker never sees the code) -----------------------
+
+	def test_code_never_appears_in_the_message_log(self):
+		p = self.person("9000077101")
+		art = self.grant(p)
+		with fake_post() as post:
+			verification.send_otp(art["consent_id"])
+		code = post.call_args.kwargs["json"]["recipients"][0]["otp"]
+		comm = frappe.get_last_doc("Communication", {"anumati_consent_event": art["consent_id"]})
+		self.assertNotIn(code, comm.content)
+
+	def test_dhwani_sendotp_template_passes_anumatis_own_code(self):
+		p = self.person("9000077102")
+		art = self.grant(p)
+		frappe.db.set_value("Message Template", "otp-sms-en", {"send_via": "SendOTP", "dlt_template_id": "otp-tmpl"})
+		try:
+			with fake_post() as post:
+				out = verification.send_otp(art["consent_id"])
+			self.assertTrue(out["sent"])
+			self.assertEqual(out["to"], "9000077XXX")
+			self.assertTrue(post.call_args.args[0].endswith("/api/v5/otp"))
+			params = post.call_args.kwargs["params"]
+			self.assertEqual((params["template_id"], params["mobile"]), ("otp-tmpl", "919000077102"))
+			self.assertTrue(verification.verify_otp(art["consent_id"], params["otp"])["confirmed"])
+		finally:
+			frappe.db.set_value("Message Template", "otp-sms-en", {"send_via": "Flow", "dlt_template_id": "flow-otp"})
+
+	def test_codes_are_limited_and_not_sent_without_setup(self):
+		p = self.person("9000077103")
+		art = self.grant(p)
+		with fake_post():
+			for _ in range(verification.MAX_SENDS):
+				verification.send_otp(art["consent_id"])
+			self.assertRaises(frappe.ValidationError, verification.send_otp, art["consent_id"])
+		q = self.person("9000077104")
+		art2 = self.grant(q)
+		frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 0)
+		try:
+			self.assertEqual(verification.send_otp(art2["consent_id"]), {"sent": False, "reason": "not_set_up"})
+		finally:
+			frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 1)
+
+	def test_only_the_capturing_worker_or_staff_can_verify(self):
+		from anumati.tests.test_console import user_with_role
+
+		art = self.grant(self.person("9000077105"))
+		frappe.set_user(user_with_role("Anumati Field Worker"))
+		try:
+			self.assertRaises(frappe.PermissionError, verification.send_otp, art["consent_id"])
+		finally:
+			frappe.set_user("Administrator")
+
+	def test_a_phone_cannot_claim_a_code_confirmed(self):
+		for method in ("device_sms_otp", "server_otp"):
+			p = self.person("90000772" + ("01" if method == "device_sms_otp" else "02"))
+			self.grant(p, verification_method=method, verification_status="confirmed",
+			           evidence=[{"file": "/private/files/haan-sample.m4a", "kind": "audio"}])
+			self.assertEqual(consent.state(p.principal_ref, programme=PROG)[0]["verification_status"], "recorded", method)

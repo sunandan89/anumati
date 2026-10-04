@@ -208,6 +208,11 @@ doctype("Programme", [
     F("allow_processing_before_confirm", "Check", "Allow processing before confirmation", default="1",
       description="Never applies to minors"),
     F("confirm_window_days", "Int", "Days before unconfirmed escalates", default="7"),
+    F("sms_code_route", "Select", "How SMS codes are sent", sel("MSG91 when online", "Worker's phone"),
+      default="MSG91 when online",
+      description="MSG91 (about Rs 0.2 per SMS): the server texts the code, so the worker never sees it. Worker's phone: free, "
+                  "works without internet, but the worker sees the code, so the person's voice 'haan' is also recorded. "
+                  "With MSG91, the app uses the worker's phone (plus voice) by itself whenever there is no internet."),
     F("sms_receipts", "Check", "Send SMS receipts", default="1",
       description="Needs an enabled SMS Channel Provider and approved Message Templates"),
     F("device_cache_ttl_hours", "Int", "Device consent cache TTL (hours)", default="24"),
@@ -700,7 +705,9 @@ doctype("Message Template", [
     F("channel", "Select", "Channel", sel("sms", "whatsapp", "ivr", "email"), reqd=True, in_list_view=True),
     F("language", "Link", "Language", "Language", reqd=True, in_list_view=True),
     col("c1"),
-    F("dlt_template_id", "Data", "DLT template ID"),
+    F("dlt_template_id", "Data", "MSG91 template ID", description="The MSG91 template (flow) ID, registered against the DLT template"),
+    F("send_via", "Select", "Send via", sel("Flow", "SendOTP"), default="Flow", depends_on="eval:doc.channel=='sms'",
+      description="SendOTP: MSG91's OTP service, for an approved OTP template (the code is still made and checked by Anumati)"),
     F("approved", "Check", "Approved", in_list_view=True),
     sec("body_section"),
     F("body", "Small Text", "Body", reqd=True),

@@ -57,7 +57,8 @@ def send_sms(principal: str, event: str, context: dict, reference=None) -> str |
 	template = template_for(event, "sms", doc.preferred_language)
 	if not (provider and template and phone):
 		return None
-	body = frappe.render_template(template.body, context)
+	# The log keeps what was said, never a one-time code.
+	body = frappe.render_template(template.body, {**context, **({"otp": "******"} if context.get("otp") else {})})
 	adapter = frappe.get_module(PROVIDERS.get(provider.provider, "anumati.channels.msg91"))
 	status, message_id = "Sent", None
 	try:

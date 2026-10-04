@@ -22,6 +22,7 @@ CAPTURE_FIELDS = (
 	"notice_delivery", "notice_completed",
 )
 CLIENT_VERIFICATION = ("recorded", "confirmed", "evidence_only")
+WORKER_SEEN_OR_SERVER = ("device_sms_otp", "server_otp")
 
 
 class ConsentRequestError(frappe.ValidationError):
@@ -134,6 +135,10 @@ def record(event):
 			frappe.throw(_("notice must be a published notice of this programme"), ConsentRequestError)
 		values["notice_version"] = notice.version
 	status = event.verification_status or ("evidence_only" if event.verification_method == "evidence_only" else "recorded")
+	if status == "confirmed" and event.verification_method in WORKER_SEEN_OR_SERVER:
+		# A code sent from the worker's own phone passes through the worker's hands, and a server code is
+		# confirmed only by verification.verify_otp: neither is "confirmed" on the phone's say-so.
+		status = "recorded"
 	if status not in CLIENT_VERIFICATION:
 		frappe.throw(_("verification_status must be one of {0}").format(", ".join(CLIENT_VERIFICATION)), ConsentRequestError)
 
@@ -181,6 +186,12 @@ def _check_who(principal: str, action: str, event):
 				             ConsentRequestError)
 	elif person.needs_assistance and action in ("grant", "renew") and not (event.witness or "").strip():
 		frappe.throw(_("Someone who needs help to read the notice needs a witness"), ConsentRequestError)
+	if action in ("grant", "renew") and event.verification_method == "device_sms_otp":
+		# The worker sees a code sent from their own phone, so it can't stand alone: the person's (or the
+		# guardian's) recorded "haan" must come with it.
+		if not any((e or {}).get("kind") == "audio" for e in (event.evidence or [])):
+			frappe.throw(_("A code sent from the worker's phone needs the recorded voice 'haan' with it"),
+			             ConsentRequestError)
 	return person
 
 
