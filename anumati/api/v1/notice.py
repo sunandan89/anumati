@@ -3,7 +3,7 @@
 import frappe
 from frappe import _
 
-from anumati import profile
+from anumati import channels, profile
 
 RULE3 = ("withdrawal_methods", "rights_text", "board_complaint_route", "dpo_contact", "security_summary")
 LABELS = ("label_yes_all", "label_no_all", "label_manage", "label_save")
@@ -39,6 +39,8 @@ def get_active(programme, language=None):
 		# Extra questions about the person this programme asks (none unless switched on), in the
 		# requested language where translated.
 		"profile_questions": profile.for_notice(programme, name, language),
+		# Whether the server can text codes now; if not, the app uses the worker's phone with the voice 'haan'.
+		"server_codes": channels.can_send_codes(language),
 	}
 	if language:
 		t = frappe.db.get_value(
