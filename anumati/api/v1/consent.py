@@ -22,6 +22,7 @@ CAPTURE_FIELDS = (
 	"notice_delivery", "notice_completed",
 )
 CLIENT_VERIFICATION = ("recorded", "confirmed", "evidence_only")
+WORKER_SEEN_OR_SERVER = ("device_sms_otp", "server_otp")
 
 
 class ConsentRequestError(frappe.ValidationError):
@@ -134,6 +135,10 @@ def record(event):
 			frappe.throw(_("notice must be a published notice of this programme"), ConsentRequestError)
 		values["notice_version"] = notice.version
 	status = event.verification_status or ("evidence_only" if event.verification_method == "evidence_only" else "recorded")
+	if status == "confirmed" and event.verification_method in WORKER_SEEN_OR_SERVER:
+		# A code sent from the worker's own phone passes through the worker's hands, and a server code is
+		# confirmed only by verification.verify_otp: neither is "confirmed" on the phone's say-so.
+		status = "recorded"
 	if status not in CLIENT_VERIFICATION:
 		frappe.throw(_("verification_status must be one of {0}").format(", ".join(CLIENT_VERIFICATION)), ConsentRequestError)
 

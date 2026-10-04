@@ -11,6 +11,7 @@
   "language",
   "c1",
   "dlt_template_id",
+  "send_via",
   "approved",
   "body_section",
   "body"
@@ -45,9 +46,19 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "The MSG91 template (flow) ID, registered against the DLT template",
    "fieldname": "dlt_template_id",
    "fieldtype": "Data",
-   "label": "DLT template ID"
+   "label": "MSG91 template ID"
+  },
+  {
+   "default": "Flow",
+   "depends_on": "eval:doc.channel=='sms'",
+   "description": "SendOTP: MSG91's OTP service, for an approved OTP template (the code is still made and checked by Anumati)",
+   "fieldname": "send_via",
+   "fieldtype": "Select",
+   "label": "Send via",
+   "options": "Flow\nSendOTP"
   },
   {
    "fieldname": "approved",
