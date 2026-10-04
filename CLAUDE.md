@@ -14,6 +14,12 @@ Anumati is an open-source, field-first DPDP consent platform for nonprofits, bui
 - No PII in logs. Field-level encryption for name, phone, evidence. Phone lookups by salted hash.
 - All sample data is fictional.
 
+## Product guide and QA test cases
+
+- `docs/guide/product-guide.md` (features by persona, journeys as Mermaid flowcharts, roadmap) and `docs/guide/qa-test-cases.md` (manual test cases) are the user-facing record of what is built.
+- Every PR that changes behaviour a user or tester would notice, in this repo or in `anumati_collect`, updates both in the same PR (in this repo; an app-only change gets a companion PR here). Keep test IDs stable; add new ones at the end of their section.
+- On merge to main, the Pages workflow builds them into `site/guide/` (`tools/build_guide.py`) and publishes them with the website.
+
 ## Layout (planned)
 
 - `anumati/` — Frappe app (server, console, portals, APIs)
