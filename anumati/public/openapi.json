@@ -307,6 +307,16 @@
       "maxLength": 10,
       "type": "string"
      },
+     "leave_programme": {
+      "enum": [
+       0,
+       1,
+       true,
+       false,
+       "0",
+       "1"
+      ]
+     },
      "notice": {
       "maxLength": 140,
       "type": "string"
@@ -1358,6 +1368,14 @@
       "schema": {
        "type": "string"
       }
+     },
+     {
+      "in": "query",
+      "name": "leave_programme",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
      }
     ],
     "responses": {
@@ -1398,6 +1416,32 @@
      }
     },
     "summary": "Submit a rights request"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.rights.withdrawable": {
+   "get": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Uses currently on for a request's person (staff)"
    }
   },
   "/api/v2/method/anumati.api.v1.verification.send_otp": {

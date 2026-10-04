@@ -126,19 +126,25 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SY-03 | Older record arrives late | Withdraw a use on phone A; on phone B (offline) grant the same use with an earlier time; sync B after A | The withdrawal stays: an older record never overrides a newer one | P1 |
 | SY-04 | Rejected record | (Developer can force) a record the server refuses | Home shows "… records could not be saved on the server"; the list shows the reason; Try again / Discard | P1 |
 | FI-01 | Find offline | Find beneficiary → search by name, then ID (offline); then by receipt code of a consent taken **on this phone** | Person found; each use's status shown. A downloaded person (consent taken on another phone) is found by their latest receipt code too | P0 |
-| WD-01 | Withdraw all optional uses | Log withdrawal or request → In person → find the person → "Stop all optional uses" → Save | Phone shows those uses withdrawn at once; after sync, the console shows them withdrawn; essential use still granted | P0 |
-| WD-02 | Withdraw one use | Choose "Stop only: Photos and stories" | Only that use withdrawn | P0 |
-| WD-03 | Paper slip, person not on phone | Paper slip → enter a code not on this phone | "Not on this phone. It goes to the office inbox with the code"; the request appears **Open** in the inbox | P0 |
+| WD-01 | Withdraw all optional uses | Stop or change consent → find the person → **Stop all** → Save ("Stop 3 uses for …") | Phone shows those uses withdrawn at once; after sync, the console shows them withdrawn; essential use still granted | P0 |
+| WD-02 | Withdraw some uses | Switch off "Photos and stories" and "Follow-up calls", leave "Anonymised research" on | Save reads "Stop 2 uses for …"; only those two withdrawn | P0 |
+| WD-03 | Paper slip, person not on phone | Tick "They gave a paper slip or letter" → enter a code not on this phone → "Stop all optional uses" | "Not on this phone. It goes to the office inbox with the code"; the request appears **Open** in the inbox | P0 |
 | WD-04 | Other requests | "See or correct my data", "Delete my data", "Complaint" | Inbox shows them as Data access request, Erasure and Grievance, each with a due date 30 days out | P0 |
-| WD-05 | Field withdrawal is listed in the inbox | Do WD-01 with **Paper slip** and slip number `SLIP-0042` → Sync → console: Requests | One **Closed** withdrawal request for that person, with the slip number, linked to the withdrawal consent record, and the resolution naming the worker. No "new request" alert. Syncing again adds no second request | P0 |
+| WD-05 | Field withdrawal is listed in the inbox | Do WD-01 with the paper slip box ticked and slip number `SLIP-0042` → Sync → console: Requests | One **Closed** withdrawal request for that person, with the slip number, linked to the withdrawal consent record, and the resolution naming the worker. No "new request" alert. Syncing again adds no second request | P0 |
 | WD-06 | Slip from someone another worker enrolled | On phone B, find by the receipt code of a consent taken on phone A (after both have synced) | Person found; withdrawal works as WD-01 | P0 |
 | WD-07 | Code given, person not on the phone | Enter a real receipt code of a person not downloaded to this phone → "Delete my data" → Save → Sync | The inbox request is already matched to that person (Beneficiary filled) | P1 |
-| WD-08 | Nothing left to stop | Find a person whose optional uses are all off → "Stop all optional uses" | Note "No optional use is on for this person, so there is nothing to stop."; Save is disabled. Other requests can still be saved | P1 |
+| WD-08 | Nothing left to stop | Find a person who has left the programme (nothing on) | Note "Nothing is on for this person, so there is nothing to stop."; no switches; Save is disabled until another request is chosen | P1 |
+| WD-09 | Essential use is locked | Find a person with Health screening on | Health screening shows a lock and "Needed for the programme. To stop it, they leave the programme." No switch | P0 |
+| WD-10 | Leave the programme | Find a person → **Leave the programme** → read the warning → **Yes, leave** → Save → Sync | Every use, Health screening too, shows withdrawn on the phone and in the console; the person's record shows **Relationship ended** today; the inbox request's resolution starts "Left the programme". **Cancel** in the warning changes nothing | P0 |
+| WD-11 | Withdrawal noted and SMS | After WD-02 | "Withdrawal noted" lists the stopped uses; **Send by SMS** opens your SMS app with the message in the person's language; no button if they have no phone | P1 |
+| WD-12 | Delete my data explained | Find a person → Other requests | "Delete my data" says the office keeps only what the law needs and that services may stop | P2 |
 | AP-01 | Add a use later | Console: add a new optional purpose, approve its record of processing, publish a new notice version → app: Sync → Ask for one more purpose → pick a person | Past decisions shown "not asked again"; only the new use is asked; "I have read it to them" before Yes/No. (Hindi text needs the new version's Hindi translation reviewed) | P1 |
 | AP-02 | Add a use, offline | As AP-01, offline, person has a phone | Code from your phone + voice "haan" required before Save | P1 |
 | AP-03 | Add a use, no phone | Person without a phone | Voice "haan" required | P1 |
 | AP-04 | Add a use, needs help | Person who needs help reading | Witness name required | P1 |
 | AP-05 | Add a use, child | A child consented through a parent | "A guardian must consent for this person. Take a new consent with the guardian." | P1 |
+| AP-06 | Ask again | After WD-02 → Ask for one more purpose → the same person | The two withdrawn uses show "Ask again"; "Anonymised research" is under "Already agreed"; Yes switches a use back on after sync | P1 |
+| AP-07 | Rejoin after leaving | After WD-10 → Ask for one more purpose → the same person | "Rejoin the programme: Health screening" is asked; Yes and Sync turn it back on and clear Relationship ended in the console | P1 |
 
 ## 8. Web console
 
@@ -158,11 +164,12 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-12 | SMS code setting | Programme → Capture & verification → "How SMS codes are sent" | Two options; default "MSG91 when online" | P0 |
 | WC-13 | Guardian order number | Create a Guardian Link with type Court and no order number | Refused: "Enter the order number that appointed this guardian" | P1 |
 | WC-14 | Inbox and SLA | Requests list and board | Due date = received + 30 days; overdue shown in red in the list and in Needs attention | P0 |
-| WC-15 | Record withdrawal | Open a withdrawal request → **Record withdrawal** → choose the programme | One signed withdrawal created; request closed; doing it again creates no second one | P0 |
+| WC-15 | Record withdrawal | Open a matched withdrawal request → **Record withdrawal** | A checklist of the person's uses that are on (optional ones ticked, essential ones marked "(essential)"); untick one → Withdraw: only the ticked uses withdrawn; request closed; doing it again creates no second one. Nothing on: a message instead of the checklist | P0 |
 | WC-16 | Shared number | Two people share a phone; send `STOP` from it (needs an inbound number) | Request **Unmatched** with possible matches; **Who is this for?** → pick → Match | P2 |
 | WC-17 | Request notifications | Submit a request | DPO and Operator get a Desk notification; another 3 days before the due date | P2 |
 | WC-18 | Turned 18 | Open a sample child → set year of birth so they are now 18 or older → Save | "Turned 18: renew consent" is ticked and the person appears under that shortcut; `consent.check` answers `renewal_due` | P2 |
 | WC-19 | Chain check | Anumati Settings → Chain verification (after the nightly job), or ask a developer to call `chain.verify` | Chain reported intact | P1 |
+| WC-20 | Record withdrawal: leave the programme | As WC-15, tick **Leave the programme** → Withdraw | Every use, essential too, withdrawn; the person's record shows Relationship ended | P1 |
 
 ## 9. SMS channels (need an SMS account and inbound number)
 

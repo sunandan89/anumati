@@ -22,7 +22,7 @@ For a connector or host app, create a User with the right role, generate its API
 Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, signature, key_id, server_time, verification_status}`. Replaying the same `event_uuid` returns the original artefact. Rules: purposes must belong to the programme; a child needs a `guardian_link` for that child and can't be granted purposes marked "not for minors"; a guardian other than a parent needs the order number (`authority_ref`) on the link; an adult who can't decide alone (`pwd_guarded`) needs a guardian appointed by a court or the Local Level Committee (`committee`, `court` or `legal_guardian`) with the order number; someone who needs help reading (`needs_assistance`) needs a `witness` when they agree; a child who has turned 18 consents for themself (no guardian), which makes them an adult record; `action` is grant | refuse | renew.
 
 ## consent.withdraw (POST)
-`principal_ref, programme, channel, event_uuid, purposes?, paper_trail_number?` plus any capture fields. With no `purposes`, it withdraws every optional purpose currently granted (spec section 6). Idempotent on `event_uuid`. With `channel` `field_worker` or `slip`, it also files one **Closed** withdrawal Rights Request linked to the event, carrying the slip number, so the inbox lists every withdrawal.
+`principal_ref, programme, channel, event_uuid, purposes?, paper_trail_number?, leave_programme?` plus any capture fields. With no `purposes`, it withdraws every optional purpose currently granted (spec section 6). Idempotent on `event_uuid`. With `channel` `field_worker` or `slip`, it also files one **Closed** withdrawal Rights Request linked to the event, carrying the slip number, so the inbox lists every withdrawal. `leave_programme` (with no `purposes`) withdraws every granted purpose, essential ones included, and marks the person's relationship ended once nothing is granted in any programme; granting an essential purpose again clears it.
 
 ## consent.check (GET)
 `principal_ref, purpose, programme?` returns `{allow, status, event, principal_ref, purpose, checked_at}`. It is served from Redis. `status` is one of granted | withdrawn | refused | not_asked | unknown_principal | awaiting_confirmation. A grant that isn't confirmed yet is denied for minors, and for programmes with *Allow processing before confirmation* off.
@@ -52,7 +52,10 @@ Receipts, confirmation requests and withdrawal confirmations for a child, or an 
 `request_type` (withdrawal | access | correction | erasure | grievance | nomination), `channel`, `principal_ref?`, `payload?`, `paper_trail_number?`, `consent_code?` returns `{request, status, sla_due}`. The SLA clock starts at receipt. Without `principal_ref`, a receipt code (`AN-7K2Q9C` or `7K2Q9C`) in `consent_code` matches the person when it is unambiguous.
 
 ## rights.fulfil_withdrawal (POST, staff)
-`request, programme, purposes?` records one signed withdrawal for a matched request and closes it. Calling it twice returns the same event. In Desk this is the **Record withdrawal** button on the request.
+`request, programme, purposes?, leave_programme?` records one signed withdrawal for a matched request and closes it. Calling it twice returns the same event. In Desk this is the **Record withdrawal** button on the request.
+
+## rights.withdrawable (GET, staff)
+`request` returns the uses currently on for the request's person: `[{programme, programme_name, code, title, essential}]`. It feeds the Record withdrawal checklist and carries no personal data.
 
 ## notifications.feed (GET)
 `since` (ISO datetime), `limit?` (at most 500) returns `{events: [...], until}`. It mirrors the webhook events (`consent.recorded`, `consent.withdrawn`, `rights.created`, `rights.closed`) for hosts that can't receive webhooks. Pass `until` back as the next `since`. It carries identifiers and purpose codes only.

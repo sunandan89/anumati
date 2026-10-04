@@ -147,6 +147,13 @@ def record(event):
 		 "purposes_granted": granted, "purposes_denied": denied, "verification_status": status,
 		 "captured_by": frappe.session.user}
 	)
+	if granted and frappe.db.get_value("Data Principal", principal, "relationship_ended_on") and frappe.get_all(
+			"Purpose", {"name": ("in", [enforcement.purpose_name(programme, c) for c in granted]), "essential": 1},
+			limit=1):
+		# They rejoined a programme: the relationship is live again.
+		frappe.db.set_value("Data Principal", principal, "relationship_ended_on", None)
+		frappe.get_doc("Data Principal", principal).add_comment(
+			"Info", _("Rejoined programme {0}: relationship live again").format(programme))
 	if person.renewal_due and not event.guardian_link and action in ("grant", "renew"):
 		# A child who turned 18 has now consented themselves: they are an adult record from here on.
 		doc = frappe.get_doc("Data Principal", principal)
@@ -204,10 +211,11 @@ def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **ext
 	           **{k: v for k, v in extra.items() if k not in ("cmd", "data") and v is not None}}
 	schema.validate("ConsentWithdraw", payload)
 	paper_trail = extra.pop("paper_trail_number", None)
+	leave = frappe.utils.cint(extra.pop("leave_programme", 0))
 	principal = _principal(principal_ref)
-	artefact = withdraw_for(principal, programme, channel, event_uuid, purposes, **extra)
+	artefact = withdraw_for(principal, programme, channel, event_uuid, purposes, leave=leave, **extra)
 	if channel in FIELD_CHANNELS:
-		_field_request(principal, channel, artefact, paper_trail)
+		_field_request(principal, channel, artefact, paper_trail, leave)
 	return artefact
 
 
@@ -215,7 +223,7 @@ def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **ext
 FIELD_CHANNELS = ("field_worker", "slip")
 
 
-def _field_request(principal, channel, artefact, paper_trail=None):
+def _field_request(principal, channel, artefact, paper_trail=None, leave=False):
 	"""Keep a closed withdrawal request in the inbox, so every withdrawal, however it arrived, is listed
 	there with who logged it and the slip number (spec section 6). Once per event, so a re-sent sync
 	does not add a second one."""
@@ -225,16 +233,22 @@ def _field_request(principal, channel, artefact, paper_trail=None):
 		"doctype": "Rights Request", "request_type": "withdrawal", "channel": channel, "status": "Closed",
 		"matched_principal": principal, "linked_event": artefact["consent_id"],
 		"paper_trail_number": paper_trail or None,
-		"resolution": _("Withdrawn in the field by {0}: consent event {1} ({2}).").format(
+		"resolution": (_("Left the programme. ") if leave else "") + _(
+			"Withdrawn in the field by {0}: consent event {1} ({2}).").format(
 			frappe.session.user, artefact["consent_id"], artefact["short_code"]),
 	})
 	doc.flags.ignore_permissions = True
 	doc.insert()
 
 
-def withdraw_for(principal, programme, channel, event_uuid, purposes=None, **extra):
+def withdraw_for(principal, programme, channel, event_uuid, purposes=None, leave=False, **extra):
 	"""Withdrawal without the capture-permission check. Callers must authorise first (the API above, or a
-	rights request the operator is allowed to work)."""
+	rights request the operator is allowed to work).
+
+	`leave`: the person leaves the programme. With no `purposes`, every granted purpose is withdrawn,
+	essential ones included (S.6(4): any consent can be withdrawn; the programme then stops serving them),
+	and once nothing is granted in any programme the person's relationship is marked ended, which starts
+	the retention clocks that run from it."""
 	if (existing := _existing(event_uuid)):
 		return existing
 	programme = _programme(programme)
@@ -244,7 +258,8 @@ def withdraw_for(principal, programme, channel, event_uuid, purposes=None, **ext
 		prefix = f"{programme}-"
 		purposes = [
 			p[len(prefix):] for p, s in states.items()
-			if p.startswith(prefix) and s["status"] == "granted" and not frappe.db.get_value("Purpose", p, "essential")
+			if p.startswith(prefix) and s["status"] == "granted"
+			and (leave or not frappe.db.get_value("Purpose", p, "essential"))
 		]
 	_check_purposes(programme, principal, [], list(purposes))
 	values = {k: extra.get(k) for k in CAPTURE_FIELDS if extra.get(k) not in (None, "")}
@@ -261,7 +276,20 @@ def withdraw_for(principal, programme, channel, event_uuid, purposes=None, **ext
 	except frappe.DuplicateEntryError:
 		frappe.db.rollback(save_point="anumati_withdraw")
 		return _existing(event_uuid)
+	if leave:
+		_end_relationship_if_done(principal)
 	return _artefact(doc)
+
+
+def _end_relationship_if_done(principal):
+	"""Mark the relationship ended once no purpose is granted in any programme (spec T16)."""
+	enforcement.invalidate(principal)
+	if any(s["status"] == "granted" for s in enforcement.states_for(principal).values()):
+		return
+	if not frappe.db.get_value("Data Principal", principal, "relationship_ended_on"):
+		frappe.db.set_value("Data Principal", principal, "relationship_ended_on", frappe.utils.today())
+		frappe.get_doc("Data Principal", principal).add_comment(
+			"Info", _("Left the programme: relationship ended, retention clocks started"))
 
 
 def _source_system(user: str):

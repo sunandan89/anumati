@@ -43,7 +43,7 @@ SCHEMAS = {
 		"properties": {
 			"event_uuid": S(minLength=8, maxLength=64), "principal_ref": S(minLength=1, maxLength=140),
 			"programme": S(minLength=1, maxLength=140), "purposes": CODES, "paper_trail_number": S(maxLength=140),
-			**CAPTURE,
+			"leave_programme": {"enum": [0, 1, True, False, "0", "1"]}, **CAPTURE,
 		},
 	},
 	"PrincipalUpsert": {
@@ -99,7 +99,9 @@ PATHS = {
 	BASE + "principal.upsert": op("Create or update a principal", body="PrincipalUpsert"),
 	BASE + "notice.get_active": op("Live notice for a programme", query=[("programme", True), ("language", False)], method="get"),
 	BASE + "rights.submit": op("Submit a rights request", body="RightsSubmit"),
-	BASE + "rights.fulfil_withdrawal": op("Carry out a withdrawal request (staff)", query=[("request", True), ("programme", True)]),
+	BASE + "rights.withdrawable": op("Uses currently on for a request's person (staff)", query=[("request", True)], method="get"),
+	BASE + "rights.fulfil_withdrawal": op("Carry out a withdrawal request (staff)",
+	                                      query=[("request", True), ("programme", True), ("leave_programme", False)]),
 	BASE + "notifications.feed": op("Polling feed mirroring webhooks", query=[("since", True), ("limit", False)], method="get"),
 	BASE + "verification.send_otp": op("Send a one-time code for a consent event (server OTP)", query=[("consent_id", True)]),
 	BASE + "verification.verify_otp": op("Check the code; confirms the consent", query=[("consent_id", True), ("code", True)]),

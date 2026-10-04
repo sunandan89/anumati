@@ -19,29 +19,68 @@ frappe.ui.form.on("Rights Request", {
 	},
 });
 
+// Record withdrawal: tick the uses to stop (all optional ones are ticked to start), or leave the programme.
 function record_withdrawal(frm) {
-	frappe.prompt(
-		[
-			{ fieldname: "programme", fieldtype: "Link", options: "Programme", label: __("Programme"), reqd: 1 },
-			{ fieldname: "note", fieldtype: "HTML",
-			  options: `<p class="text-muted small">${__("Leave purposes empty to withdraw every optional purpose (the default in the spec).")}</p>` },
-			{ fieldname: "purposes", fieldtype: "Small Text", label: __("Purpose codes (optional, comma-separated)") },
-		],
-		(values) => {
-			const purposes = (values.purposes || "").split(",").map((s) => s.trim()).filter(Boolean);
-			frappe.call({
-				method: "anumati.api.v1.rights.fulfil_withdrawal",
-				args: { request: frm.doc.name, programme: values.programme, purposes: purposes.length ? purposes : null },
-				freeze: true,
-				callback: (r) => {
-					frappe.show_alert({ message: __("Withdrawal recorded: {0}", [r.message.short_code]), indicator: "green" });
-					frm.reload_doc();
+	frappe.call({
+		method: "anumati.api.v1.rights.withdrawable",
+		args: { request: frm.doc.name },
+		type: "GET",
+		callback: (r) => {
+			const uses = r.message || [];
+			if (!uses.length) {
+				frappe.msgprint(__("Nothing is on for this person, so there is nothing to withdraw. Write the resolution and close the request."));
+				return;
+			}
+			const programmes = [...new Set(uses.map((u) => u.programme))];
+			const label = (p) => uses.find((u) => u.programme === p).programme_name;
+			const fields = [
+				{ fieldname: "programme", fieldtype: "Select", label: __("Programme"), reqd: 1,
+				  options: programmes.map((p) => ({ value: p, label: label(p) })), default: programmes[0],
+				  hidden: programmes.length === 1 ? 1 : 0 },
+			];
+			programmes.forEach((p, i) => {
+				fields.push({
+					fieldname: `uses_${i}`, fieldtype: "MultiCheck", columns: 1,
+					label: __("Uses to stop in {0}", [label(p)]),
+					depends_on: `eval:doc.programme==${JSON.stringify(p)} && !doc.leave_programme`,
+					options: uses.filter((u) => u.programme === p).map((u) => ({
+						label: u.essential ? __("{0} (essential)", [u.title]) : u.title,
+						value: u.code, checked: !u.essential,
+					})),
+				});
+			});
+			fields.push(
+				{ fieldname: "leave_programme", fieldtype: "Check", label: __("Leave the programme"),
+				  description: __("Stops every use, essential ones too. The programme stops serving them and their retention clock starts.") },
+			);
+			const d = new frappe.ui.Dialog({
+				title: __("Record withdrawal"),
+				fields,
+				primary_action_label: __("Withdraw"),
+				primary_action(values) {
+					const i = programmes.indexOf(values.programme);
+					const picked = values[`uses_${i}`] || [];
+					if (!values.leave_programme && !picked.length) {
+						frappe.msgprint(__("Tick at least one use to stop, or Leave the programme."));
+						return;
+					}
+					frappe.call({
+						method: "anumati.api.v1.rights.fulfil_withdrawal",
+						args: { request: frm.doc.name, programme: values.programme,
+						        purposes: values.leave_programme ? null : picked,
+						        leave_programme: values.leave_programme ? 1 : 0 },
+						freeze: true,
+						callback: (res) => {
+							d.hide();
+							frappe.show_alert({ message: __("Withdrawal recorded: {0}", [res.message.short_code]), indicator: "green" });
+							frm.reload_doc();
+						},
+					});
 				},
 			});
+			d.show();
 		},
-		__("Record withdrawal"),
-		__("Withdraw")
-	);
+	});
 }
 
 // Days left on the SLA, shown above the form.
