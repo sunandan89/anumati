@@ -64,6 +64,37 @@ class TestInbox(FrappeTestCase):
 		again = rights.fulfil_withdrawal(req.name, PROG)
 		self.assertEqual(again["hash"], first["hash"])
 
+	def test_field_withdrawal_leaves_one_closed_request_in_the_inbox(self):
+		p = make_principal()
+		self.grant(p)
+		args = {"principal_ref": p.principal_ref, "programme": PROG, "channel": "slip",
+		        "event_uuid": str(uuid.uuid4()), "paper_trail_number": "SLIP-0042"}
+		first = consent.withdraw(**args)
+		consent.withdraw(**args)  # a re-sent sync
+		reqs = frappe.get_all("Rights Request", {"linked_event": first["consent_id"]},
+		                      ["status", "request_type", "matched_principal", "paper_trail_number"])
+		self.assertEqual(len(reqs), 1)
+		self.assertEqual(reqs[0].status, "Closed")
+		self.assertEqual(reqs[0].request_type, "withdrawal")
+		self.assertEqual(reqs[0].matched_principal, p.name)
+		self.assertEqual(reqs[0].paper_trail_number, "SLIP-0042")
+		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
+
+	def test_api_withdrawal_adds_no_inbox_request(self):
+		p = make_principal()
+		self.grant(p)
+		art = consent.withdraw(principal_ref=p.principal_ref, programme=PROG, channel="api",
+		                       event_uuid=str(uuid.uuid4()))
+		self.assertFalse(frappe.db.exists("Rights Request", {"linked_event": art["consent_id"]}))
+
+	def test_receipt_code_on_a_slip_matches_the_request(self):
+		p = make_principal()
+		art = self.grant(p)
+		out = rights.submit("erasure", "slip", consent_code=art["short_code"][3:].lower())
+		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "matched_principal"), p.name)
+		unknown = rights.submit("erasure", "slip", consent_code="AN-ZZZZZZ")
+		self.assertFalse(frappe.db.get_value("Rights Request", unknown["request"], "matched_principal"))
+
 	def test_receipt_code_resolves_to_principal(self):
 		p = make_principal()
 		art = self.grant(p)

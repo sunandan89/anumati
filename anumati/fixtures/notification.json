@@ -5,6 +5,7 @@
   "subject": "New {{ doc.request_type }} request {{ doc.name }} ({{ doc.channel }})",
   "document_type": "Rights Request",
   "event": "New",
+  "condition": "doc.status != \"Closed\"",
   "channel": "System Notification",
   "enabled": 1,
   "is_standard": 0,

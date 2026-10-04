@@ -331,6 +331,10 @@
       ],
       "type": "string"
      },
+     "paper_trail_number": {
+      "maxLength": 140,
+      "type": "string"
+     },
      "principal_ref": {
       "maxLength": 140,
       "minLength": 1,
@@ -521,6 +525,10 @@
        "api",
        "ussd"
       ],
+      "type": "string"
+     },
+     "consent_code": {
+      "maxLength": 20,
       "type": "string"
      },
      "paper_trail_number": {
