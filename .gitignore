@@ -38,3 +38,6 @@ secrets.json
 *.swp
 .DS_Store
 Thumbs.db
+
+# Built from docs/guide by the Pages workflow
+site/guide/

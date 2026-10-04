@@ -3,7 +3,7 @@ name: Website
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "docs/guide/**", "tools/build_guide.py", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -28,6 +28,10 @@ jobs:
         run: |
           size=$(du -cb site/index.html site/assets/* | tail -1 | cut -f1)
           echo "site size: $size bytes"; test "$size" -lt 307200
+      - name: Build the product guide and QA test cases (docs/guide → site/guide)
+        run: |
+          pip install -q markdown
+          python3 tools/build_guide.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
