@@ -254,3 +254,13 @@ class TestJourneys(FrappeTestCase):
 		self.assertEqual(channels.contact_phone(adult), "5550005678")
 		found = {p.name for p in inbox.principals_for_phone_hash(pii.phone_hash("5550001234"))}
 		self.assertEqual(found, {guardian.name, child.name})
+
+	# -- code from the worker's own phone -----------------------------------------
+
+	def test_a_code_from_the_workers_phone_needs_the_voice_haan(self):
+		p = make_principal(phone="5550009911")
+		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, verification_method="device_sms_otp")
+		art = self.grant(p.principal_ref, verification_method="device_sms_otp", verification_status="confirmed",
+		                 evidence=[{"file": "/private/files/haan-sample.m4a", "kind": "audio"}])
+		self.assertEqual(art["verification_status"], "recorded", "the worker saw the code: never 'confirmed'")
+		self.assertEqual(frappe.db.get_value("Programme", PROG, "sms_code_route"), "MSG91 when online")

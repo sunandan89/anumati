@@ -21,6 +21,7 @@
   "rules_section",
   "allow_processing_before_confirm",
   "confirm_window_days",
+  "sms_code_route",
   "sms_receipts",
   "device_cache_ttl_hours",
   "c3",
@@ -124,6 +125,14 @@
    "fieldname": "confirm_window_days",
    "fieldtype": "Int",
    "label": "Days before unconfirmed escalates"
+  },
+  {
+   "default": "MSG91 when online",
+   "description": "MSG91 (about Rs 0.2 per SMS): the server texts the code, so the worker never sees it. Worker's phone: free, works without internet, but the worker sees the code, so the person's voice 'haan' is also recorded. With MSG91, the app uses the worker's phone (plus voice) by itself whenever there is no internet.",
+   "fieldname": "sms_code_route",
+   "fieldtype": "Select",
+   "label": "How SMS codes are sent",
+   "options": "MSG91 when online\nWorker's phone"
   },
   {
    "default": "1",

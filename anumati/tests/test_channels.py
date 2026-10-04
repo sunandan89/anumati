@@ -222,5 +222,6 @@ class TestChannels(FrappeTestCase):
 	def test_a_phone_cannot_claim_a_code_confirmed(self):
 		for method in ("device_sms_otp", "server_otp"):
 			p = self.person("90000772" + ("01" if method == "device_sms_otp" else "02"))
-			self.grant(p, verification_method=method, verification_status="confirmed")
+			self.grant(p, verification_method=method, verification_status="confirmed",
+			           evidence=[{"file": "/private/files/haan-sample.m4a", "kind": "audio"}])
 			self.assertEqual(consent.state(p.principal_ref, programme=PROG)[0]["verification_status"], "recorded", method)

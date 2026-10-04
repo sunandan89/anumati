@@ -186,6 +186,12 @@ def _check_who(principal: str, action: str, event):
 				             ConsentRequestError)
 	elif person.needs_assistance and action in ("grant", "renew") and not (event.witness or "").strip():
 		frappe.throw(_("Someone who needs help to read the notice needs a witness"), ConsentRequestError)
+	if action in ("grant", "renew") and event.verification_method == "device_sms_otp":
+		# The worker sees a code sent from their own phone, so it can't stand alone: the person's (or the
+		# guardian's) recorded "haan" must come with it.
+		if not any((e or {}).get("kind") == "audio" for e in (event.evidence or [])):
+			frappe.throw(_("A code sent from the worker's phone needs the recorded voice 'haan' with it"),
+			             ConsentRequestError)
 	return person
 
 
