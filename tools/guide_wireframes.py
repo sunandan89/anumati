@@ -231,7 +231,7 @@ SCREENS = {
 <div class="h">Occupation (optional)</div><div class="chips"><span class="chip">Farming or farm labour</span><span class="chip on">Daily wage work</span><span class="chip">Homemaker</span><span class="chip">Self-employed</span><span class="chip">Other</span></div>
 <div class="note">These are listed in the notice under “What we collect”. Reports show only totals, never one person's answers.</div></div>""" + foot("Continue"),
     "f1-withdraw": bar("Stop or change consent", "Withdrawal or request") + """<div class="body">
-<div class="field"><span>Receipt code, name or ID</span><b>AN-7K2Q9C</b></div>
+<div class="field"><span>Receipt code, name, ID or phone</span><b>AN-7K2Q9C</b></div>
 <div class="check"><span class="box on"></span><div>They gave a paper slip or letter</div></div>
 <div class="field"><span>Paper slip number (optional)</span><b>SLIP-0042</b></div>
 <div class="card" style="border-color:#B4532A"><b>Sunita Devi (sample)</b><div class="muted">AC-4XK2M9PQ · AN-7K2Q9C</div></div>

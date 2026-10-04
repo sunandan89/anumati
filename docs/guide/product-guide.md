@@ -73,7 +73,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | Server-sent code | After Save, online: the server texts a code to the person's phone; the worker never sees it |
 | **Stop or change consent** | In person, or with a paper slip or letter: switch off any of the uses that are on (or Stop all), **leave the programme**, or log a request (see or correct data, delete data, complaint) |
 | **Ask for one more purpose** | A later visit: a new use, a use they withdrew or refused (**Ask again**), or rejoining after leaving; uses already agreed are not asked again |
-| **Find beneficiary** | Offline search by name, ID or receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone); shows each use's status; tapping a person opens the withdrawal screen |
+| **Find beneficiary** | Offline search by name, ID, receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone) or **phone number**: their own, or their parent's or guardian's, so one family phone finds the parent and the children. Each result says whose number matched; shows each use's status; tapping a person opens the withdrawal screen |
 | Offline first | Everything is saved on the phone (encrypted) and syncs when online; no duplicates even if sync is cut off |
 | App lock and lost phone | The app locks after 5 minutes away or on restart; 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
 
@@ -281,7 +281,7 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 
 ```mermaid
 flowchart TD
-  A["Stop or change consent<br/>(tick: paper slip or letter)"] --> F["Search: name, ID or receipt code"]
+  A["Stop or change consent<br/>(tick: paper slip or letter)"] --> F["Search: name, ID, receipt code<br/>or phone (own or guardian's)"]
   F -- "Found on the phone" --> W{"What do they want?"}
   F -- "Not on the phone" --> R["Saved as a request with the code<br/>→ inbox; the code finds the person"]
   W -- "Switch off one or more uses<br/>(or Stop all)" --> L["Save: Stop N uses for the person"]
@@ -299,6 +299,7 @@ flowchart TD
 - The Save button names what will happen ("Stop 2 uses for Radha"), and **Withdrawal noted** lists what stopped, with **Send by SMS** from the worker's phone.
 - If nothing is on, there is nothing to stop; other requests can still be logged.
 - The phone knows everyone in the programme it has downloaded, so a slip enrolled on another phone is still found by its receipt code (the person's latest one).
+- **By phone number:** type the number (with or without +91, or just its last 4 or more digits). It finds the person whose number it is and every child or guarded adult whose parent or guardian has that number; each result says "Their number" or "Guardian's number (Mother)". The guardian's number is kept on the phone, encrypted, like the person's own.
 
 #### Requests in the inbox
 

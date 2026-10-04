@@ -82,6 +82,11 @@ def for_device(programme, since=None, limit=500):
 		                            as_list=True)) if events else {}
 		last = frappe.db.get_value("Consent Event", {"principal": name, "programme": programme},
 		                           "short_code", order_by="creation desc")
+		# The latest guardian's number, so the phone can find a child or guarded adult by it too.
+		link = frappe.db.get_value("Guardian Link", {"principal": name}, ["guardian", "relation", "guardian_type"],
+		                           as_dict=True, order_by="creation desc")
+		guardian_phone = (frappe.get_doc("Data Principal", link.guardian).get_password("phone", raise_exception=False)
+		                  if link and link.guardian else None)
 		out.append({
 			"principal_ref": doc.principal_ref,
 			"full_name": doc.get_password("full_name", raise_exception=False) or "",
@@ -89,6 +94,8 @@ def for_device(programme, since=None, limit=500):
 			"preferred_language": doc.preferred_language,
 			**{f: doc.get(f) or 0 for f in FLAGS},
 			"last_code": last,
+			"guardian_phone": guardian_phone or "",
+			"guardian_relation": (link.relation or link.guardian_type or "") if link else "",
 			"decisions": [
 				{"purpose": frappe.db.get_value("Purpose", s.purpose, "code") or s.purpose, "status": s.status,
 				 "at": str(times.get(s.last_event) or s.updated or "")}
