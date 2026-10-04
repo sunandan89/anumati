@@ -13,9 +13,10 @@ Anumati helps NGOs take, prove and honour consent under India's DPDP Act 2023, i
 5. [Screens, journey by journey](#screens-journey-by-journey)
 6. [After consent](#after-consent)
 7. [Web console journeys](#web-console-journeys)
-8. [Roadmap: Phase 2 and Phase 3](#roadmap-phase-2-and-phase-3)
-9. [Setup still needed](#setup-still-needed)
-10. [Glossary](#glossary)
+8. [Built vs the design prototype](#built-vs-the-design-prototype)
+9. [Roadmap: Phase 2 and Phase 3](#roadmap-phase-2-and-phase-3)
+10. [Setup still needed](#setup-still-needed)
+11. [Glossary](#glossary)
 
 ## The three parts
 
@@ -326,6 +327,150 @@ Rules the console enforces:
 - **Extra questions: totals** shows counts only, never one person's answers; counts under 5 show as "fewer than 5".
 - The **chain** is checked every night (result in Needs attention and Anumati Settings); each consent record has a **Check signature** button.
 - Access log and record views show who opened names, phones or evidence.
+
+## Built vs the design prototype
+
+The [design prototype](https://sunandan89.github.io/anumati/prototype/) shows all eight surfaces from spec §3a, including screens planned for later phases. This table lists every prototype screen and where it stands today.
+
+- **Built**: works now.
+- **Partly**: the core works, but some of what the prototype shows is missing (listed).
+- **Record only**: the record can be kept in the console, but nothing acts on it yet.
+- **Phase 2** or **Phase 3**: not started; planned for that phase. Phases follow spec §11; where the spec does not name a screen, the phase shown is the closest fit.
+
+Most console screens are standard Frappe lists and forms rather than the prototype's custom layouts. They show the same information.
+
+```mermaid
+flowchart LR
+  W["Public website"]:::b --- A["Field app"]:::b
+  A --- C["NGO console"]:::p
+  C --- AN["Analytics"]:::p
+  C --- BT["Beneficiary touchpoints"]:::p
+  C --- D["Developer portal"]:::p
+  C --- AU["Auditor and partner portal"]:::l
+  C --- PL["Platform console"]:::l
+  classDef b fill:#DDEBD9,stroke:#3F6B3A
+  classDef p fill:#F6E7C1,stroke:#9A6B12
+  classDef l fill:#EEE,stroke:#888
+```
+
+Green: built. Yellow: partly built. Grey: later phases.
+
+### Public website
+
+| Prototype screen | Status | Notes |
+| --- | --- | --- |
+| Home, How it works, For NGOs, Open source, Pricing, Talk to us | **Built** | Copy describes only what Phase 1 does; later features are tagged "coming". "Talk to us" needs a team email set before it sends anything |
+
+### Field app (Anumati Collect)
+
+| Prototype screen | Status | Notes |
+| --- | --- | --- |
+| Home and sync | **Built** | Plus sync issues list, app lock, lost-phone wipe |
+| Beneficiary (with segment flags) | **Built** | Screen 1, "Who is giving consent?" |
+| Guardian | **Built** | Parent for a child; guardian with an order for an adult |
+| Notice (audio-gated) | **Built** | Reviewed natural voice, or the phone's voice, or "I have read the whole notice" |
+| Choices | **Built** | All optional uses off; equal "Yes to all" / "No to all" |
+| Evidence | **Built** | Voice "haan", thumbprint or signature photo, witness, ID photo |
+| Verify | **Built** | Server SMS code; worker's phone + voice; confirm later; evidence only. Missed-call verification: **Phase 2** |
+| Receipt | **Built** | Receipt code for the slip; SMS receipt where SMS is set up |
+| Log a withdrawal | **Built** | Also access, correction, erasure, complaint requests |
+| Ask for one more purpose | **Built** | |
+| Renew consent at 18 | **Phase 2** | The server already flags who turned 18 |
+
+### NGO console
+
+| Prototype screen | Status | Notes |
+| --- | --- | --- |
+| Dashboard | **Built** | **Today** workspace: counts, verification pipeline, needs attention |
+| Programmes › Overview, Notice & purposes | **Built** | |
+| Programmes › Capture & verification | **Built** | Allowed methods, "How SMS codes are sent", confirm-later days |
+| Programmes › Withdrawal channels (+ receipt preview) | **Partly** | The channel list can be filled in but the app does not use it yet; no receipt preview |
+| Programmes › Field team | **Built** | Users and field phones |
+| Programmes › Integration | **Partly** | Connected systems (Source System) only; no ODK connector yet (**Phase 2**) |
+| New programme wizard (templates, discovery questions, suggested purposes) | **Phase 2** | Programmes are set up with the standard form |
+| Notices › Purposes | **Built** | "Allowed for children", "needs a phone" |
+| Notices › Notice content + Rule 3 checklist | **Built** | |
+| Notices › Publish gate (ROPA/DPIA must be complete) | **Built** | |
+| Notices › Translations, reviewer sign-off | **Built** | |
+| Notices › Generate draft audio | **Built** | Sarvam natural voice; plays only after a reviewer approves |
+| Notices › Versions | **Built** | Publishing workflow |
+| Notices › Live phone preview in 3 languages | **Partly** | A Preview button on the notice; no side-by-side phone preview |
+| Campaigns (list, detail, 5-step wizard, auto triggers) | **Record only** | A campaign record can be created; sending, the wizard and auto triggers are **Phase 2** |
+| Principals › search | **Built** | Name, phone, receipt code or ID; every view logged |
+| Principals › record (state, guardian links, nominee) | **Built** | |
+| Principals › signed timeline | **Partly** | Consent history list per person, with "Check signature"; not the prototype's timeline layout |
+| Principals › Relationship ended | **Built** | Logged; the retention clock it starts acts in **Phase 2** |
+| Principals › Evidence certificate (BSA s.63) | **Phase 3** | |
+| Inbox › filters, due dates, board | **Built** | Requests list and board; overdue in red; reminders |
+| Inbox › shared-number matching | **Built** | "Who is this for?" |
+| Inbox › Record withdrawal | **Built** | |
+| Inbox › erasure fulfilment with legal hold | **Phase 2** | Staff act by hand and close the request |
+| Inbox › conversation thread and replies | **Phase 2** | |
+| Channels › Messaging | **Built** | MSG91 (codes, receipts); inbound SMS and missed call need a number. WhatsApp, IVR, email: **Phase 2** |
+| Channels › Capture & connectors | **Partly** | Connected systems and API; ODK connector **Phase 2**, CommCare **Phase 3** |
+| Channels › Devices (+ Report lost) | **Built** | |
+| Channels › Message templates | **Built** | |
+| Audit & governance › Audit log | **Built** | Signed, chained; checked nightly |
+| Audit & governance › Retention policies | **Record only** | Policies can be recorded; automatic purge is **Phase 2** |
+| Audit & governance › Processors | **Record only** | Partner routing of withdrawals and erasures is **Phase 2** |
+| Audit & governance › Records of processing + DPIA | **Built** | DPO sign-off unblocks publishing |
+| Audit & governance › Breach (72-hour steps) | **Partly** | Incident record with each step's date and "Board told now"; messaging affected people and the Board report are **Phase 3** |
+| Audit & governance › Access log | **Built** | |
+| Auditor share link | **Record only** | The share can be recorded; the portal it opens is **Phase 3** |
+| Settings › Organisation, Team & roles | **Built** | Anumati Settings; Frappe users and roles |
+| Settings › Branding | **Partly** | Frappe's own website and print settings |
+| Settings › Sign-in & sharing (SSO, 2FA, funder sharing) | **Partly** | Frappe supports 2FA and Google/Microsoft sign-in but they are not set up; funder sharing is **Record only** |
+| Settings › Plan & billing | **Phase 3** | Belongs to the platform console |
+
+### Analytics
+
+| Prototype tab | Status | Notes |
+| --- | --- | --- |
+| Overview | **Built** | Consents per week, by purpose, this month's counts |
+| Verification | **Partly** | Verification pipeline chart and confirmation counts; no "unconfirmed after N days" funnel |
+| Withdrawals & rights | **Partly** | Withdrawals by channel, requests by type; no on-time rate or median days |
+| Languages & districts | **Partly** | By language only; districts are not recorded |
+| Field team | **Built** | Consents by worker; "notice heard in full" |
+| Funder roll-up | **Phase 3** | |
+
+### Beneficiary touchpoints
+
+| Prototype screen | Status | Notes |
+| --- | --- | --- |
+| SMS receipt, code and confirmation | **Built** | Needs the MSG91 key and approved templates |
+| SMS STOP and missed call | **Built** | Needs an inbound number |
+| Printed slip with tear-off | **Partly** | The worker writes the receipt code on a paper slip; no printed slip |
+| WhatsApp menu | **Phase 2** | |
+| Web preference centre | **Phase 2** | |
+| Hosted consent page | **Phase 2** | |
+
+### Developer portal
+
+| Prototype tab | Status | Notes |
+| --- | --- | --- |
+| Quickstart | **Partly** | `docs/api.md` on GitHub; no ODK XLSForm example until the connector exists |
+| API reference | **Built** | OpenAPI spec (`anumati/public/openapi.json`) and `docs/api.md` |
+| Webhooks log | **Partly** | A polling event feed (`notifications.feed`); signed webhooks are **Phase 2** |
+| Try a consent check (sandbox) | **Phase 2** | |
+| Keys & scopes | **Partly** | Standard Frappe API keys per user; no scoped keys screen |
+
+### Auditor and partner portal
+
+| Prototype tab | Status | Notes |
+| --- | --- | --- |
+| Audit pack with chain verification | **Phase 3** | The chain check and public signature check (`consent.verify`, `consent.public_keys`) already exist as APIs |
+| Look up a consent (names hidden) | **Partly** | Anyone can check a receipt's signature through the API; no portal page |
+| Partner confirmations | **Phase 2** | Acknowledgement records exist; partner routing comes with Phase 2 |
+
+### Dhwani platform console
+
+| Prototype tab | Status | Notes |
+| --- | --- | --- |
+| Organisations, Usage & messaging, Language packs, Health | **Phase 3** | Separate `anumati_platform` app; today each NGO is one Frappe site |
+
+### Still to design (from spec §10)
+
+IVR prompt recorder, principal merge, purpose editor and paper request form use Frappe's standard forms for now.
 
 ## Roadmap: Phase 2 and Phase 3
 
