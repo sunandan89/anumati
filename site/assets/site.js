@@ -300,17 +300,17 @@ function renderSite(){
       ${wordmark(34)}
       <div class="links">${SITE_PAGES.map(([k,l]) => `<button class="${S.site.page===k?'on':''}" data-a="site" data-p="${k}">${l}</button>`).join('')}</div>
       <span class="spacer"></span>
-      <div class="row navcta" style="gap:8px"><button class="btn sm" data-a="lens" data-k="dev">Docs</button><button class="btn sm pri" data-a="lens" data-k="con">Sign in</button></div>
+      <div class="row navcta" style="gap:8px"><button class="btn sm" data-a="lens" data-k="guide">Product guide</button>${SITE.consoleUrl ? `<button class="btn sm pri" data-a="lens" data-k="con">Sign in</button>` : ''}</div>
     </nav>
     <hr class="stitch">
     <div class="story">
       <div class="story-layer" aria-hidden="true"><svg class="thread"></svg><div class="traveler"><div class="say-bubble"></div><div class="bird"></div></div></div>
       ${pg}
-      <footer class="foot" data-pose="wave" data-say="That’s the whole thread. Try the field app next!"><div class="wrap row wr" style="gap:28px;align-items:flex-start">
-        <div class="stack" style="gap:8px;max-width:320px">${wordmark(38)}<div class="small muted">Open-source DPDP consent for the social sector. Built by Dhwani RIS on Frappe. Server AGPL-3.0, mobile SDK MIT.</div></div>
-        <div class="stack small" style="gap:6px"><strong>Product</strong><button class="btn ghost sm fl" data-a="site" data-p="how">How it works</button><button class="btn ghost sm fl" data-a="site" data-p="pricing">Pricing</button><button class="btn ghost sm fl" data-a="lens" data-k="dev">Developer docs</button></div>
-        <div class="stack small" style="gap:6px"><strong>Try the prototype</strong><button class="btn ghost sm fl" data-a="lens" data-k="app">Field app</button><button class="btn ghost sm fl" data-a="lens" data-k="ben">Beneficiary view</button><button class="btn ghost sm fl" data-a="lens" data-k="con">NGO console</button></div>
-        <div class="small muted" style="margin-left:auto;max-width:280px">Clickable prototype. Names, numbers and organisations shown inside the product are illustrative.</div>
+      <footer class="foot" data-pose="wave" data-say="That’s the whole thread. The product guide shows every screen."><div class="wrap row wr" style="gap:28px;align-items:flex-start">
+        <div class="stack" style="gap:8px;max-width:320px">${wordmark(38)}<div class="small muted">Open-source DPDP consent for the social sector. Built by Dhwani RIS on Frappe. Server AGPL-3.0, field app MIT.</div></div>
+        <div class="stack small" style="gap:6px"><strong>Product</strong><button class="btn ghost sm fl" data-a="site" data-p="how">How it works</button><button class="btn ghost sm fl" data-a="site" data-p="pricing">Pricing</button><button class="btn ghost sm fl" data-a="lens" data-k="api">API reference</button></div>
+        <div class="stack small" style="gap:6px"><strong>Learn more</strong><button class="btn ghost sm fl" data-a="lens" data-k="guide">Product guide</button><button class="btn ghost sm fl" data-a="lens" data-k="qa">Test cases</button><button class="btn ghost sm fl" data-a="lens" data-k="code">Code on GitHub</button><button class="btn ghost sm fl" data-a="lens" data-k="proto">Design prototype</button></div>
+        <div class="small muted" style="margin-left:auto;max-width:280px">Phase 1 is built and ready for a pilot. Features marked “coming” are planned for Phases 2 and 3. The design prototype also shows planned screens. Names and numbers on this site are illustrative.</div>
       </div></footer>
     </div>
   </div>`;
@@ -318,20 +318,20 @@ function renderSite(){
 function heroReceipt(){
   return `<div class="stitch-box" style="background:var(--surface);border-radius:20px;padding:28px;box-shadow:var(--shadow);max-width:420px;justify-self:center;width:100%">
     <div class="row" style="justify-content:space-between"><span class="eyebrow">Consent receipt</span><span class="chip c-ok">Confirmed</span></div>
-    <div class="mono" style="font-size:34px;letter-spacing:.08em;margin:10px 0 4px;font-weight:500">AN-7K2Q</div>
+    <div class="mono" style="font-size:34px;letter-spacing:.08em;margin:10px 0 4px;font-weight:500">AN-7K2Q9C</div>
     <div class="hi" style="font-size:17px">सुनीता डी. · स्वास्थ्य जाँच</div>
     <div class="stack small" style="gap:8px;margin-top:16px">
-      ${[['leaf','Captured offline · Khairi village · 11:20'],['leaf','Notice played in Hindi · 1:42'],['leaf','Thumbprint + witness (ASHA)'],['leaf','Phone verified by SMS code, no data'],['terra','Signed and chained on sync']].map(([c,t]) => `<div class="row"><span class="dot" style="background:var(--${c})"></span>${t}</div>`).join('')}
+      ${[['leaf','Captured offline · Khairi village · 11:20'],['leaf','Notice played in Hindi · 1:42'],['leaf','Voice “haan” + witness (ASHA)'],['leaf','SMS code read back from her phone'],['terra','Signed and chained on sync']].map(([c,t]) => `<div class="row"><span class="dot" style="background:var(--${c})"></span>${t}</div>`).join('')}
     </div>
     <hr class="stitch" style="margin:18px 0 12px">
-    <div class="small muted">To withdraw: missed call 080-4719-XXXX · SMS STOP · tell any worker</div>
+    <div class="small muted">To withdraw: tell any worker · show this slip · SMS STOP AN-7K2Q9C</div>
   </div>`;
 }
 const secHead = (eyebrow, title, lede) => `<span class="eyebrow">${eyebrow}</span><h2 style="max-width:19em">${title}</h2>${lede?`<p class="lede" style="margin:0">${lede}</p>`:''}`;
 
 function siteHome(){
-  const rungs = [['Online','OTP by SMS or WhatsApp',4],['Signal, no data','Code sent from the worker’s own SIM',3],['She has signal','She gives a missed call',2],['No signal','Evidence now, SMS confirmation later',1],['No phone','Thumbprint, voice and a witness',0]];
-  const chans = ['Tell a field worker','Tear-off paper slip','SMS STOP','Missed call','IVR helpline','WhatsApp','Web preference centre','Email','SHG or panchayat desk','Through a partner system'];
+  const rungs = [['Online','Anumati’s server texts her a code; she reads it back',4,0],['Signal, no data','Code from the worker’s own phone, plus her voice “haan”',3,1],['No signal','Evidence now, confirmed later by SMS',1,3],['No phone','Her voice “haan” or thumbprint, and a witness if it was read to her',0,4],['Child or guardian','Code to the parent’s or guardian’s phone, or a photo of their ID',2,2]];
+  const chans = [['Tell a field worker',1],['Paper slip or letter',1],['SMS STOP',1],['Missed call',1],['Staff in the console',1],['WhatsApp',0],['IVR helpline',0],['Web preference centre',0],['Email',0],['Through a partner system',0]];
   const gaps = [
     ['A smartphone with data','Many people share a basic phone, or have none.','featurephone'],
     ['She can read the notice','Many need it read or played aloud, in their own language.','cantread'],
@@ -344,9 +344,9 @@ function siteHome(){
     <div class="stack" style="gap:22px">
       <span class="eyebrow">Open-source consent for India’s DPDP Act</span>
       <h1>Consent that works where the <em>internet doesn’t.</em></h1>
-      <p class="lede">Anumati lets nonprofits take, prove and honour consent in the field: offline, in all 22 scheduled languages, for people who can’t read the notice, share a phone, or don’t own one.</p>
-      <div class="row wr"><button class="btn pri" data-a="site" data-p="demo">Talk to us</button><button class="btn" data-a="lens" data-k="app">Try the field app ${ic('arrow',16)}</button></div>
-      <div class="row wr small muted" style="gap:18px"><span>Self-host free</span><span>·</span><span>Hosted in India</span><span>·</span><span>Built on Frappe</span></div>
+      <p class="lede">Anumati lets nonprofits take, prove and honour consent in the field: offline, in the person’s own language, for people who can’t read the notice, share a phone, or don’t own one.</p>
+      <div class="row wr"><button class="btn pri" data-a="site" data-p="demo">Plan a pilot</button><button class="btn" data-a="lens" data-k="guide">See every screen ${ic('arrow',16)}</button></div>
+      <div class="row wr small muted" style="gap:18px"><span class="chip c-ok">Phase 1 built · pilot next</span><span>Android field app</span><span>·</span><span>Hindi and English</span><span>·</span><span>Built on Frappe</span></div>
     </div>
     <div style="width:100%;max-width:620px;justify-self:center">${heroArt()}</div>
   </div></section>
@@ -363,24 +363,24 @@ function siteHome(){
   </div></section>
 
   <section class="section" style="background:var(--surface)" data-pose="sleep" data-say="No signal? I wait on the phone and deliver the receipt when it comes back."><div class="wrap stack" style="gap:24px">
-    ${secHead('The verification ladder','Proof that fits the signal you have.','Each programme picks which rungs it allows. The field app offers the best one available at that moment and records which was used.')}
-    <div class="ladder" data-io>${rungs.map(([t,d,n],ri) => `<div class="rung"><div class="wayimg" style="justify-content:flex-start">${rungArt(ri)}</div><div class="sig">${[1,2,3,4].map(i => `<i class="${i<=n?'on':''}" style="height:${i*4+2}px"></i>`).join('')}</div><strong>${t}</strong><span class="small muted">${d}</span></div>`).join('')}</div>
+    ${secHead('The verification ladder','Proof that fits the signal you have.','Each programme picks the methods it allows and how SMS codes are sent. The field app checks for internet by itself, picks the right route and records which proof was used.')}
+    <div class="ladder" data-io>${rungs.map(([t,d,n,ai]) => `<div class="rung"><div class="wayimg" style="justify-content:flex-start">${rungArt(ai)}</div><div class="sig">${[1,2,3,4].map(i => `<i class="${i<=n?'on':''}" style="height:${i*4+2}px"></i>`).join('')}</div><strong>${t}</strong><span class="small muted">${d}</span></div>`).join('')}</div>
   </div></section>
 
-  <section class="section" data-pose="envelope" data-say="She said stop. I fly it to every system that used her data."><div class="wrap grid g2" style="gap:40px;align-items:start">
+  <section class="section" data-pose="envelope" data-say="She said stop. I carry it to the inbox and the ledger."><div class="wrap grid g2" style="gap:40px;align-items:start">
     <div class="stack" style="gap:16px">
-      ${secHead('Withdrawal, the way people actually ask','Saying stop must be as easy as saying yes.','Every route lands in one inbox, is matched to the right person even on a shared phone, and reaches every system that used the data.')}
-      <button class="btn" data-a="lens" data-k="ben" style="align-self:flex-start">See what the beneficiary sees ${ic('arrow',16)}</button>
+      ${secHead('Withdrawal, the way people actually ask','Saying stop must be as easy as saying yes.','Every route lands in one inbox with a due date, is matched to the right person even on a shared phone, and is signed into the ledger. Connected systems see the change at once when they check consent.')}
+      <button class="btn" data-a="site" data-p="how" style="align-self:flex-start">What happens after she says stop ${ic('arrow',16)}</button>
     </div>
-    <div class="grid g2" style="gap:10px">${chans.map(c => `<div class="card row" style="padding:12px 14px;gap:10px"><span class="dot" style="background:var(--terra)"></span>${c}</div>`).join('')}</div>
+    <div class="grid g2" style="gap:10px">${chans.map(([c,on]) => `<div class="card row" style="padding:12px 14px;gap:10px${on?'':';opacity:.72'}"><span class="dot" style="background:var(--${on?'terra':'line'})"></span>${c}${on?'':' <span class="chip c-neu" style="margin-left:auto">coming</span>'}</div>`).join('')}</div>
   </div><div class="wrap" style="margin-top:28px"><div style="max-width:720px;margin:0 auto">${stopArt()}</div></div></section>
 
   <section class="section" style="background:var(--surface)" data-pose="perch" data-say="Three ways in. Start wherever your systems already are."><div class="wrap stack" style="gap:24px">
     ${secHead('Three ways to use it','Start where your systems are.')}
     <div class="grid g3">
-      <div class="card stack"><div class="wayimg">${wayArt('office')}</div><span class="chip c-terra" style="align-self:flex-start">No IT team</span><h3 style="font-size:22px">Full stack</h3><p class="muted" style="margin:0">Hosted console plus the Anumati Collect Android app. Configure a programme and start the same week.</p></div>
-      <div class="card stack"><div class="wayimg">${wayArt('tablet')}</div><span class="chip c-ind" style="align-self:flex-start">On ODK, CommCare, OpenMRS</span><h3 style="font-size:22px">Connectors</h3><p class="muted" style="margin:0">Add one row to your XLSForm or a callout in CommCare. Consent comes back into your form with a code.</p></div>
-      <div class="card stack"><div class="wayimg">${wayArt('code')}</div><span class="chip c-neu" style="align-self:flex-start">Own developers</span><h3 style="font-size:22px">API only</h3><p class="muted" style="margin:0">REST, webhooks and a hosted consent page. Keep your own UI and let Anumati hold the evidence.</p></div>
+      <div class="card stack"><div class="wayimg">${wayArt('office')}</div><span class="chip c-terra" style="align-self:flex-start">No IT team · ready now</span><h3 style="font-size:22px">Full stack</h3><p class="muted" style="margin:0">Web console plus the Anumati Collect Android app. Set up a programme and notice, sign in your field team, and start the same week.</p></div>
+      <div class="card stack"><div class="wayimg">${wayArt('tablet')}</div><span class="chip c-neu" style="align-self:flex-start">Coming · ODK first, then CommCare</span><h3 style="font-size:22px">Connectors</h3><p class="muted" style="margin:0">Open Anumati’s consent screens from inside your ODK or Kobo form; the survey goes ahead only with consent. ODK is next, CommCare follows.</p></div>
+      <div class="card stack"><div class="wayimg">${wayArt('code')}</div><span class="chip c-ind" style="align-self:flex-start">Own developers · ready now</span><h3 style="font-size:22px">API</h3><p class="muted" style="margin:0">REST API with an OpenAPI spec: add people, record and withdraw consent, and check consent in milliseconds before you use data. An event feed tells your systems what changed.</p></div>
     </div>
   </div></section>
 
@@ -393,17 +393,17 @@ function siteHome(){
 
 function siteHow(){
   const steps = [
-    ['lang','Choose language','Hindi, Marathi or any of 22. The choice follows her to SMS, calls and the preference centre.'],
-    ['notice','Hear the notice','Text, picture card and audio. The choices stay locked until the notice has played through.'],
-    ['choices','Choose purposes','Every optional use starts off. “Yes to all” and “No to all” carry equal weight.'],
-    ['evidence','Record evidence','Tap, voice, thumbprint, witness, or a guardian for minors and persons with disabilities.'],
-    ['verify','Verify','OTP, SMS from the device, missed call, later confirmation, or evidence only.'],
-    ['receipt','Give a receipt','A code she keeps, with three ways to withdraw, printed or sent in her language.']
+    ['lang','Who and which language','Is she consenting for herself, or is a parent or guardian? Hindi or English today; more languages as reviewed translations are added.'],
+    ['notice','Hear the notice','Text and a reviewed natural-voice recording. The choices stay locked until the notice has played through, or the worker confirms she read it all aloud.'],
+    ['choices','Choose purposes','Every optional use starts off. “Yes to all” and “No to all” carry equal weight. Uses not allowed for children are never offered for a child.'],
+    ['evidence','Record evidence','Voice “haan”, a photo of her thumbprint or signature, and a witness when the notice was read to her. Parents and guardians give their own details.'],
+    ['verify','Verify','An SMS code from Anumati’s server, or from the worker’s phone with a voice “haan”; confirm later by SMS; or evidence only.'],
+    ['receipt','Give a receipt','A code she keeps on a paper slip, with the ways to withdraw. An SMS receipt follows where SMS is set up.']
   ];
-  const after = [['received','Received','Missed call, SMS, WhatsApp, slip, worker or letter. The response clock starts now.'],['matched','Matched','By consent code, phone or name. Shared phones get a call-back menu.'],['enforced','Enforced','A new signed event. Every system’s consent check returns “no” from now on.'],['propagated','Propagated','Partners and processors are told and must confirm. She gets a confirmation in her language.']];
+  const after = [['received','Received','Told to a worker, a paper slip or letter, SMS STOP or a missed call. A 30-day due date starts now.'],['matched','Matched','By receipt code or phone. When several people share a number, staff pick the right person.'],['enforced','Enforced','A new signed event. The consent check returns “no” from now on, and the field phone updates at once.'],['propagated','Tracked','Staff are reminded 3 days before the due date; overdue requests show in red. Telling partners automatically is coming in Phase 2.']];
   return `
   <section class="section pattern" data-pose="envelope" data-say="Six steps in the field, one receipt at the end. Let’s walk them."><div class="wrap grid g2" style="gap:40px;align-items:center">
-    <div class="stack" style="gap:18px">${secHead('How it works','Six steps in the field. One signed record on the server.','The same flow runs in the Anumati Collect app, on the hosted page, and inside connectors for ODK and CommCare.')}<button class="btn" data-a="lens" data-k="app" style="align-self:flex-start">Walk through it in the field app ${ic('arrow',16)}</button></div>
+    <div class="stack" style="gap:18px">${secHead('How it works','Six steps in the field. One signed record on the server.','The flow runs in the Anumati Collect Android app, offline. Other systems record and check consent through the API.')}<button class="btn" data-a="lens" data-k="guide" style="align-self:flex-start">See the app’s screens, journey by journey ${ic('arrow',16)}</button></div>
     ${heroReceipt()}
   </div></section>
 
@@ -413,26 +413,26 @@ function siteHow(){
   </div></section>
 
   <section class="section" style="background:var(--surface)" data-pose="envelope" data-say="When she says stop, I make sure everyone hears it."><div class="wrap stack" style="gap:24px">
-    ${secHead('After she says stop','A withdrawal reaches every system, with proof.')}
+    ${secHead('After she says stop','A withdrawal lands in one inbox, with proof.')}
     <ol class="flowline">${after.map(([ico,t,d]) => `<li><div class="flowdot">${icon64(ico)}</div><strong>${t}</strong><span class="small muted">${d}</span></li>`).join('')}</ol>
     <div style="max-width:720px;margin:8px auto 0;width:100%">${stopArt()}</div>
   </div></section>
 
   <section class="section" data-pose="perch" data-say="For your tech team: here’s what sits underneath."><div class="wrap grid g3" style="gap:16px">
-    ${[['server','A ledger you can prove','Frappe app on MariaDB, one site per organisation. Consent events are append-only, signed with Ed25519 and hash-chained.'],['phone','A field app that waits','Flutter on Dhwani’s frappe_mobile_sdk: offline outbox, idempotent sync, encrypted storage on the device.'],['plug','Open doors','REST API, signed webhooks, a hosted consent page, and connectors for ODK, CommCare and Frappe.']].map(([i,t,d]) => `<div class="card stack" style="gap:8px">${icon64(i)}<h3 style="font-size:20px">${t}</h3><p class="muted small" style="margin:0">${d}</p></div>`).join('')}
-    <div class="row wr" style="grid-column:1/-1"><button class="btn sm" data-a="lens" data-k="dev">API reference</button><button class="btn sm" data-a="lens" data-k="aud">See the audit pack</button></div>
+    ${[['server','A ledger you can prove','Frappe app on MariaDB. Consent events are append-only, signed with Ed25519 and hash-chained; the chain is checked every night. Names, phones and evidence are encrypted.'],['phone','A field app that waits','Flutter on Dhwani’s frappe_mobile_sdk: offline outbox, sync that never duplicates, encrypted storage, PIN lock and remote wipe of a lost phone.'],['plug','Open doors','REST API with an OpenAPI spec, an event feed, and public signature checks anyone can run. Connectors for ODK and CommCare are next.']].map(([i,t,d]) => `<div class="card stack" style="gap:8px">${icon64(i)}<h3 style="font-size:20px">${t}</h3><p class="muted small" style="margin:0">${d}</p></div>`).join('')}
+    <div class="row wr" style="grid-column:1/-1"><button class="btn sm" data-a="lens" data-k="api">API reference</button><button class="btn sm" data-a="lens" data-k="code">Code on GitHub</button></div>
   </div></section>`;
 }
 
 function siteNgos(){
   const segs = [
-    ['featurephone','Basic phones, no data','OTP links and web pages never load.','SMS code sent from the worker’s SIM, SMS keywords, missed calls.'],
-    ['sharedphone','A shared household phone','The phone number gets treated as the person.','The phone owner is recorded; a call-back menu picks the right person.'],
-    ['nophone','No phone at all','No way to prove consent or to withdraw.','Thumbprint, witness, and a printed receipt with a tear-off withdrawal slip.'],
-    ['cantread','Can’t read the notice','A tick box is not informed consent.','An audio notice that must play through, picture cards, worker attestation.'],
-    ['child','Children in your programmes','No verifiable step for the parent.','Guardian link checked by SMS, DigiLocker or document; profiling blocked.'],
-    ['guardian','People with a lawful guardian','Rarely supported at all.','Family, court or committee guardian, with the order kept on file.'],
-    ['existing','People you already hold data on','Consent was never recorded.','True-up campaigns by SMS and field visit, with a clear refusal branch.']
+    ['featurephone','Basic phones, no data','OTP links and web pages never load.','A plain SMS code she reads back. Withdraw by SMS STOP or a missed call once your number is set up.'],
+    ['sharedphone','A shared household phone','The phone number gets treated as the person.','Each person has their own record. When a STOP comes from a shared number, staff pick the right person.'],
+    ['nophone','No phone at all','No way to prove consent or to withdraw.','Voice “haan” or a thumbprint photo, a witness, and a receipt code on a paper slip she can bring back.'],
+    ['cantread','Can’t read the notice','A tick box is not informed consent.','The notice is played aloud and must finish before choices unlock; a witness confirms it was read fairly.'],
+    ['child','Children in your programmes','No verifiable step for the parent.','The parent gets the SMS code, or shows ID. Uses not allowed for children are never offered; turning 18 is flagged.'],
+    ['guardian','People with a lawful guardian','Rarely supported at all.','Guardian appointed by a court or Local Level Committee, with the order number required. No order yet: nothing is saved.'],
+    ['existing','People you already hold data on','Consent was never recorded.','Coming in Phase 2: catch-up and re-consent campaigns. Today, a field worker can add a new use on the next visit.']
   ];
   return `
   <section class="section pattern" data-pose="talk" data-say="Tell me who you work with. I’ll show you how each of them can say yes, or no."><div class="wrap stack" style="gap:24px">
@@ -444,21 +444,21 @@ function siteNgos(){
     <div class="card stack"><h3 style="font-size:22px">Your first week</h3>
       ${['Organisation and DPO set up','First programme and purposes','Notice in your languages, reviewed','SMS sender ID and DLT templates','Field team logged in to Anumati Collect','Pilot with 50 real consents'].map((t,i) => `<label class="check"><input type="checkbox" ${i<3?'checked':''} id="wk${i}"> ${t}</label>`).join('')}
     </div>
-    <div class="card stack"><div class="wayimg" style="justify-content:flex-start">${icon64('unlock')}</div><h3 style="font-size:22px">What stays yours</h3><p class="muted" style="margin:0">Your data sits in your own site, in India, or on your own server. You can export everything, run the same code yourself, and leave any time. Dhwani acts as your processor under a data processing agreement.</p><button class="btn pri" data-a="site" data-p="demo" style="align-self:flex-start">Plan a pilot</button></div>
+    <div class="card stack"><div class="wayimg" style="justify-content:flex-start">${icon64('unlock')}</div><h3 style="font-size:22px">What stays yours</h3><p class="muted" style="margin:0">Your data sits in your own Frappe site, hosted in India or on your own server. You can export everything, run the same code yourself, and leave any time. Dhwani acts as your processor under a data processing agreement.</p><button class="btn pri" data-a="site" data-p="demo" style="align-self:flex-start">Plan a pilot</button></div>
   </div></section>`;
 }
 
 function siteOpen(){
-  const repos = [['server','anumati','Server · AGPL-3.0','Frappe app: notices, consent ledger, rights, channels, governance.'],['phone','frappe_mobile_sdk','Mobile SDK · MIT','Offline-first Flutter SDK already used in Dhwani field apps.'],['plug','anumati_connectors','Connectors · MIT','ODK, CommCare, web widget, Frappe client; OpenMRS next.']];
+  const repos = [['server','anumati','Server · AGPL-3.0','Frappe app: notices, consent ledger, requests inbox, SMS, records of processing, audit.'],['phone','anumati_collect','Field app · MIT','Anumati Collect for Android, on Dhwani’s offline-first frappe_mobile_sdk.'],['plug','anumati_connectors','Connectors · coming','ODK first, then CommCare and a web widget.']];
   const principles = [['code','Open code','Every line on a public repository, under licences that keep it open.'],['table','Open data model','Consent records follow a documented schema anyone can read or export.'],['export','Portable','Export all records with their signatures and verify them without us.'],['unlock','No lock-in','Self-host the same code, or move between hosted and self-hosted any time.']];
-  const road = [['Now','Foundations','Ledger, signing, tenancy tests'],['Next','Core capture','Field app, verification ladder, ODK connector, first pilot'],['Later','Rights and channels','WhatsApp, IVR, guardians, campaigns'],['Later','Scale and trust','Security audit, 22-language pack, CommCare, public-good listing']];
+  const road = [['Done','Foundations','Signed, hash-chained ledger; roles; tenancy and tamper tests'],['Built','Core capture','Field app, guardians, SMS codes, receipts, withdrawal inbox, console, API. Pilot next'],['Next','Rights and channels','ODK connector, WhatsApp, IVR, self-service page, erasure, retention, campaigns'],['Later','Scale and trust','Security test, 22-language pack, CommCare, evidence certificate, breach notices']];
   return `
   <section class="section pattern" data-pose="talk" data-say="Everything here is open. Pull a thread, add a patch."><div class="wrap grid g2" style="gap:40px;align-items:center">
-    <div class="stack" style="gap:18px">${secHead('Open source','Free to run, free to fork, built to be a public good.','Anumati is three repositories. Use them together, or take only the parts you need.')}</div>
+    <div class="stack" style="gap:18px">${secHead('Open source','Free to run, free to fork, built to be a public good.','Anumati is a server and a field app today, with connectors to follow. Use them together, or take only the parts you need.')}</div>
     <div>${quiltArt(false)}</div>
   </div></section>
 
-  <section class="section" data-pose="perch" data-say="Three repositories, one story."><div class="wrap stack" style="gap:24px">
+  <section class="section" data-pose="perch" data-say="Every line is on GitHub."><div class="wrap stack" style="gap:24px">
     <div class="grid g3">${repos.map(([i,n,l,d]) => `<div class="card stack" style="gap:8px">${icon64(i)}<span class="mono muted">${n}</span><strong>${l}</strong><span class="small muted">${d}</span></div>`).join('')}</div>
     <div class="grid g4">${principles.map(([i,t,d]) => `<div class="stack" style="gap:6px">${icon64(i)}<strong>${t}</strong><span class="small muted">${d}</span></div>`).join('')}</div>
     <div class="small muted">Anumati reuses ideas from the open-source TSI DPDP CMS (Apache 2.0) with attribution, including its records of processing, breach and purge lifecycle.</div>
@@ -466,7 +466,7 @@ function siteOpen(){
 
   <section class="section" style="background:var(--surface)" data-pose="envelope" data-say="Here’s where the thread goes next."><div class="wrap stack" style="gap:24px">
     ${secHead('Roadmap','Stitched in four passes.')}
-    <ol class="flowline">${road.map(([w,t,d],i) => `<li><div class="flowdot"><span class="chip ${i===0?'c-ok':i===1?'c-wait':'c-neu'}">${w}</span></div><strong>${t}</strong><span class="small muted">${d}</span></li>`).join('')}</ol>
+    <ol class="flowline">${road.map(([w,t,d],i) => `<li><div class="flowdot"><span class="chip ${i<2?'c-ok':i===2?'c-wait':'c-neu'}">${w}</span></div><strong>${t}</strong><span class="small muted">${d}</span></li>`).join('')}</ol>
   </div></section>
 
   <section class="section" data-pose="wave" data-say="That’s me in the brand sheet. Say hello!"><div class="wrap stack" style="gap:20px">
@@ -480,9 +480,9 @@ function siteOpen(){
 }
 
 function sitePricing(){
-  const plans = [['house','Self-host','Free','Run it on your own server. Community support.',['All features','Docker or bench install','Community forum']],
-    ['onephone','Hosted Starter','[₹ — / year]','One programme, pooled SMS and WhatsApp.',['Hosted in India','Up to 3 field devices','Email support']],
-    ['many','Hosted Programme','[₹ — / year]','Several programmes and your own SMS account.',['Unlimited consents','Connectors included','Onboarding + DLT setup']],
+  const plans = [['house','Self-host','Free','Run it on your own server. Community support.',['All features','Frappe bench install','GitHub issues']],
+    ['onephone','Hosted Starter','[₹ — / year]','One programme, pooled SMS.',['Hosted in India','Up to 3 field devices','Email support']],
+    ['many','Hosted Programme','[₹ — / year]','Several programmes and your own SMS account.',['Unlimited consents','API access','Onboarding + DLT setup']],
     ['building','Dedicated','[₹ — / year]','Your own instance with an SLA.',['Dedicated tenant','99.5% uptime','Named support']]];
   return `
   <section class="section pattern" data-pose="talk" data-say="No meter running per consent. Promise."><div class="wrap stack" style="gap:24px">
@@ -491,11 +491,11 @@ function sitePricing(){
       <div class="card price ${i===2?'stitch-box':''}" style="${i===2?'background:var(--raised)':''}">
         ${icon64(ico)}<strong>${n}</strong><div class="amt">${a}</div><span class="small muted">${d}</span>
         <div class="stack small" style="gap:6px">${f.map(x => `<div class="row" style="gap:8px">${ic('check',16)}${x}</div>`).join('')}</div>
-        <button class="btn ${i===2?'pri':''}" data-a="site" data-p="demo">${i===0?'Read install guide':'Talk to us'}</button>
+        <button class="btn ${i===2?'pri':''}" ${i===0?'data-a="lens" data-k="code"':'data-a="site" data-p="demo"'}>${i===0?'See the code':'Talk to us'}</button>
       </div>`).join('')}</div>
   </div></section>
   <section class="section" style="background:var(--surface)" data-pose="envelope" data-say="SMS and calls are passed through at cost. I just carry them."><div class="wrap grid g3" style="gap:16px">
-    ${[['featurephone','Messaging at cost','SMS, WhatsApp and IVR minutes on pooled accounts are billed at cost. Bring your own account if you prefer.'],['lang','Language pack included','All hosted plans use the shared, reviewed 22-language pack.'],['guardian','Grant-supported onboarding','Grants can cover onboarding for smaller NGOs. Ask us.']].map(([i,t,d]) => `<div class="stack" style="gap:6px">${icon64(i)}<strong>${t}</strong><span class="small muted">${d}</span></div>`).join('')}
+    ${[['featurephone','Messaging at cost','SMS on pooled accounts is billed at cost (about ₹0.2 per message). Bring your own MSG91 account if you prefer.'],['lang','Languages included','Hindi and English now, with natural-voice audio. More reviewed languages as they are added.'],['guardian','Grant-supported onboarding','Grants can cover onboarding for smaller NGOs. Ask us.']].map(([i,t,d]) => `<div class="stack" style="gap:6px">${icon64(i)}<strong>${t}</strong><span class="small muted">${d}</span></div>`).join('')}
   </div></section>`;
 }
 
@@ -534,7 +534,13 @@ function render(){
   document.title = S.site.page === 'home' ? 'Anumati · Consent that works where the internet doesn’t' : `${PAGE_TITLES[S.site.page]} · Anumati`;
   setupIO(); storyInit();
 }
-const lensUrl = k => (k === 'con' && SITE.consoleUrl) ? SITE.consoleUrl : `${SITE.prototypeUrl}#${k}`;
+const LINKS = {
+  guide: 'guide/',
+  qa: 'guide/qa-test-cases.html',
+  code: 'https://github.com/sunandan89/anumati',
+  api: 'https://github.com/sunandan89/anumati/blob/main/docs/api.md'
+};
+const lensUrl = k => k === 'con' ? SITE.consoleUrl : k === 'proto' ? SITE.prototypeUrl : LINKS[k];
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-a]'); if (!el) return;
   if (el.dataset.a === 'site'){
