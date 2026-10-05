@@ -37,6 +37,19 @@ class TestFieldAppMVP(FrappeTestCase):
 		later = principal.for_device(demo.PROGRAMME, since=out["until"])
 		self.assertNotIn(ref, [p["principal_ref"] for p in later["people"]], "paging by since")
 
+	def test_people_for_the_phone_carry_the_guardian_number(self):
+		ref = f"MVP-{uuid.uuid4().hex[:6]}"
+		self.grant(ref)
+		mother = frappe.get_doc({"doctype": "Data Principal", "principal_ref": f"MVP-G-{uuid.uuid4().hex[:6]}",
+		                         "full_name": "Radha S. (fictional)", "phone": "5550001234"}).insert()
+		child = frappe.db.get_value("Data Principal", {"principal_ref": ref})
+		frappe.get_doc({"doctype": "Guardian Link", "principal": child, "guardian": mother.name,
+		                "guardian_type": "parent", "relation": "Mother", "verification_method": "device_sms_otp"}).insert()
+		out = principal.for_device(demo.PROGRAMME)
+		person = next(p for p in out["people"] if p["principal_ref"] == ref)
+		self.assertEqual(person["guardian_phone"], "5550001234")
+		self.assertEqual(person["guardian_relation"], "Mother")
+
 	def test_people_for_the_phone_need_permission(self):
 		frappe.set_user("Guest")
 		try:

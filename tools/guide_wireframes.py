@@ -118,8 +118,8 @@ SCREENS = {
 <div class="card"><div class="row">3 records on this phone<span class="st">Sync</span></div><div class="muted">Sync when you have data</div></div>
 <div class="muted">Programme</div><div class="card" style="flex-direction:row;justify-content:space-between"><span>Village Health Camps</span><span style="color:#B4532A;font-size:13px">Change</span></div>
 <div class="tile"><span class="ic">+</span><div><div class="t">Take new consent</div><div class="d">Self, assisted or guardian</div></div></div>
-<div class="tile"><span class="ic">×</span><div><div class="t">Log withdrawal or request</div><div class="d">Told in person, slip or letter</div></div></div>
-<div class="tile"><span class="ic">↺</span><div><div class="t">Ask for one more purpose</div><div class="d">Existing beneficiary, new use</div></div></div>
+<div class="tile"><span class="ic">×</span><div><div class="t">Stop a use or leave</div><div class="d">In person, slip or letter</div></div></div>
+<div class="tile"><span class="ic">↺</span><div><div class="t">Add a use or rejoin</div><div class="d">A new use, a change of mind, or rejoining</div></div></div>
 <div class="tile"><span class="ic">⌕</span><div><div class="t">Find beneficiary</div><div class="d">See consent status offline</div></div></div>
 </div>""",
     "a1-who": bar("Who is giving consent?", "Step 1 of 3") + f"""<div class="body">{who("self")}
@@ -230,16 +230,32 @@ SCREENS = {
 <div class="h">Gender (optional)</div><div class="chips"><span class="chip on">Female</span><span class="chip">Male</span><span class="chip">Other</span><span class="chip">Prefer not to say</span></div>
 <div class="h">Occupation (optional)</div><div class="chips"><span class="chip">Farming or farm labour</span><span class="chip on">Daily wage work</span><span class="chip">Homemaker</span><span class="chip">Self-employed</span><span class="chip">Other</span></div>
 <div class="note">These are listed in the notice under “What we collect”. Reports show only totals, never one person's answers.</div></div>""" + foot("Continue"),
-    "f1-withdraw": bar("Log what they asked for", "Withdrawal or request") + """<div class="body">
-<div class="muted">How did it reach you?</div><div class="seg" style="align-self:flex-start"><span class="on">In person</span><span>Paper slip</span><span>Letter</span></div>
-<div class="field"><span>Consent code, name or ID</span><b>AN-7K2Q9C</b></div>
-<div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-4XK2M9PQ · AN-7K2Q9C · Found on this phone</div></div>
-<div class="muted">What do they want?</div>
-<div class="opt on"><span class="dot"></span>Stop all optional uses</div>
-<div class="opt"><span class="dot"></span>Stop only: Follow-up calls</div>
-<div class="opt"><span class="dot"></span>Delete my data</div>
-<div class="opt"><span class="dot"></span>See or correct my data</div>
-<div class="opt"><span class="dot"></span>Complaint</div></div>""" + foot("Save"),
+    "f1-withdraw": bar("Stop a use or leave", "Withdrawal or request") + """<div class="body">
+<div class="field"><span>Receipt code, name, ID or phone</span><b>AN-7K2Q9C</b></div>
+<div class="card" style="border-color:#B4532A"><b>Sunita Devi (sample)</b><div class="muted">AC-4XK2M9PQ · AN-7K2Q9C</div></div>
+<div class="row" style="font-weight:400"><span class="muted">Switch off what they no longer agree to</span><span class="link">Stop all</span></div>
+<div class="p"><div><div class="t">Follow-up calls</div><div class="d" style="color:#9E2F24">Will stop</div></div><span class="sw"></span></div>
+<div class="p"><div><div class="t">Photos and stories</div><div class="d">On</div></div><span class="sw on"></span></div>
+<div class="p req"><div><div class="t">🔒 Health screening</div><div class="d">Needed for the programme. To stop it, they leave the programme.</div></div></div>
+<div class="out" style="color:#9E2F24;border-color:#9E2F24">⎋ Leave the programme</div>
+<div class="muted">Other requests: See or correct my data · Delete my data · Complaint</div>
+<div class="check"><span class="box on"></span><div>They gave a paper slip or letter</div></div>
+<div class="field"><span>Paper slip number (optional)</span><b>SLIP-0042</b></div></div>""" + foot("Stop 1 use for Sunita Devi (sample)"),
+    "f2-leave": bar("Stop a use or leave", "Withdrawal or request") + """<div class="body" style="opacity:.35">
+<div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-4XK2M9PQ · AN-7K2Q9C</div></div>
+<div class="p"><div><div class="t">Follow-up calls</div></div><span class="sw on"></span></div></div>
+<div style="position:absolute;left:24px;right:24px;top:230px;background:#FFFDF8;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,.25)">
+<div style="font-size:19px;font-weight:600">Leave the programme?</div>
+<div style="font-size:14px">This stops every use of their data in this programme, essential ones too. The programme stops serving them. Do they still want this?</div>
+<div class="row" style="justify-content:flex-end"><span class="link" style="text-decoration:none">Cancel</span><span class="cta" style="padding:9px 16px;font-size:14px">Yes, leave</span></div></div>""",
+    "f3-noted": bar("Stop a use or leave", "Withdrawal or request") + """<div class="body" style="opacity:.35">
+<div class="card"><b>Sunita Devi (sample)</b></div></div>
+<div style="position:absolute;left:24px;right:24px;top:230px;background:#FFFDF8;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,.25)">
+<div style="font-size:19px;font-weight:600">Withdrawal noted</div>
+<div style="font-size:14px">Stopped: Follow-up calls</div>
+<div class="muted">Withdrawal code — write it on their slip</div><div class="code" style="font-size:24px">AN-W5K7RD</div>
+<div class="muted">It takes effect on this phone now and reaches the office on sync.</div>
+<div class="row" style="justify-content:flex-end"><span class="link" style="text-decoration:none">Send by SMS</span><span class="cta" style="padding:9px 16px;font-size:14px">OK</span></div></div>""",
 }
 
 

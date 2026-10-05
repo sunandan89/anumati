@@ -29,18 +29,47 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 	return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
 
 
+@frappe.whitelist(methods=["GET"])
+def withdrawable(request):
+	"""The uses currently on for the request's person, by programme, for the console's Record withdrawal
+	checklist: [{programme, programme_name, code, title, essential}]. Titles and codes only, no personal data."""
+	doc = frappe.get_doc("Rights Request", request)
+	doc.check_permission("read")
+	if not doc.matched_principal:
+		return []
+	rows = frappe.get_all("Consent State", {"principal": doc.matched_principal, "status": "granted"},
+	                      ["programme", "purpose"], order_by="programme, purpose")
+	purposes = {p.name: p for p in frappe.get_all(
+		"Purpose", {"name": ("in", [r.purpose for r in rows] or ["-"])}, ["name", "code", "purpose_title", "essential"])}
+	names = dict(frappe.get_all("Programme", {"name": ("in", list({r.programme for r in rows}) or ["-"])},
+	                            ["name", "programme_name"], as_list=True))
+	return [
+		{"programme": r.programme, "programme_name": names.get(r.programme) or r.programme,
+		 "code": purposes[r.purpose].code, "title": purposes[r.purpose].purpose_title,
+		 "essential": purposes[r.purpose].essential}
+		for r in rows if r.purpose in purposes
+	]
+
+
 @frappe.whitelist(methods=["POST"])
-def fulfil_withdrawal(request, programme, purposes=None):
+def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
 	"""Carry out a withdrawal request: record the signed withdrawal event and close the request.
-	Idempotent: the event UUID is derived from the request."""
+	Idempotent: the event UUID is derived from the request. `leave_programme` withdraws every granted
+	purpose, essential ones included (see consent.withdraw_for)."""
 	doc = frappe.get_doc("Rights Request", request)
 	doc.check_permission("write")
 	if doc.request_type != "withdrawal":
 		frappe.throw(_("Only withdrawal requests can be fulfilled this way"))
 	if not doc.matched_principal:
 		frappe.throw(_("Match the request to a principal first"))
+	purposes = frappe.parse_json(purposes) if isinstance(purposes, str) else purposes
+	if purposes and not frappe.utils.cint(leave_programme) and frappe.get_all(
+			"Purpose", {"programme": programme, "code": ("in", purposes), "essential": 1}, limit=1):
+		# As in the field app: an essential use stops only when the person leaves the programme.
+		frappe.throw(_("An essential use stops only when the person leaves the programme. Tick Leave the programme."))
 	artefact = consent.withdraw_for(
-		doc.matched_principal, programme, doc.channel, f"rq-{frappe.scrub(doc.name)}-{programme}", purposes
+		doc.matched_principal, programme, doc.channel, f"rq-{frappe.scrub(doc.name)}-{programme}", purposes,
+		leave=frappe.utils.cint(leave_programme),
 	)
 	doc.linked_event = artefact["consent_id"]
 	doc.status = "Closed"

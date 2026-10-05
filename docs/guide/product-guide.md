@@ -71,9 +71,9 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | Extra questions | "About the person" screen, only when the programme switches questions on |
 | Receipt code | A code like `AN-7K2Q9C` to write on the slip; optional SMS receipt from the worker's phone |
 | Server-sent code | After Save, online: the server texts a code to the person's phone; the worker never sees it |
-| **Log withdrawal or request** | In person, paper slip or letter: stop all optional uses, stop one use, see or correct data, delete data, complaint |
-| **Ask for one more purpose** | A later visit: only the new use is asked; past choices are not asked again |
-| **Find beneficiary** | Offline search by name, ID or receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone); shows each use's status; tapping a person opens the withdrawal screen |
+| **Stop a use or leave** | In person, or with a paper slip or letter: switch off any of the uses that are on (or Stop all / Keep all), **leave the programme**, or log a request (see or correct data, delete data, complaint) |
+| **Add a use or rejoin** | A later visit: a new use, a use they withdrew or refused (**Ask again**), or rejoining after leaving; uses already agreed are not asked again |
+| **Find beneficiary** | Offline search by name, ID, receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone) or **phone number**: their own, or their parent's or guardian's, so one family phone finds the parent and the children. Each result says whose number matched; shows each use's status; tapping a person opens the withdrawal screen |
 | Offline first | Everything is saved on the phone (encrypted) and syncs when online; no duplicates even if sync is cut off |
 | App lock and lost phone | The app locks after 5 minutes away or on restart; 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
 
@@ -91,7 +91,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stored encrypted; the list shows names and masked phones, and every view is logged); consent history per person; guardians; "Turned 18: renew consent" list |
 | **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
 | **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log, audit log |
-| **Requests inbox** | Every withdrawal or rights request with a due date (30 days by default; overdue shown in red in the list), a board view, **Record withdrawal** (pick the programme, optionally the uses); staff are notified of new requests and 3 days before the due date |
+| **Requests inbox** | Every withdrawal or rights request with a due date (30 days by default; overdue shown in red in the list), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme); staff are notified of new requests and 3 days before the due date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
 | **Access logs** | Every view of a name, phone or evidence file is logged |
@@ -240,9 +240,9 @@ No internet, or the programme set to "Worker's phone": the Confirm screen asks f
 
 ### Extra questions and withdrawal
 
-| About the person | Log withdrawal or request |
-| --- | --- |
-| <img src="wireframes/e1-about.png" width="200" alt="Extra questions after the choices"> | <img src="wireframes/f1-withdraw.png" width="200" alt="How it arrived, find the person, what they want"> |
+| About the person | Stop a use or leave | Leave the programme | Withdrawal noted |
+| --- | --- | --- | --- |
+| <img src="wireframes/e1-about.png" width="200" alt="Extra questions after the choices"> | <img src="wireframes/f1-withdraw.png" width="200" alt="Find the person, switch off uses, leave, or other requests"> | <img src="wireframes/f2-leave.png" width="200" alt="Confirm leaving the programme"> | <img src="wireframes/f3-noted.png" width="200" alt="What was stopped, with Send by SMS"> |
 
 ## After consent
 
@@ -271,28 +271,37 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 
 | How it arrives | Phase 1 | What happens |
 | --- | --- | --- |
-| Told to a field worker | Yes | "Log withdrawal or request" on the phone; a withdrawal takes effect on the phone at once, and after sync it is signed and listed in the inbox as a closed request |
+| Told to a field worker | Yes | "Stop a use or leave" on the phone; a withdrawal takes effect on the phone at once, and after sync it is signed and listed in the inbox as a closed request |
 | Paper slip or letter | Yes | Same screen, with the slip number, which is kept on the inbox request |
 | SMS `STOP` / `STOP <code>` / `STOP <n>` | Built; needs an inbound number | Withdraws all optional uses, that consent, or use number n; ambiguous ones go to the inbox. `DATA` opens an access request; anything else a complaint |
 | Missed call | Built; needs a missed-call number | Opens a withdrawal request in the inbox |
-| Staff in the web console | Yes | "Record withdrawal" on the request (choose the programme): one signed withdrawal, request closed |
+| Staff in the web console | Yes | "Record withdrawal" on the request: tick the optional uses to stop (all ticked to start), or Leave the programme (the only way to stop an essential use, as in the app); one signed withdrawal, request closed |
 
 #### Withdrawal in the field app
 
 ```mermaid
 flowchart TD
-  A["Log withdrawal or request<br/>In person / Paper slip / Letter"] --> F["Search: name, ID or receipt code"]
+  A["Stop a use or leave<br/>(tick: paper slip or letter)"] --> F["Search: name, ID, receipt code<br/>or phone (own or guardian's)"]
   F -- "Found on the phone" --> W{"What do they want?"}
   F -- "Not on the phone" --> R["Saved as a request with the code<br/>→ inbox; the code finds the person"]
-  W -- "Stop all optional uses /<br/>Stop only one use" --> L["Uses switch off on the phone at once"]
+  W -- "Switch off one or more uses<br/>(or Stop all)" --> L["Save: Stop N uses for the person"]
+  W -- "Leave the programme" --> LV["Confirm: services stop<br/>→ every use, essential too"]
   W -- "See or correct / Delete /<br/>Complaint" --> Q["Request → inbox, due in 30 days"]
-  L -- "sync" --> S["Signed withdrawal on the server:<br/>consent check says no;<br/>closed request in the inbox<br/>with the slip number"]
+  L --> N["Withdrawal noted:<br/>what stopped, withdrawal code,<br/>Send by SMS"]
+  LV --> N
+  N -- "sync" --> S["Signed withdrawal on the server:<br/>consent check says no;<br/>closed request in the inbox<br/>with the slip number"]
   S --> M["SMS withdrawal confirmation<br/>(once SMS is set up)"]
 ```
 
-- Essential uses can't be stopped this way; the person asks to **delete** their data instead, and staff handle it.
-- If no optional use is on, there is nothing to stop and Save stays off.
+- **Essential and optional uses.** An essential use is the core service the person enrols for (for example Health screening); optional uses are extras such as follow-up calls, photos and stories, or research. Optional uses are switches. An essential use is shown locked: to stop it, the person **leaves the programme**.
+- **Leaving the programme** (DPDP Act s.6(4): any consent can be withdrawn) stops every use of the programme, essential ones too and those already off (so an older "yes" synced later from another phone can't turn one back on), after the worker confirms with them that the programme will stop serving them. Once nothing is on in any programme, the person's record is marked **Relationship ended**, which starts the retention clock; erasing at the end of it is Phase 2 (staff erase by hand until then). While leaving is chosen, every use shows "Will stop" and the switches are greyed; **Don't leave** undoes it. Rejoining later is done with **Add a use or rejoin**, which also clears Relationship ended (only when the rejoin is newer than the leaving; an older consent synced late changes nothing).
+- **Delete my data** is separate: the office keeps only what the law needs, erases the rest and closes the request.
+- The Save button names what will happen ("Stop 2 uses for Radha"), and **Withdrawal noted** lists what stopped with a **withdrawal code** to write on their slip, and **Send by SMS** from the worker's phone with the same code. For a child or an adult with a guardian the SMS goes to the guardian's number.
+- The "paper slip or letter" box is at the bottom, just above Save.
+- In **Find beneficiary**, tapping a person offers **Stop a use or leave** or **Add a use or rejoin**.
+- If nothing is on, there is nothing to stop; other requests can still be logged.
 - The phone knows everyone in the programme it has downloaded, so a slip enrolled on another phone is still found by its receipt code (the person's latest one).
+- **By phone number:** type the number (with or without +91, or just its last 4 or more digits). It finds the person whose number it is and every child or guarded adult whose parent or guardian has that number; each result says "Their number" or "Guardian's number (Mother)". The guardian's number is kept on the phone, encrypted, like the person's own.
 
 #### Requests in the inbox
 
@@ -306,9 +315,35 @@ flowchart LR
   C -- "access / correction / erasure /<br/>complaint" --> M["Staff act and close<br/>(automation: Phase 2)"]
 ```
 
+### Journeys, step by step
+
+Each picture shows the screens in order, left to right, with what the worker or office does at each step. People, codes and numbers are fictional.
+
+**1. Stop some uses** (in person, found by the family phone number)
+
+<img src="wireframes/j1-stop-some-uses.png" width="100%" alt="Home, search by phone, switch off a use, Withdrawal noted with code">
+
+**2. Leave the programme**
+
+<img src="wireframes/j2-leave-programme.png" width="100%" alt="Leave the programme, warning, every use Will stop, Withdrawal noted">
+
+**3. A slip from someone not on this phone** (through to the office)
+
+<img src="wireframes/j3-slip-not-on-phone.png" width="100%" alt="Code not on this phone, saved request, office matched by code, Record withdrawal checklist">
+
+**4. Other requests** (delete, see or correct, complaint)
+
+<img src="wireframes/j4-other-requests.png" width="100%" alt="Delete my data, office inbox, resolution and close">
+
+**5. Add a use or rejoin** (a new use, a change of mind, rejoining)
+
+<img src="wireframes/j5-add-use-or-rejoin.png" width="100%" alt="Find choice, case 1 new use, case 2 ask again, case 3 rejoin first, new receipt code">
+
+The pictures are made by `tools/guide_journeys.py`; redraw them when these screens change.
+
 ### Add a use later
 
-When a programme adds a new use, the worker opens **Ask for one more purpose**, picks the person, reads only the new part of the notice, and records Yes or No. Past decisions are shown and not asked again. With a phone, the code follows the same routes (server code after Save, or the worker's phone plus voice); with no phone, the voice "haan" is the proof; a witness is asked if the person needs help reading. A child, or anyone who consented through a guardian, needs a new consent with the guardian instead.
+When a programme adds a new use, the worker opens **Add a use or rejoin**, picks the person, reads only the new part of the notice, and records Yes or No. Uses already agreed are shown and not asked again. A use they withdrew or refused can be asked again (**Ask again**), and someone who left the programme can **rejoin** it. When rejoining, the other uses can be answered only after Yes to rejoining; if they say No, nothing else applies and there is nothing to save. With two or more uses, **Yes to all** and **No to all** (equal weight) work once every part has been read to them. With a phone, the code follows the same routes (server code after Save, or the worker's phone plus voice); with no phone, the voice "haan" is the proof; a witness is asked if the person needs help reading. A child, or anyone who consented through a guardian, needs a new consent with the guardian instead.
 
 ## Web console journeys
 
@@ -338,7 +373,7 @@ Rules the console enforces:
 
 1. Open **Today** (Needs attention lists overdue requests), the **Requests** list (overdue in red) or the **Requests board**.
 2. Open a request. If no person is set, fill **Beneficiary**; for SMS or missed calls from a shared number, **Who is this for?** offers the people on that number.
-3. Withdrawal: **Record withdrawal**. Other types: act, write the resolution, close.
+3. Withdrawal: **Record withdrawal**, tick the optional uses to stop (all ticked to start) or tick **Leave the programme**. Essential uses aren't on the checklist: they stop only when the person leaves. Other types: act, write the resolution, close.
 
 Withdrawals done on a field phone arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 
@@ -395,7 +430,7 @@ Green: built. Yellow: partly built. Grey: later phases.
 | Verify | **Built** | Server SMS code; worker's phone + voice; confirm later; evidence only. Missed-call verification: **Phase 2** |
 | Receipt | **Built** | Receipt code for the slip; SMS receipt where SMS is set up |
 | Log a withdrawal | **Built** | Also access, correction, erasure, complaint requests |
-| Ask for one more purpose | **Built** | |
+| Ask for one more purpose ("Add a use or rejoin") | **Built** | Also asks again about withdrawn or refused uses, and rejoining |
 | Renew consent at 18 | **Phase 2** | The server already flags who turned 18 |
 
 ### NGO console

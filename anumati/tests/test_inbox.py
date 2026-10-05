@@ -5,7 +5,7 @@ import uuid
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import add_days, getdate
+from frappe.utils import add_days, getdate, now_datetime
 
 from anumati import inbox, pii
 from anumati.api.v1 import consent, rights
@@ -22,11 +22,19 @@ class TestInbox(FrappeTestCase):
 		make_purpose(PROG, "screen", "Health screening", essential=1)
 		make_purpose(PROG, "follow", "Follow-up calls")
 
-	def grant(self, principal):
+	def grant(self, principal, at="2026-09-20 11:20:00", granted=("screen", "follow"), denied=()):
 		return consent.record({
 			"event_uuid": str(uuid.uuid4()), "principal_ref": principal.principal_ref, "programme": PROG,
-			"purposes_granted": ["screen", "follow"], "channel": "app", "device_time": "2026-09-20 11:20:00",
+			"purposes_granted": list(granted), "purposes_denied": list(denied), "channel": "app", "device_time": at,
 		})
+
+	def leave(self, principal):
+		return consent.withdraw(principal_ref=principal.principal_ref, programme=PROG, channel="field_worker",
+		                        event_uuid=str(uuid.uuid4()), leave_programme=1, device_time="2026-09-30 10:00:00")
+
+	@staticmethod
+	def later():
+		return str(add_days(now_datetime(), 1))
 
 	def test_sla_clock_starts_at_receipt(self):
 		out = rights.submit("access", "slip", paper_trail_number="PT-0001")
@@ -94,6 +102,71 @@ class TestInbox(FrappeTestCase):
 		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "matched_principal"), p.name)
 		unknown = rights.submit("erasure", "slip", consent_code="AN-ZZZZZZ")
 		self.assertFalse(frappe.db.get_value("Rights Request", unknown["request"], "matched_principal"))
+
+	def test_leaving_the_programme_withdraws_essential_uses_and_ends_the_relationship(self):
+		p = make_principal()
+		self.grant(p)
+		art = consent.withdraw(principal_ref=p.principal_ref, programme=PROG, channel="field_worker",
+		                       event_uuid=str(uuid.uuid4()), leave_programme=1)
+		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "withdrawn")
+		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
+		self.assertTrue(frappe.db.get_value("Data Principal", p.name, "relationship_ended_on"))
+		req = frappe.db.get_value("Rights Request", {"linked_event": art["consent_id"]}, ["status", "resolution"],
+		                          as_dict=True)
+		self.assertEqual(req.status, "Closed")
+		self.assertIn("Left the programme", req.resolution)
+		# Rejoining (an essential use granted again, after leaving) makes the relationship live again.
+		self.grant(p, at=self.later())
+		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
+		self.assertFalse(frappe.db.get_value("Data Principal", p.name, "relationship_ended_on"))
+
+	def test_an_older_grant_synced_after_leaving_changes_nothing(self):
+		# Phone B took a consent before she left; phone A recorded her leaving and synced first.
+		p = make_principal()
+		self.grant(p, granted=("screen",), denied=("follow",))
+		self.leave(p)
+		self.grant(p, at="2026-09-25 09:00:00")  # older than leaving, synced later
+		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "withdrawn")
+		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn",
+		                 "a use that was off when she left stays off")
+		self.assertTrue(frappe.db.get_value("Data Principal", p.name, "relationship_ended_on"),
+		                "the relationship stays ended")
+
+	def test_plain_withdrawal_keeps_essential_uses_and_the_relationship(self):
+		p = make_principal()
+		self.grant(p)
+		consent.withdraw(principal_ref=p.principal_ref, programme=PROG, channel="field_worker",
+		                 event_uuid=str(uuid.uuid4()))
+		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
+		self.assertFalse(frappe.db.get_value("Data Principal", p.name, "relationship_ended_on"))
+
+	def test_office_can_record_leaving_the_programme(self):
+		p = make_principal()
+		self.grant(p)
+		req = frappe.get_doc({"doctype": "Rights Request", "request_type": "withdrawal", "channel": "slip",
+		                      "matched_principal": p.name}).insert()
+		rights.fulfil_withdrawal(req.name, PROG, leave_programme=1)
+		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "withdrawn")
+		self.assertTrue(frappe.db.get_value("Data Principal", p.name, "relationship_ended_on"))
+
+	def test_office_cannot_stop_an_essential_use_without_leaving(self):
+		p = make_principal()
+		self.grant(p)
+		req = frappe.get_doc({"doctype": "Rights Request", "request_type": "withdrawal", "channel": "slip",
+		                      "matched_principal": p.name}).insert()
+		self.assertRaises(frappe.ValidationError, rights.fulfil_withdrawal, req.name, PROG, ["screen"])
+		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
+
+	def test_console_checklist_lists_the_uses_that_are_on(self):
+		p = make_principal()
+		self.grant(p)
+		req = frappe.get_doc({"doctype": "Rights Request", "request_type": "withdrawal", "channel": "slip",
+		                      "matched_principal": p.name}).insert()
+		uses = {u["code"]: u for u in rights.withdrawable(req.name)}
+		self.assertEqual(set(uses), {"screen", "follow"})
+		self.assertTrue(uses["screen"]["essential"])
+		self.assertFalse(uses["follow"]["essential"])
+		self.assertEqual(uses["follow"]["programme"], PROG)
 
 	def test_receipt_code_resolves_to_principal(self):
 		p = make_principal()
