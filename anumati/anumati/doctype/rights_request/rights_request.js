@@ -19,7 +19,8 @@ frappe.ui.form.on("Rights Request", {
 	},
 });
 
-// Record withdrawal: tick the uses to stop (all optional ones are ticked to start), or leave the programme.
+// Record withdrawal: tick the optional uses to stop (all ticked to start), or leave the programme. Essential
+// uses are not on the list: as in the field app, they stop only when the person leaves.
 function record_withdrawal(frm) {
 	frappe.call({
 		method: "anumati.api.v1.rights.withdrawable",
@@ -39,15 +40,23 @@ function record_withdrawal(frm) {
 				  hidden: programmes.length === 1 ? 1 : 0 },
 			];
 			programmes.forEach((p, i) => {
-				fields.push({
-					fieldname: `uses_${i}`, fieldtype: "MultiCheck", columns: 1,
-					label: __("Uses to stop in {0}", [label(p)]),
-					depends_on: `eval:doc.programme==${JSON.stringify(p)} && !doc.leave_programme`,
-					options: uses.filter((u) => u.programme === p).map((u) => ({
-						label: u.essential ? __("{0} (essential)", [u.title]) : u.title,
-						value: u.code, checked: !u.essential,
-					})),
-				});
+				const optional = uses.filter((u) => u.programme === p && !u.essential);
+				const essential = uses.filter((u) => u.programme === p && u.essential).map((u) => u.title);
+				const when = `eval:doc.programme==${JSON.stringify(p)} && !doc.leave_programme`;
+				if (optional.length) {
+					fields.push({
+						fieldname: `uses_${i}`, fieldtype: "MultiCheck", columns: 1, depends_on: when,
+						label: __("Uses to stop in {0}", [label(p)]),
+						options: optional.map((u) => ({ label: u.title, value: u.code, checked: 1 })),
+					});
+				}
+				if (essential.length) {
+					fields.push({
+						fieldname: `essential_${i}`, fieldtype: "HTML", depends_on: when,
+						options: `<p class="text-muted small">${__("Essential, stops only if they leave the programme: {0}",
+							[frappe.utils.escape_html(essential.join(", "))])}</p>`,
+					});
+				}
 			});
 			fields.push(
 				{ fieldname: "leave_programme", fieldtype: "Check", label: __("Leave the programme"),
@@ -61,7 +70,7 @@ function record_withdrawal(frm) {
 					const i = programmes.indexOf(values.programme);
 					const picked = values[`uses_${i}`] || [];
 					if (!values.leave_programme && !picked.length) {
-						frappe.msgprint(__("Tick at least one use to stop, or Leave the programme."));
+						frappe.msgprint(__("Tick at least one optional use to stop, or Leave the programme."));
 						return;
 					}
 					frappe.call({

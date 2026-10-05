@@ -62,6 +62,11 @@ def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
 		frappe.throw(_("Only withdrawal requests can be fulfilled this way"))
 	if not doc.matched_principal:
 		frappe.throw(_("Match the request to a principal first"))
+	purposes = frappe.parse_json(purposes) if isinstance(purposes, str) else purposes
+	if purposes and not frappe.utils.cint(leave_programme) and frappe.get_all(
+			"Purpose", {"programme": programme, "code": ("in", purposes), "essential": 1}, limit=1):
+		# As in the field app: an essential use stops only when the person leaves the programme.
+		frappe.throw(_("An essential use stops only when the person leaves the programme. Tick Leave the programme."))
 	artefact = consent.withdraw_for(
 		doc.matched_principal, programme, doc.channel, f"rq-{frappe.scrub(doc.name)}-{programme}", purposes,
 		leave=frappe.utils.cint(leave_programme),

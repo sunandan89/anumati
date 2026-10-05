@@ -275,7 +275,7 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 | Paper slip or letter | Yes | Same screen, with the slip number, which is kept on the inbox request |
 | SMS `STOP` / `STOP <code>` / `STOP <n>` | Built; needs an inbound number | Withdraws all optional uses, that consent, or use number n; ambiguous ones go to the inbox. `DATA` opens an access request; anything else a complaint |
 | Missed call | Built; needs a missed-call number | Opens a withdrawal request in the inbox |
-| Staff in the web console | Yes | "Record withdrawal" on the request: tick the uses to stop (optional ones ticked to start), or Leave the programme; one signed withdrawal, request closed |
+| Staff in the web console | Yes | "Record withdrawal" on the request: tick the optional uses to stop (all ticked to start), or Leave the programme (the only way to stop an essential use, as in the app); one signed withdrawal, request closed |
 
 #### Withdrawal in the field app
 
@@ -294,7 +294,7 @@ flowchart TD
 ```
 
 - **Essential and optional uses.** An essential use is the core service the person enrols for (for example Health screening); optional uses are extras such as follow-up calls, photos and stories, or research. Optional uses are switches. An essential use is shown locked: to stop it, the person **leaves the programme**.
-- **Leaving the programme** (DPDP Act s.6(4): any consent can be withdrawn) stops every use, essential ones too, after the worker confirms with them that the programme will stop serving them. Once nothing is on in any programme, the person's record is marked **Relationship ended**, which starts the retention clock; erasing at the end of it is Phase 2 (staff erase by hand until then). While leaving is chosen, every use shows "Will stop" and the switches are greyed; **Don't leave** undoes it. Rejoining later is done with **Add a use or rejoin**, which also clears Relationship ended.
+- **Leaving the programme** (DPDP Act s.6(4): any consent can be withdrawn) stops every use of the programme, essential ones too and those already off (so an older "yes" synced later from another phone can't turn one back on), after the worker confirms with them that the programme will stop serving them. Once nothing is on in any programme, the person's record is marked **Relationship ended**, which starts the retention clock; erasing at the end of it is Phase 2 (staff erase by hand until then). While leaving is chosen, every use shows "Will stop" and the switches are greyed; **Don't leave** undoes it. Rejoining later is done with **Add a use or rejoin**, which also clears Relationship ended (only when the rejoin is newer than the leaving; an older consent synced late changes nothing).
 - **Delete my data** is separate: the office keeps only what the law needs, erases the rest and closes the request.
 - The Save button names what will happen ("Stop 2 uses for Radha"), and **Withdrawal noted** lists what stopped with a **withdrawal code** to write on their slip, and **Send by SMS** from the worker's phone with the same code. For a child or an adult with a guardian the SMS goes to the guardian's number.
 - The "paper slip or letter" box is at the bottom, just above Save.
@@ -314,6 +314,32 @@ flowchart LR
   C -- "withdrawal" --> W["Record withdrawal<br/>(signed) → closed"]
   C -- "access / correction / erasure /<br/>complaint" --> M["Staff act and close<br/>(automation: Phase 2)"]
 ```
+
+### Journeys, step by step
+
+Each picture shows the screens in order, left to right, with what the worker or office does at each step. People, codes and numbers are fictional.
+
+**1. Stop some uses** (in person, found by the family phone number)
+
+<img src="wireframes/j1-stop-some-uses.png" width="100%" alt="Home, search by phone, switch off a use, Withdrawal noted with code">
+
+**2. Leave the programme**
+
+<img src="wireframes/j2-leave-programme.png" width="100%" alt="Leave the programme, warning, every use Will stop, Withdrawal noted">
+
+**3. A slip from someone not on this phone** (through to the office)
+
+<img src="wireframes/j3-slip-not-on-phone.png" width="100%" alt="Code not on this phone, saved request, office matched by code, Record withdrawal checklist">
+
+**4. Other requests** (delete, see or correct, complaint)
+
+<img src="wireframes/j4-other-requests.png" width="100%" alt="Delete my data, office inbox, resolution and close">
+
+**5. Add a use or rejoin** (a new use, a change of mind, rejoining)
+
+<img src="wireframes/j5-add-use-or-rejoin.png" width="100%" alt="Find choice, case 1 new use, case 2 ask again, case 3 rejoin first, new receipt code">
+
+The pictures are made by `tools/guide_journeys.py`; redraw them when these screens change.
 
 ### Add a use later
 
@@ -347,7 +373,7 @@ Rules the console enforces:
 
 1. Open **Today** (Needs attention lists overdue requests), the **Requests** list (overdue in red) or the **Requests board**.
 2. Open a request. If no person is set, fill **Beneficiary**; for SMS or missed calls from a shared number, **Who is this for?** offers the people on that number.
-3. Withdrawal: **Record withdrawal**, tick the uses to stop (optional ones are ticked to start; essential ones are marked) or tick **Leave the programme**. Other types: act, write the resolution, close.
+3. Withdrawal: **Record withdrawal**, tick the optional uses to stop (all ticked to start) or tick **Leave the programme**. Essential uses aren't on the checklist: they stop only when the person leaves. Other types: act, write the resolution, close.
 
 Withdrawals done on a field phone arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 

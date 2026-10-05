@@ -147,9 +147,8 @@ def record(event):
 		 "purposes_granted": granted, "purposes_denied": denied, "verification_status": status,
 		 "captured_by": frappe.session.user}
 	)
-	if granted and frappe.db.get_value("Data Principal", principal, "relationship_ended_on") and frappe.get_all(
-			"Purpose", {"name": ("in", [enforcement.purpose_name(programme, c) for c in granted]), "essential": 1},
-			limit=1):
+	if granted and frappe.db.get_value("Data Principal", principal, "relationship_ended_on") and _rejoined(
+			principal, programme, granted):
 		# They rejoined a programme: the relationship is live again.
 		frappe.db.set_value("Data Principal", principal, "relationship_ended_on", None)
 		frappe.get_doc("Data Principal", principal).add_comment(
@@ -161,6 +160,19 @@ def record(event):
 		frappe.clear_document_cache("Data Principal", principal)
 		enforcement.invalidate(principal)
 	return out
+
+
+def _rejoined(principal, programme, granted) -> bool:
+	"""An essential purpose of this event is granted now. An older grant that arrives after they left is
+	ignored by enforcement (a newer decision wins), so it must not end "Relationship ended" either."""
+	essential = frappe.get_all(
+		"Purpose", {"name": ("in", [enforcement.purpose_name(programme, c) for c in granted]), "essential": 1},
+		pluck="name")
+	if not essential:
+		return False
+	enforcement.invalidate(principal)
+	states = enforcement.states_for(principal)
+	return any(states.get(name, {}).get("status") == "granted" for name in essential)
 
 
 GUARDIAN_FOR_ADULT = ("legal_guardian", "court", "committee", "family_pwd")
@@ -253,13 +265,16 @@ def withdraw_for(principal, programme, channel, event_uuid, purposes=None, leave
 		return existing
 	programme = _programme(programme)
 	purposes = json.loads(purposes) if isinstance(purposes, str) else purposes
-	if not purposes:
+	if not purposes and leave:
+		# Every purpose of the programme, not only those granted now: each gets a withdrawn state at this
+		# time, so an older "yes" synced later from another phone cannot turn one back on.
+		purposes = frappe.get_all("Purpose", {"programme": programme}, pluck="code", order_by="code")
+	elif not purposes:
 		states = enforcement.states_for(principal)
 		prefix = f"{programme}-"
 		purposes = [
 			p[len(prefix):] for p, s in states.items()
-			if p.startswith(prefix) and s["status"] == "granted"
-			and (leave or not frappe.db.get_value("Purpose", p, "essential"))
+			if p.startswith(prefix) and s["status"] == "granted" and not frappe.db.get_value("Purpose", p, "essential")
 		]
 	_check_purposes(programme, principal, [], list(purposes))
 	values = {k: extra.get(k) for k in CAPTURE_FIELDS if extra.get(k) not in (None, "")}
