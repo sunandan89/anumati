@@ -53,6 +53,7 @@ class TestBreachNotification(FrappeTestCase):
 
 	def setUp(self):
 		self.device = f"{DEVICE}-{uuid.uuid4().hex[:6]}"
+		frappe.get_doc({"doctype": "Field Device", "device_id": self.device, "status": "lost"}).insert()
 		self.hindi = make_principal(full_name="Sunita D. (fictional)", phone="5550101001", preferred_language="hi")
 		self.english = make_principal(full_name="Asha K. (fictional)", phone="5550101002", preferred_language="en")
 		self.nophone = make_principal(full_name="Gauri P. (fictional)", preferred_language="hi", no_phone=1)
