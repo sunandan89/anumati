@@ -225,6 +225,14 @@ def _programme(spec) -> str:
 	return notice
 
 
+BREACH_NOTICE = {
+	"en": "{{ org }}: an incident affected your data: {{ what_happened }}. We have secured it. You can: {{ can_do }}. "
+	      "Help: {{ helpline }}. Ref {{ code }}",
+	"hi": "{{ org }}: आपकी जानकारी से जुड़ी एक घटना हुई: {{ what_happened }}। हमने इसे सुरक्षित किया है। आप: {{ can_do }}। "
+	      "मदद: {{ helpline }}। कोड {{ code }}",
+}
+
+
 def _sms_setup():
 	"""Server-sent codes through Dhwani's MSG91 account: the approved OTP template, and the messaging
 	account once `msg91_auth_key` is in the site config (set in the Frappe Cloud dashboard, never in the
@@ -235,6 +243,13 @@ def _sms_setup():
 			"body": "Your OTP is ##OTP## . Keep it confidential. -Dhwani RIS", "approved": 1,
 			"dlt_template_id": DHWANI_OTP_TEMPLATE, "send_via": "SendOTP",
 		}).insert(ignore_permissions=True)
+	# Breach notices: drafts for the preview. Not approved until the MSG91 account owner registers the text for DLT
+	# and enters its template ID, so nothing can be sent before then.
+	for lang, body in BREACH_NOTICE.items():
+		if frappe.db.exists("Language", lang) and not frappe.db.exists(
+				"Message Template", {"template_event": "breach_notice", "channel": "sms", "language": lang}):
+			frappe.get_doc({"doctype": "Message Template", "template_event": "breach_notice", "channel": "sms",
+			                "language": lang, "body": body, "approved": 0}).insert(ignore_permissions=True)
 	if frappe.conf.get("msg91_auth_key") and not frappe.db.exists("Channel Provider", {"provider_type": "SMS"}):
 		frappe.get_doc({
 			"doctype": "Channel Provider", "provider_name": "MSG91 (Dhwani)", "provider_type": "SMS",

@@ -214,6 +214,7 @@ Yes to all,सब के लिए हाँ
 access,डेटा देखने का अनुरोध
 active,चालू
 aditya,आदित्य
+affected_uses,प्रभावित उपयोगों वाले लोग
 allow,अनुमति है
 amit,अमित
 anonymise,पहचान हटाएँ
@@ -273,6 +274,7 @@ heard in full,पूरी सुनी
 hidden for people without a phone,"जिनके पास फ़ोन नहीं, उनसे नहीं पूछा जाता"
 hold_for_review,समीक्षा के लिए रोकें
 hosted_page,वेब पेज
+id_list,आईडी की सूची
 in_person,आमने-सामने
 insert,बनाया
 ivr,फ़ोन (IVR)
@@ -287,6 +289,7 @@ legitimate_use,वैध उपयोग
 logged_out,साइन आउट
 lost,खो गया
 lost_device,फ़ोन खोया या चोरी
+lost_phone,जिनका डेटा खोए फ़ोन पर था
 majority_transfer,18 साल पूरे
 manual,हाथ से शुरू
 material_notice_change,सूचना बदली
@@ -295,6 +298,7 @@ missed_call,मिस्ड कॉल
 months,महीने
 neha,नेहा
 neighbour,पड़ोसी
+no_phone,फ़ोन नहीं
 no_processing,उनका डेटा इस्तेमाल बंद
 nomination,नामांकन
 not_asked,पूछा नहीं गया
@@ -340,6 +344,9 @@ sibling,भाई/बहन
 simran,सिमरन
 slip,पर्ची
 sms,SMS
+sms_delivered,SMS पहुँचा
+sms_failed,SMS नहीं पहुँचा
+sms_sent,SMS भेजा
 spouse,पति/पत्नी
 student,विद्यार्थी
 submit,जमा किया
@@ -357,6 +364,7 @@ validity_expiry,सहमति समाप्त होने वाली
 waiting for confirmation,पुष्टि बाकी
 web,वेबसाइट
 whatsapp,व्हाट्सऐप
+whole_programme,कार्यक्रम के सभी लोग
 wipe_queued,मिटाना बाकी
 wiped,मिटा दिया
 withdraw,सहमति वापस ली

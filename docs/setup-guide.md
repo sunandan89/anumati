@@ -117,6 +117,7 @@ Nothing is sent until all four pieces exist: an MSG91 account, DLT-approved temp
    - Withdrawal confirmation: `Withdrawn: {#var#} ({#var#}).`
    - OTP: `Your code is {#var#}.`
    - Deferred confirmation: `You consented on {#var#} to {#var#}. Reply STOP to withdraw.`
+   - Breach notice (Hindi and English; needed before Anumati can tell people about a breach by SMS): `{#var#}: an incident affected your data: {#var#}. We have secured it. You can: {#var#}. Help: {#var#}. Ref {#var#}`
 4. In MSG91, create a **Flow** for each approved DLT template and note each flow's **template ID**.
 5. In MSG91 → **API**, copy your **Auth Key**. You'll type it straight into Anumati in E2. Never paste it in chat or email.
 
@@ -133,7 +134,7 @@ For each message and language: search bar → **Message Template** → **+ Add**
 - **Event**: `receipt`, `withdrawal_confirmation`, `otp` or `deferred_confirmation`.
 - **Channel** `sms`, **Language** (e.g. `hi`).
 - **DLT template ID**: the MSG91 **flow template ID** from E1 step 4.
-- **Body**: the same text, with these placeholders: `{{ code }}` (receipt code), `{{ programme }}`, `{{ purposes }}`, `{{ date }}`, `{{ otp }}`. They go to MSG91 in this order as var1…var5.
+- **Body**: the same text, with these placeholders: `{{ code }}` (receipt code), `{{ programme }}`, `{{ purposes }}`, `{{ date }}`, `{{ otp }}`. They go to MSG91 in this order as var1…var5. The breach notice (event `breach_notice`) also uses `{{ org }}`, `{{ what_happened }}`, `{{ can_do }}` and `{{ helpline }}` (var6…var9). The demo data adds unapproved breach-notice texts to copy.
 - Tick **Approved** only once DLT has approved the template. Unapproved templates are never sent.
 
 ### E4. Inbound SMS and missed calls (in MSG91)
@@ -222,6 +223,7 @@ Useful places:
 - **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
 - **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.
 - **A breach**: the form shows the hours left of the 72-hour deadline. Click **Board told now** when you have told the Board.
+- **Telling people about a breach** (DPO): the incident's **Tell affected people** tab. Put your mobile in **My Settings** to get a test SMS, and set **Helpline for beneficiaries** in Anumati Settings so the notice gives a number to call.
 
 ### Hindi Desk
 Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **Language** = **Hindi** → **Save**, then reload. Menu sections, record names, dropdown values, statuses, chart labels and the main buttons and messages appear in Hindi. Some field labels on forms stay in English for now. The Hindi labels are a first draft in `tools/gen_labels.py`: have a Hindi-speaking colleague read them before the pilot and send corrections.

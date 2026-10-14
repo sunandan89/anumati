@@ -141,6 +141,10 @@ def delivery_report(provider=None, token=None, request_id=None, status=None, **k
 	if not comm:
 		return {"outcome": "unknown"}
 	delivered = str(status or "").lower() in ("1", "delivered", "success", "delivrd")
+	failed = str(status or "").lower() in ("2", "failed", "undelivered", "rejected", "expired", "16", "9")
+	if delivered or failed:
+		# Counted on the Breach Incident (and any other message) as delivered or failed.
+		frappe.db.set_value("Communication", comm, "anumati_delivery", "sms_delivered" if delivered else "sms_failed")
 	for att in frappe.get_all("Verification Attempt", {"response": comm, "result": "pending"}, ["name", "consent_event"]):
 		if delivered:
 			frappe.db.set_value("Verification Attempt", att.name, {"result": "confirmed", "delivered_at": now_datetime()})

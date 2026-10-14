@@ -27,7 +27,30 @@
   "board_intimated_on",
   "board_report_on",
   "dpb_report",
-  "closed_on"
+  "closed_on",
+  "notify_tab",
+  "audience_section",
+  "notify_audience",
+  "notify_ids",
+  "c3",
+  "notify_counts",
+  "message_section",
+  "what_happened_en",
+  "can_do_en",
+  "c4",
+  "what_happened_hi",
+  "can_do_hi",
+  "preview_section",
+  "notify_preview",
+  "results_section",
+  "notify_sent_on",
+  "notify_sent_by",
+  "notify_sent",
+  "c5",
+  "notify_delivered",
+  "notify_failed",
+  "visit_section",
+  "visit_list"
  ],
  "fields": [
   {
@@ -150,11 +173,144 @@
    "fieldname": "closed_on",
    "fieldtype": "Datetime",
    "label": "Closed"
+  },
+  {
+   "fieldname": "notify_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tell affected people"
+  },
+  {
+   "fieldname": "audience_section",
+   "fieldtype": "Section Break",
+   "label": "Who was affected"
+  },
+  {
+   "description": "People whose data was on the lost phone, everyone in the programme, people with the affected uses, or a list of IDs",
+   "fieldname": "notify_audience",
+   "fieldtype": "Select",
+   "label": "Who to tell",
+   "options": "\nlost_phone\nwhole_programme\naffected_uses\nid_list"
+  },
+  {
+   "depends_on": "eval:doc.notify_audience=='id_list'",
+   "fieldname": "notify_ids",
+   "fieldtype": "Small Text",
+   "label": "Beneficiary IDs (one per line)"
+  },
+  {
+   "fieldname": "c3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notify_counts",
+   "fieldtype": "HTML",
+   "label": "Who will be told"
+  },
+  {
+   "description": "The words around these blanks are the approved breach notice (Message Template). Say only what you know; the Board report has the detail.",
+   "fieldname": "message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "fieldname": "what_happened_en",
+   "fieldtype": "Data",
+   "label": "What happened (English)",
+   "length": 30
+  },
+  {
+   "fieldname": "can_do_en",
+   "fieldtype": "Data",
+   "label": "What you can do (English)",
+   "length": 30
+  },
+  {
+   "fieldname": "c4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "what_happened_hi",
+   "fieldtype": "Data",
+   "label": "What happened (Hindi)",
+   "length": 30
+  },
+  {
+   "fieldname": "can_do_hi",
+   "fieldtype": "Data",
+   "label": "What you can do (Hindi)",
+   "length": 30
+  },
+  {
+   "fieldname": "preview_section",
+   "fieldtype": "Section Break",
+   "label": "Preview"
+  },
+  {
+   "fieldname": "notify_preview",
+   "fieldtype": "HTML",
+   "label": "Preview"
+  },
+  {
+   "fieldname": "results_section",
+   "fieldtype": "Section Break",
+   "label": "Results"
+  },
+  {
+   "fieldname": "notify_sent_on",
+   "fieldtype": "Datetime",
+   "label": "Sent on",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "notify_sent_by",
+   "fieldtype": "Link",
+   "label": "Sent by",
+   "no_copy": 1,
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notify_sent",
+   "fieldtype": "Int",
+   "label": "Sent by SMS",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "c5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notify_delivered",
+   "fieldtype": "Int",
+   "label": "Delivered",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "notify_failed",
+   "fieldtype": "Int",
+   "label": "Failed",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "People without a phone, and anyone whose SMS failed. IDs only: field workers find each person in the app by ID.",
+   "fieldname": "visit_section",
+   "fieldtype": "Section Break",
+   "label": "Field visit list"
+  },
+  {
+   "fieldname": "visit_list",
+   "fieldtype": "Table",
+   "label": "Field visit list",
+   "options": "Breach Visit"
   }
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-04 10:00:00.000000",
+ "modified": "2026-10-14 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Breach Incident",

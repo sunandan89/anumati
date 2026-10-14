@@ -180,6 +180,13 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-18 | Turned 18 | Open a sample child → set year of birth so they are now 18 or older → Save | "Turned 18: renew consent" is ticked and the person appears under that shortcut; `consent.check` answers `renewal_due` | P2 |
 | WC-19 | Chain check | Anumati Settings → Chain verification (after the nightly job), or ask a developer to call `chain.verify` | Chain reported intact | P1 |
 | WC-20 | Record withdrawal: leave the programme | As WC-15, tick **Leave the programme** → Withdraw | Every use, essential too, withdrawn; the person's record shows Relationship ended | P1 |
+| WC-21 | Breach: who to tell | Report a field phone lost (Field Device → Report lost) → open the new Breach Incident → **Tell affected people** tab | Who to tell is "People whose data was on the lost phone"; counts show total, by SMS (own · guardian's), no phone, and languages; no names or numbers anywhere on the tab. Change Who to tell: counts update without saving | P0 |
+| WC-22 | Breach: preview | Fill What happened and What you can do in Hindi and English | The preview shows the full SMS per language with the organisation, helpline and a sample code, its SMS parts, and the cost in the confirm dialog | P1 |
+| WC-23 | Breach: sending off | No approved `breach_notice` Message Template (the demo ones are unapproved) | Yellow note "Sending SMS is off…"; no Send buttons; **Print notice for visits** still works | P0 |
+| WC-24 | Breach: only the DPO sends | Log in as Admin or Programme Manager and open the incident | No **Send** buttons; the counts and preview still show | P0 |
+| WC-25 | Breach: send (needs SMS account and approved templates) | As DPO: **Send a test to my phone** → then **Send to affected people…**, type a wrong number, then the right one | Test SMS reaches your profile mobile; the wrong number is refused; the right one sends in the background; the form reloads with "Breach notice sent…", Principals notified on filled, status Notifying; the button is gone (sends once). Communications are linked to the incident with no phone number | P1 |
+| WC-26 | Breach: field visit list | After sending, with a person without a phone in the audience | They are on the field visit list by ID and language. **Download field visit list** gives a CSV; tick **Told in person** → Told on fills with today | P1 |
+| WC-27 | Breach: results and retry | After delivery reports arrive (or with one failed SMS) | Delivered / waiting / failed counts on the blue note; **Retry failed** sends again and takes the person off the visit list if it goes through | P2 |
 
 ## 9. SMS channels (need an SMS account and inbound number)
 

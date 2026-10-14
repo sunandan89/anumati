@@ -90,7 +90,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Today** dashboard | Consent records in the last 30 days, confirmed uses, evidence-only uses, records waiting to sync on phones, withdrawals, open requests, "Needs attention" list (overdue requests, chain check) |
 | **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stored encrypted; the list shows names and masked phones, and every view is logged); consent history per person; guardians; "Turned 18: renew consent" list |
 | **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
-| **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log, audit log |
+| **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log with the 72-hour steps and **Tell affected people** (SMS breach notice in each person's language, field visit list for the rest), audit log |
 | **Requests inbox** | Every withdrawal or rights request with a due date (30 days by default; overdue shown in red in the list), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme); staff are notified of new requests and 3 days before the due date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
@@ -377,6 +377,34 @@ Rules the console enforces:
 
 Withdrawals done on a field phone arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 
+### Tell people affected by a breach
+
+Open the **Breach Incident** → **Tell affected people** tab. Only the DPO sends.
+
+1. **Who to tell**: people whose data was on the lost phone (the default for a lost phone), everyone in the programme, people with the affected uses, or a list of beneficiary IDs. People who withdrew or left are included: telling them is a legal duty, not a use of their data.
+2. The tab shows counts only, never names or numbers: how many by SMS (own phone or the guardian's, for a child or a guarded adult), how many have no phone, and the languages.
+3. **The message**: fill the two short blanks in Hindi and English ("What happened", "What you can do"). The preview shows the full SMS each language gets, its SMS parts and the cost. The organisation name, the helpline (Anumati Settings, else "tell any field worker") and each person's own latest receipt code are filled in.
+4. **Tell affected people → Send a test to my phone** (to the mobile in your user profile), then **Send to affected people…**, type the number of people to confirm, and send. It sends in the background and can be sent once.
+5. **Results**: sent, delivered, waiting and failed, from MSG91's delivery reports. **Retry failed** sends again to anyone whose SMS failed.
+6. **Field visit list**: everyone without a phone, or whose SMS failed, by beneficiary ID. **Download field visit list** (CSV) and **Print notice for visits**; field workers read the notice out and tick **Told in person**.
+7. The 72-hour steps fill themselves: **Principals notified on**, the count sent, and the status moves to **Notifying**.
+
+Sending stays off, with a yellow note, until there is an SMS account and an approved breach-notice template (event `breach_notice`) for each language. Until then, use the field visit list and the printed notice.
+
+```mermaid
+flowchart LR
+  A[Breach Incident] --> B[Who to tell]
+  B --> C[Counts and preview]
+  C --> D{Approved template<br/>and SMS account?}
+  D -- no --> V[Field visit list<br/>and printed notice]
+  D -- yes --> T[Test to my phone]
+  T --> S[Send, type the count]
+  S --> R[Results: delivered,<br/>waiting, failed]
+  R -- failed --> F[Retry failed]
+  S -- no phone or failed --> V
+  V --> K[Told in person ticked]
+```
+
 ### Reports and audit
 
 - Analytics charts update from live data.
@@ -470,7 +498,7 @@ Green: built. Yellow: partly built. Grey: later phases.
 | Audit & governance › Retention policies | **Record only** | Policies can be recorded; automatic purge is **Phase 2** |
 | Audit & governance › Processors | **Record only** | Partner routing of withdrawals and erasures is **Phase 2** |
 | Audit & governance › Records of processing + DPIA | **Built** | DPO sign-off unblocks publishing |
-| Audit & governance › Breach (72-hour steps) | **Partly** | Incident record with each step's date and "Board told now"; messaging affected people and the Board report are **Phase 3** |
+| Audit & governance › Breach (72-hour steps) | **Partly** | Incident record with each step's date and "Board told now"; **Tell affected people** by SMS with a field visit list (built). The Board report and WhatsApp/voice notices are **Phase 3** |
 | Audit & governance › Access log | **Built** | |
 | Auditor share link | **Record only** | The share can be recorded; the portal it opens is **Phase 3** |
 | Settings › Organisation, Team & roles | **Built** | Anumati Settings; Frappe users and roles |
@@ -556,7 +584,7 @@ flowchart LR
 
 | Feature | What it adds |
 | --- | --- |
-| **Breach notification** | Work out who is affected, message each person in their language, prepare the Data Protection Board report, warn staff as the 72-hour deadline nears |
+| **Breach notification** | Prepare the Data Protection Board report; WhatsApp and voice notices. (Telling affected people by SMS, the field visit list and the 72-hour countdown are built) |
 | **22 Indian languages** | Shared language pack with reviewed translations and audio |
 | **Audit pack and evidence certificate** | Exportable PDF + JSON + chain proof; legal evidence certificate (BSA s.63) |
 | **CommCare connector and web widget** | Consent inside CommCare apps and websites |
@@ -572,6 +600,7 @@ flowchart LR
 | Real user accounts; remove the demo password | Admin | Before the pilot |
 | MSG91 receipt templates (6 texts drafted) | MSG91 account owner | Optional |
 | Inbound number for SMS STOP and missed calls | Admin | Optional |
+| DLT-approved breach-notice template (Hindi and English) and a helpline in Anumati Settings | MSG91 account owner, DPO | Before a breach notice can be sent by SMS |
 | Hindi review by a native speaker | Programme team | Later |
 
 ## Glossary
