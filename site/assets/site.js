@@ -300,7 +300,7 @@ function renderSite(){
       ${wordmark(34)}
       <div class="links">${SITE_PAGES.map(([k,l]) => `<button class="${S.site.page===k?'on':''}" data-a="site" data-p="${k}">${l}</button>`).join('')}</div>
       <span class="spacer"></span>
-      <div class="row navcta" style="gap:8px"><button class="btn sm" data-a="lens" data-k="guide">Product guide</button>${SITE.consoleUrl ? `<button class="btn sm pri" data-a="lens" data-k="con">Sign in</button>` : ''}</div>
+      <div class="row navcta" style="gap:8px"><button class="btn sm themebtn" data-a="theme" aria-label="${isDark() ? 'Switch to light mode' : 'Switch to dark mode'}" title="${isDark() ? 'Light mode' : 'Dark mode'}">${isDark() ? '☀' : '☾'}</button><button class="btn sm" data-a="lens" data-k="guide">Product guide</button>${SITE.consoleUrl ? `<button class="btn sm pri" data-a="lens" data-k="con">Sign in</button>` : ''}</div>
     </nav>
     <hr class="stitch">
     <div class="story">
@@ -540,6 +540,13 @@ const LINKS = {
   code: 'https://github.com/sunandan89/anumati',
   api: 'https://github.com/sunandan89/anumati/blob/main/docs/api.md'
 };
+/* Light by default; the ☀/☾ button switches, and the choice is remembered on this device only. */
+const isDark = () => document.documentElement.dataset.theme === 'dark';
+function setTheme(dark){
+  if (dark) document.documentElement.dataset.theme = 'dark'; else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem('anumati-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  render();
+}
 const lensUrl = k => k === 'con' ? SITE.consoleUrl : k === 'proto' ? SITE.prototypeUrl : LINKS[k];
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-a]'); if (!el) return;
@@ -547,6 +554,8 @@ document.addEventListener('click', e => {
     e.preventDefault();
     if (pageFromHash() === el.dataset.p) render(); else location.hash = el.dataset.p;
     window.scrollTo(0, 0);
+  } else if (el.dataset.a === 'theme'){
+    e.preventDefault(); setTheme(!isDark());
   } else if (el.dataset.a === 'lens'){
     e.preventDefault(); location.href = lensUrl(el.dataset.k);
   }
