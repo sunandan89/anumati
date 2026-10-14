@@ -14,7 +14,8 @@ import requests
 
 API = "https://control.msg91.com/api/v5/flow"
 OTP_API = "https://control.msg91.com/api/v5/otp"
-VARS = ("code", "programme", "purposes", "date", "otp")
+# Flow variables, in var1..varN order. New ones go at the end so existing templates keep their numbering.
+VARS = ("code", "programme", "purposes", "date", "otp", "org", "what_happened", "can_do", "helpline")
 OTP_EXPIRY_MINUTES = 10
 
 

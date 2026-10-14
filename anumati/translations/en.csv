@@ -37,6 +37,7 @@ Withdrawn (30 Days),Withdrawn (30 days)
 access,Data access
 active,Active
 aditya,Aditya
+affected_uses,People with the affected uses
 allow,Allowed
 amit,Amit
 anonymise,Anonymise
@@ -89,6 +90,7 @@ guardian_pwd,"Guardian, for a person with disability"
 hard_purge,Delete completely
 hold_for_review,Hold for review
 hosted_page,Web page
+id_list,A list of IDs
 in_person,In person
 insert,Created
 ivr,Phone (IVR)
@@ -103,6 +105,7 @@ legitimate_use,Legitimate use
 logged_out,Signed out
 lost,Lost
 lost_device,Lost or stolen phone
+lost_phone,People whose data was on the lost phone
 majority_transfer,Turning 18
 manual,Started by hand
 material_notice_change,Notice changed
@@ -111,6 +114,7 @@ missed_call,Missed call
 months,Months
 neha,Neha
 neighbour,Neighbour
+no_phone,No phone
 no_processing,Stop using their data
 nomination,Nomination
 not_asked,Not asked
@@ -154,6 +158,9 @@ sibling,Brother or sister
 simran,Simran
 slip,Paper slip
 sms,SMS
+sms_delivered,SMS delivered
+sms_failed,SMS failed
+sms_sent,SMS sent
 spouse,Spouse
 student,Student
 submit,Submitted
@@ -169,6 +176,7 @@ ussd,USSD
 validity_expiry,Consent about to expire
 web,Website
 whatsapp,WhatsApp
+whole_programme,Everyone in the programme
 wipe_queued,Wipe queued
 wiped,Wiped
 withdraw,Withdrew

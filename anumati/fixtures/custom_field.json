@@ -79,6 +79,19 @@
  },
  {
   "doctype": "Custom Field",
+  "name": "Communication-anumati_delivery",
+  "dt": "Communication",
+  "fieldname": "anumati_delivery",
+  "fieldtype": "Select",
+  "label": "SMS delivery",
+  "insert_after": "anumati_consent_event",
+  "module": "Anumati",
+  "options": "\nsms_sent\nsms_delivered\nsms_failed",
+  "read_only": 1,
+  "description": "From the provider's delivery report. Used to count breach notices delivered and failed."
+ },
+ {
+  "doctype": "Custom Field",
   "name": "Translation-anumati_audio",
   "dt": "Translation",
   "fieldname": "anumati_audio",

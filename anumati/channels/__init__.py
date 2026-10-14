@@ -81,8 +81,11 @@ def send_sms(principal: str, event: str, context: dict, reference=None) -> str |
 
 
 def log(provider, direction, body, phone_hash, template=None, status=None, message_id=None, reference=None,
-        channel="sms"):
-	"""A stock Communication with the Anumati custom fields; phone_no is deliberately left empty."""
+        channel="sms", link=None, delivery=None):
+	"""A stock Communication with the Anumati custom fields; phone_no is deliberately left empty. `link` is a
+	(doctype, name) the message is about when it isn't a Consent Event (e.g. a Breach Incident)."""
+	is_event = bool(reference and frappe.db.exists("Consent Event", reference))
+	ref_doctype, ref_name = ("Consent Event", reference) if is_event else (link or (None, None))
 	comm = frappe.get_doc({
 		"doctype": "Communication",
 		"communication_type": "Communication",
@@ -97,9 +100,10 @@ def log(provider, direction, body, phone_hash, template=None, status=None, messa
 		"anumati_sender_hash": phone_hash,
 		"anumati_provider": provider.name if provider else None,
 		"anumati_message_template": template,
-		"anumati_consent_event": reference if reference and frappe.db.exists("Consent Event", reference) else None,
-		"reference_doctype": "Consent Event" if reference and frappe.db.exists("Consent Event", reference) else None,
-		"reference_name": reference if reference and frappe.db.exists("Consent Event", reference) else None,
+		"anumati_consent_event": reference if is_event else None,
+		"anumati_delivery": delivery,
+		"reference_doctype": ref_doctype,
+		"reference_name": ref_name,
 	})
 	comm.flags.ignore_permissions = True
 	comm.insert()

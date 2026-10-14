@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-10-04 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-14 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -114,6 +114,14 @@ child("Notice Processor", [
 ])
 child("Processor Purpose", [F("purpose", "Link", "Purpose", "Purpose", reqd=True, in_list_view=True)])
 child("Breach Purpose", [F("purpose", "Link", "Purpose", "Purpose", reqd=True, in_list_view=True)])
+child("Breach Visit", [
+    F("principal_ref", "Data", "Beneficiary ID", read_only=True, in_list_view=True, columns=3),
+    F("principal", "Link", "Beneficiary", "Data Principal", read_only=True, hidden=True),
+    F("language", "Data", "Language", read_only=True, in_list_view=True, columns=2),
+    F("reason", "Select", "Why", sel("no_phone", "sms_failed"), read_only=True, in_list_view=True, columns=2),
+    F("told", "Check", "Told in person", in_list_view=True, columns=1),
+    F("told_on", "Date", "Told on", in_list_view=True, columns=2),
+])
 child("Campaign Channel", [F("channel", "Select", "Channel", sel("sms", "whatsapp", "ivr", "email", "field_visit"), reqd=True, in_list_view=True)])
 child("Channel Provider Template", [F("message_template", "Link", "Message template", "Message Template", reqd=True, in_list_view=True)])
 child("Audit Share Programme", [F("programme", "Link", "Programme", "Programme", reqd=True, in_list_view=True)])
@@ -155,6 +163,8 @@ doctype("Anumati Settings", [
     F("dpo_name", "Data", "DPO name"),
     F("dpo_email", "Data", "DPO email", "Email"),
     F("dpo_phone", "Data", "DPO phone", "Phone"),
+    F("helpline", "Data", "Helpline for beneficiaries", "Phone",
+      description="Put in breach notices and other messages to beneficiaries. Empty: they are told to ask any field worker."),
     F("default_languages", "Table MultiSelect", "Default languages", "Language Row"),
     F("rights_sla_days", "Int", "Rights request SLA (days)", default="30",
       description="Default response time for rights requests, pending counsel"),
@@ -662,6 +672,32 @@ doctype("Breach Incident", [
     F("board_report_on", "Datetime", "Detailed Board report"),
     F("dpb_report", "Attach", "Board report file"),
     F("closed_on", "Datetime", "Closed"),
+    tab("notify_tab", "Tell affected people"),
+    sec("audience_section", "Who was affected"),
+    F("notify_audience", "Select", "Who to tell", sel("", "lost_phone", "whole_programme", "affected_uses", "id_list"),
+      description="People whose data was on the lost phone, everyone in the programme, people with the affected uses, or a list of IDs"),
+    F("notify_ids", "Small Text", "Beneficiary IDs (one per line)", depends_on="eval:doc.notify_audience=='id_list'"),
+    col("c3"),
+    F("notify_counts", "HTML", "Who will be told"),
+    sec("message_section", "Message",
+        description="The words around these blanks are the approved breach notice (Message Template). Say only what you know; the Board report has the detail."),
+    F("what_happened_en", "Data", "What happened (English)", length=30),
+    F("can_do_en", "Data", "What you can do (English)", length=30),
+    col("c4"),
+    F("what_happened_hi", "Data", "What happened (Hindi)", length=30),
+    F("can_do_hi", "Data", "What you can do (Hindi)", length=30),
+    sec("preview_section", "Preview"),
+    F("notify_preview", "HTML", "Preview"),
+    sec("results_section", "Results"),
+    F("notify_sent_on", "Datetime", "Sent on", **RO),
+    F("notify_sent_by", "Link", "Sent by", "User", **RO),
+    F("notify_sent", "Int", "Sent by SMS", **RO),
+    col("c5"),
+    F("notify_delivered", "Int", "Delivered", **RO),
+    F("notify_failed", "Int", "Failed", **RO),
+    sec("visit_section", "Field visit list",
+        description="People without a phone, and anyone whose SMS failed. IDs only: field workers find each person in the app by ID."),
+    F("visit_list", "Table", "Field visit list", "Breach Visit"),
 ], {ADM: "F", DPO: "F", SM: "F"}, autoname="format:BR-{###}", track_changes=1)
 
 doctype("Audit Entry", [
