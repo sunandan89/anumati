@@ -25,7 +25,6 @@ PAGE = """<!doctype html>
 <title>{title}</title>
 <style>
 :root {{ --ground:#F3EADB; --surface:#FFFDF8; --ink:#2A2118; --ink2:#5C4F40; --line:#E9DCC6; --terra:#B4532A; --leaf:#3E6B3A; }}
-@media (prefers-color-scheme: dark) {{ :root {{ --ground:#1E1A15; --surface:#28231C; --ink:#F3EADB; --ink2:#CDBFAA; --line:#3D352B; --terra:#E08A5C; --leaf:#8DBA86; }} }}
 * {{ box-sizing: border-box; }}
 body {{ margin:0; background:var(--ground); color:var(--ink); font:16px/1.6 "Noto Sans", system-ui, sans-serif; }}
 nav {{ background:var(--leaf); color:#F4F8EF; padding:12px 16px; display:flex; gap:16px; flex-wrap:wrap; font-size:14px; }}
@@ -50,7 +49,7 @@ footer {{ color:var(--ink2); font-size:13px; padding:24px 16px; text-align:cente
 </main>
 <footer>Built from <a href="{source}">docs/guide/{name}</a> on every merge to main.</footer>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({{ startOnLoad: true, theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "neutral" }});</script>
+<script>mermaid.initialize({{ startOnLoad: true, theme: "neutral" }});</script>
 </body>
 </html>
 """
