@@ -10,138 +10,170 @@ Two separate things, for the person and for staff:
 | Law (our reading; confirm with counsel) | DPDP Act s.6(4) withdrawal, s.11 access, s.12 correction and erasure, s.14 nomination | DPDP Act s.8(10) and s.13: a way to complain, answered within the published period; the Board only after this |
 | DocType | **Rights Request** (exists; narrowed) | **Grievance** (new) |
 | Numbers | `RQ-00031` | `GR-00012` |
-| Reply time | 30 days (Anumati Settings) | 30 days, DPO at day 15 (Anumati Settings) |
-| After the reply | Closed | Person can say **Not satisfied** once; then the Board route |
+| Reply by | 30 days | 30 days; the DPO takes over at day 15 |
+| After the answer | Closed | The person says whether it solved it; if not, back to the DPO once, then the Board route |
 
-Screens: self-service [sign in](img/p1-sign-in.png), [choices](img/p2-choices.png), [leave and history](img/p3-leave-history.png), [rights and grievance forms](img/g1-ask.png), [tracking](img/g2-track.png); staff [workspace](img/s0-workspace.png), [rights list](img/s1-rights.png), [grievance list](img/s1-grievances.png), [grievance form](img/s2-grievance.png), [register](img/s3-register.png).
+Screens: self-service [sign in](img/p1-sign-in.png), [choices](img/p2-choices.png), [leave and history](img/p3-leave-history.png), [rights and grievance forms](img/g1-ask.png), [conversation and answer](img/g2-track.png); staff [Grievances page](img/s0-workspace.png), [rights list](img/s1-rights.png), [grievance list](img/s1-grievances.png), [grievance form](img/s2-grievance.png), [register](img/s3-register.png).
+
+---
+
+## 0. Plain words
+
+The same words for the person and for staff. No "upheld", "escalated", "SLA" or "unmatched" on any screen.
+
+**Status** (both DocTypes)
+
+| Stored value | Shown as | Hindi | Meaning |
+| --- | --- | --- | --- |
+| `new` | New | नया | Just arrived |
+| `who_is_this` | Who is this? *(staff only)* | यह कौन है? | Came from a phone shared by several people, or a code we can't find |
+| `looking` | Being looked at | देखा जा रहा है | Someone is working on it |
+| `waiting_partners` | Waiting for partners *(rights only)* | साझेदारों का इंतज़ार | Partners must confirm (e.g. deletion) |
+| `answered` | Answered | जवाब दिया | We replied |
+| `closed` | Closed | बंद | Done |
+| `cannot_do` | Can't do this *(rights only)* | नहीं हो सकता | Refused, with the reason in the answer (e.g. the law requires us to keep it) |
+
+**Flags shown next to the status** (not statuses): **DPO** (the DPO has it), **Not happy** (the person said the answer didn't solve it), **Late** (past the reply-by date).
+
+**What did we find?** (grievance, chosen by staff when answering; the person sees the sentence)
+
+| Stored value | Staff sees | Person sees |
+| --- | --- | --- |
+| `fixed` | We fixed it | We fixed it. |
+| `partly_fixed` | We fixed part of it | We fixed part of it. |
+| `nothing_wrong` | Nothing was wrong | We checked and found nothing wrong. |
+
+**The person's answer:** "Yes, this solves it" / "No, I'm not happy with this".
 
 ---
 
 ## 1. Rights Request (existing DocType, changed)
 
-**Change:** `grievance` leaves the Type list; grievances move to their own DocType. Adds a reply the person can read.
+**Changes:** `grievance` leaves the Type list (grievances get their own DocType); statuses become the plain words above; the person and staff talk in one conversation.
 
 ### Fields
 
 | # | Label | Fieldname | Type | Options / notes | Screen |
 | --- | --- | --- | --- | --- | --- |
 | | **Tab: Request** | | | | |
-| 1 | What they asked | `request_type` | Select | `withdrawal` Stop using my data · `access` Show me my data · `correction` Correct my details · `erasure` Delete my data · `nomination` Name someone to act for me. Required. In list, standard filter. **Default removed** (was grievance) | g1-ask b; s1-rights |
-| 2 | Came in by | `channel` | Select | as today (field worker, slip, SMS, missed call, …, `web` = Self-service page) | s1-rights |
-| 3 | Status | `status` | Select | Open · Unmatched · In Progress · Awaiting Acknowledgement · Closed · Rejected (unchanged) | s1-rights; g1-ask a |
-| 4 | Received on | `received_on` | Datetime | unchanged; the clock starts here | |
-| 5 | Due by | `sla_due` | Date | unchanged | g1-ask a; s1-rights |
+| 1 | What they asked | `request_type` | Select | `withdrawal` Stop using my data · `access` Show me my data · `correction` Correct my details · `erasure` Delete my data · `nomination` Name someone to act for me. Required; no default | g1-ask b; s1-rights |
+| 2 | Came in by | `channel` | Select | as today; `web` shows as "Self-service page" | s1-rights |
+| 3 | Status | `status` | Select | new · who_is_this · looking · waiting_partners · answered · closed · cannot_do (patch maps the old values) | s1-rights; g1-ask a |
+| 4 | Received | `received_on` | Datetime | unchanged; the clock starts here | |
+| 5 | Reply by | `sla_due` | Date | unchanged (label only) | g1-ask a; s1-rights |
 | 6 | Subject | `subject` | Data | unchanged (auto) | |
 | | Column | | | | |
 | 7 | Beneficiary | `matched_principal` | Link Data Principal | unchanged | s1-rights |
-| 8–11 | Match confidence, Possible matches, Assigned to, Paper-trail number | unchanged | | | |
-| 12 | Resulting consent event | `linked_event` | Link | unchanged (withdrawals) | |
-| | **Section: Reply** *(new)* | | | | |
-| 13 | Reply to the person | `reply` | Small Text | Shown on their self-service page; sent by SMS when an approved `rights_update` template exists | g1-ask a (status line) |
-| 14 | Replied on | `replied_on` | Datetime | read-only, set when the reply is sent | |
-| | Sender section, Details tab | unchanged (sender hash, email, raw payload, resolution, evidence) | | | |
+| 8 | Raised by | `raised_by_role` | Select | *new*: `self` · `guardian` · `nominee` · `field_worker` · `staff`. A guardian can act for a child | |
+| 9–12 | Match confidence, Possible matches, Assigned to, Paper-trail number | unchanged | | | |
+| 13 | Resulting consent event | `linked_event` | Link | unchanged (withdrawals) | |
+| | **Section: Answer** *(new)* | | | | |
+| 14 | Answer to the person | `answer` | Small Text | Shown on their page; the SMS only says there is an answer | g1-ask a |
+| 15 | Answered on | `answered_on` | Datetime | read-only | |
+| | Conversation | Frappe **Communication** | | Messages from their page and our replies, on the form timeline (stock) | |
+| | Sender section, Details tab | unchanged | | | |
 
-**Naming:** `RQ-{#####}` (unchanged).
-**List columns:** ID · What they asked · Beneficiary · Came in by · Status · Due by. **Filters:** What they asked, Status, Beneficiary.
-**Permissions:** unchanged (Admin and DPO full; Operator edit; Programme Manager read; Field Worker create through the API).
-**Board:** the existing Kanban board stays, now rights requests only.
+**Naming:** `RQ-{#####}`. **List columns:** ID · What they asked · Beneficiary · Came in by · Status · Reply by. **Filters:** What they asked, Status, Beneficiary. **Permissions:** unchanged. **Board:** the existing Kanban board, rights requests only.
 
 ---
 
 ## 2. Grievance (new DocType)
 
-**Type:** regular, not submittable (status moves on as staff work it, like Rights Request). **Module:** Anumati. **Track changes:** on. **Delete:** nobody except System Manager (a complaint record is kept).
-**Naming:** `GR-{#####}`. **Title field:** `subject`. **Sort:** creation, newest first.
+**Type:** regular, not submittable. **Module:** Anumati. **Track changes:** on. **Delete:** nobody except System Manager. **Naming:** `GR-{#####}`. **Title field:** `subject`. **Sort:** newest first.
 
 ### Fields
 
 | # | Label | Fieldname | Type | Options / notes | Screen |
 | --- | --- | --- | --- | --- | --- |
 | | **Tab: Grievance** | | | | |
-| 1 | What is it about? | `category` | Select | `used_without_consent` Used without my consent · `did_not_stop` Didn't stop when I asked · `wrong_details` Wrong details · `shared_or_leaked` My data was shared or leaked · `staff_behaviour` Staff behaviour · `request_not_answered` My request was not answered · `other` Something else. Required. In list, standard filter | g1-ask c; s1-grievances; s2 |
-| 2 | About request | `about_request` | Link Rights Request | Shown and required when category = request_not_answered; optional otherwise | g1-ask c; s2 ("Open RQ-00031") |
-| 3 | Subject | `subject` | Data | Auto: category label + " · " + channel, unless typed | s2 title |
-| 4 | In their words | `description` | Small Text | Hindi or English; required from the self-service page | g1-ask c |
-| 5 | Photo or document | `evidence` | Attach | Private file; optional | g1-ask c |
-| 6 | Came in by | `channel` | Select | same list as Rights Request (`web` = Self-service page) | s2 |
+| 1 | What is it about? | `category` | Select | `used_without_consent` Used without my consent · `did_not_stop` Didn't stop when I asked · `wrong_details` Wrong details · `shared_or_leaked` My data was shared or leaked · `staff_behaviour` Staff behaviour · `request_not_answered` My request was not answered · `other` Something else. Required | g1-ask c; s1-grievances; s2 |
+| 2 | Which request? | `about_request` | Link Rights Request | Required when "My request was not answered"; optional otherwise | g1-ask c; s2 |
+| 3 | Subject | `subject` | Data | Auto from the category, unless typed | s2 title |
+| 4 | In their words | `description` | Small Text | Hindi or English | g1-ask c |
+| 5 | Photo or document | `evidence` | Attach | Optional; stored encrypted like consent evidence | g1-ask c |
+| 6 | Came in by | `channel` | Select | same list as Rights Request | s2 |
 | | Column | | | | |
-| 7 | Beneficiary | `matched_principal` | Link Data Principal | Same matching as Rights Request (by phone hash; **Who is this for?** when the number is shared) | s1-grievances; s2 |
-| 8 | Status | `status` | Select | Open · Unmatched · In Progress · **With DPO** · **Replied** · **Reopened** · Closed. In list, standard filter | g1-ask a; g2-track; s1-grievances |
-| 9 | Assigned to | `assigned_to` | Link User | Operator at first; the DPO after escalation | s1-grievances; s2 |
-| 10 | Received on | `received_on` | Datetime | Default now; the clock starts here | s2 |
-| 11 | Due by | `sla_due` | Date | received_on + `grievance_sla_days` (30) | g2-track; s1-grievances; s2 |
-| 12 | Passed to the DPO on | `escalated_on` | Datetime | read-only; set by the daily check or by Not satisfied | g2-track b; s2 |
-| | **Section: Outcome and reply** | | | | |
-| 13 | Outcome | `outcome` | Select | `resolved` Resolved · `partly_resolved` Partly resolved · `not_upheld` Not upheld. Required to send a reply | s2 |
-| 14 | What we did (internal) | `internal_note` | Small Text | Never shown to the person | s2 |
-| 15 | Reply to the person | `reply` | Small Text | Required to send; shown on their page and sent by SMS | g2-track c; s2 |
-| 16 | Replied on | `replied_on` | Datetime | read-only | g2-track c |
-| 17 | Their answer | `person_response` | Select | `satisfied` · `not_satisfied`; read-only (set from their page or by staff for a field visit) | g2-track c |
-| 18 | Answered on | `responded_on` | Datetime | read-only | |
+| 7 | Beneficiary | `matched_principal` | Link Data Principal | Same matching as Rights Request ("Who is this?" for shared phones) | s1-grievances; s2 |
+| 8 | Raised by | `raised_by_role` | Select | as Rights Request | |
+| 9 | Status | `status` | Select | new · who_is_this · looking · answered · closed | all |
+| 10 | Assigned to | `assigned_to` | Link User | Operator first; the DPO from day 15 | s1-grievances; s2 |
+| 11 | Received · Reply by | `received_on`, `sla_due` | Datetime, Date | reply by = received + 30 days | s2 |
+| 12 | With the DPO since | `dpo_since` | Datetime | read-only; shows the **DPO** flag | s0; s2 |
+| | **Section: Answer** | | | | |
+| 13 | What did we find? | `finding` | Select | fixed · partly_fixed · nothing_wrong. Required to answer | s2 |
+| 14 | What we did (internal) | `internal_note` | Small Text | never shown to the person | s2 |
+| 15 | Did it solve it? | `person_says` | Select | `solved` · `not_happy`; read-only (from their page, or staff after a visit). `not_happy` shows the **Not happy** flag | g2-track c |
+| 16 | Said on | `person_said_on` | Datetime | read-only | |
+| | Conversation | Frappe **Communication** | | Their messages from the page and our replies; the person sees the same thread | g2-track b, c; s2 |
 | | **Tab: Details** | | | | |
-| 19 | Possible matches | `candidates` | Small Text | read-only, IDs only (as Rights Request) | |
-| 20 | Sender phone hash | `sender_hash` | Data | read-only, indexed; the number is never stored | |
-| 21 | Sender email | `raised_by` | Data (Email) | for emails to the DPO | |
-| 22 | Paper-trail number | `paper_trail_number` | Data | | |
-| 23 | As received | `raw_payload` | Long Text | the SMS or email text | |
+| 17–21 | Possible matches, Sender phone hash, Sender email, Paper-trail number, As received | as Rights Request | | the number itself is never stored | |
 | | **Tab: Beneficiary's consents** | | | | |
-| 24 | Consents | `consents_html` | HTML | Filled by the form script: the person's uses, on/off, with receipt codes; no phone numbers | s2 tab |
+| 22 | Consents | `consents_html` | HTML | the person's uses, on/off, with receipt codes | s2 |
 
-### Status flow
+### How it moves
 
 ```mermaid
 flowchart LR
-  O[Open] --> P[In Progress]
-  U[Unmatched] -->|Who is this for?| O
-  O & P -->|day 15, not replied| D[With DPO]
-  O & P & D -->|Send reply| R[Replied]
-  R -->|I'm satisfied, or 30 days with no answer| C[Closed]
-  R -->|Not satisfied, once| X[Reopened · with DPO]
-  X -->|Send reply| R2[Replied, final] --> C
+  W[Who is this?] -->|staff pick the person| N[New]
+  N --> L[Being looked at]
+  L -.->|day 15, no answer| L2[Being looked at · DPO]
+  L & L2 -->|Reply to the person + What did we find?| A[Answered]
+  A -->|Yes, this solves it · or 30 days with no reply| C[Closed]
+  A -->|No, I'm not happy · once, within 30 days| L3[Being looked at · DPO · Not happy]
+  L3 -->|second answer| A2[Answered, final] --> C
 ```
 
-No Frappe Workflow: the moves are buttons on the form (Send reply) and the daily check, like the Rights Request inbox today. After a second reply, **Not satisfied** is not offered again; the page shows the Board route.
+No Frappe Workflow; the moves come from **Reply to the person**, the person's buttons and a daily check. After the second answer the page shows the Board route instead of "No, I'm not happy".
+
+### Conversation (both DocTypes)
+
+- **Person → us:** "Write to us" on their page adds a message (a received Communication, linked to the request, no phone number).
+- **Us → person:** **Reply to the person** (a dialog: message, and for grievances "What did we find?" when it's the answer) adds a sent Communication and, if it's the answer, sets Answered.
+- **SMS:** a short "there is a reply, see it at the link or ask a field worker" (DLT variables are short, so the reply text itself is never sent by SMS).
+- **Desk:** the thread shows on the form timeline (stock), so nothing new to learn.
 
 ### Form buttons (Desk)
 
-- **Send reply** (Operator, DPO): needs Outcome and Reply; sets Replied, replied_on; logs the SMS (Communication linked to the grievance, number never stored).
-- **Open RQ-xxxxx** when `about_request` is set.
-- **Move to rights requests** / on Rights Request **Move to grievances**: for something filed under the wrong door (creates the other record, closes this one with a link). Mainly for emails and SMS text.
+**Reply to the person** · **Open RQ-xxxxx** (when linked) · **Move to rights requests** (and **Move to grievances** on a rights request) for anything that came in through the wrong door.
 
-### List and workspace
+### Desk navigation
 
-- **List columns:** ID · Category · About · Assigned to · Status · Due by. **Filters:** Category, Status, Assigned to. **Indicators:** Open/Reopened orange, With DPO red, Replied green, Closed grey; overdue rows red, as for requests.
-- **Requests workspace** (Frappe v15 Workspace) split in two halves, each with Number Cards (open, overdue, unmatched / with DPO) and Shortcuts (list, board or register, + New). The Today "Needs attention" block counts both.
+Under **Requests** in the sidebar, two entries, each its own page (stock nested Workspaces):
+
+- **Rights requests:** counts (new or being looked at, waiting for partners, late, who is this?), shortcuts (list, board, + New).
+- **Grievances:** counts (new or being looked at, with the DPO, late, not happy), shortcuts (list, register, + New).
+
+**Today → Needs attention** counts both.
 
 ### Permissions
 
-| Role | Read | Write | Create | Delete | Report | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| Anumati DPO | ✓ | ✓ | ✓ | | ✓ | Owns escalations |
-| Anumati Operator | ✓ | ✓ | ✓ | | ✓ | Works the list |
-| Anumati Admin | ✓ | | | | ✓ | Read only |
-| Anumati Programme Manager | ✓ | | | | ✓ | Read only |
-| Anumati Field Worker | | | ✓ (API) | | | Raises from the app |
-| System Manager | ✓ | ✓ | ✓ | ✓ | ✓ | |
+| Role | Read | Write | Create | Report | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Anumati DPO | ✓ | ✓ | ✓ | ✓ | Gets every grievance from day 15 |
+| Anumati Operator | ✓ | ✓ | ✓ | ✓ | Except **Staff behaviour** grievances (DPO only), so a colleague never handles a complaint about themselves |
+| Anumati Admin | ✓ | | | ✓ | Read only, except Staff behaviour |
+| Anumati Programme Manager | | | | ✓ | Register totals only |
+| Anumati Field Worker | | | ✓ (API) | | Raises from the app; can't read back |
+| System Manager | ✓ | ✓ | ✓ | ✓ | Only role that can delete |
 
-### Automation (stock where possible)
+### Automation
 
 | What | How |
 | --- | --- |
-| Due date, matching, subject | Controller `validate` (same helpers as Rights Request) |
-| DPO at day 15 | Daily scheduler job: grievances Open/In Progress older than `grievance_escalate_after_days` (15) → status With DPO, assign the DPO (stock Assign To), Desk notification |
-| Overdue alert | Stock **Notification**: "Days After" Due by, to the DPO |
-| New grievance alert | Stock **Notification**: "New", to Operator and DPO |
-| Auto-close | Daily job: Replied with no answer for 30 days → Closed |
-| Grievance register | Script Report: counts by category, replied, median days to reply, escalated, overdue, not satisfied; date filter |
+| Reply by, matching, subject | controller `validate` (same helpers as Rights Request) |
+| DPO at day 15 | daily job: not answered after 15 days → assign the DPO (stock Assign To), Desk notification |
+| Late | stock **Notification** "Days After" Reply by, to the DPO |
+| New grievance | stock **Notification** "New", to Operator and DPO (Staff behaviour: DPO only) |
+| Auto-close | daily job: Answered, no reply for 30 days → Closed, with an SMS saying so |
+| Register | Script Report: received, answered, typical days to answer, with the DPO, late, not happy, by category |
 
-### SMS (Message Template events; need DLT approval, logged and shown on the page until then)
+### SMS (Message Templates; DLT approval needed; until then shown on the page only)
 
 | Event | Text (English; Hindi too) |
 | --- | --- |
 | `grievance_received` | `{{ org }}: we got your grievance {{ code }}. We will reply by {{ date }}.` |
-| `grievance_reply` | `{{ org }}: reply to {{ code }}: {{ reply }}. Not satisfied? Use the link on your receipt or tell a field worker.` |
-| `rights_update` (exists) | Rights request received / replied |
+| `request_reply` | `{{ org }}: there is a reply to {{ code }}. See it at {{ link }} or ask a field worker.` |
+| `rights_update` (exists) | Rights request received |
 
 ---
 
@@ -149,27 +181,45 @@ No Frappe Workflow: the moves are buttons on the form (Send reply) and the daily
 
 | From | Rights / support request | Grievance |
 | --- | --- | --- |
-| Self-service page | **Rights / support request** form (Stop → My choices) | **Grievance** form |
-| Field app | "Stop a use or leave" and the request list (see, correct, delete, nominate) | New **Grievance** button: category + their words (companion PR in `anumati_collect`) |
-| SMS | `STOP…` withdrawal, `DATA` access | `HELP` and any other text, category Something else |
+| Self-service page | Rights / support request form (Stop → My choices) | Grievance form |
+| Field app | Stop a use or leave; request list (see, correct, delete, nominate) | New **Grievance** button (companion PR in `anumati_collect`) |
+| SMS | `STOP…`, `DATA` | `HELP` and any other text → Something else |
 | Missed call | Withdrawal (unchanged) | |
-| Email to the DPO | Arrives as a Rights Request (unchanged); **Move to grievances** if it's a complaint | |
-| API | `rights.submit` (unchanged, types without grievance) | New `grievance.submit` (in OpenAPI) |
+| Email to the DPO | **Grievance** by default (people write to the DPO to complain); **Move to rights requests** if it's a request | |
+| API | `rights.submit` (no grievance type) | new `grievance.submit` (in OpenAPI) |
 
-**Existing data:** a patch moves every Rights Request of type grievance to a new Grievance (same dates, beneficiary, text and messages), leaving a note on the old number.
+**Existing data:** a patch moves rights requests of type grievance to Grievance and maps old statuses (Open → new, Unmatched → who_is_this, In Progress → looking, Awaiting Acknowledgement → waiting_partners, Closed → closed, Rejected → cannot_do).
 
 ## 4. Settings (Anumati Settings)
 
-`grievance_sla_days` (30) · `grievance_escalate_after_days` (15) · existing `rights_sla_days` (30).
+`rights_sla_days` (30, exists) · `grievance_sla_days` (30) · `grievance_dpo_after_days` (15).
 
-## 5. Build order
+## 5. Retention
 
-1. **PR 1, self-service page:** sign-in, My choices, History, Requests tab with **Rights / support request**; Rights Request reply fields.
-2. **PR 2, grievance:** Grievance DocType, patch, SMS routing, escalation, notifications, register, workspace split, self-service grievance form and tracking, API; companion field-app PR.
+Grievances and rights requests are kept after an erasure request (they are the record that we handled it), with the text kept as received. The retention period for them follows the Retention Policy (Phase 2 purge); until then, kept.
 
-## 6. Open questions
+## 6. Frappe Helpdesk: considered, not used
 
-1. Reply time 30 days and DPO at day 15: confirm.
-2. Grievances visible to Admin and Programme Manager (read only)? A staff-behaviour complaint may be about a colleague; alternative: DPO and Operator only.
-3. Emails to the DPO: keep landing as rights requests (with Move), or land as grievances by default?
-4. Category list: final?
+| | Frappe Helpdesk | This design |
+| --- | --- | --- |
+| Ready-made | Tickets, SLA with escalation, agent screens, canned replies, email | Built from stock Frappe pieces |
+| Who the customer is | A Contact / Website User, signed in with **email**; name and phone stored in plain text | A beneficiary signed in with an **SMS code**; name and phone stay encrypted, looked up by salted hash |
+| Channels | Email and web (WhatsApp/SMS need add-ons) | SMS STOP/DATA/HELP, missed call, field app, slip, web, email |
+| Ties to consent | None; would be custom fields | Links to the person, their consents and receipts; withdrawals write signed Consent Events |
+| Staff screens | A separate agent app (Vue), new to learn | The same Desk the team already uses |
+| Hindi | Partly translated | Our Hindi labels |
+| Cost to adopt | Another app to install, upgrade and secure on Frappe Cloud; data split across two apps | None |
+
+Helpdesk would bring good ticket handling, but it would store beneficiary names and numbers unencrypted, can't sign people in by SMS, and knows nothing about consent. We copy its good ideas (reply-by clock, escalation, canned replies later) inside Anumati. Revisit if an NGO already runs Helpdesk for its own support desk: then a one-way link (Anumati grievance → Helpdesk ticket) could be added.
+
+## 7. Build order
+
+1. **PR 1, self-service page:** sign-in, My choices, History, Requests tab with Rights / support request; Rights Request plain statuses, Raised by, answer and conversation.
+2. **PR 2, grievance:** Grievance DocType, patch, SMS routing, DPO at day 15, notifications, register, sidebar entries, self-service grievance form and conversation, API; companion field-app PR.
+
+## 8. Open questions
+
+1. Reply by 30 days, DPO at day 15: confirm.
+2. Staff behaviour grievances for the DPO only: agree?
+3. Emails to the DPO land as grievances by default: agree?
+4. Category list final?
