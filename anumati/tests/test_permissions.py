@@ -22,6 +22,21 @@ GUEST_ALLOWLIST = {
 	"anumati.api.v1.channel.inbound_sms",
 	"anumati.api.v1.channel.missed_call",
 	"anumati.api.v1.channel.delivery_report",
+	# Self-service page (/my-consent). Signing in: an SMS code to a number we hold, or a receipt code and year
+	# of birth; rate-limited, with tries counted per number and per code.
+	"anumati.selfservice.start",
+	"anumati.selfservice.verify",
+	"anumati.selfservice.code_login",
+	"anumati.selfservice.home",
+	"anumati.selfservice.sign_out",
+	"anumati.selfservice.choose",
+	# Signed in only: each one needs the page's session cookie and answers 401 without it.
+	"anumati.selfservice.overview",
+	"anumati.selfservice.save_choices",
+	"anumati.selfservice.leave",
+	"anumati.selfservice.receipt",
+	"anumati.selfservice.ask",
+	"anumati.selfservice.write",
 }
 TWO_FACTOR_ROLES = {"Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager"}
 

@@ -1,0 +1,10 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_content %}
+<div class="anumati-ss" id="anumati-ss" aria-live="polite">
+	<noscript>{{ _("This page needs JavaScript. You can also tell any field worker.") }}</noscript>
+</div>
+<script>window.anumati_ss = {{ ss_config | safe }};</script>
+{% endblock %}

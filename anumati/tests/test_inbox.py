@@ -52,7 +52,7 @@ class TestInbox(FrappeTestCase):
 		b = make_principal(phone="9000044444", shared_phone=1)
 		req = frappe.get_doc({"doctype": "Rights Request", "request_type": "withdrawal", "channel": "sms",
 		                      "sender_hash": pii.phone_hash("9000044444")}).insert()
-		self.assertEqual(req.status, "Unmatched")
+		self.assertEqual(req.status, "who_is_this")
 		self.assertFalse(req.matched_principal)
 		self.assertIn(a.principal_ref, req.candidates)
 		self.assertIn(b.principal_ref, req.candidates)
@@ -67,7 +67,7 @@ class TestInbox(FrappeTestCase):
 		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
 		req.reload()
-		self.assertEqual(req.status, "Closed")
+		self.assertEqual(req.status, "request_closed")
 		self.assertEqual(req.linked_event, first["consent_id"])
 		again = rights.fulfil_withdrawal(req.name, PROG)
 		self.assertEqual(again["hash"], first["hash"])
@@ -82,7 +82,7 @@ class TestInbox(FrappeTestCase):
 		reqs = frappe.get_all("Rights Request", {"linked_event": first["consent_id"]},
 		                      ["status", "request_type", "matched_principal", "paper_trail_number"])
 		self.assertEqual(len(reqs), 1)
-		self.assertEqual(reqs[0].status, "Closed")
+		self.assertEqual(reqs[0].status, "request_closed")
 		self.assertEqual(reqs[0].request_type, "withdrawal")
 		self.assertEqual(reqs[0].matched_principal, p.name)
 		self.assertEqual(reqs[0].paper_trail_number, "SLIP-0042")
@@ -113,7 +113,7 @@ class TestInbox(FrappeTestCase):
 		self.assertTrue(frappe.db.get_value("Data Principal", p.name, "relationship_ended_on"))
 		req = frappe.db.get_value("Rights Request", {"linked_event": art["consent_id"]}, ["status", "resolution"],
 		                          as_dict=True)
-		self.assertEqual(req.status, "Closed")
+		self.assertEqual(req.status, "request_closed")
 		self.assertIn("Left the programme", req.resolution)
 		# Rejoining (an essential use granted again, after leaving) makes the relationship live again.
 		self.grant(p, at=self.later())

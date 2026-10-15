@@ -6,7 +6,7 @@ encrypted field at send time and never written to the Communication (only its sa
 bodies carry codes and purpose names, never the principal's name."""
 
 import frappe
-from frappe.utils import formatdate, now_datetime
+from frappe.utils import formatdate, get_url, now_datetime
 
 from anumati import pii
 
@@ -57,7 +57,7 @@ def contact_phone(doc) -> str | None:
 	return own
 
 
-def send_sms(principal: str, event: str, context: dict, reference=None) -> str | None:
+def send_sms(principal: str, event: str, context: dict, reference=None, link=None) -> str | None:
 	"""Send one templated SMS to a principal. Returns the Communication name, or None if not sendable
 	(no provider, no approved template, no phone). Never raises for a missing setup: capture must not
 	fail because a receipt could not be sent."""
@@ -77,7 +77,7 @@ def send_sms(principal: str, event: str, context: dict, reference=None) -> str |
 		status = "Error"
 		frappe.log_error(title=f"Anumati SMS send failed ({event})", message=f"provider={provider.name} template={template.name}")
 	return log(provider, "Sent", body, pii.phone_hash(phone), template=template.name, status=status,
-	           message_id=message_id, reference=reference)
+	           message_id=message_id, reference=reference, link=link)
 
 
 def log(provider, direction, body, phone_hash, template=None, status=None, message_id=None, reference=None,
@@ -117,7 +117,8 @@ def event_context(event) -> dict:
 	codes = json.loads(event.purposes_granted or "[]") or json.loads(event.purposes_denied or "[]")
 	titles = [frappe.db.get_value("Purpose", f"{event.programme}-{c}", "purpose_title") or c for c in codes]
 	return {"code": event.short_code, "programme": programme.programme_name, "purposes": ", ".join(titles),
-	        "purpose_list": titles, "date": formatdate(event.server_time), "action": event.action}
+	        "purpose_list": titles, "date": formatdate(event.server_time), "action": event.action,
+	        "link": get_url("/my-consent")}
 
 
 def on_consent_event(event: str):

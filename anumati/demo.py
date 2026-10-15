@@ -233,6 +233,19 @@ BREACH_NOTICE = {
 }
 
 
+# Self-service page: drafts like the breach notice, for the MSG91 account owner to register for DLT.
+REQUEST_TEXTS = {
+	"request_reply": {
+		"en": "{{ code }}: there is a reply to your request. See it at {{ link }} or ask any field worker.",
+		"hi": "{{ code }}: आपके अनुरोध का जवाब आया है। {{ link }} पर देखें या किसी भी कार्यकर्ता से पूछें।",
+	},
+	"rights_update": {
+		"en": "We got your request {{ code }}. We will reply by {{ date }}. See it at {{ link }}",
+		"hi": "आपका अनुरोध {{ code }} मिला। हम {{ date }} तक जवाब देंगे। {{ link }} पर देखें",
+	},
+}
+
+
 def _sms_setup():
 	"""Server-sent codes through Dhwani's MSG91 account: the approved OTP template, and the messaging
 	account once `msg91_auth_key` is in the site config (set in the Frappe Cloud dashboard, never in the
@@ -250,6 +263,12 @@ def _sms_setup():
 				"Message Template", {"template_event": "breach_notice", "channel": "sms", "language": lang}):
 			frappe.get_doc({"doctype": "Message Template", "template_event": "breach_notice", "channel": "sms",
 			                "language": lang, "body": body, "approved": 0}).insert(ignore_permissions=True)
+	for event, bodies in REQUEST_TEXTS.items():
+		for lang, body in bodies.items():
+			if frappe.db.exists("Language", lang) and not frappe.db.exists(
+					"Message Template", {"template_event": event, "channel": "sms", "language": lang}):
+				frappe.get_doc({"doctype": "Message Template", "template_event": event, "channel": "sms",
+				                "language": lang, "body": body, "approved": 0}).insert(ignore_permissions=True)
 	if frappe.conf.get("msg91_auth_key") and not frappe.db.exists("Channel Provider", {"provider_type": "SMS"}):
 		frappe.get_doc({
 			"doctype": "Channel Provider", "provider_name": "MSG91 (Dhwani)", "provider_type": "SMS",

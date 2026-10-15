@@ -242,7 +242,7 @@ def _field_request(principal, channel, artefact, paper_trail=None, leave=False):
 	if frappe.db.exists("Rights Request", {"linked_event": artefact["consent_id"]}):
 		return
 	doc = frappe.get_doc({
-		"doctype": "Rights Request", "request_type": "withdrawal", "channel": channel, "status": "Closed",
+		"doctype": "Rights Request", "request_type": "withdrawal", "channel": channel, "status": "request_closed",
 		"matched_principal": principal, "linked_event": artefact["consent_id"],
 		"paper_trail_number": paper_trail or None,
 		"resolution": (_("Left the programme. ") if leave else "") + _(

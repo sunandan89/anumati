@@ -2,9 +2,15 @@
 
 Matching never exposes personal data: requests carry a salted phone hash or a consent short code, and
 candidates are listed by principal_ref only. A shared number that maps to several people is left for a
-person to resolve (status Unmatched), with the SLA clock already running from receipt."""
+person to resolve (status "Who is this?"), with the reply-by clock already running from receipt."""
 
 import frappe
+
+# Rights Request statuses (plain words; the same ones the person sees on the self-service page).
+NEW, WHO, WORKING, WAITING_PERSON, WAITING_PARTNERS = (
+	"new_request", "who_is_this", "working_on_it", "waiting_for_person", "waiting_for_partners")
+ANSWERED, CLOSED, CANNOT = "request_answered", "request_closed", "cannot_do"
+DONE = (ANSWERED, CLOSED, CANNOT)  # nothing more for staff to do; the reply-by clock stops
 
 
 def principals_for_phone_hash(phone_hash: str) -> list[dict]:
@@ -56,15 +62,15 @@ def match(request):
 	if request.matched_principal:
 		request.match_confidence = request.match_confidence or 100
 		request.candidates = None
-		if request.status == "Unmatched":
-			request.status = "Open"
+		if request.status == WHO:
+			request.status = NEW
 		return
 	found = principals_for_phone_hash(request.sender_hash)
 	if len(found) == 1:
 		request.matched_principal, request.match_confidence, request.candidates = found[0].name, 90, None
 	elif len(found) > 1:
-		request.status = "Unmatched"
+		request.status = WHO
 		request.match_confidence = 0
 		request.candidates = ", ".join(sorted(p.principal_ref or p.name for p in found))
-	elif request.channel in ("sms", "missed_call", "ivr", "whatsapp") and request.status == "Open":
-		request.status = "Unmatched"
+	elif request.channel in ("sms", "missed_call", "ivr", "whatsapp") and request.status == NEW:
+		request.status = WHO

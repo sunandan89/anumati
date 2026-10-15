@@ -72,8 +72,20 @@ def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
 		leave=frappe.utils.cint(leave_programme),
 	)
 	doc.linked_event = artefact["consent_id"]
-	doc.status = "Closed"
+	doc.status = inbox.CLOSED
 	doc.resolution = (doc.resolution or "") + _("Withdrawn by consent event {0} ({1}).").format(
 		artefact["consent_id"], artefact["short_code"])
 	doc.save()
 	return artefact
+
+
+@frappe.whitelist(methods=["POST"])
+def reply(request, message, kind="update"):
+	"""Reply to the person on a request (staff, from Desk). `kind`: update (stays Working on it), question
+	(Waiting for the person) or answer (Answered). The message joins the conversation the person sees on the
+	self-service page; an SMS only says there is a reply."""
+	from anumati import conversation
+
+	doc = frappe.get_doc("Rights Request", request)
+	doc.check_permission("write")
+	return {"message": conversation.staff_message(doc, message, kind), "status": doc.status}

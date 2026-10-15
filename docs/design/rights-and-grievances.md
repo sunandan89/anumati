@@ -1,6 +1,6 @@
 # Rights requests and grievances: design for sign-off
 
-Status: **draft for sign-off**. Frappe v15, stock building blocks. Sample data is fictional.
+Status: **signed off 15 Oct 2026.** PR 1 (self-service page, rights requests) built; PR 2 (grievance) next. Frappe v15, stock building blocks. Sample data is fictional.
 
 Two separate things, for the person and for staff:
 
@@ -17,33 +17,32 @@ Screens: self-service [sign in](img/p1-sign-in.png), [choices](img/p2-choices.pn
 
 ---
 
-## 0. Plain words
+## 0. Plain words (final, 15 Oct)
 
-The same words for the person and for staff. No "upheld", "escalated", "SLA" or "unmatched" on any screen.
+The status says **whose turn it is**. Messages go back and forth without changing it, except as below.
 
-**Status** (both DocTypes)
+| Stored value | Staff see | Person sees | Hindi | Whose turn |
+| --- | --- | --- | --- | --- |
+| `new_request` | Received | Received | प्राप्त हुआ | Staff |
+| `who_is_this` | Who is this? | Received | यह कौन है? | Staff (match the person) |
+| `working_on_it` | Working on it | Working on it | हम देख रहे हैं | Staff |
+| `waiting_for_person` | Waiting for the person | Waiting for your reply | व्यक्ति के जवाब का इंतज़ार | Person |
+| `waiting_for_partners` | Waiting for partners *(rights only)* | Waiting for partners | साझेदारों का इंतज़ार | Partners |
+| `request_answered` | Answered | Answered | जवाब दिया | Person (grievance: is it solved?) |
+| `request_closed` | Closed | Closed | बंद | — |
+| `cannot_do` | Can't do this *(rights only)* | Can't do this | नहीं हो सकता | — |
 
-| Stored value | Shown as | Hindi | Meaning |
-| --- | --- | --- | --- |
-| `new` | New | नया | Just arrived |
-| `who_is_this` | Who is this? *(staff only)* | यह कौन है? | Came from a phone shared by several people, or a code we can't find |
-| `looking` | Being looked at | देखा जा रहा है | Someone is working on it |
-| `waiting_partners` | Waiting for partners *(rights only)* | साझेदारों का इंतज़ार | Partners must confirm (e.g. deletion) |
-| `answered` | Answered | जवाब दिया | We replied |
-| `closed` | Closed | बंद | Done |
-| `cannot_do` | Can't do this *(rights only)* | नहीं हो सकता | Refused, with the reason in the answer (e.g. the law requires us to keep it) |
+Moves: staff **Send update** keeps *Working on it*; **Ask a question** → *Waiting for the person*; **Send final answer** → *Answered*; whenever the person writes, it goes back to *Working on it*. Flags next to the status: **DPO**, **Not happy**, **Late**.
 
-**Flags shown next to the status** (not statuses): **DPO** (the DPO has it), **Not happy** (the person said the answer didn't solve it), **Late** (past the reply-by date).
+**Outcome** (grievance, chosen with the final answer; the person sees the sentence):
 
-**What did we find?** (grievance, chosen by staff when answering; the person sees the sentence)
-
-| Stored value | Staff sees | Person sees |
+| Stored value | Staff choose | Person sees |
 | --- | --- | --- |
-| `fixed` | We fixed it | We fixed it. |
-| `partly_fixed` | We fixed part of it | We fixed part of it. |
-| `nothing_wrong` | Nothing was wrong | We checked and found nothing wrong. |
+| `put_right` | Complaint was right: put right | You were right. We have put it right. |
+| `partly_put_right` | Partly right: partly put right | You were partly right. We have put that part right. |
+| `no_problem_found` | No problem found | We checked and found no problem. |
 
-**The person's answer:** "Yes, this solves it" / "No, I'm not happy with this".
+The person answers "Yes, this solves it" / "No, I'm not happy with this".
 
 ---
 
@@ -58,7 +57,7 @@ The same words for the person and for staff. No "upheld", "escalated", "SLA" or 
 | | **Tab: Request** | | | | |
 | 1 | What they asked | `request_type` | Select | `withdrawal` Stop using my data · `access` Show me my data · `correction` Correct my details · `erasure` Delete my data · `nomination` Name someone to act for me. Required; no default | g1-ask b; s1-rights |
 | 2 | Came in by | `channel` | Select | as today; `web` shows as "Self-service page" | s1-rights |
-| 3 | Status | `status` | Select | new · who_is_this · looking · waiting_partners · answered · closed · cannot_do (patch maps the old values) | s1-rights; g1-ask a |
+| 3 | Status | `status` | Select | the section 0 statuses (patch maps the old values) | s1-rights; g1-ask a |
 | 4 | Received | `received_on` | Datetime | unchanged; the clock starts here | |
 | 5 | Reply by | `sla_due` | Date | unchanged (label only) | g1-ask a; s1-rights |
 | 6 | Subject | `subject` | Data | unchanged (auto) | |
@@ -95,12 +94,12 @@ The same words for the person and for staff. No "upheld", "escalated", "SLA" or 
 | | Column | | | | |
 | 7 | Beneficiary | `matched_principal` | Link Data Principal | Same matching as Rights Request ("Who is this?" for shared phones) | s1-grievances; s2 |
 | 8 | Raised by | `raised_by_role` | Select | as Rights Request | |
-| 9 | Status | `status` | Select | new · who_is_this · looking · answered · closed | all |
+| 9 | Status | `status` | Select | the section 0 statuses (no waiting_for_partners or cannot_do) | all |
 | 10 | Assigned to | `assigned_to` | Link User | Operator first; the DPO from day 15 | s1-grievances; s2 |
 | 11 | Received · Reply by | `received_on`, `sla_due` | Datetime, Date | reply by = received + 30 days | s2 |
 | 12 | With the DPO since | `dpo_since` | Datetime | read-only; shows the **DPO** flag | s0; s2 |
 | | **Section: Answer** | | | | |
-| 13 | What did we find? | `finding` | Select | fixed · partly_fixed · nothing_wrong. Required to answer | s2 |
+| 13 | Outcome | `outcome` | Select | put_right · partly_put_right · no_problem_found (section 0). Required with the final answer | s2 |
 | 14 | What we did (internal) | `internal_note` | Small Text | never shown to the person | s2 |
 | 15 | Did it solve it? | `person_says` | Select | `solved` · `not_happy`; read-only (from their page, or staff after a visit). `not_happy` shows the **Not happy** flag | g2-track c |
 | 16 | Said on | `person_said_on` | Datetime | read-only | |
@@ -188,7 +187,7 @@ Under **Requests** in the sidebar, two entries, each its own page (stock nested 
 | Email to the DPO | **Grievance** by default (people write to the DPO to complain); **Move to rights requests** if it's a request | |
 | API | `rights.submit` (no grievance type) | new `grievance.submit` (in OpenAPI) |
 
-**Existing data:** a patch moves rights requests of type grievance to Grievance and maps old statuses (Open → new, Unmatched → who_is_this, In Progress → looking, Awaiting Acknowledgement → waiting_partners, Closed → closed, Rejected → cannot_do).
+**Existing data:** a patch moves rights requests of type grievance to Grievance and maps old statuses (Open → new_request, Unmatched → who_is_this, In Progress → working_on_it, Awaiting Acknowledgement → waiting_for_partners, Closed → request_closed, Rejected → cannot_do).
 
 ## 4. Settings (Anumati Settings)
 

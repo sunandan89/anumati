@@ -1,23 +1,67 @@
 // Copyright (c) 2026, Dhwani RIS and contributors
 // License: AGPL-3.0. See LICENSE
 
+// Statuses are plain words (inbox.py); these mean nothing is left for staff to do.
+const DONE = ["request_answered", "request_closed", "cannot_do"];
+
 frappe.ui.form.on("Rights Request", {
 	refresh(frm) {
-		if (frm.doc.status === "Unmatched" && frm.doc.candidates) {
+		if (frm.doc.status === "who_is_this" && frm.doc.candidates) {
 			frm.set_intro(__("Shared number: possible people are {0}. Call back or check the slip, then use Who is this for?", [frappe.utils.escape_html(frm.doc.candidates)]), "orange");
-		} else if (frm.doc.status === "Unmatched") {
+		} else if (frm.doc.status === "who_is_this") {
 			frm.set_intro(__("Not matched yet. Find the person by their receipt code or ID, then use Who is this for?"), "orange");
 		}
-		if (!frm.is_new() && frm.doc.status === "Unmatched" && frm.doc.candidates && frm.perm[0] && frm.perm[0].write) {
+		if (!frm.is_new() && frm.doc.status === "who_is_this" && frm.doc.candidates && frm.perm[0] && frm.perm[0].write) {
 			frm.add_custom_button(__("Who is this for?"), () => pick_person(frm)).addClass("btn-primary");
 		}
 		show_due(frm);
-		const open = !["Closed", "Rejected"].includes(frm.doc.status);
+		const open = !DONE.includes(frm.doc.status);
 		if (!frm.is_new() && open && frm.doc.request_type === "withdrawal" && frm.doc.matched_principal) {
 			frm.add_custom_button(__("Record withdrawal"), () => record_withdrawal(frm)).addClass("btn-primary");
 		}
+		if (!frm.is_new() && frm.doc.matched_principal && frm.doc.status !== "request_closed" && frm.perm[0] && frm.perm[0].write) {
+			const group = __("Reply to the person");
+			frm.add_custom_button(__("Send update"), () => reply(frm, "update"), group);
+			frm.add_custom_button(__("Ask a question"), () => reply(frm, "question"), group);
+			frm.add_custom_button(__("Send final answer"), () => reply(frm, "answer"), group);
+		}
 	},
 });
+
+// Reply to the person: the message joins the conversation they see on the self-service page, and an SMS
+// (once an approved "Reply to a request" template exists) tells them there is a reply.
+//   update   - "we're checking": stays Working on it
+//   question - we need something from them: Waiting for the person (their reply moves it back)
+//   answer   - the final answer: Answered
+function reply(frm, kind) {
+	const titles = { update: __("Send update"), question: __("Ask a question"), answer: __("Send final answer") };
+	const hints = {
+		update: __("For example: We are checking with the field team. The status stays Working on it."),
+		question: __("Ask what you need to know. The status becomes Waiting for the person until they reply."),
+		answer: __("Your answer to the request. The status becomes Answered."),
+	};
+	const d = new frappe.ui.Dialog({
+		title: titles[kind],
+		fields: [
+			{ fieldtype: "HTML", options: `<p class="text-muted small">${hints[kind]} ${__("Plain words, no names of other people.")}</p>` },
+			{ fieldname: "message", fieldtype: "Small Text", label: __("Message"), reqd: 1 },
+		],
+		primary_action_label: __("Send"),
+		primary_action(values) {
+			frappe.call({
+				method: "anumati.api.v1.rights.reply",
+				args: { request: frm.doc.name, message: values.message, kind },
+				freeze: true,
+				callback: () => {
+					d.hide();
+					frappe.show_alert({ message: __("Sent"), indicator: "green" });
+					frm.reload_doc();
+				},
+			});
+		},
+	});
+	d.show();
+}
 
 // Record withdrawal: tick the optional uses to stop (all ticked to start), or leave the programme. Essential
 // uses are not on the list: as in the field app, they stop only when the person leaves.
@@ -92,13 +136,13 @@ function record_withdrawal(frm) {
 	});
 }
 
-// Days left on the SLA, shown above the form.
+// Days left to reply, shown above the form.
 function show_due(frm) {
-	if (!frm.doc.sla_due || ["Closed", "Rejected"].includes(frm.doc.status)) return;
+	if (!frm.doc.sla_due || DONE.includes(frm.doc.status)) return;
 	const days = frappe.datetime.get_day_diff(frm.doc.sla_due, frappe.datetime.get_today());
-	const text = days < 0 ? __("Overdue by {0} days", [-days]) : days === 0 ? __("Due today") : __("{0} days left", [days]);
+	const text = days < 0 ? __("Late by {0} days", [-days]) : days === 0 ? __("Reply due today") : __("{0} days left to reply", [days]);
 	frm.dashboard.set_headline_alert(
-		`<b>${text}</b> · ${__("due {0}", [frappe.datetime.str_to_user(frm.doc.sla_due)])}`,
+		`<b>${text}</b> · ${__("reply by {0}", [frappe.datetime.str_to_user(frm.doc.sla_due)])}`,
 		days < 3 ? "red" : days < 10 ? "orange" : "blue"
 	);
 }

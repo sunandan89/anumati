@@ -22,6 +22,21 @@ GUEST_ALLOWLIST = {
 	"anumati.api.v1.channel.inbound_sms",
 	"anumati.api.v1.channel.missed_call",
 	"anumati.api.v1.channel.delivery_report",
+	# Self-service page (/my-consent). Signing in: an SMS code to a number we hold, or a receipt code and year
+	# of birth; rate-limited, with tries counted per number and per code.
+	"anumati.selfservice.start",
+	"anumati.selfservice.verify",
+	"anumati.selfservice.code_login",
+	"anumati.selfservice.home",
+	"anumati.selfservice.sign_out",
+	"anumati.selfservice.choose",
+	# Signed in only: each one needs the page's session cookie and answers 401 without it.
+	"anumati.selfservice.overview",
+	"anumati.selfservice.save_choices",
+	"anumati.selfservice.leave",
+	"anumati.selfservice.receipt",
+	"anumati.selfservice.ask",
+	"anumati.selfservice.write",
 }
 DENIED = {401, 403}
 
@@ -66,6 +81,16 @@ for site in (site_a, site_b):
 	for cb in ("inbound_sms", "missed_call", "delivery_report"):
 		r = call("POST", site, f"/api/method/anumati.api.v1.channel.{cb}", data={"provider": "x", "token": "wrong", "sender": "9000000000"})
 		expect(r.status_code in DENIED, f"{site} {cb} with a wrong secret -> {r.status_code}")
+
+	# The self-service page's signed-in methods refuse anyone without its session cookie.
+	for m in ("overview", "save_choices", "leave", "ask", "write", "choose"):
+		r = call("POST", site, f"/api/method/anumati.selfservice.{m}", data={"i": 0, "programme": "x", "request_type": "access",
+		                                                                         "request": "x", "text": "x", "year": 1990})
+		expect(r.status_code == 401, f"{site} self-service {m} without a session -> {r.status_code}")
+	r = call("GET", site, "/api/method/anumati.selfservice.receipt?i=0&event=x")
+	expect(r.status_code == 401, f"{site} self-service receipt without a session -> {r.status_code}")
+	r = call("GET", site, "/my-consent")
+	expect(r.status_code == 200, f"{site} /my-consent page -> {r.status_code}")
 
 # 2. guest allowlist
 expect(set(inv["guest"]) == GUEST_ALLOWLIST, f"guest methods changed: {sorted(set(inv['guest']) ^ GUEST_ALLOWLIST)}")

@@ -85,7 +85,7 @@ def handle_sms(provider, sender, text):
 	artefacts = [consent.withdraw_for(principal, prog, "sms", f"sms-{req.name}-{prog}", purposes)
 	             for prog in programmes]
 	req.reload()
-	req.update({"status": "Closed", "linked_event": artefacts[0]["consent_id"] if artefacts else None,
+	req.update({"status": inbox.CLOSED, "linked_event": artefacts[0]["consent_id"] if artefacts else None,
 	            "resolution": "Withdrawn by SMS: " + ", ".join(a["short_code"] for a in artefacts)})
 	req.flags.ignore_permissions = True
 	req.save()

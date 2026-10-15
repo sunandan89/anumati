@@ -175,7 +175,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-13 | Guardian order number | Create a Guardian Link with type Court and no order number | Refused: "Enter the order number that appointed this guardian" | P1 |
 | WC-14 | Inbox and SLA | Requests list and board | Due date = received + 30 days; overdue shown in red in the list and in Needs attention | P0 |
 | WC-15 | Record withdrawal | Open a matched withdrawal request → **Record withdrawal** | A checklist of the person's optional uses that are on, all ticked; the essential use is not on the list, with a line "Essential, stops only if they leave the programme". Untick one → Withdraw: only the ticked uses withdrawn; request closed; doing it again creates no second one. Nothing on: a message instead of the checklist | P0 |
-| WC-16 | Shared number | Two people share a phone; send `STOP` from it (needs an inbound number) | Request **Unmatched** with possible matches; **Who is this for?** → pick → Match | P2 |
+| WC-16 | Shared number | Two people share a phone; send `STOP` from it (needs an inbound number) | Request **Who is this?** with possible matches; **Who is this for?** → pick → Match | P2 |
 | WC-17 | Request notifications | Submit a request | DPO and Operator get a Desk notification; another 3 days before the due date | P2 |
 | WC-18 | Turned 18 | Open a sample child → set year of birth so they are now 18 or older → Save | "Turned 18: renew consent" is ticked and the person appears under that shortcut; `consent.check` answers `renewal_due` | P2 |
 | WC-19 | Chain check | Anumati Settings → Chain verification (after the nightly job), or ask a developer to call `chain.verify` | Chain reported intact | P1 |
@@ -187,6 +187,8 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-25 | Breach: send (needs SMS account and approved templates) | As DPO: **Send a test to my phone** → then **Send to affected people…**, type a wrong number, then the right one | Test SMS reaches your profile mobile; the wrong number is refused; the right one sends in the background; the form reloads with "Breach notice sent…", Principals notified on filled, status Notifying; the button is gone (sends once). Communications are linked to the incident with no phone number | P1 |
 | WC-26 | Breach: field visit list | After sending, with a person without a phone in the audience | They are on the field visit list by ID and language. **Download field visit list** gives a CSV; tick **Told in person** → Told on fills with today | P1 |
 | WC-27 | Breach: results and retry | After delivery reports arrive (or with one failed SMS) | Delivered / waiting / failed counts on the blue note; **Retry failed** sends again and takes the person off the visit list if it goes through | P2 |
+| WC-28 | Plain request statuses | Open the Requests list and board | Statuses read Received, Who is this?, Working on it, Waiting for the person, Waiting for partners, Answered, Closed, Can't do this (Hindi Desk: Hindi words); late ones red; old requests show the new words after migrate | P1 |
+| WC-29 | Reply to the person | On a request with a beneficiary: **Reply to the person › Ask a question**, then **Send update**, then **Send final answer** | Status goes Waiting for the person → Working on it → Answered; each message is on the timeline; the answer is under **Answer to the person** | P0 |
 
 ## 9. SMS channels (need an SMS account and inbound number)
 
@@ -209,6 +211,30 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-05 | Worker-phone code needs voice | API: record a consent with `device_sms_otp` and no audio evidence | Refused | P1 |
 | SE-06 | Names encrypted | Database / report view of Beneficiary | Name and phone stored encrypted; whole-word name search still works | P1 |
 | SE-07 | Check before use | API `consent.check` for an adult's granted, unconfirmed use with "Allow processing before confirmation" off | `allow: false`, `awaiting_confirmation`; on: `allow: true` | P1 |
+
+## 11. Self-service page (`/my-consent`)
+
+Open the site's `/my-consent` on a phone browser. Use a fictional beneficiary whose phone you hold (phone B) and who has a child consented by them as guardian. SMS sign-in needs MSG91 set up; the receipt-code tests don't.
+
+| ID | Scenario | Steps | Expected | Priority |
+| --- | --- | --- | --- | --- |
+| SS-01 | Sign in by SMS | Enter phone B's number → **Send me a code** → enter the code | Signed in; "Who are you here for?" lists the person and their child, first names only | P0 |
+| SS-02 | Unknown number | Enter a number not in Anumati | Same message as SS-01 ("If this number is with us…"); no SMS arrives | P0 |
+| SS-03 | Wrong code | Enter a wrong code 5 times | "That code is not right. N tries left", then the code stops working; ask for a new one | P0 |
+| SS-04 | Too many codes | Ask for a code 4 times in 10 minutes | The 4th is refused: try again in 10 minutes | P1 |
+| SS-05 | Shared phone | Two adults share a number (one with a year of birth on record) → sign in | "Who are you?" with both names; the wrong year is refused; the one with no year on record is told to ask a field worker; after the right year only that adult (and their wards) show | P0 |
+| SS-06 | My choices | Open the person → **My choices** | One card per programme; essential use shows **Required** with no tick box; other uses ticked on/off as recorded | P0 |
+| SS-07 | Turn a use off and one on | Untick one use, tick another → **Save changes** → **Yes, save** | "Saved. Your receipt code is …"; Desk: a new withdrawal and a new grant (channel web, confirmed), and a closed withdrawal request in the inbox | P0 |
+| SS-08 | Guardian for a child | Open the child → turn a use on | Saved; Desk: the consent has the guardian link and "Guardian, child" | P1 |
+| SS-09 | Leave a programme | **Leave this programme** → Leave without ticking, then tick → **Leave the programme** | Refused without the tick; then every use off, "You have left this programme", the person's record shows Relationship ended | P0 |
+| SS-10 | Receipt code sign-in | **No phone? Use your receipt code** → a receipt code + wrong year, then the right year | Wrong year refused; then signed in with the yellow note; uses can be turned off but not on; children are not listed | P0 |
+| SS-11 | History and receipt | **History** → **Download receipt (PDF)** | Every decision newest first with how it was given; the PDF is that receipt with the self-service link | P1 |
+| SS-12 | Rights / support request | **Requests › Rights / support request** → Show me my data, add a note → **Send request** | "Request RQ-… sent. We will reply by …"; Desk: request type access, channel Self-service page, raised by The person | P0 |
+| SS-13 | Conversation | Staff: Ask a question (WC-29) → person: **Write to us** → staff: Send final answer | The person sees each message (You / Office, never staff names) and the status Waiting for your reply → Working on it → Answered | P0 |
+| SS-14 | Stop using my data | Rights / support request → Stop using some or all of my data → Send | Opens My choices instead of making a request | P2 |
+| SS-15 | Sign out and timeout | **Sign out**; or leave the page 15 minutes, then tap anything | Back to sign-in | P1 |
+| SS-16 | Hindi | Switch the site language to Hindi (header) and reload | Every label on the page is in Hindi | P1 |
+| SS-17 | No data in the page source | View the page source before signing in | No names, numbers or codes; only fixed text | P1 |
 
 ## Reporting a bug
 

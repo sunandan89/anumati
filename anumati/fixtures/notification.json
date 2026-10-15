@@ -5,7 +5,7 @@
   "subject": "New {{ doc.request_type }} request {{ doc.name }} ({{ doc.channel }})",
   "document_type": "Rights Request",
   "event": "New",
-  "condition": "doc.status != \"Closed\"",
+  "condition": "doc.status != \"request_closed\"",
   "channel": "System Notification",
   "enabled": 1,
   "is_standard": 0,
@@ -29,11 +29,11 @@
   "event": "Days Before",
   "date_changed": "sla_due",
   "days_in_advance": 3,
-  "condition": "doc.status not in ('Closed', 'Rejected')",
+  "condition": "doc.status not in ('request_answered', 'request_closed', 'cannot_do')",
   "channel": "System Notification",
   "enabled": 1,
   "is_standard": 0,
-  "message": "<p>{{ doc.name }} ({{ doc.request_type }}) is due in 3 days and is still {{ doc.status }}.</p>",
+  "message": "<p>{{ doc.name }} ({{ doc.request_type }}) must be answered in 3 days and is still {{ _(doc.status) }}.</p>",
   "recipients": [
    {
     "doctype": "Notification Recipient",

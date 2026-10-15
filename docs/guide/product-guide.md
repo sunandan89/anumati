@@ -82,6 +82,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 - Hears the whole notice before choosing; every optional use starts **off**; "Yes to all" and "No to all" carry equal weight.
 - Gets a receipt code and can withdraw any time: tell any field worker, show the paper slip, or (once an inbound number is set up) SMS `STOP <code>` or give a missed call.
 - A child's guardian gets the messages. `STOP <code>` from the guardian's phone withdraws that consent; a plain `STOP` or a missed call from it goes to the inbox for staff to match, because it could mean the guardian or the child.
+- **Self-service page** (`/my-consent` on the organisation's site; the link is on the receipt): sign in with an SMS code to their number, or with the receipt code and year of birth. See and change their choices (and their children's, as guardian), leave a programme, download receipts, and send a **rights / support request** (see, correct or delete their data, name someone) with a conversation with the office.
 
 ### Programme manager, DPO, operator, admin (web console)
 
@@ -91,7 +92,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stored encrypted; the list shows names and masked phones, and every view is logged); consent history per person; guardians; "Turned 18: renew consent" list |
 | **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
 | **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log with the 72-hour steps and **Tell affected people** (SMS breach notice in each person's language, field visit list for the rest), audit log |
-| **Requests inbox** | Every withdrawal or rights request with a due date (30 days by default; overdue shown in red in the list), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme); staff are notified of new requests and 3 days before the due date |
+| **Requests inbox** | Every withdrawal or rights request with a reply-by date (30 days by default; late ones in red), plain statuses (Received, Who is this?, Working on it, Waiting for the person, Waiting for partners, Answered, Closed, Can't do this), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme) and **Reply to the person** (Send update, Ask a question, Send final answer); staff are notified of new requests and 3 days before the reply-by date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
 | **Access logs** | Every view of a name, phone or evidence file is logged |
@@ -277,6 +278,39 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 | Missed call | Built; needs a missed-call number | Opens a withdrawal request in the inbox |
 | Staff in the web console | Yes | "Record withdrawal" on the request: tick the optional uses to stop (all ticked to start), or Leave the programme (the only way to stop an essential use, as in the app); one signed withdrawal, request closed |
 
+#### Self-service page
+
+The person opens `/my-consent` (the link and QR are on the receipt) on any phone browser. No app, no password. The page is a stock Frappe portal page in Hindi or English (the language picker in the site header).
+
+```mermaid
+flowchart TD
+  S["/my-consent"] --> P{"Has a phone?"}
+  P -- "Yes" --> O["Mobile number → SMS code<br/>(only to a number we hold)"]
+  P -- "No" --> R["Receipt code + year of birth<br/>(can only turn uses off)"]
+  O --> W{"Several adults<br/>on this number?"}
+  W -- "Yes" --> Y["Pick your name,<br/>confirm year of birth"]
+  W -- "No" --> PP["You, and the children<br/>you are guardian for"]
+  Y --> PP
+  R --> C
+  PP --> C["My choices: tick uses on or off<br/>→ Save → new receipt code"]
+  C --> L["Leave this programme<br/>(every use stops)"]
+  PP --> H["History: every decision,<br/>receipt PDF"]
+  PP --> Q["Requests: rights / support request,<br/>conversation with the office"]
+```
+
+- **Who can be seen.** After the SMS code, the person sees themselves and the children (or adults) they are guardian for. If several adults share the number, each picks their name and confirms their year of birth, so nobody can act for another adult. With a receipt code and year of birth they see only that record.
+- **Turning a use on** needs the SMS code (it counts as the confirmation); with a receipt code, or for someone who needs help reading or has just turned 18, the page says to ask a field worker. Essential uses are locked; they stop only by **Leave this programme**.
+- **Every change** is a new signed consent record (channel "web") with its own receipt code, exactly as from the field app; turning something off also lists a closed withdrawal in the inbox.
+- **Requests:** "Stop using my data" goes to My choices (at once); "Show me my data", "Correct my details", "Delete my data" and "Name someone to act for me" go to the inbox with a reply-by date. The office replies from Desk; the person sees the conversation and can write back. Statuses use the same words for both: Received → Working on it ⇄ Waiting for your reply → Answered → Closed.
+- **Safety:** codes expire in 10 minutes (5 tries, 3 codes per number per 10 minutes); receipt codes allow 5 tries an hour; the visit ends after 15 minutes idle; nothing is stored in Frappe's user list; responses carry only the person's own data.
+
+| <img src="wireframes/s1-sign-in.png" width="100%" alt="Sign in with phone and code, or receipt code and year of birth"> |
+| --- |
+| <img src="wireframes/s2-choices.png" width="100%" alt="Who are you, My choices, confirm"> |
+| <img src="wireframes/s3-leave-history-requests.png" width="100%" alt="Leave, history with receipts, requests and conversation"> |
+
+*Design mock-ups (fictional data); the built page uses the site's own header and colours.*
+
 #### Withdrawal in the field app
 
 ```mermaid
@@ -372,10 +406,11 @@ Rules the console enforces:
 ### Work the requests inbox
 
 1. Open **Today** (Needs attention lists overdue requests), the **Requests** list (overdue in red) or the **Requests board**.
-2. Open a request. If no person is set, fill **Beneficiary**; for SMS or missed calls from a shared number, **Who is this for?** offers the people on that number.
-3. Withdrawal: **Record withdrawal**, tick the optional uses to stop (all ticked to start) or tick **Leave the programme**. Essential uses aren't on the checklist: they stop only when the person leaves. Other types: act, write the resolution, close.
+2. Open a request. If no person is set (status **Who is this?**), fill **Beneficiary**; for SMS or missed calls from a shared number, **Who is this for?** offers the people on that number.
+3. Withdrawal: **Record withdrawal**, tick the optional uses to stop (all ticked to start) or tick **Leave the programme**. Essential uses aren't on the checklist: they stop only when the person leaves. Other types: act, then **Reply to the person**.
+4. **Reply to the person** (button group on the request): **Send update** (stays *Working on it*), **Ask a question** (*Waiting for the person*; their reply on the self-service page moves it back to *Working on it*), **Send final answer** (*Answered*). The conversation is on the request's timeline; the person sees it on their page, and an SMS tells them there is a reply once the "Reply to a request" template is approved.
 
-Withdrawals done on a field phone arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
+Withdrawals done on a field phone or on the self-service page arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 
 ### Tell people affected by a breach
 
@@ -525,7 +560,7 @@ Green: built. Yellow: partly built. Grey: later phases.
 | SMS STOP and missed call | **Built** | Needs an inbound number |
 | Printed slip with tear-off | **Partly** | The worker writes the receipt code on a paper slip; no printed slip |
 | WhatsApp menu | **Phase 2** | |
-| Web preference centre | **Phase 2** | |
+| Web preference centre | **Built** | The self-service page `/my-consent`: sign in by SMS code or receipt code, choices, leave, history with receipts, rights / support requests with a conversation. Complaints (grievances) are the next step |
 | Hosted consent page | **Phase 2** | |
 
 ### Developer portal
@@ -572,7 +607,7 @@ flowchart LR
 | --- | --- |
 | **Renew at 18** in the app | The person who turned 18 consents on their own record; no duplicate person |
 | **ODK connector** | Open Anumati's consent screens from inside an ODK / Kobo form; the survey goes ahead only with consent |
-| **Self-service page** | People see and change their own choices from a link |
+| **Grievances** | A separate complaint form and register, the DPO taking over at day 15, "Did this solve it?" and the Data Protection Board route (the self-service page and rights requests are built) |
 | **Withdrawal over WhatsApp, IVR and email** | More ways to withdraw, each as easy as giving consent |
 | **Access, correction and erasure carried out** | Data export for access requests; erasure fanned out to every connected system, with acknowledgements |
 | **Retention and purge** | Data deleted automatically when a purpose's retention period ends, with advance notice |
@@ -600,6 +635,7 @@ flowchart LR
 | Real user accounts; remove the demo password | Admin | Before the pilot |
 | MSG91 receipt templates (6 texts drafted) | MSG91 account owner | Optional |
 | Inbound number for SMS STOP and missed calls | Admin | Optional |
+| Self-service page: show the language picker (Website Settings), add the link to the receipt SMS, DLT-approve "Request received" and "Reply to a request" (drafts in Setup › Message Template) | Admin, MSG91 account owner | Sign-in by SMS code works once MSG91 is set up; until then people use their receipt code |
 | DLT-approved breach-notice template (Hindi and English) and a helpline in Anumati Settings | MSG91 account owner, DPO | Before a breach notice can be sent by SMS |
 | Hindi review by a native speaker | Programme team | Later |
 
