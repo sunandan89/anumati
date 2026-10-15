@@ -338,15 +338,16 @@ def check(principal_ref, purpose, programme=None):
 	state = enforcement.states_for(principal).get(purpose_name) if principal else None
 	status = state["status"] if state else ("unknown_principal" if not principal else "not_asked")
 	allow = status == "granted"
+	if allow and frappe.get_cached_value("Data Principal", principal, "renewal_due"):
+		# Turned 18 since a guardian consented: ask the person themselves. Checked first, because a
+		# confirmation of the guardian's consent would not help.
+		allow, status = False, "renewal_due"
 	if allow and state.get("verification") not in ("confirmed", "evidence_only"):
 		programme_name = frappe.get_cached_value("Purpose", purpose_name, "programme")
 		minor = frappe.get_cached_value("Data Principal", principal, "is_minor")
 		before_confirm = frappe.get_cached_value("Programme", programme_name, "allow_processing_before_confirm")
 		if minor or not before_confirm:
 			allow, status = False, "awaiting_confirmation"
-	if status == "granted" and frappe.get_cached_value("Data Principal", principal, "renewal_due"):
-		# Turned 18 since a guardian consented: ask the person themselves.
-		allow, status = False, "renewal_due"
 	checked_at = now_datetime()
 	if principal:
 		from frappe.deferred_insert import deferred_insert
