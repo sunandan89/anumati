@@ -155,6 +155,8 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | AP-07 | Rejoin after leaving | After WD-10 → Add a use or rejoin → the same person | "Rejoin the programme: Health screening" is asked; Yes and Sync turn it back on and clear Relationship ended in the console | P1 |
 | AP-08 | Rejoin: other uses wait | After WD-10 → Add a use or rejoin → tap No on "Rejoin the programme" | The other uses can't be answered ("Answer “Rejoin the programme” first."); note "They do not want to rejoin… Nothing to save"; Save off | P1 |
 | AP-09 | Yes to all / No to all | A person with 2+ uses to ask → tick "I have read it to them" on each → **Yes to all**, then **No to all** | The buttons stay off until every part is read; each sets every answer; Save works for either (except No to all while rejoining, as AP-08) | P2 |
+| SY-06 | One record, singular | Take 1 consent offline → Home; then make that one record fail on the server (as SY-04) | Home reads "1 record on this phone" and "1 record could not be saved on the server…" (singular); with 2 or more, the plural | P2 |
+| FI-04 | Find in Hindi | Take a Hindi consent (Hindi translation reviewed, with "Uses (translated)" filled) → Find beneficiary → that person | Each use's name in the list is in Hindi (the reviewed translation), not the English notice's title | P1 |
 
 ## 8. Web console
 
