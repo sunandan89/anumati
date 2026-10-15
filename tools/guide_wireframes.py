@@ -338,7 +338,7 @@ NEW_SCREENS = {
 <div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q9C · English</div><div class="muted">Their number</div>""" + status("Health screening", "granted") + status("Follow-up calls", "withdrawn") + status("Photos and stories", "refused") + status("Anonymised research", "not asked") + """</div>
 <div class="card"><b>Pooja (sample)</b><div class="muted">AC-5PQ3RZ2A · AN-M4D2XC · English</div><div class="muted">Guardian's number (Mother)</div>""" + status("Health screening", "granted") + status("Follow-up calls", "granted") + status("Photos and stories", "not asked") + status("Anonymised research", "not asked") + """</div></div>""",
     "k2-sync-issues": home_head(2) + """<div class="body">
-<div class="card" style="background:#F4D6CF;border-color:#9E2F24;flex-direction:row;gap:10px;align-items:center"><span style="color:#9E2F24;font-size:18px">ⓘ</span>1 records could not be saved on the server. Open to see why.</div>
+<div class="card" style="background:#F4D6CF;border-color:#9E2F24;flex-direction:row;gap:10px;align-items:center"><span style="color:#9E2F24;font-size:18px">ⓘ</span>1 record could not be saved on the server. Open to see why.</div>
 <div class="muted">Programme</div><div class="card" style="flex-direction:row;justify-content:space-between"><span>Village Health Camps</span><span style="color:#B4532A;font-size:13px">Change</span></div></div>
 <div style="position:absolute;left:0;right:0;top:300px;bottom:0;background:#F3EADB;box-shadow:0 -6px 24px rgba(0,0,0,.18);border-radius:18px 18px 0 0;overflow:hidden">""" + bar("Records that need attention") + """<div class="body">
 <div class="card"><b>consent · AC-2LK7T5WE · AN-R8Z6PC</b><div class="muted">2026-10-14 16:42:05</div>
