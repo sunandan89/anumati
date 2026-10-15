@@ -132,7 +132,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WD-01 | Withdraw all optional uses | Stop a use or leave → find the person → **Stop all** → Save ("Stop 3 uses for …") | Phone shows those uses withdrawn at once; after sync, the console shows them withdrawn; essential use still granted | P0 |
 | WD-02 | Withdraw some uses | Switch off "Photos and stories" and "Follow-up calls", leave "Anonymised research" on | Save reads "Stop 2 uses for …"; only those two withdrawn | P0 |
 | WD-03 | Paper slip, person not on phone | Tick "They gave a paper slip or letter" → enter a code not on this phone → "Stop all optional uses" | "Not on this phone. It goes to the office inbox with the code"; the request appears **Open** in the inbox | P0 |
-| WD-04 | Other requests | "See or correct my data", "Delete my data", "Complaint" | Inbox shows them as Data access request, Erasure and Grievance, each with a due date 30 days out | P0 |
+| WD-04 | Other requests | "See or correct my data", "Delete my data", "Complaint" | After sync: the first two are in the Requests inbox as Data access request and Erasure, the complaint under **Requests › Grievances** (Something else), each with a reply-by date 30 days out | P0 |
 | WD-05 | Field withdrawal is listed in the inbox | Do WD-01 with the paper slip box ticked and slip number `SLIP-0042` → Sync → console: Requests | One **Closed** withdrawal request for that person, with the slip number, linked to the withdrawal consent record, and the resolution naming the worker. No "new request" alert. Syncing again adds no second request | P0 |
 | WD-06 | Slip from someone another worker enrolled | On phone B, find by the receipt code of a consent taken on phone A (after both have synced) | Person found; withdrawal works as WD-01 | P0 |
 | WD-07 | Code given, person not on the phone | Enter a real receipt code of a person not downloaded to this phone → "Delete my data" → Save → Sync | The inbox request is already matched to that person (Beneficiary filled) | P1 |
@@ -153,7 +153,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | AP-05 | Add a use, child | A child consented through a parent | "A guardian must consent for this person. Take a new consent with the guardian." | P1 |
 | AP-06 | Ask again | After WD-02 → Add a use or rejoin → the same person | The two withdrawn uses show "Ask again"; "Anonymised research" is under "Already agreed"; Yes switches a use back on after sync | P1 |
 | AP-07 | Rejoin after leaving | After WD-10 → Add a use or rejoin → the same person | "Rejoin the programme: Health screening" is asked; Yes and Sync turn it back on and clear Relationship ended in the console | P1 |
-| AP-08 | Rejoin: other uses wait | After WD-10 → Add a use or rejoin → tap No on "Rejoin the programme" | The other uses can't be answered ("Answer Rejoin the programme first"); note "They do not want to rejoin… Nothing to save"; Save off | P1 |
+| AP-08 | Rejoin: other uses wait | After WD-10 → Add a use or rejoin → tap No on "Rejoin the programme" | The other uses can't be answered ("Answer “Rejoin the programme” first."); note "They do not want to rejoin… Nothing to save"; Save off | P1 |
 | AP-09 | Yes to all / No to all | A person with 2+ uses to ask → tick "I have read it to them" on each → **Yes to all**, then **No to all** | The buttons stay off until every part is read; each sets every answer; Save works for either (except No to all while rejoining, as AP-08) | P2 |
 
 ## 8. Web console
@@ -195,6 +195,9 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-33 | DPO at day 15 | Ask a developer to set a grievance's Received on 16 days back and run the daily job (or wait) | Assigned to the DPO, DPO tag, a timeline note and a notification | P1 |
 | WC-34 | Move between lists | On a rights request: **Actions › Move to grievances**; on the new grievance: **Actions › Move to rights requests** | Each move closes the old one with a note and carries the messages over | P2 |
 | WC-35 | Complaint from the field app or SMS | Field app: **Complaint** on a person; SMS `HELP` from a known number | Both arrive under Grievances (Something else), matched to the person | P1 |
+| WC-36 | Answered grievance closes by itself | Ask a developer to set an Answered grievance's **Answered on** 31 days back and run the daily job (or wait) | Status Closed, with a timeline note; the person's page shows it closed | P2 |
+| WC-37 | Requests workspace and Needs attention | Open **Requests** as DPO; then **Today** with a late grievance and one with the DPO | Number cards: open, overdue and to-match rights requests; grievances open, with the DPO and late. Sidebar: Rights requests, Requests board, Grievances, Grievance register. Needs attention shows "grievances are past their reply date" and "grievances are with the DPO" as counts only; clicking one opens the filtered list | P1 |
+| WC-38 | Who can see grievances | Open Requests › Grievances as Programme Manager, then as Admin | Programme Manager: no access. Admin: can read (staff-behaviour ones hidden) but has no **Reply to the person** and can't edit | P1 |
 
 ## 9. SMS channels (need an SMS account and inbound number)
 
@@ -217,6 +220,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-05 | Worker-phone code needs voice | API: record a consent with `device_sms_otp` and no audio evidence | Refused | P1 |
 | SE-06 | Names encrypted | Database / report view of Beneficiary | Name and phone stored encrypted; whole-word name search still works | P1 |
 | SE-07 | Check before use | API `consent.check` for an adult's granted, unconfirmed use with "Allow processing before confirmation" off | `allow: false`, `awaiting_confirmation`; on: `allow: true` | P1 |
+| SE-08 | Request and grievance APIs need login | Call `anumati.api.v1.rights.submit` and `anumati.api.v1.grievance.submit` without a token | 401 or 403; nothing created | P0 |
 
 ## 11. Self-service page (`/my-consent`)
 
