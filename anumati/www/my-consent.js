@@ -246,12 +246,15 @@
 		}));
 	}
 
-	// Requests: a rights / support request, and the conversation on each one.
+	// Requests: two doors (a rights / support request, or a grievance), and the conversation on each one.
 	function requests_tab() {
-		const open = h("button", { type: "button", class: "ss-card ss-who", onclick: render_ask },
-			h("span", { class: "ss-avatar ss-blue" }, "⇄"), h("span", {}, h("b", {}, T("rights_request")), h("small", { class: "d-block text-muted" }, T("rights_request_help"))), h("span", { class: "ss-chev" }, "›"));
+		const door = (icon, cls, title, help, onclick) => h("button", { type: "button", class: "ss-card ss-who", onclick },
+			h("span", { class: `ss-avatar ${cls}` }, icon), h("span", {}, h("b", {}, title), h("small", { class: "d-block text-muted" }, help)), h("span", { class: "ss-chev" }, "›"));
 		const list = S.person.requests;
-		return h("div", {}, open, h("div", { class: "ss-label" }, T("raised_by_you")),
+		return h("div", {},
+			door("⇄", "ss-blue", T("rights_request"), T("rights_request_help"), render_ask),
+			door("!", "ss-red", T("grievance"), T("grievance_help"), render_complain),
+			h("div", { class: "ss-label" }, T("raised_by_you")),
 			list.length ? list.map(request_card) : h("p", { class: "text-muted" }, T("no_requests")));
 	}
 	function request_card(r) {
@@ -262,11 +265,52 @@
 			render_person();
 		});
 		const tone = { request_answered: "ok", request_closed: "ok", cannot_do: "", waiting_for_person: "warn" }[r.status] ?? "info";
+		const grievance = r.kind === "grievance";
+		const title = grievance ? T("grievance") : T("type_" + r.type);
+		const answer = (m, k) => grievance && r.outcome && m.from === "office" && k === r.messages.map((x) => x.from).lastIndexOf("office") && r.status !== "working_on_it";
+		const respond = (solved) => async () => {
+			S.person = await call("respond", { i: S.i, grievance_name: r.id, solved: solved ? 1 : 0 });
+			render_person(solved ? T("thanks_closed") : T("sent_to_dpo"));
+		};
 		return h("div", { class: "ss-card" },
-			h("div", { class: "ss-row" }, h("b", {}, T("type_" + r.type)), h("span", { class: `ss-chip ss-${tone}` }, T("st_" + r.status))),
-			h("small", { class: "text-muted d-block" }, `${r.id} · ${T("reply_by", date(r.reply_by))}`),
-			r.messages.map((m) => h("div", { class: `ss-msg ss-${m.from}` }, h("small", { class: "text-muted d-block" }, `${m.from === "you" ? T("you") : T("office")} · ${date(m.at)}`), m.text)),
+			h("div", { class: "ss-row" }, h("b", {}, title), h("span", { class: `ss-chip ss-${tone}` }, T("st_" + r.status))),
+			h("small", { class: "text-muted d-block" }, [grievance ? T("cat_" + r.type) : null, r.id, T("reply_by", date(r.reply_by))].filter(Boolean).join(" · ")),
+			grievance && r.with_dpo && !["request_answered", "request_closed"].includes(r.status) ? h("small", { class: "d-block ss-dpo" }, T("with_dpo")) : null,
+			r.messages.map((m, k) => h("div", { class: `ss-msg ss-${m.from}` },
+				h("small", { class: "text-muted d-block" }, `${m.from === "you" ? T("you") : T("office")} · ${date(m.at)}`),
+				answer(m, k) ? h("b", { class: "d-block" }, r.outcome) : null, m.text)),
+			r.can_respond ? h("div", { class: "ss-gap" }, h("b", { class: "d-block" }, T("did_it_solve")),
+				button(T("yes_solved"), respond(true)),
+				r.can_say_not_happy ? button(T("not_happy"), respond(false), "btn-default") : null) : null,
+			grievance && r.board_route ? alertBox(T("board_route"), "warn") : null,
 			["request_closed", "cannot_do"].includes(r.status) ? null : [field(T("write_to_us"), text), send]);
+	}
+	function render_complain() {
+		const cats = ["used_without_consent", "did_not_stop", "wrong_details", "shared_or_leaked", "staff_behaviour", "request_not_answered", "something_else"];
+		const category = h("select", { class: "form-control" }, h("option", { value: "" }, T("choose")), cats.map((c) => h("option", { value: c }, T("cat_" + c))));
+		const mine = S.person.requests.filter((r) => r.kind === "request");
+		const about = h("select", { class: "form-control" }, h("option", { value: "" }, T("choose")), mine.map((r) => h("option", { value: r.id }, `${r.id} · ${T("type_" + r.type)}`)));
+		const aboutField = field(T("which_request"), about);
+		aboutField.hidden = true;
+		category.onchange = () => { aboutField.hidden = category.value !== "request_not_answered"; };
+		const details = h("textarea", { class: "form-control", rows: 4, placeholder: T("hindi_or_english"), maxlength: 2000 });
+		const photo = h("input", { type: "file", class: "form-control-file", accept: "image/jpeg,image/png,application/pdf" });
+		const go = button(T("send_grievance"));
+		go.onclick = busy(go, async () => {
+			let data = null;
+			const f = photo.files && photo.files[0];
+			if (f) {
+				if (f.size > 3 * 1024 * 1024) throw new Error(T("photo_too_big"));
+				data = await new Promise((ok, no) => { const rd = new FileReader(); rd.onload = () => ok(rd.result); rd.onerror = no; rd.readAsDataURL(f); });
+			}
+			const r = await call("complain", { i: S.i, category: category.value, details: details.value, about_request: about.value, ...(data ? { photo: data } : {}) });
+			S.person = r; S.tab = "requests";
+			render_person(T("grievance_sent", r.grievance, date(r.reply_by)));
+		});
+		show(h("h3", {}, T("make_grievance")), h("p", { class: "text-muted" }, `${S.person.name} · ${T("we_reply_within", C.grievance_days)}`),
+			field(T("what_about"), category), aboutField, field(T("what_happened"), details),
+			field(T("photo"), photo, T("photo_help")), go,
+			h("div", { class: "text-center" }, link(T("go_back"), () => render_person())), footer());
 	}
 	function render_ask() {
 		const types = [

@@ -82,7 +82,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 - Hears the whole notice before choosing; every optional use starts **off**; "Yes to all" and "No to all" carry equal weight.
 - Gets a receipt code and can withdraw any time: tell any field worker, show the paper slip, or (once an inbound number is set up) SMS `STOP <code>` or give a missed call.
 - A child's guardian gets the messages. `STOP <code>` from the guardian's phone withdraws that consent; a plain `STOP` or a missed call from it goes to the inbox for staff to match, because it could mean the guardian or the child.
-- **Self-service page** (`/my-consent` on the organisation's site; the link is on the receipt): sign in with an SMS code to their number, or with the receipt code and year of birth. See and change their choices (and their children's, as guardian), leave a programme, download receipts, and send a **rights / support request** (see, correct or delete their data, name someone) with a conversation with the office.
+- **Self-service page** (`/my-consent` on the organisation's site; the link is on the receipt): sign in with an SMS code to their number, or with the receipt code and year of birth. See and change their choices (and their children's, as guardian), leave a programme, download receipts, send a **rights / support request** (see, correct or delete their data, name someone), or make a **grievance** (a complaint), each with a conversation with the office.
 
 ### Programme manager, DPO, operator, admin (web console)
 
@@ -92,6 +92,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stored encrypted; the list shows names and masked phones, and every view is logged); consent history per person; guardians; "Turned 18: renew consent" list |
 | **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
 | **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log with the 72-hour steps and **Tell affected people** (SMS breach notice in each person's language, field visit list for the rest), audit log |
+| **Grievances** | Complaints in their own list (GR-), apart from rights requests: what it's about, the person's words and photo, Reply to the person with an **Outcome** on the final answer, the DPO taking over at day 15 (and straight away for staff-behaviour complaints, which only the DPO sees), "did this solve it?", and the **Grievance register** |
 | **Requests inbox** | Every withdrawal or rights request with a reply-by date (30 days by default; late ones in red), plain statuses (Received, Who is this?, Working on it, Waiting for the person, Waiting for partners, Answered, Closed, Can't do this), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme) and **Reply to the person** (Send update, Ask a question, Send final answer); staff are notified of new requests and 3 days before the reply-by date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
@@ -274,7 +275,7 @@ Each step can be repeated safely: a sync cut off halfway resumes without duplica
 | --- | --- | --- |
 | Told to a field worker | Yes | "Stop a use or leave" on the phone; a withdrawal takes effect on the phone at once, and after sync it is signed and listed in the inbox as a closed request |
 | Paper slip or letter | Yes | Same screen, with the slip number, which is kept on the inbox request |
-| SMS `STOP` / `STOP <code>` / `STOP <n>` | Built; needs an inbound number | Withdraws all optional uses, that consent, or use number n; ambiguous ones go to the inbox. `DATA` opens an access request; anything else a complaint |
+| SMS `STOP` / `STOP <code>` / `STOP <n>` | Built; needs an inbound number | Withdraws all optional uses, that consent, or use number n; ambiguous ones go to the inbox. `DATA` opens an access request; `HELP` or anything else opens a grievance |
 | Missed call | Built; needs a missed-call number | Opens a withdrawal request in the inbox |
 | Staff in the web console | Yes | "Record withdrawal" on the request: tick the optional uses to stop (all ticked to start), or Leave the programme (the only way to stop an essential use, as in the app); one signed withdrawal, request closed |
 
@@ -295,19 +296,22 @@ flowchart TD
   PP --> C["My choices: tick uses on or off<br/>→ Save → new receipt code"]
   C --> L["Leave this programme<br/>(every use stops)"]
   PP --> H["History: every decision,<br/>receipt PDF"]
-  PP --> Q["Requests: rights / support request,<br/>conversation with the office"]
+  PP --> Q["Requests: rights / support request<br/>or grievance, conversation with the office"]
 ```
 
 - **Who can be seen.** After the SMS code, the person sees themselves and the children (or adults) they are guardian for. If several adults share the number, each picks their name and confirms their year of birth, so nobody can act for another adult. With a receipt code and year of birth they see only that record.
 - **Turning a use on** needs the SMS code (it counts as the confirmation); with a receipt code, or for someone who needs help reading or has just turned 18, the page says to ask a field worker. Essential uses are locked; they stop only by **Leave this programme**.
 - **Every change** is a new signed consent record (channel "web") with its own receipt code, exactly as from the field app; turning something off also lists a closed withdrawal in the inbox.
 - **Requests:** "Stop using my data" goes to My choices (at once); "Show me my data", "Correct my details", "Delete my data" and "Name someone to act for me" go to the inbox with a reply-by date. The office replies from Desk; the person sees the conversation and can write back. Statuses use the same words for both: Received → Working on it ⇄ Waiting for your reply → Answered → Closed.
+- **Grievance** (a complaint): pick what it's about (used without my consent, didn't stop when I asked, wrong details, shared or leaked, staff behaviour, my request was not answered, something else), say what happened, add a photo or PDF if they like (kept encrypted). The final answer shows the outcome in one line ("You were right. We have put it right.", "You were partly right…", "We checked and found no problem.") and asks **Did this solve it?** "No" (once, within 30 days) sends it back to the DPO; the page always shows how to complain to the Data Protection Board.
 - **Safety:** codes expire in 10 minutes (5 tries, 3 codes per number per 10 minutes); receipt codes allow 5 tries an hour; the visit ends after 15 minutes idle; nothing is stored in Frappe's user list; responses carry only the person's own data.
 
 | <img src="wireframes/s1-sign-in.png" width="100%" alt="Sign in with phone and code, or receipt code and year of birth"> |
 | --- |
 | <img src="wireframes/s2-choices.png" width="100%" alt="Who are you, My choices, confirm"> |
 | <img src="wireframes/s3-leave-history-requests.png" width="100%" alt="Leave, history with receipts, requests and conversation"> |
+| <img src="wireframes/s4-requests-and-grievance.png" width="100%" alt="Two doors: rights / support request and grievance"> |
+| <img src="wireframes/s5-grievance-answer.png" width="100%" alt="Grievance received, conversation, answer with did this solve it"> |
 
 *Design mock-ups (fictional data); the built page uses the site's own header and colours.*
 
@@ -410,7 +414,22 @@ Rules the console enforces:
 3. Withdrawal: **Record withdrawal**, tick the optional uses to stop (all ticked to start) or tick **Leave the programme**. Essential uses aren't on the checklist: they stop only when the person leaves. Other types: act, then **Reply to the person**.
 4. **Reply to the person** (button group on the request): **Send update** (stays *Working on it*), **Ask a question** (*Waiting for the person*; their reply on the self-service page moves it back to *Working on it*), **Send final answer** (*Answered*). The conversation is on the request's timeline; the person sees it on their page, and an SMS tells them there is a reply once the "Reply to a request" template is approved.
 
+A request that is really a complaint (often an email): **Actions › Move to grievances**. The reverse is on the grievance.
+
 Withdrawals done on a field phone or on the self-service page arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
+
+### Work grievances
+
+Grievances (complaints, DPDP Act s.13) have their own list under **Requests › Grievances**, so routine requests never count as complaints.
+
+1. They arrive from the self-service page, the field app's **Complaint**, SMS `HELP` (or any text that isn't a keyword), email to the DPO (once the DPO mailbox appends to Grievance), or the API.
+2. Open one: what it's about, which request (for "my request was not answered"), the person's words, **View photo or document** (each view logged), and the person's consents on the last tab.
+3. **Reply to the person** › Send update / Ask a question / **Send final answer** (pick the **Outcome**: complaint was right: put right · partly right: partly put right · no problem found). The person sees it and answers **Did this solve it?**
+4. No final answer in 15 days, or the person says they are not happy: it goes to the **DPO** (assigned, notified, red DPO tag). **Staff behaviour** grievances go to the DPO at once, and only the DPO can see them.
+5. Answered and no word from the person for 30 days: closed automatically.
+6. **Grievance register** (report): received, answered, typical days to answer, passed to the DPO, late, not happy, by category.
+
+<img src="wireframes/w1-grievance-desk.png" width="100%" alt="A grievance in Desk: outcome, conversation, DPO">
 
 ### Tell people affected by a breach
 
@@ -560,7 +579,7 @@ Green: built. Yellow: partly built. Grey: later phases.
 | SMS STOP and missed call | **Built** | Needs an inbound number |
 | Printed slip with tear-off | **Partly** | The worker writes the receipt code on a paper slip; no printed slip |
 | WhatsApp menu | **Phase 2** | |
-| Web preference centre | **Built** | The self-service page `/my-consent`: sign in by SMS code or receipt code, choices, leave, history with receipts, rights / support requests with a conversation. Complaints (grievances) are the next step |
+| Web preference centre | **Built** | The self-service page `/my-consent`: sign in by SMS code or receipt code, choices, leave, history with receipts, rights / support requests and grievances, each with a conversation |
 | Hosted consent page | **Phase 2** | |
 
 ### Developer portal
@@ -607,7 +626,6 @@ flowchart LR
 | --- | --- |
 | **Renew at 18** in the app | The person who turned 18 consents on their own record; no duplicate person |
 | **ODK connector** | Open Anumati's consent screens from inside an ODK / Kobo form; the survey goes ahead only with consent |
-| **Grievances** | A separate complaint form and register, the DPO taking over at day 15, "Did this solve it?" and the Data Protection Board route (the self-service page and rights requests are built) |
 | **Withdrawal over WhatsApp, IVR and email** | More ways to withdraw, each as easy as giving consent |
 | **Access, correction and erasure carried out** | Data export for access requests; erasure fanned out to every connected system, with acknowledgements |
 | **Retention and purge** | Data deleted automatically when a purpose's retention period ends, with advance notice |
@@ -635,7 +653,8 @@ flowchart LR
 | Real user accounts; remove the demo password | Admin | Before the pilot |
 | MSG91 receipt templates (6 texts drafted) | MSG91 account owner | Optional |
 | Inbound number for SMS STOP and missed calls | Admin | Optional |
-| Self-service page: show the language picker (Website Settings), add the link to the receipt SMS, DLT-approve "Request received" and "Reply to a request" (drafts in Setup › Message Template) | Admin, MSG91 account owner | Sign-in by SMS code works once MSG91 is set up; until then people use their receipt code |
+| Self-service page: show the language picker (Website Settings), add the link to the receipt SMS, DLT-approve "Request received", "Grievance received" and "Reply to a request" (drafts in Setup › Message Template) | Admin, MSG91 account owner | Sign-in by SMS code works once MSG91 is set up; until then people use their receipt code |
+| Grievances: DPO email in Anumati Settings is the DPO's user; the DPO mailbox (Email Account) appends to **Grievance**; publish the 30-day reply time in the notice | Admin, DPO | Before the pilot |
 | DLT-approved breach-notice template (Hindi and English) and a helpline in Anumati Settings | MSG91 account owner, DPO | Before a breach notice can be sent by SMS |
 | Hindi review by a native speaker | Programme team | Later |
 

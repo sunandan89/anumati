@@ -26,7 +26,7 @@ ROPA Entry,Record of processing
 Recorded (30 Days),Recorded (30 days)
 Requests By Type,Requests by type
 Retention Policy,Retention rule
-Rights Request,Request
+Rights Request,Rights request
 Source System,Connected system
 System Usage Log,Consent check log
 Verification Attempt,Confirmation attempt
@@ -76,6 +76,7 @@ delete,Deleted
 deny,Denied
 device_sms,SMS from the worker's phone
 device_sms_otp,SMS code from the worker's phone
+did_not_stop,Didn't stop when I asked
 digilocker,DigiLocker
 document,Document
 email,Email
@@ -91,6 +92,7 @@ field_worker,Field worker
 grant,Agreed
 granted,Agreed
 grievance,Grievance
+grievance_received,Grievance received
 guardian_minor,"Guardian, for a child"
 guardian_pwd,"Guardian, for a person with disability"
 hard_purge,Delete completely
@@ -122,20 +124,24 @@ neha,Neha
 neighbour,Neighbour
 new_request,Received
 no_phone,No phone
+no_problem_found,No problem found
 no_processing,Stop using their data
 nomination,Nomination
 not_asked,Not asked
+not_happy,"No, I'm not happy with this"
 number,Number
 other,Other
 otp,One-time code
 paper,Paper form
 parent,Parent
+partly_put_right,Partly right: partly put right
 patient,Patient
 pending,Pending
 phishing,Phishing
 phone_voice,Phone read it aloud
 pooja,Pooja
 priya,Priya
+put_right,Complaint was right: put right
 rahul,Rahul
 ransomware,Ransomware
 re_consent,Re-consent
@@ -153,6 +159,7 @@ renew,Renewed
 renewal,Renewal
 request_answered,Answered
 request_closed,Closed
+request_not_answered,My request was not answered
 request_reply,Reply to a request
 retention_notice,Data about to be deleted
 reverse_sms,Reply by SMS
@@ -163,6 +170,7 @@ self,Self
 self_digital,"Self, on their own phone"
 self_worker_device,"Self, on the worker's phone"
 server_otp,SMS code from Anumati
+shared_or_leaked,My data was shared or leaked
 shreya,Shreya
 sibling,Brother or sister
 simran,Simran
@@ -171,7 +179,10 @@ sms,SMS
 sms_delivered,SMS delivered
 sms_failed,SMS failed
 sms_sent,SMS sent
+solved,"Yes, this solves it"
+something_else,Something else
 spouse,Spouse
+staff_behaviour,Staff behaviour
 student,Student
 submit,Submitted
 text,Short answer
@@ -182,6 +193,7 @@ unconfirmed,Waiting for confirmation
 under_18,Under 18
 unknown,Not known
 update,Changed
+used_without_consent,Used without my consent
 ussd,USSD
 validity_expiry,Consent about to expire
 waiting_for_partners,Waiting for partners
@@ -198,5 +210,6 @@ withdrawal_confirmation,Withdrawal done
 withdrawn,Withdrawn
 witness,Witness
 working_on_it,Working on it
+wrong_details,Wrong details
 year,Year
 years,Years

@@ -17,7 +17,7 @@ from cryptography.fernet import Fernet
 from frappe.utils.password import get_encryption_key
 
 MAGIC = b"ANUMATI-ENC1\n"
-EVIDENCE_DOCTYPES = ("Data Principal", "Guardian Link", "Consent Event")
+EVIDENCE_DOCTYPES = ("Data Principal", "Guardian Link", "Consent Event", "Grievance")
 
 
 def _fernet() -> Fernet:

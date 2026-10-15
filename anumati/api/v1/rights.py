@@ -16,15 +16,25 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 	schema.validate("RightsSubmit", {k: v for k, v in {
 		"request_type": request_type, "channel": channel, "principal_ref": principal_ref, "payload": payload,
 		"paper_trail_number": paper_trail_number, "consent_code": consent_code}.items() if v is not None})
-	doc = frappe.new_doc("Rights Request")
-	doc.update({"request_type": request_type, "channel": channel, "raw_payload": payload,
-	            "paper_trail_number": paper_trail_number})
+	principal = None
 	if principal_ref:
-		doc.matched_principal = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
-		if not doc.matched_principal:
+		principal = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
+		if not principal:
 			frappe.throw(_("Unknown principal_ref {0}").format(principal_ref))
 	elif consent_code:
-		doc.matched_principal = inbox.principal_for_short_code(consent_code)
+		principal = inbox.principal_for_short_code(consent_code)
+	if request_type == "grievance":
+		# Complaints are grievances now (grievance.submit); older field apps still send them here.
+		from anumati import grievance
+
+		frappe.has_permission("Grievance", "create", throw=True)
+		doc = grievance.create("something_else", channel, principal, description=payload, raw_payload=payload,
+		                       paper_trail_number=paper_trail_number,
+		                       raised_by_role="by_field_worker" if channel in ("field_worker", "slip") else None)
+		return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
+	doc = frappe.new_doc("Rights Request")
+	doc.update({"request_type": request_type, "channel": channel, "raw_payload": payload,
+	            "paper_trail_number": paper_trail_number, "matched_principal": principal})
 	doc.insert()
 	return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
 

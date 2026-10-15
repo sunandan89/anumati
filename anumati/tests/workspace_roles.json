@@ -12,6 +12,12 @@
   "Anumati Admin",
   "System Manager"
  ],
+ "Grievances": [
+  "Anumati Operator",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
  "Notices and Compliance": [
   "Anumati Programme Manager",
   "Anumati DPO",
@@ -20,6 +26,18 @@
  ],
  "Programmes": [
   "Anumati Programme Manager",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Requests": [
+  "Anumati Operator",
+  "Anumati DPO",
+  "Anumati Admin",
+  "System Manager"
+ ],
+ "Rights requests": [
+  "Anumati Operator",
   "Anumati DPO",
   "Anumati Admin",
   "System Manager"

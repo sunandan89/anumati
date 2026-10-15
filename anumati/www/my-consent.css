@@ -7,6 +7,8 @@
 .anumati-ss .ss-who { display: flex; align-items: center; gap: 12px; }
 .anumati-ss .ss-who > span:nth-child(2) { flex: 1; }
 .anumati-ss .ss-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; background: var(--orange-100, #f3e7dd); color: var(--orange-700, #8a3e1c); flex: none; }
+.anumati-ss .ss-avatar.ss-red { background: var(--red-100, #fff0f0); color: var(--red-600, #cc2929); border-radius: 8px; }
+.anumati-ss .ss-dpo { color: var(--red-700, #a61c1c); margin-top: 4px; }
 .anumati-ss .ss-avatar.ss-blue { background: var(--blue-100, #edf6fd); color: var(--blue-600, #0070cc); border-radius: 8px; }
 .anumati-ss .ss-chev { color: var(--text-muted, #999); font-size: 20px; }
 .anumati-ss .ss-row { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 6px; }

@@ -1,11 +1,13 @@
 10-digit number,10 अंकों का नंबर
 18_plus,18 या अधिक
 72-hour deadline passed {0} hours ago. Tell the Data Protection Board now.,72 घंटे की समय-सीमा {0} घंटे पहले निकल गई। डेटा संरक्षण बोर्ड को अभी बताएँ।
+A senior officer (the Data Protection Officer) is now looking into this.,अब एक वरिष्ठ अधिकारी (डेटा संरक्षण अधिकारी) इसे देख रहे हैं।
 A summary of what we hold and why,"हमारे पास क्या है और क्यों, इसका सार"
 A use needed for the service can only stop if you leave the programme.,सेवा के लिए ज़रूरी उपयोग तभी बंद होता है जब आप कार्यक्रम छोड़ें।
 Access log (names and evidence),कौन देखा (नाम और सबूत)
 Acknowledged,पुष्टि मिली
 Active,चालू
+Add a photo (JPG or PNG) or a PDF of up to 3 MB.,3 MB तक की फ़ोटो (JPG या PNG) या PDF जोड़ें।
 Add at least one purpose,कम से कम एक उद्देश्य जोड़ें
 Add more details…,और जानकारी जोड़ें…
 Adult,वयस्क
@@ -45,8 +47,14 @@ Cancel,रद्द करें
 Change number,नंबर बदलें
 Channel Provider,मैसेजिंग खाता
 Check signature,हस्ताक्षर जाँचें
+Choose the outcome with the final answer.,अंतिम जवाब के साथ परिणाम चुनें।
+Choose what it is about.,चुनें कि यह किस बारे में है।
+Choose what they asked for,चुनें कि उन्होंने क्या माँगा
 Choose what you are asking for.,चुनें कि आप क्या माँग रहे हैं।
+Choose which request was not answered.,चुनें किस अनुरोध का जवाब नहीं मिला।
+Choose…,चुनें…
 Closed,बंद
+Closed: no reply from the person {0} days after the answer.,बंद: जवाब के {0} दिन बाद तक व्यक्ति से कोई उत्तर नहीं।
 Community meeting,सामुदायिक बैठक
 Complaint,शिकायत
 Completed,पूरा
@@ -75,6 +83,8 @@ Data Principal,लाभार्थी
 Data Processor,डेटा प्रोसेसर
 Data Protection Officer: {0},डेटा संरक्षण अधिकारी: {0}
 Delete my data,मेरी जानकारी हटाएँ
+Did this solve it?,क्या इससे हल हुआ?
+Didn't stop when I asked,कहने पर भी बंद नहीं हुआ
 Download receipt (PDF),रसीद डाउनलोड करें (PDF)
 Due today,आज तक
 Email,ईमेल
@@ -90,9 +100,19 @@ Field team,फील्ड टीम
 Field worker,फ़ील्ड कार्यकर्ता
 Find a receipt,रसीद खोजें
 For example: We are checking with the field team. The status stays Working on it.,जैसे: हम फ़ील्ड टीम से पता कर रहे हैं। स्थिति 'हम देख रहे हैं' रहेगी।
+From,से
 Funder Link,फंडर के साथ साझा
 Go back,वापस जाएँ
 Granted,सहमति दी
+Grievance,शिकायत
+Grievance Register,शिकायत रजिस्टर
+Grievance register,शिकायत रजिस्टर
+Grievance {0} received. We will reply by {1}.,शिकायत {0} मिल गई। हम {1} तक जवाब देंगे।
+Grievances,शिकायतें
+Grievances Late,देर वाली शिकायतें
+Grievances Not Happy,असंतुष्ट शिकायतें
+Grievances Open,खुली शिकायतें
+Grievances With The DPO,DPO के पास शिकायतें
 Guardian,अभिभावक
 Guardian Link,अभिभावक
 Guardian's ID,अभिभावक का पहचान पत्र
@@ -113,10 +133,12 @@ How to exercise rights,अपने अधिकारों का उपयो
 How to withdraw consent,सहमति वापस कैसे लें
 I understand and want to leave,मैं समझता/समझती हूँ और छोड़ना चाहता/चाहती हूँ
 "If this number is with us, a code is on its way by SMS to {0}.","अगर यह नंबर हमारे पास है, तो {0} पर SMS से कोड आ रहा है।"
+"If we can't sort it out, you can complain to the Data Protection Board of India. How: see the notice you agreed to.","अगर हम इसे हल न कर पाएँ, तो आप भारत के डेटा संरक्षण बोर्ड से शिकायत कर सकते हैं। कैसे: वह सूचना देखें जिस पर आपने सहमति दी थी।"
 If you die or can't decide for yourself,अगर आपकी मृत्यु हो जाए या आप ख़ुद फ़ैसला न कर सकें
 Inbox,इनबॉक्स
 Incidents and audit,घटनाएँ और ऑडिट
 "It's on the paper slip you were given, like AN-7K2Q9C.","यह आपको दी गई काग़ज़ की पर्ची पर है, जैसे AN-7K2Q9C।"
+"JPG, PNG or PDF, up to 3 MB","JPG, PNG या PDF, 3 MB तक"
 Late,देर हो गई
 Late by {0} days,{0} दिन की देर
 Leave the programme,कार्यक्रम छोड़ें
@@ -127,6 +149,7 @@ Left the programme on the self-service page.,स्वयं-सेवा पे
 Live,चालू
 MSG91 when online,इंटरनेट हो तो MSG91
 "Machine-made, not approved: not played in the field","मशीन से बना, स्वीकृत नहीं: फील्ड में नहीं चलेगा"
+Make a grievance,शिकायत करें
 Make audio again,ऑडियो फिर से बनाएँ
 Make natural audio,प्राकृतिक आवाज़ में ऑडियो बनाएँ
 Making audio… this can take a minute,ऑडियो बन रहा है… एक मिनट लग सकता है
@@ -140,24 +163,37 @@ Messaging,मैसेजिंग
 Minor,नाबालिग
 Missed Call,मिस्ड कॉल
 Missed call,मिस्ड कॉल
+Move to grievances,शिकायतों में भेजें
+Move to rights requests,अधिकार अनुरोधों में भेजें
+Moved from rights request {0},अधिकार अनुरोध {0} से लाया गया
+Moved to grievance {0}.,शिकायत {0} में भेजा गया।
+Moved to rights request {0},अधिकार अनुरोध {0} में भेजा गया
 My choices,मेरे विकल्प
+My data was shared or leaked,मेरी जानकारी साझा हुई या लीक हुई
+My request was not answered,मेरे अनुरोध का जवाब नहीं मिला
 Name or phone,नाम या फ़ोन
 Name someone to act for me,मेरी ओर से काम करने के लिए किसी को नामित करें
 "Name, phone number or receipt code","नाम, फ़ोन नंबर या रसीद कोड"
 Need help? Tell any field worker.,मदद चाहिए? किसी भी फ़ील्ड कार्यकर्ता को बताएँ।
 Needed for the service,सेवा के लिए ज़रूरी
 Needs attention,ध्यान दें
+New grievance,नई शिकायत
+New rights request,नया अधिकार अनुरोध
+No final answer after {0} days: passed to the DPO.,{0} दिन में अंतिम जवाब नहीं: DPO को भेजा।
 "No one found. Names match whole words, and phone numbers must be complete.","कोई नहीं मिला। नाम पूरे शब्द से मिलता है, और फ़ोन नंबर पूरा होना चाहिए।"
 No phone,फ़ोन नहीं
 No phone? Use your receipt code,फ़ोन नहीं है? अपनी रसीद का कोड इस्तेमाल करें
 No programmes yet.,अभी कोई कार्यक्रम नहीं।
 No to all,सब के लिए ना
+"No, I'm not happy with this","नहीं, मैं इससे संतुष्ट नहीं हूँ"
 None,कोई नहीं
 Not asked yet,अभी पूछा नहीं गया
+Not happy,संतुष्ट नहीं
 Not recorded,दर्ज नहीं
 Not synced,सिंक नहीं
 Nothing changed.,कुछ नहीं बदला।
 Nothing needs attention right now.,अभी किसी चीज़ पर ध्यान देने की ज़रूरत नहीं।
+Nothing recorded yet.,अभी कुछ दर्ज नहीं है।
 Nothing yet.,अभी कुछ नहीं।
 Notice,सूचना
 Notice Heard In Full,पूरी सूचना सुनी
@@ -173,18 +209,22 @@ On,चालू
 On Hold,रोका गया
 Open Breaches,खुले डेटा उल्लंघन
 Open Rights Requests,खुले अनुरोध
+Open {0},{0} खोलें
 Opens My choices: it takes effect at once,मेरे विकल्प खुलेगा: तुरंत लागू होता है
 Organisation,संस्था
+Outcome,परिणाम
 Overdue,समय निकल गया
 Overdue Requests,समय निकले अनुरोध
 Overdue by {0} days,{0} दिन देर
 Paper slip,काग़ज़ की पर्ची
 Partner system,साझेदार प्रणाली
+Passed to the DPO,DPO को भेजा गया
 Paused,रुका हुआ
 People,लोग
 Person,व्यक्ति
 Phone call,फ़ोन कॉल
 Phones Not Synced,सिंक नहीं हुए फ़ोन
+Photo or document (optional),फ़ोटो या दस्तावेज़ (वैकल्पिक)
 "Plain words, no names of other people.","आसान शब्द, दूसरे लोगों के नाम नहीं।"
 Please keep it under {0} characters.,कृपया {0} अक्षरों से कम लिखें।
 Please sign in again.,कृपया फिर से साइन-इन करें।
@@ -205,7 +245,7 @@ Re-consent campaign,दोबारा सहमति अभियान
 Receipt code,रसीद कोड
 "Receipt code, e.g. AN-7K2Q9C","रसीद कोड, जैसे AN-7K2Q9C"
 Receipt {0},रसीद {0}
-Received,प्राप्त हुआ
+Received,प्राप्त
 Record demo audio (Sarvam),डेमो ऑडियो रिकॉर्ड करें (Sarvam)
 Record views,रिकॉर्ड कब देखे गए
 Record withdrawal,सहमति वापसी दर्ज करें
@@ -228,12 +268,15 @@ Request {0} sent. We will reply by {1}.,अनुरोध {0} भेज दि�
 Requested,अनुरोध भेजा
 Requests,अनुरोध
 Requests By Type,प्रकार के अनुसार अनुरोध
+Requests To Match,मिलान वाले अनुरोध
 Requests board,अनुरोध बोर्ड
 Required,ज़रूरी
 Retention Policy,डेटा रखने का नियम
 Retired,बंद
 Rights / support request,अधिकार / सहायता अनुरोध
-Rights Request,अनुरोध
+Rights / support requests,अधिकार / सहायता अनुरोध
+Rights Request,अधिकार अनुरोध
+Rights requests,अधिकार अनुरोध
 Rule 3: {0} is missing,नियम 3: {0} नहीं है
 Running,चल रहा है
 SMS and messaging,SMS और मैसेजिंग
@@ -247,6 +290,7 @@ See or change your consent,अपनी सहमति देखें या �
 "See, correct or delete your data, stop a use, name someone","अपनी जानकारी देखें, सुधारें या हटाएँ, कोई उपयोग बंद करें, किसी को नामित करें"
 Send,भेजें
 Send final answer,अंतिम जवाब भेजें
+Send grievance,शिकायत भेजें
 Send me a code,मुझे कोड भेजें
 Send request,अनुरोध भेजें
 Send update,अपडेट भेजें
@@ -265,8 +309,12 @@ Signature or thumbprint,हस्ताक्षर या अँगूठे �
 Signed out,साइन आउट
 Signed out.,साइन आउट हो गए।
 Significant Data Fiduciary,महत्वपूर्ण डेटा फ़िड्यूशियरी
+Something else,कुछ और
+Something went wrong with your data or a request,आपकी जानकारी या किसी अनुरोध में कुछ गलत हुआ
 Something went wrong. Please try again.,कुछ गड़बड़ हुई। कृपया फिर कोशिश करें।
 Source System,जुड़ा हुआ सिस्टम
+Staff behaviour,कर्मचारी का व्यवहार
+Staff behaviour: only the DPO can see this grievance.,कर्मचारी का व्यवहार: यह शिकायत केवल DPO देख सकते हैं।
 Start,शुरू करें
 Starting…,शुरू हो रहा है…
 Stop,बंद करें
@@ -278,10 +326,19 @@ Summary of security safeguards,सुरक्षा उपायों का �
 Switch person,व्यक्ति बदलें
 System Usage Log,सहमति जाँच लॉग
 Team,टीम
+Tell us what happened,बताएँ क्या हुआ
+Tell us what happened.,बताएँ क्या हुआ।
+Thank you. We have closed it.,धन्यवाद। हमने इसे बंद कर दिया है।
 That code is not right. {0} tries left.,यह कोड सही नहीं है। {0} बार और कोशिश कर सकते हैं।
+That file could not be read.,यह फ़ाइल पढ़ी नहीं जा सकी।
+That file is bigger than 3 MB.,यह फ़ाइल 3 MB से बड़ी है।
 That year of birth doesn't match. Please try again.,जन्म का साल मेल नहीं खाता। कृपया फिर कोशिश करें।
+The person is not happy with the answer: passed to the DPO.,व्यक्ति जवाब से संतुष्ट नहीं: DPO को भेजा।
+The person said this did not solve it. Passed to the DPO.,व्यक्ति ने कहा कि इससे हल नहीं हुआ। DPO को भेजा गया।
+There is no answer to respond to yet.,अभी कोई जवाब नहीं है।
 This can't be turned on here. Please ask a field worker.,इसे यहाँ चालू नहीं किया जा सकता। कृपया किसी फ़ील्ड कार्यकर्ता से पूछें।
 This code has expired. Ask for a new one.,इस कोड का समय ख़त्म हो गया। नया कोड मँगाएँ।
+This is closed.,यह बंद है।
 This number is linked to more than one person. Choose your name and confirm your year of birth.,यह नंबर एक से ज़्यादा लोगों से जुड़ा है। अपना नाम चुनें और अपने जन्म का साल बताएँ।
 This page,यह पेज
 This page needs JavaScript. You can also tell any field worker.,इस पेज के लिए JavaScript चाहिए। आप किसी भी फ़ील्ड कार्यकर्ता को भी बता सकते हैं।
@@ -289,6 +346,7 @@ This record is number {0} on the signed chain (key {1}). It has not been changed
 This record's signature does not verify. Tell the DPO.,इस रिकॉर्ड का हस्ताक्षर सही नहीं है। DPO को बताएँ।
 Thumbprint,अँगूठे का निशान
 Tick that you understand first.,पहले टिक करें कि आप समझते हैं।
+To,तक
 "To turn a use on, please ask a field worker.",कोई उपयोग चालू करने के लिए कृपया किसी फ़ील्ड कार्यकर्ता से पूछें।
 "To turn a use on, sign in with your phone number or ask a field worker.",कोई उपयोग चालू करने के लिए अपने फ़ोन नंबर से साइन-इन करें या किसी फ़ील्ड कार्यकर्ता से पूछें।
 Today,आज
@@ -299,15 +357,18 @@ Too many wrong codes. Ask for a new one.,बहुत बार ग़लत क
 Translations Not Reviewed,समीक्षा बाकी अनुवाद
 "Turn uses of your data on or off, see what you agreed to, or ask us something.","अपनी जानकारी के उपयोग चालू या बंद करें, देखें कि आपने किस बात पर सहमति दी, या हमसे कुछ पूछें।"
 Turned off on the self-service page.,स्वयं-सेवा पेज पर बंद किया।
+Typical days to answer,जवाब के सामान्य दिन
 Unknown use,अनजान उपयोग
 Unmatched Requests,मिलान बाकी अनुरोध
 Use the self-service page,स्वयं-सेवा पेज इस्तेमाल करें
 Use your receipt code,अपनी रसीद का कोड इस्तेमाल करें
+Used without my consent,मेरी सहमति के बिना इस्तेमाल हुआ
 Verification Attempt,पुष्टि का प्रयास
 Verification Pipeline,पुष्टि की स्थिति
 Verified by,पुष्टि
 View guardian's ID,अभिभावक का पहचान पत्र देखें
 View order or document,आदेश या दस्तावेज़ देखें
+View photo or document,फ़ोटो या दस्तावेज़ देखें
 Voice: their “haan”,आवाज़: उनकी “हाँ”
 Waiting,बाकी
 Waiting For Confirmation,पुष्टि बाकी
@@ -315,18 +376,25 @@ Waiting To Sync,सिंक बाकी
 Waiting for confirmation,पुष्टि बाकी
 Waiting for partners,साझेदारों का इंतज़ार
 Waiting for your reply,आपके जवाब का इंतज़ार
+We checked and found no problem.,हमने जाँच की और कोई समस्या नहीं मिली।
 We couldn't find anyone with this number. Please ask a field worker.,इस नंबर से कोई नहीं मिला। कृपया किसी फ़ील्ड कार्यकर्ता से पूछें।
 We couldn't find that receipt code with that year of birth.,इस जन्म के साल के साथ यह रसीद कोड नहीं मिला।
 "We don't have your year of birth, so we can't confirm it's you here. Please ask a field worker.","हमारे पास आपके जन्म का साल नहीं है, इसलिए यहाँ पुष्टि नहीं हो सकती। कृपया किसी फ़ील्ड कार्यकर्ता से पूछें।"
+We have passed it to the Data Protection Officer.,हमने इसे डेटा संरक्षण अधिकारी को भेज दिया है।
 "We keep a record that you agreed and left, as the law requires, and delete the rest when the retention period ends.",कानून के अनुसार हम यह रिकॉर्ड रखते हैं कि आपने सहमति दी और छोड़ा; बाकी जानकारी रखने की अवधि ख़त्म होने पर हटा देते हैं।
 We never show your details until you prove it's you.,"जब तक आप साबित न करें कि यह आप हैं, हम आपकी जानकारी नहीं दिखाते।"
 We reply within {0} days,हम {0} दिन में जवाब देते हैं
 Website,वेबसाइट
+What did they ask for?,उन्होंने क्या माँगा?
+What is it about?,यह किस बारे में है?
+Which request?,कौन-सा अनुरोध?
+Which request? must be one of this person's requests,'कौन-सा अनुरोध?' इसी व्यक्ति का अनुरोध होना चाहिए
 Who are you here for?,आप किसके लिए आए हैं?
 Who are you?,आप कौन हैं?
 Who is this for?,यह किसके लिए है?
 Wipe queued,मिटाना बाकी
 Wiped,मिटा दिया
+With the DPO,DPO के पास
 Withdrawal,सहमति वापसी
 Withdrawal recorded: {0},सहमति वापसी दर्ज: {0}
 Withdrawals By Channel,माध्यम के अनुसार सहमति वापसी
@@ -338,14 +406,19 @@ Worker's phone,कार्यकर्ता का फ़ोन
 Working on it,हम देख रहे हैं
 Write a message first.,पहले संदेश लिखें।
 Write to us,हमें लिखें
+Wrong details,गलत जानकारी
 Year of birth,जन्म का साल
 Yes to all,सब के लिए हाँ
 "Yes, save","हाँ, सहेजें"
+"Yes, this solves it","हाँ, इससे हल हो गया"
 You,आप
 You are their guardian,आप उनके अभिभावक हैं
+"You have already told us. If you are still not happy, you can complain to the Data Protection Board.","आप हमें पहले ही बता चुके हैं। अगर आप अब भी संतुष्ट नहीं हैं, तो डेटा संरक्षण बोर्ड से शिकायत कर सकते हैं।"
 You have left the programme. Your receipt code is {0}.,आपने कार्यक्रम छोड़ दिया है। आपका रसीद कोड {0} है।
 "You have left this programme. To rejoin, please ask a field worker.",आपने यह कार्यक्रम छोड़ दिया है। फिर से जुड़ने के लिए किसी फ़ील्ड कार्यकर्ता से पूछें।
 You haven't asked us anything yet.,आपने अभी तक हमसे कुछ नहीं पूछा है।
+You were partly right. We have put that part right.,आप आंशिक रूप से सही थे। हमने वह हिस्सा ठीक कर दिया है।
+You were right. We have put it right.,आप सही थे। हमने इसे ठीक कर दिया है।
 You will stop getting this programme's services. All these uses stop today:,आपको इस कार्यक्रम की सेवाएँ मिलना बंद हो जाएँगी। ये सभी उपयोग आज बंद होंगे:
 Your answer to the request. The status becomes Answered.,अनुरोध का आपका जवाब। स्थिति 'जवाब दिया' हो जाएगी।
 Your child · you are the guardian,आपका बच्चा · आप अभिभावक हैं
@@ -396,6 +469,7 @@ delete,हटाया
 deny,अनुमति नहीं
 device_sms,कार्यकर्ता के फ़ोन से SMS
 device_sms_otp,कार्यकर्ता के फ़ोन से SMS कोड
+did_not_stop,कहने पर भी बंद नहीं हुआ
 digilocker,डिजीलॉकर
 document,दस्तावेज़
 draft,मसौदा
@@ -414,6 +488,9 @@ field_worker,फील्ड कार्यकर्ता
 grant,सहमति दी
 granted,सहमति है
 grievance,शिकायत
+grievance_received,शिकायत मिली
+grievances are past their reply date,शिकायतों के जवाब की तारीख निकल गई
+grievances are with the DPO,शिकायतें DPO के पास हैं
 guardian_minor,"अभिभावक, बच्चे के लिए"
 guardian_pwd,"अभिभावक, दिव्यांग व्यक्ति के लिए"
 hard_purge,पूरी तरह मिटाएँ
@@ -447,20 +524,24 @@ neha,नेहा
 neighbour,पड़ोसी
 new_request,प्राप्त हुआ
 no_phone,फ़ोन नहीं
+no_problem_found,कोई समस्या नहीं मिली
 no_processing,उनका डेटा इस्तेमाल बंद
 nomination,नामांकन
 not_asked,पूछा नहीं गया
+not_happy,"नहीं, मैं इससे संतुष्ट नहीं हूँ"
 number,संख्या
 other,अन्य
 otp,एक बार का कोड
 paper,काग़ज़ का फ़ॉर्म
 parent,माता/पिता
+partly_put_right,आंशिक रूप से सही: कुछ हिस्सा ठीक किया
 patient,मरीज़
 pending,बाकी
 phishing,फ़िशिंग
 phone_voice,फ़ोन ने पढ़कर सुनाया
 pooja,पूजा
 priya,प्रिया
+put_right,शिकायत सही थी: ठीक कर दिया
 rahul,राहुल
 ransomware,रैनसमवेयर
 re_consent,दोबारा सहमति
@@ -479,6 +560,7 @@ renewal,नवीनीकरण
 reply by {0},{0} तक जवाब
 request_answered,जवाब दिया
 request_closed,बंद
+request_not_answered,मेरे अनुरोध का जवाब नहीं मिला
 request_reply,अनुरोध का जवाब
 requests are past their due date,अनुरोधों का समय निकल गया है
 requests need matching to a person,अनुरोधों को व्यक्ति से मिलाना बाकी है
@@ -491,6 +573,7 @@ self,स्वयं
 self_digital,"स्वयं, अपने फ़ोन पर"
 self_worker_device,"स्वयं, कार्यकर्ता के फ़ोन पर"
 server_otp,अनुमति से SMS कोड
+shared_or_leaked,मेरी जानकारी साझा हुई या लीक हुई
 shreya,श्रेया
 sibling,भाई/बहन
 simran,सिमरन
@@ -499,7 +582,10 @@ sms,SMS
 sms_delivered,SMS पहुँचा
 sms_failed,SMS नहीं पहुँचा
 sms_sent,SMS भेजा
+solved,"हाँ, इससे हल हो गया"
+something_else,कुछ और
 spouse,पति/पत्नी
+staff_behaviour,कर्मचारी का व्यवहार
 student,विद्यार्थी
 submit,जमा किया
 text,छोटा जवाब
@@ -511,6 +597,7 @@ unconfirmed,पुष्टि बाकी
 under_18,18 से कम
 unknown,पता नहीं
 update,बदला
+used_without_consent,मेरी सहमति के बिना इस्तेमाल हुआ
 ussd,USSD
 validity_expiry,सहमति समाप्त होने वाली
 waiting for confirmation,पुष्टि बाकी
@@ -528,6 +615,7 @@ withdrawal_confirmation,सहमति वापसी पूरी
 withdrawn,वापस ली गई
 witness,गवाह
 working_on_it,हम देख रहे हैं
+wrong_details,गलत जानकारी
 year,साल
 years,साल
 {0} days left,{0} दिन बाकी

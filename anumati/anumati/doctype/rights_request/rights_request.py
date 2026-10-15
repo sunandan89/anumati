@@ -9,7 +9,7 @@ from anumati import inbox
 
 
 TITLES = {"withdrawal": "Withdrawal", "access": "Data access request", "correction": "Correction request",
-          "erasure": "Erasure request", "grievance": "Grievance", "nomination": "Nomination"}
+          "erasure": "Erasure request", "nomination": "Nomination"}
 CHANNELS = {"field_worker": "field worker", "slip": "paper slip", "sms": "SMS", "missed_call": "missed call",
             "ivr": "phone (IVR)", "whatsapp": "WhatsApp", "web": "website", "email": "email",
             "community": "community meeting", "api": "connected system", "ussd": "USSD"}

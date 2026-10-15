@@ -16,6 +16,8 @@
   "helpline",
   "default_languages",
   "rights_sla_days",
+  "grievance_sla_days",
+  "grievance_dpo_after_days",
   "consent_record_retention_years",
   "signing_section",
   "signing_key_id",
@@ -104,6 +106,20 @@
    "fieldname": "rights_sla_days",
    "fieldtype": "Int",
    "label": "Rights request SLA (days)"
+  },
+  {
+   "default": "30",
+   "description": "Days to give a final answer to a grievance. Published in the notice; pending counsel",
+   "fieldname": "grievance_sla_days",
+   "fieldtype": "Int",
+   "label": "Grievance reply time (days)"
+  },
+  {
+   "default": "15",
+   "description": "A grievance with no final answer by then is assigned to the DPO",
+   "fieldname": "grievance_dpo_after_days",
+   "fieldtype": "Int",
+   "label": "Grievance goes to the DPO after (days)"
   },
   {
    "default": "7",
@@ -245,7 +261,7 @@
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-15 10:00:00.000000",
+ "modified": "2026-10-16 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Anumati Settings",

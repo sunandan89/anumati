@@ -1,6 +1,6 @@
 # Rights requests and grievances: design for sign-off
 
-Status: **signed off 15 Oct 2026.** PR 1 (self-service page, rights requests) built; PR 2 (grievance) next. Frappe v15, stock building blocks. Sample data is fictional.
+Status: **signed off 15 Oct 2026; built.** PR 1 (self-service page, rights requests) merged; PR 2 (grievances) built. The field app's existing **Complaint** option now files a grievance (category Something else); a category picker in the app is a follow-up. Frappe v15, stock building blocks. Sample data is fictional.
 
 Two separate things, for the person and for staff:
 

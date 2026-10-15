@@ -391,6 +391,67 @@
     ],
     "type": "object"
    },
+   "GrievanceSubmit": {
+    "additionalProperties": false,
+    "properties": {
+     "about_request": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "category": {
+      "enum": [
+       "used_without_consent",
+       "did_not_stop",
+       "wrong_details",
+       "shared_or_leaked",
+       "staff_behaviour",
+       "request_not_answered",
+       "something_else"
+      ],
+      "type": "string"
+     },
+     "channel": {
+      "enum": [
+       "app",
+       "hosted_page",
+       "connector",
+       "field_worker",
+       "slip",
+       "sms",
+       "missed_call",
+       "ivr",
+       "whatsapp",
+       "web",
+       "email",
+       "community",
+       "api",
+       "ussd"
+      ],
+      "type": "string"
+     },
+     "consent_code": {
+      "maxLength": 20,
+      "type": "string"
+     },
+     "description": {
+      "maxLength": 5000,
+      "type": "string"
+     },
+     "paper_trail_number": {
+      "maxLength": 140,
+      "type": "string"
+     },
+     "principal_ref": {
+      "maxLength": 140,
+      "type": "string"
+     }
+    },
+    "required": [
+     "category",
+     "channel"
+    ],
+    "type": "object"
+   },
    "PrincipalUpsert": {
     "additionalProperties": false,
     "properties": {
@@ -1042,6 +1103,142 @@
      }
     },
     "summary": "Play or view one encrypted evidence file (staff; logged)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.grievance.move_from_request": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "request",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Move a rights request to grievances (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.grievance.move_to_request": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "grievance_name",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "request_type",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Move a grievance to rights requests (staff)"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.grievance.reply": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "grievance",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "message",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "kind",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "outcome",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Reply to the person on a grievance (staff); the final answer carries an outcome"
+   }
+  },
+  "/api/v2/method/anumati.api.v1.grievance.submit": {
+   "post": {
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GrievanceSubmit"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Submit a grievance (complaint)"
    }
   },
   "/api/v2/method/anumati.api.v1.notice.get_active": {

@@ -69,6 +69,15 @@ SCHEMAS = {
 			"paper_trail_number": S(maxLength=140), "consent_code": S(maxLength=20),
 		},
 	},
+	"GrievanceSubmit": {
+		"type": "object", "additionalProperties": False, "required": ["category", "channel"],
+		"properties": {
+			"category": S(enum=["used_without_consent", "did_not_stop", "wrong_details", "shared_or_leaked",
+			                    "staff_behaviour", "request_not_answered", "something_else"]),
+			"channel": S(enum=CHANNELS), "principal_ref": S(maxLength=140), "description": S(maxLength=5000),
+			"about_request": S(maxLength=140), "consent_code": S(maxLength=20), "paper_trail_number": S(maxLength=140),
+		},
+	},
 	"Artefact": {"type": "object", "properties": {k: S() for k in (
 		"consent_id", "short_code", "event_uuid", "action", "hash", "signature", "key_id", "server_time",
 		"verification_status")} | {"chain_seq": {"type": "integer"}}},
@@ -102,6 +111,12 @@ PATHS = {
 	BASE + "rights.withdrawable": op("Uses currently on for a request's person (staff)", query=[("request", True)], method="get"),
 	BASE + "rights.fulfil_withdrawal": op("Carry out a withdrawal request (staff)",
 	                                      query=[("request", True), ("programme", True), ("leave_programme", False)]),
+	BASE + "grievance.submit": op("Submit a grievance (complaint)", body="GrievanceSubmit"),
+	BASE + "grievance.reply": op("Reply to the person on a grievance (staff); the final answer carries an outcome",
+	                             query=[("grievance", True), ("message", True), ("kind", False), ("outcome", False)]),
+	BASE + "grievance.move_from_request": op("Move a rights request to grievances (staff)", query=[("request", True)]),
+	BASE + "grievance.move_to_request": op("Move a grievance to rights requests (staff)",
+	                                       query=[("grievance_name", True), ("request_type", True)]),
 	BASE + "rights.reply": op("Reply to the person on a request (staff): update, question or answer",
 	                          query=[("request", True), ("message", True), ("kind", False)]),
 	BASE + "notifications.feed": op("Polling feed mirroring webhooks", query=[("since", True), ("limit", False)], method="get"),

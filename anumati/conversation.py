@@ -51,17 +51,27 @@ def _add(doc, direction: str, text: str, phone_hash=None):
 	return comm.name
 
 
-def staff_message(doc, text: str, kind: str) -> str:
-	"""Staff reply from Desk. Moves the status by `kind` and texts the person that there is a reply."""
+def staff_message(doc, text: str, kind: str, outcome: str | None = None) -> str:
+	"""Staff reply from Desk. Moves the status by `kind` and texts the person that there is a reply. A
+	grievance's final answer also records the outcome (grievance.OUTCOME_FOR_PERSON)."""
+	from anumati import grievance
+
 	if kind not in KINDS:
 		frappe.throw(_("Unknown kind of reply"))
 	if not doc.matched_principal:
 		frappe.throw(_("Match the request to a person first"))
+	if doc.status == inbox.CLOSED:
+		frappe.throw(_("This is closed."))
+	is_grievance = doc.doctype == "Grievance"
+	if is_grievance and kind == "answer" and outcome not in grievance.OUTCOME_FOR_PERSON:
+		frappe.throw(_("Choose the outcome with the final answer."))
 	text = _clean(text)
 	comm = _add(doc, "Sent", text)
 	doc.status = KINDS[kind]
 	if kind == "answer":
 		doc.answer, doc.answered_on = text, now_datetime()
+		if is_grievance:
+			doc.outcome = outcome
 	doc.save()
 	# DLT texts can't carry a free reply, so the SMS only says there is one and where to read it.
 	channels.send_sms(doc.matched_principal, "request_reply", {"code": doc.name, "link": get_url(PAGE)},
