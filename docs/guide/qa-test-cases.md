@@ -128,7 +128,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SY-03 | Older record arrives late | Withdraw a use on phone A; on phone B (offline) grant the same use with an earlier time; sync B after A | The withdrawal stays: an older record never overrides a newer one | P1 |
 | SY-04 | Rejected record | (Developer can force) a record the server refuses | Home shows "… records could not be saved on the server"; the list shows the reason; Try again / Discard | P1 |
 | SY-05 | Older consent arrives after leaving | Phone B (offline): Add a use or rejoin for a person → Yes. Phone A: that person leaves the programme → Sync A. Then sync B | Everything stays withdrawn, including uses that were off before; the person's record keeps **Relationship ended** | P1 |
-| SY-06 | Phone clock ahead | Set phone A's date a year ahead → take a consent and sync → reset the date → from the console or by SMS, stop one of its uses | The stop holds: a phone whose clock runs ahead never outranks a later decision | P0 |
+| SY-07 | Phone clock ahead | Set phone A's date a year ahead → take a consent and sync → reset the date → from the console or by SMS, stop one of its uses | The stop holds: a phone whose clock runs ahead never outranks a later decision | P0 |
 | FI-01 | Find offline | Find beneficiary → search by name, then ID (offline); then by receipt code of a consent taken **on this phone** | Person found; each use's status shown. A downloaded person (consent taken on another phone) is found by their latest receipt code too | P0 |
 | FI-02 | Find by phone | Find beneficiary → type a person's mobile number, then the same with +91, then only its last 4 digits, then +91 and only the first 7 digits | The person is found each time, labelled "Their number". Three digits or fewer search names only | P0 |
 | FI-03 | Find by guardian's phone | Take a parent consent for a child with the mother's number (journey C) → Find → type the mother's number. Repeat on another phone after both sync | The child is found, labelled "Guardian's number (Mother)"; if the mother is also enrolled, both appear. Works on the other phone too | P0 |
@@ -221,9 +221,9 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-05 | Worker-phone code needs voice | API: record a consent with `device_sms_otp` and no audio evidence | Refused | P1 |
 | SE-06 | Names encrypted | Database / report view of Beneficiary | Name and phone stored encrypted; whole-word name search still works | P1 |
 | SE-07 | Check before use | API `consent.check` for an adult's granted, unconfirmed use with "Allow processing before confirmation" off | `allow: false`, `awaiting_confirmation`; on: `allow: true` | P1 |
-| SE-08 | The phone can't confirm its own consent | API: record a consent with `verification_status: confirmed` | Saved as `recorded`; only the server's code check or a delivery report confirms it | P0 |
-| SE-09 | Evidence must be this person's file | API: record an `evidence_only` consent whose evidence is another person's file, a missing file or a wrong sha256 | Refused. With no evidence at all it is saved as `recorded`, not `evidence_only` | P0 |
-| SE-10 | A retried request is filed once | API: send the same `rights.submit` (or `grievance.submit`) twice with the same `client_request_id` | One request, one reply-by date; the second call returns the first | P1 |
+| SE-09 | The phone can't confirm its own consent | API: record a consent with `verification_status: confirmed` | Saved as `recorded`; only the server's code check or a delivery report confirms it | P0 |
+| SE-10 | Evidence must be this person's file | API: record an `evidence_only` consent whose evidence is another person's file, a missing file or a wrong sha256 | Refused. With no evidence at all it is saved as `recorded`, not `evidence_only` | P0 |
+| SE-11 | A retried request is filed once | API: send the same `rights.submit` (or `grievance.submit`) twice with the same `client_request_id` | One request, one reply-by date; the second call returns the first | P1 |
 
 ## 11. Self-service page (`/my-consent`)
 
