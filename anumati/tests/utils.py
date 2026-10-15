@@ -57,6 +57,7 @@ def make_event(principal=None, programme="TST", **kw):
 			**kw,
 		}
 	)
+	doc.flags.anumati_trusted = True  # a ledger fixture, not a capture: the consent rules have their own tests
 	doc.insert()
 	return doc
 
