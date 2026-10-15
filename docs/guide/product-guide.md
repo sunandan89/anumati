@@ -269,6 +269,15 @@ flowchart LR
 
 Each step can be repeated safely: a sync cut off halfway resumes without duplicates.
 
+What the server checks on every synced consent:
+
+- **Which decision wins.** The phone's time is used to order decisions made offline, but never later than the moment the record reached the server. A phone whose clock runs ahead can't make an old "yes" outrank a later "stop".
+- **Who confirms.** The phone never decides that a consent is confirmed. Only the server's own SMS code check, a delivered "confirm later" SMS, or a signed-in self-service visit confirms it. "Evidence only" counts only when the voice or thumbprint file checks out; otherwise the consent is simply recorded.
+- **Evidence.** Each voice clip or photo must be a file uploaded for this person, with the same fingerprint (sha256) the consent signs. Anything else is refused and stays in the phone's sync issues list.
+- **Nothing lost.** If two records ever race for the same place in the ledger, the loser is refused, not marked synced, so the phone keeps it and tries again.
+- **One phone, one worker.** A phone belongs to the worker signed in on it until they sign out or a coordinator releases it (Field phones → status **logged_out**). Nobody else can check it in or cancel its wipe.
+- **No duplicates.** Requests and grievances from the app carry a request ID, so a retried send files them once.
+
 ### Withdrawal and requests
 
 | How it arrives | Phase 1 | What happens |

@@ -9,13 +9,22 @@ from anumati.api.v1 import consent
 
 
 @frappe.whitelist(methods=["POST"])
-def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_number=None, consent_code=None):
+def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_number=None, consent_code=None,
+           client_request_id=None):
 	"""A rights request from a host system, connector or field worker (spec section 8). A receipt code
-	(`consent_code`, from the person's slip) finds the person when `principal_ref` is not known."""
+	(`consent_code`, from the person's slip) finds the person when `principal_ref` is not known.
+	`client_request_id` (a UUID the caller makes once per request) makes a retry return the first one
+	instead of filing it twice with its own reply-by clock (review C10)."""
 	frappe.has_permission("Rights Request", "create", throw=True)
 	schema.validate("RightsSubmit", {k: v for k, v in {
 		"request_type": request_type, "channel": channel, "principal_ref": principal_ref, "payload": payload,
-		"paper_trail_number": paper_trail_number, "consent_code": consent_code}.items() if v is not None})
+		"paper_trail_number": paper_trail_number, "consent_code": consent_code,
+		"client_request_id": client_request_id}.items() if v is not None})
+	if client_request_id:
+		for doctype, key in (("Rights Request", "request"), ("Grievance", "request")):
+			if (seen := frappe.db.get_value(doctype, {"client_request_id": client_request_id},
+			                                ["name", "status", "sla_due"], as_dict=True)):
+				return {key: seen.name, "status": seen.status, "sla_due": seen.sla_due}
 	principal = None
 	if principal_ref:
 		principal = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
@@ -29,12 +38,13 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 
 		frappe.has_permission("Grievance", "create", throw=True)
 		doc = grievance.create("something_else", channel, principal, description=payload, raw_payload=payload,
-		                       paper_trail_number=paper_trail_number,
+		                       paper_trail_number=paper_trail_number, client_request_id=client_request_id,
 		                       raised_by_role="by_field_worker" if channel in ("field_worker", "slip") else None)
 		return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
 	doc = frappe.new_doc("Rights Request")
 	doc.update({"request_type": request_type, "channel": channel, "raw_payload": payload,
-	            "paper_trail_number": paper_trail_number, "matched_principal": principal})
+	            "paper_trail_number": paper_trail_number, "matched_principal": principal,
+	            "client_request_id": client_request_id})
 	doc.insert()
 	return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
 

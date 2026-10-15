@@ -13,7 +13,7 @@ from anumati import enforcement, profile
 from anumati.api.schema import SchemaError
 from anumati.api.v1 import consent, notice, notifications, principal
 from anumati.api.v1.consent import ConsentRequestError
-from anumati.tests.utils import ensure_language, make_principal, make_programme, make_purpose
+from anumati.tests.utils import ensure_language, make_evidence, make_principal, make_programme, make_purpose
 
 PROG = "JRN"
 
@@ -261,6 +261,6 @@ class TestJourneys(FrappeTestCase):
 		p = make_principal(phone="5550009911")
 		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, verification_method="device_sms_otp")
 		art = self.grant(p.principal_ref, verification_method="device_sms_otp", verification_status="confirmed",
-		                 evidence=[{"file": "/private/files/haan-sample.m4a", "kind": "audio"}])
+		                 evidence=[make_evidence(p.name)])
 		self.assertEqual(art["verification_status"], "recorded", "the worker saw the code: never 'confirmed'")
 		self.assertEqual(frappe.db.get_value("Programme", PROG, "sms_code_route"), "MSG91 when online")

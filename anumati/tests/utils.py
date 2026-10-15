@@ -1,6 +1,7 @@
 """Test helpers. All sample data is fictional."""
 
 import uuid
+from contextlib import contextmanager
 
 import frappe
 
@@ -58,3 +59,36 @@ def make_event(principal=None, programme="TST", **kw):
 	)
 	doc.insert()
 	return doc
+
+
+@contextmanager
+def webhook_call(token=None, ip="203.0.113.10"):
+	"""Run a provider callback as a POST with the X-Anumati-Token header from a documentation IP address."""
+	from werkzeug.test import EnvironBuilder
+	from werkzeug.wrappers import Request
+
+	headers = {"X-Anumati-Token": token} if token else {}
+	saved = (getattr(frappe.local, "request", None), getattr(frappe.local, "request_ip", None))
+	frappe.local.request = Request(EnvironBuilder(method="POST", headers=headers).get_environ())
+	frappe.local.request_ip = ip
+	try:
+		yield
+	finally:
+		frappe.local.request, frappe.local.request_ip = saved
+
+
+def make_evidence(principal_name, content=None, kind="audio", attach_to="Data Principal"):
+	"""Upload a private evidence file for a person, as the field app does; returns the event's evidence entry."""
+	import hashlib
+
+	content = content or f"fictional voice haan {uuid.uuid4().hex} ".encode() * 20
+	f = frappe.get_doc({
+		"doctype": "File", "file_name": f"{uuid.uuid4().hex[:8]}-{kind}.m4a", "content": content, "is_private": 1,
+		"attached_to_doctype": attach_to, "attached_to_name": principal_name,
+	}).insert(ignore_permissions=True)
+	return {"file": f.file_url, "kind": kind, "sha256": hashlib.sha256(content).hexdigest()}
+
+
+def call_webhook(fn, token=None, ip="203.0.113.10", **kwargs):
+	with webhook_call(token, ip):
+		return fn(**kwargs)

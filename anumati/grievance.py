@@ -77,13 +77,13 @@ def has_permission(doc, ptype=None, user=None):
 
 # ------------------------------------------------------------------ new grievances
 def create(category: str, channel: str, principal=None, description=None, about_request=None, raised_by_role=None,
-           sender_hash=None, raw_payload=None, paper_trail_number=None, raised_by=None):
+           sender_hash=None, raw_payload=None, paper_trail_number=None, raised_by=None, client_request_id=None):
 	"""A new grievance from any door (self-service page, field app, SMS, API, a moved request)."""
 	doc = frappe.get_doc({
 		"doctype": "Grievance", "category": category, "channel": channel, "matched_principal": principal,
 		"description": description, "about_request": about_request, "raised_by_role": raised_by_role,
 		"sender_hash": sender_hash, "raw_payload": raw_payload, "paper_trail_number": paper_trail_number,
-		"raised_by": raised_by, "received_on": now_datetime(),
+		"raised_by": raised_by, "received_on": now_datetime(), "client_request_id": client_request_id,
 	})
 	doc.insert(ignore_permissions=True)
 	return doc

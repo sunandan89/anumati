@@ -18,6 +18,7 @@
   "api_key",
   "api_secret",
   "webhook_secret",
+  "allowed_ips",
   "templates_section",
   "templates"
  ],
@@ -89,10 +90,16 @@
    "label": "API secret"
   },
   {
-   "description": "Used to check HMAC on inbound callbacks",
+   "description": "The provider sends it in the X-Anumati-Token header of every callback (POST only)",
    "fieldname": "webhook_secret",
    "fieldtype": "Password",
    "label": "Inbound webhook secret"
+  },
+  {
+   "description": "One per line. Callbacks from any other address are refused. Blank = any address",
+   "fieldname": "allowed_ips",
+   "fieldtype": "Small Text",
+   "label": "Callback IP addresses"
   },
   {
    "fieldname": "templates_section",

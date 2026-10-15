@@ -12,7 +12,7 @@ from frappe import _
 from frappe.rate_limiter import rate_limit
 from frappe.utils import now_datetime
 
-from anumati import enforcement
+from anumati import enforcement, evidence
 from anumati.api import schema
 from anumati.ledger import keystore, signing
 
@@ -22,7 +22,6 @@ CAPTURE_FIELDS = (
 	"notice_delivery", "notice_completed",
 )
 CLIENT_VERIFICATION = ("recorded", "confirmed", "evidence_only")
-WORKER_SEEN_OR_SERVER = ("device_sms_otp", "server_otp")
 
 
 class ConsentRequestError(frappe.ValidationError):
@@ -94,16 +93,38 @@ def _check_purposes(programme: str, principal: str, granted: list, denied: list)
 			frappe.throw(_("Purpose {0} is not allowed for minors").format(code), ConsentRequestError)
 
 
-def _insert(values: dict) -> dict:
+def _insert(values: dict, ignore_permissions=False) -> dict:
+	"""Insert and seal one event. The same event_uuid synced twice at once returns the one that won. Any
+	other clash (two writers on the same chain position, which the chain lock should make impossible)
+	raises, so the phone keeps the record and retries; it never gets an empty "synced" (review C4)."""
 	doc = frappe.get_doc({"doctype": "Consent Event", **values})
+	doc.flags.ignore_permissions = ignore_permissions
 	frappe.db.savepoint("anumati_record")
 	try:
 		doc.insert()
-	except frappe.DuplicateEntryError:
-		# Same event_uuid synced twice at once: return the one that won.
+	except (frappe.DuplicateEntryError, frappe.UniqueValidationError):
 		frappe.db.rollback(save_point="anumati_record")
-		return _existing(values["event_uuid"])
+		if (existing := _existing(values["event_uuid"])):
+			return existing
+		raise
 	return _artefact(doc)
+
+
+def _verification_status(event, principal) -> str:
+	"""Only the server decides how far a consent is verified (review C2). A phone or host system can never
+	set "confirmed": that comes only from the server's own code check (verification.verify_otp) or a
+	delivery report. "evidence_only" needs at least one evidence file that checks out, or the guardian's
+	order or ID uploaded for this person; without it the consent is just "recorded"."""
+	if event.verification_status and event.verification_status not in CLIENT_VERIFICATION:
+		frappe.throw(_("verification_status must be one of {0}").format(", ".join(CLIENT_VERIFICATION)), ConsentRequestError)
+	try:
+		checked = evidence.check_event_evidence(principal, event.evidence, event.guardian_link)
+	except evidence.EvidenceError as e:
+		frappe.throw(str(e), ConsentRequestError)
+	if event.verification_method == "evidence_only" and (
+			checked or evidence.guardian_link_has_evidence(event.guardian_link, principal)):
+		return "evidence_only"
+	return "recorded"
 
 
 @frappe.whitelist(methods=["POST"])
@@ -134,13 +155,7 @@ def record(event):
 		if not notice or notice.programme != programme or notice.docstatus != 1:
 			frappe.throw(_("notice must be a published notice of this programme"), ConsentRequestError)
 		values["notice_version"] = notice.version
-	status = event.verification_status or ("evidence_only" if event.verification_method == "evidence_only" else "recorded")
-	if status == "confirmed" and event.verification_method in WORKER_SEEN_OR_SERVER:
-		# A code sent from the worker's own phone passes through the worker's hands, and a server code is
-		# confirmed only by verification.verify_otp: neither is "confirmed" on the phone's say-so.
-		status = "recorded"
-	if status not in CLIENT_VERIFICATION:
-		frappe.throw(_("verification_status must be one of {0}").format(", ".join(CLIENT_VERIFICATION)), ConsentRequestError)
+	status = _verification_status(event, principal)
 
 	out = _insert(
 		{**values, "event_uuid": event.event_uuid, "action": action, "principal": principal, "programme": programme,
@@ -283,17 +298,15 @@ def withdraw_for(principal, programme, channel, event_uuid, purposes=None, leave
 		 "channel": channel, "purposes_granted": [], "purposes_denied": list(purposes),
 		 "verification_status": "recorded", "captured_by": frappe.session.user}
 	)
-	doc = frappe.get_doc({"doctype": "Consent Event", **values})
-	doc.flags.ignore_permissions = True
-	frappe.db.savepoint("anumati_withdraw")
-	try:
-		doc.insert()
-	except frappe.DuplicateEntryError:
-		frappe.db.rollback(save_point="anumati_withdraw")
-		return _existing(event_uuid)
+	if values.get("evidence"):
+		try:
+			evidence.check_event_evidence(principal, values["evidence"], values.get("guardian_link"))
+		except evidence.EvidenceError as e:
+			frappe.throw(str(e), ConsentRequestError)
+	artefact = _insert(values, ignore_permissions=True)
 	if leave:
 		_end_relationship_if_done(principal)
-	return _artefact(doc)
+	return artefact
 
 
 def _end_relationship_if_done(principal):

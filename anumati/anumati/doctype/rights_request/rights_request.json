@@ -31,6 +31,7 @@
   "detail_tab",
   "detail_section",
   "raw_payload",
+  "client_request_id",
   "resolution",
   "evidence"
  ],
@@ -191,6 +192,14 @@
    "fieldname": "raw_payload",
    "fieldtype": "Long Text",
    "label": "Raw payload"
+  },
+  {
+   "description": "Sent by the field app or host system, so a retried request is not filed twice",
+   "fieldname": "client_request_id",
+   "fieldtype": "Data",
+   "label": "Client request ID",
+   "read_only": 1,
+   "unique": 1
   },
   {
    "fieldname": "resolution",

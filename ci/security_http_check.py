@@ -18,7 +18,7 @@ import requests
 GUEST_ALLOWLIST = {
 	"anumati.api.v1.consent.verify",
 	"anumati.api.v1.consent.public_keys",
-	# SMS gateway callbacks: each call must carry the Channel Provider inbound secret
+	# SMS gateway callbacks: POST only, with the Channel Provider inbound secret in the X-Anumati-Token header
 	"anumati.api.v1.channel.inbound_sms",
 	"anumati.api.v1.channel.missed_call",
 	"anumati.api.v1.channel.delivery_report",
@@ -83,6 +83,8 @@ for site in (site_a, site_b):
 	for cb in ("inbound_sms", "missed_call", "delivery_report"):
 		r = call("POST", site, f"/api/method/anumati.api.v1.channel.{cb}", data={"provider": "x", "token": "wrong", "sender": "9000000000"})
 		expect(r.status_code in DENIED, f"{site} {cb} with a wrong secret -> {r.status_code}")
+		r = call("GET", site, f"/api/method/anumati.api.v1.channel.{cb}?provider=x&sender=9000000000")
+		expect(r.status_code in DENIED | {405}, f"{site} {cb} by GET -> {r.status_code}")
 
 	# The self-service page's signed-in methods refuse anyone without its session cookie.
 	for m in ("overview", "save_choices", "leave", "ask", "write", "choose", "complain", "respond"):

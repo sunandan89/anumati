@@ -80,3 +80,39 @@ def encrypt_existing():
 			encrypt_file(frappe.get_doc("File", name))
 		except Exception:
 			frappe.log_error(title="Anumati: could not encrypt an evidence file")
+
+
+class EvidenceError(frappe.ValidationError):
+	pass
+
+
+def check_event_evidence(principal: str, entries, guardian_link: str | None = None) -> int:
+	"""Every evidence entry on a consent event must be an uploaded private file of this person (or their
+	guardian link) whose bytes hash to the sha256 the event signs (review C3). Returns how many entries
+	were checked; raises EvidenceError on the first that fails. Error messages name the entry, never a value."""
+	owners = {("Data Principal", principal)}
+	if guardian_link:
+		owners.add(("Guardian Link", guardian_link))
+	for i, entry in enumerate(entries or [], start=1):
+		url, digest = (entry or {}).get("file"), ((entry or {}).get("sha256") or "").lower()
+		if not url or not digest:
+			frappe.throw(frappe._("Evidence {0} needs both its file and its sha256").format(i), EvidenceError)
+		files = frappe.get_all("File", {"file_url": url, "is_private": 1, "is_folder": 0},
+		                       ["name", "attached_to_doctype", "attached_to_name"])
+		match = next((f for f in files if (f.attached_to_doctype, f.attached_to_name) in owners), None)
+		if not match:
+			frappe.throw(frappe._("Evidence {0} is not a file uploaded for this person").format(i), EvidenceError)
+		if sha256_of(frappe.get_doc("File", match.name)) != digest:
+			frappe.throw(frappe._("Evidence {0} does not match its sha256").format(i), EvidenceError)
+	return len(entries or [])
+
+
+def guardian_link_has_evidence(guardian_link: str | None, principal: str) -> bool:
+	"""The guardian's order or ID photo, uploaded for this person, counts as evidence for evidence_only."""
+	if not guardian_link:
+		return False
+	urls = [u for u in frappe.db.get_value("Guardian Link", guardian_link, ["evidence", "id_document"]) or () if u]
+	return bool(urls) and bool(frappe.db.exists("File", {
+		"file_url": ("in", urls), "is_private": 1,
+		"attached_to_doctype": ("in", ["Data Principal", "Guardian Link"]),
+		"attached_to_name": ("in", [principal, guardian_link])}))

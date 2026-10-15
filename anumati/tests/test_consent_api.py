@@ -120,7 +120,10 @@ class TestConsentAPI(FrappeTestCase):
 		try:
 			self.assertFalse(self.status("follow")["allow"])
 			other = make_principal()
-			self.grant(principal_ref=other.principal_ref, verification_status="confirmed")
+			art = self.grant(principal_ref=other.principal_ref, verification_status="confirmed")
+			self.assertFalse(consent.check(other.principal_ref, "follow", programme=PROG)["allow"],
+			                 "a client cannot confirm its own consent")
+			enforcement.set_verification(art["consent_id"], "confirmed")  # as a server code check or delivery does
 			self.assertTrue(consent.check(other.principal_ref, "follow", programme=PROG)["allow"])
 		finally:
 			frappe.db.set_value("Programme", PROG, "allow_processing_before_confirm", 1)

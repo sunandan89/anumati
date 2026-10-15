@@ -429,6 +429,11 @@
       ],
       "type": "string"
      },
+     "client_request_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "type": "string"
+     },
      "consent_code": {
       "maxLength": 20,
       "type": "string"
@@ -598,6 +603,11 @@
       ],
       "type": "string"
      },
+     "client_request_id": {
+      "maxLength": 64,
+      "minLength": 8,
+      "type": "string"
+     },
      "consent_code": {
       "maxLength": 20,
       "type": "string"
@@ -690,14 +700,6 @@
      },
      {
       "in": "query",
-      "name": "token",
-      "required": true,
-      "schema": {
-       "type": "string"
-      }
-     },
-     {
-      "in": "query",
       "name": "request_id",
       "required": true,
       "schema": {
@@ -725,7 +727,7 @@
      }
     },
     "security": [],
-    "summary": "Delivery receipt callback: confirms deferred confirmations"
+    "summary": "Delivery receipt callback (POST, X-Anumati-Token header): confirms deferred confirmations"
    }
   },
   "/api/v2/method/anumati.api.v1.channel.inbound_sms": {
@@ -734,14 +736,6 @@
      {
       "in": "query",
       "name": "provider",
-      "required": true,
-      "schema": {
-       "type": "string"
-      }
-     },
-     {
-      "in": "query",
-      "name": "token",
       "required": true,
       "schema": {
        "type": "string"
@@ -776,7 +770,7 @@
      }
     },
     "security": [],
-    "summary": "SMS gateway callback: keywords STOP / STOP <code> / STOP <n> / DATA / HELP"
+    "summary": "SMS gateway callback (POST, X-Anumati-Token header): keywords STOP / STOP <code> / STOP <n> / DATA / HELP"
    }
   },
   "/api/v2/method/anumati.api.v1.channel.missed_call": {
@@ -785,14 +779,6 @@
      {
       "in": "query",
       "name": "provider",
-      "required": true,
-      "schema": {
-       "type": "string"
-      }
-     },
-     {
-      "in": "query",
-      "name": "token",
       "required": true,
       "schema": {
        "type": "string"
@@ -819,7 +805,7 @@
      }
     },
     "security": [],
-    "summary": "Missed-call callback: opens a withdrawal request"
+    "summary": "Missed-call callback (POST, X-Anumati-Token header): opens a withdrawal request"
    }
   },
   "/api/v2/method/anumati.api.v1.consent.check": {
@@ -1079,6 +1065,32 @@
     "summary": "Mark a phone lost (staff): wipe on next contact, opens a breach incident"
    }
   },
+  "/api/v2/method/anumati.api.v1.device.sign_out": {
+   "post": {
+    "parameters": [
+     {
+      "in": "query",
+      "name": "device_id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Not permitted"
+     }
+    },
+    "summary": "Field app sign-out; frees the phone for the next worker"
+   }
+  },
   "/api/v2/method/anumati.api.v1.evidence.view": {
    "get": {
     "parameters": [
@@ -1316,6 +1328,14 @@
       "in": "query",
       "name": "programme",
       "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "client_request_id",
+      "required": false,
       "schema": {
        "type": "string"
       }
