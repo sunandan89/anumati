@@ -7,7 +7,7 @@ SMS keywords (case-insensitive, Devanagari digits accepted):
   STOP            withdraw every optional purpose (if the number maps to exactly one person)
   STOP <code>     withdraw the consent with that receipt code
   STOP <n>        withdraw purpose number n from the latest receipt
-  DATA            access request      HELP  call-back request (grievance)
+  DATA            access request      HELP  grievance (call-back)
 Anything ambiguous becomes a Rights Request for a person to resolve; the SLA clock starts now."""
 
 import hmac
@@ -19,7 +19,7 @@ import frappe
 from frappe.rate_limiter import rate_limit
 from frappe.utils import now_datetime
 
-from anumati import channels, inbox, pii
+from anumati import channels, grievance, inbox, pii
 from anumati.api.v1 import consent
 
 DEVANAGARI = str.maketrans("०१२३४५६७८९", "0123456789")
@@ -57,10 +57,10 @@ def handle_sms(provider, sender, text):
 
 	if keyword == "DATA":
 		return {"outcome": "request", "request": _request("access", "sms", phone_hash, text).name}
-	if keyword == "HELP":
-		return {"outcome": "request", "request": _request("grievance", "sms", phone_hash, text).name}
 	if keyword != "STOP":
-		return {"outcome": "request", "request": _request("grievance", "sms", phone_hash, text).name}
+		# HELP, or anything else we can't act on by itself: a grievance for staff to call back and sort out.
+		doc = grievance.create("something_else", "sms", sender_hash=phone_hash, raw_payload=text, description=text)
+		return {"outcome": "grievance", "request": doc.name}
 
 	principal, purposes, programme = None, None, None
 	if arg and not arg.isdigit():

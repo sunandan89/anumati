@@ -44,5 +44,84 @@
     "receiver_by_role": "Anumati DPO"
    }
   ]
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - new grievance",
+  "subject": "New grievance {{ doc.name }}: {{ _(doc.category) }}",
+  "document_type": "Grievance",
+  "event": "New",
+  "condition": "doc.category != 'staff_behaviour'",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }} arrived by {{ _(doc.channel) }}. Reply by {{ doc.sla_due }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   },
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati Operator"
+   }
+  ]
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - new staff behaviour grievance",
+  "subject": "New grievance about staff behaviour {{ doc.name }}",
+  "document_type": "Grievance",
+  "event": "New",
+  "condition": "doc.category == 'staff_behaviour'",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }}: only the DPO can see it. Reply by {{ doc.sla_due }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   }
+  ]
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - grievance with the DPO",
+  "subject": "Grievance {{ doc.name }} is now with the DPO",
+  "document_type": "Grievance",
+  "event": "Value Change",
+  "value_changed": "dpo_since",
+  "condition": "doc.dpo_since and doc.status not in ('request_answered', 'request_closed')",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }} ({{ _(doc.category) }}) needs a final answer by {{ doc.sla_due }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   }
+  ]
+ },
+ {
+  "doctype": "Notification",
+  "name": "Anumati - grievance late",
+  "subject": "Grievance {{ doc.name }} is past its reply date",
+  "document_type": "Grievance",
+  "event": "Days After",
+  "date_changed": "sla_due",
+  "days_in_advance": 1,
+  "condition": "doc.status not in ('request_answered', 'request_closed')",
+  "channel": "System Notification",
+  "enabled": 1,
+  "is_standard": 0,
+  "message": "<p>{{ doc.name }} ({{ _(doc.category) }}) was due on {{ doc.sla_due }} and is still {{ _(doc.status) }}.</p>",
+  "recipients": [
+   {
+    "doctype": "Notification Recipient",
+    "receiver_by_role": "Anumati DPO"
+   }
+  ]
  }
 ]

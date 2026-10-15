@@ -37,6 +37,8 @@ GUEST_ALLOWLIST = {
 	"anumati.selfservice.receipt",
 	"anumati.selfservice.ask",
 	"anumati.selfservice.write",
+	"anumati.selfservice.complain",
+	"anumati.selfservice.respond",
 }
 DENIED = {401, 403}
 
@@ -83,9 +85,11 @@ for site in (site_a, site_b):
 		expect(r.status_code in DENIED, f"{site} {cb} with a wrong secret -> {r.status_code}")
 
 	# The self-service page's signed-in methods refuse anyone without its session cookie.
-	for m in ("overview", "save_choices", "leave", "ask", "write", "choose"):
+	for m in ("overview", "save_choices", "leave", "ask", "write", "choose", "complain", "respond"):
 		r = call("POST", site, f"/api/method/anumati.selfservice.{m}", data={"i": 0, "programme": "x", "request_type": "access",
-		                                                                         "request": "x", "text": "x", "year": 1990})
+		                                                                         "request": "x", "text": "x", "year": 1990,
+		                                                                         "category": "something_else", "details": "x",
+		                                                                         "grievance_name": "x", "solved": 1})
 		expect(r.status_code == 401, f"{site} self-service {m} without a session -> {r.status_code}")
 	r = call("GET", site, "/api/method/anumati.selfservice.receipt?i=0&event=x")
 	expect(r.status_code == 401, f"{site} self-service receipt without a session -> {r.status_code}")

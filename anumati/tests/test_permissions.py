@@ -37,6 +37,8 @@ GUEST_ALLOWLIST = {
 	"anumati.selfservice.receipt",
 	"anumati.selfservice.ask",
 	"anumati.selfservice.write",
+	"anumati.selfservice.complain",
+	"anumati.selfservice.respond",
 }
 TWO_FACTOR_ROLES = {"Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager"}
 

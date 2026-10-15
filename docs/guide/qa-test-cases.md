@@ -189,6 +189,12 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-27 | Breach: results and retry | After delivery reports arrive (or with one failed SMS) | Delivered / waiting / failed counts on the blue note; **Retry failed** sends again and takes the person off the visit list if it goes through | P2 |
 | WC-28 | Plain request statuses | Open the Requests list and board | Statuses read Received, Who is this?, Working on it, Waiting for the person, Waiting for partners, Answered, Closed, Can't do this (Hindi Desk: Hindi words); late ones red; old requests show the new words after migrate | P1 |
 | WC-29 | Reply to the person | On a request with a beneficiary: **Reply to the person › Ask a question**, then **Send update**, then **Send final answer** | Status goes Waiting for the person → Working on it → Answered; each message is on the timeline; the answer is under **Answer to the person** | P0 |
+| WC-30 | Grievances list and register | Open **Requests › Grievances**, then **Grievance register** | Grievances (GR-) are separate from rights requests (RQ-); the register counts by category with typical days to answer, DPO, late, not happy; no names | P1 |
+| WC-31 | Final answer needs an outcome | On a grievance: **Reply to the person › Send final answer** without picking an outcome, then with **Complaint was right: put right** | Refused without; then Answered, Outcome shown on the form | P0 |
+| WC-32 | Staff behaviour is DPO only | Create a grievance with **Staff behaviour**; open the Grievances list as Operator, then as DPO | Operator doesn't see it and can't open it by link; DPO sees it, assigned to them, with the DPO tag | P0 |
+| WC-33 | DPO at day 15 | Ask a developer to set a grievance's Received on 16 days back and run the daily job (or wait) | Assigned to the DPO, DPO tag, a timeline note and a notification | P1 |
+| WC-34 | Move between lists | On a rights request: **Actions › Move to grievances**; on the new grievance: **Actions › Move to rights requests** | Each move closes the old one with a note and carries the messages over | P2 |
+| WC-35 | Complaint from the field app or SMS | Field app: **Complaint** on a person; SMS `HELP` from a known number | Both arrive under Grievances (Something else), matched to the person | P1 |
 
 ## 9. SMS channels (need an SMS account and inbound number)
 
@@ -235,6 +241,23 @@ Open the site's `/my-consent` on a phone browser. Use a fictional beneficiary wh
 | SS-15 | Sign out and timeout | **Sign out**; or leave the page 15 minutes, then tap anything | Back to sign-in | P1 |
 | SS-16 | Hindi | Switch the site language to Hindi (header) and reload | Every label on the page is in Hindi | P1 |
 | SS-17 | No data in the page source | View the page source before signing in | No names, numbers or codes; only fixed text | P1 |
+
+## 12. Grievances on the self-service page
+
+Sign in as in section 11.
+
+| ID | Scenario | Steps | Expected | Priority |
+| --- | --- | --- | --- | --- |
+| GV-01 | Two doors | **Requests** tab | **Rights / support request** and **Grievance** are separate choices | P1 |
+| GV-02 | Make a grievance | **Grievance** → Didn't stop when I asked → write what happened → **Send grievance** | "Grievance GR-… received. We will reply by …"; Desk: under Grievances, channel Self-service page, raised by The person | P0 |
+| GV-03 | Must say what happened | Send with nothing written | Refused: "Tell us what happened." | P1 |
+| GV-04 | My request was not answered | Choose it | "Which request?" appears with only their own requests; required | P1 |
+| GV-05 | Photo | Add a JPG; then try a .txt renamed .jpg; then a 5 MB photo | The JPG is accepted (Desk: View photo or document opens it); the others are refused | P1 |
+| GV-06 | Answer and did it solve it | Staff send a final answer (WC-31) | The card shows "You were right. We have put it right." above the answer, **Did this solve it?** and the Data Protection Board line | P0 |
+| GV-07 | Not happy | **No, I'm not happy with this** | "We have passed it to the Data Protection Officer"; card says a senior officer is looking; Desk: Working on it, DPO tag, Not happy | P0 |
+| GV-08 | Only once | After a second final answer | Only **Yes, this solves it** is offered, with the Board line | P1 |
+| GV-09 | Solved | **Yes, this solves it** | "Thank you. We have closed it."; status Closed, no more messages | P1 |
+| GV-10 | Hindi | Switch to Hindi | Grievance form, categories, outcome lines and buttons are in Hindi | P2 |
 
 ## Reporting a bug
 

@@ -24,7 +24,7 @@ from frappe import _
 from frappe.rate_limiter import rate_limit
 from frappe.utils import cint, getdate, now_datetime
 
-from anumati import channels, conversation, enforcement, inbox, pii
+from anumati import channels, conversation, enforcement, grievance, inbox, pii
 from anumati.api.v1 import consent
 from anumati.api.v1.principal import mask_phone
 
@@ -369,14 +369,30 @@ def _history(person: str) -> list[dict]:
 
 
 def _requests(person: str) -> list[dict]:
+	"""Rights / support requests and grievances, newest first, each with its conversation."""
 	out = []
 	for r in frappe.get_all("Rights Request", {"matched_principal": person},
-	                        ["name", "request_type", "status", "received_on", "sla_due", "linked_event"],
+	                        ["name", "request_type", "status", "received_on", "sla_due", "linked_event", "creation"],
 	                        order_by="creation desc", limit=50):
 		if r.request_type == "withdrawal" and r.linked_event:
 			continue  # done at once (field app or My choices); it is in the history
-		out.append({"id": r.name, "type": r.request_type, "status": r.status, "received_on": str(r.received_on),
-		            "reply_by": str(r.sla_due or ""), "messages": conversation.thread("Rights Request", r.name)})
+		out.append({"id": r.name, "kind": "request", "type": r.request_type, "status": r.status,
+		            "received_on": str(r.received_on), "reply_by": str(r.sla_due or ""), "_at": r.creation,
+		            "messages": conversation.thread("Rights Request", r.name)})
+	for g in frappe.get_all("Grievance", {"matched_principal": person},
+	                        ["name", "category", "status", "received_on", "sla_due", "outcome", "person_says",
+	                         "answered_on", "dpo_since", "about_request", "creation"],
+	                        order_by="creation desc", limit=50):
+		doc = frappe._dict(g)
+		out.append({"id": g.name, "kind": "grievance", "type": g.category, "status": g.status,
+		            "received_on": str(g.received_on), "reply_by": str(g.sla_due or ""), "_at": g.creation,
+		            "about": g.about_request, "with_dpo": bool(g.dpo_since),
+		            "outcome": _(grievance.OUTCOME_FOR_PERSON[g.outcome]) if g.outcome else None,
+		            "person_says": g.person_says, "can_respond": g.status == inbox.ANSWERED,
+		            "can_say_not_happy": bool(grievance.can_say_not_happy(doc)),
+		            "board_route": bool(g.answered_on),
+		            "messages": conversation.thread("Grievance", g.name)})
+	out.sort(key=lambda r: r.pop("_at"), reverse=True)
 	return out
 
 
@@ -538,14 +554,93 @@ def ask(i, request_type, details=None):
 	return {"request": doc.name, "reply_by": str(doc.sla_due), **_overview(data, i)}
 
 
+def _own(person: str, name: str):
+	"""One of the person's own requests or grievances, by its number."""
+	doctype = "Grievance" if str(name).startswith("GR-") else "Rights Request"
+	if not name or frappe.db.get_value(doctype, name, "matched_principal") != person:
+		raise frappe.PermissionError
+	return frappe.get_doc(doctype, name)
+
+
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=20, seconds=600)
 def write(i, request, text):
-	"""Write to us on one of the person's requests."""
+	"""Write to us on one of the person's requests or grievances."""
 	data = _session()
 	person = _person(data, i)
-	if frappe.db.get_value("Rights Request", request, "matched_principal") != person:
-		raise frappe.PermissionError
-	doc = frappe.get_doc("Rights Request", request)
+	doc = _own(person, request)
+	if doc.status in (inbox.CLOSED, inbox.CANNOT):
+		frappe.throw(_("This is closed."))
 	conversation.person_message(doc, text, data.get("phone_hash"))
+	return _overview(data, i)
+
+
+PHOTO_TYPES = {b"\xff\xd8\xff": "jpg", b"\x89PNG": "png", b"%PDF": "pdf"}
+PHOTO_MAX = 3 * 1024 * 1024
+
+
+def _read_photo(photo: str) -> tuple[bytes, str]:
+	"""A photo or PDF the person added (a data URL from the page): only JPEG, PNG or PDF up to 3 MB, judged by
+	its first bytes, not its name."""
+	import base64
+
+	try:
+		content = base64.b64decode(photo.split(",", 1)[-1], validate=True)
+	except Exception:
+		frappe.throw(_("That file could not be read."))
+	kind = next((ext for magic, ext in PHOTO_TYPES.items() if content.startswith(magic)), None)
+	if not kind or len(content) > PHOTO_MAX:
+		frappe.throw(_("Add a photo (JPG or PNG) or a PDF of up to 3 MB."))
+	return content, kind
+
+
+def _attach_photo(doc, content: bytes, kind: str):
+	"""Kept private and encrypted on disk like consent evidence (evidence.py)."""
+	file = frappe.get_doc({"doctype": "File", "file_name": f"{doc.name}-evidence.{kind}", "content": content,
+	                       "is_private": 1, "attached_to_doctype": "Grievance", "attached_to_name": doc.name,
+	                       "attached_to_field": "evidence"})
+	file.insert(ignore_permissions=True)
+	frappe.db.set_value("Grievance", doc.name, "evidence", file.file_url)
+
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+@rate_limit(limit=10, seconds=600)
+def complain(i, category, details=None, about_request=None, photo=None):
+	"""A grievance: something went wrong with the person's data or a request."""
+	data = _session()
+	person = _person(data, i)
+	meta = frappe.get_meta("Grievance").get_field("category").options.split("\n")
+	if category not in meta:
+		frappe.throw(_("Choose what it is about."))
+	details = (details or "").strip()
+	if not details:
+		frappe.throw(_("Tell us what happened."))
+	if len(details) > conversation.MAX_LENGTH:
+		frappe.throw(_("Please keep it under {0} characters.").format(conversation.MAX_LENGTH))
+	if about_request:
+		_own(person, about_request)
+	elif category == "request_not_answered":
+		frappe.throw(_("Choose which request was not answered."))
+	upload = _read_photo(photo) if photo else None
+	doc = grievance.create(category, "web", person, raised_by_role=_raised_by(data, person),
+	                       sender_hash=data.get("phone_hash"), about_request=about_request or None)
+	conversation.person_message(doc, details, data.get("phone_hash"))
+	if upload:
+		_attach_photo(doc, *upload)
+	channels.send_sms(person, "grievance_received", {"code": doc.name, "date": frappe.utils.formatdate(doc.sla_due),
+	                                                 "link": frappe.utils.get_url(conversation.PAGE)},
+	                  link=("Grievance", doc.name))
+	return {"grievance": doc.name, "reply_by": str(doc.sla_due), **_overview(data, i)}
+
+
+@frappe.whitelist(allow_guest=True, methods=["POST"])
+@rate_limit(limit=10, seconds=600)
+def respond(i, grievance_name, solved):
+	"""Did the answer solve it? Yes closes it; No (once) sends it back to the DPO."""
+	data = _session()
+	person = _person(data, i)
+	doc = _own(person, grievance_name)
+	if doc.doctype != "Grievance":
+		raise frappe.PermissionError
+	grievance.respond(doc, bool(cint(solved)))
 	return _overview(data, i)

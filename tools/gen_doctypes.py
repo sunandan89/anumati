@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-10-15 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-16 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -21,6 +21,8 @@ VERIFY_STATUS = sel("captured", "recorded", "confirmed", "unconfirmed", "evidenc
 # Plain words for staff and the person (rights requests, and grievances later).
 REQUEST_STATUS = sel("new_request", "who_is_this", "working_on_it", "waiting_for_person", "waiting_for_partners",
                      "request_answered", "request_closed", "cannot_do")
+GRIEVANCE_STATUS = sel("new_request", "who_is_this", "working_on_it", "waiting_for_person", "request_answered",
+                       "request_closed")
 WITHDRAW_CH = ["field_worker", "slip", "sms", "missed_call", "ivr", "whatsapp", "web", "email", "community", "api", "ussd"]
 EVENT_CH = sel("app", "hosted_page", "connector", *WITHDRAW_CH)
 LANG_NOTE = "Link to Frappe's Language (code, e.g. hi, mr, en)"
@@ -171,6 +173,10 @@ doctype("Anumati Settings", [
     F("default_languages", "Table MultiSelect", "Default languages", "Language Row"),
     F("rights_sla_days", "Int", "Rights request SLA (days)", default="30",
       description="Default response time for rights requests, pending counsel"),
+    F("grievance_sla_days", "Int", "Grievance reply time (days)", default="30",
+      description="Days to give a final answer to a grievance. Published in the notice; pending counsel"),
+    F("grievance_dpo_after_days", "Int", "Grievance goes to the DPO after (days)", default="15",
+      description="A grievance with no final answer by then is assigned to the DPO"),
     F("consent_record_retention_years", "Int", "Consent record retention (years)", default="7",
       description="Default 7 years, pending counsel. Programmes may override."),
     sec("signing_section", "Signing key", collapsible=True,
@@ -495,7 +501,7 @@ doctype("Verification Attempt", [
 # ================================================================ rights, channels, governance
 doctype("Rights Request", [
     tab("request_tab", "Request"),
-    F("request_type", "Select", "Type", sel("withdrawal", "access", "correction", "erasure", "grievance", "nomination"), default="grievance", reqd=True, in_list_view=True, in_standard_filter=True),
+    F("request_type", "Select", "What they asked", sel("withdrawal", "access", "correction", "erasure", "nomination"), reqd=True, in_list_view=True, in_standard_filter=True),
     F("channel", "Select", "Channel", sel(*WITHDRAW_CH), default="email", reqd=True, in_list_view=True),
     F("status", "Select", "Status", REQUEST_STATUS, default="new_request", in_list_view=True, in_standard_filter=True),
     F("received_on", "Datetime", "Received on", default="now", reqd=True, description="The reply-by clock starts here, not at match"),
@@ -527,6 +533,51 @@ doctype("Rights Request", [
 ], {ADM: "F", DPO: "F", OPR: "E", FW: "C", PM: "R", SM: "F"},
     autoname="format:RQ-{#####}", track_changes=1, sort_field="creation", sort_order="DESC",
     email_append_to=1, subject_field="subject", sender_field="raised_by", has_web_view=0, title_field="subject")
+
+doctype("Grievance", [
+    tab("grievance_tab", "Grievance"),
+    F("category", "Select", "What is it about?", sel("used_without_consent", "did_not_stop", "wrong_details",
+      "shared_or_leaked", "staff_behaviour", "request_not_answered", "something_else"), reqd=True, in_list_view=True,
+      in_standard_filter=True, description="Staff behaviour grievances are seen by the DPO only"),
+    F("about_request", "Link", "Which request?", "Rights Request", in_list_view=True,
+      mandatory_depends_on="eval:doc.category=='request_not_answered'"),
+    F("subject", "Data", "Subject"),
+    F("description", "Small Text", "In their words"),
+    F("evidence", "Attach", "Photo or document"),
+    F("channel", "Select", "Came in by", sel(*WITHDRAW_CH), default="web", reqd=True),
+    col("c1"),
+    F("matched_principal", "Link", "Beneficiary", "Data Principal", in_standard_filter=True),
+    F("raised_by_role", "Select", "Raised by", sel("", "by_self", "by_guardian", "by_nominee", "by_field_worker", "by_staff")),
+    F("status", "Select", "Status", GRIEVANCE_STATUS, default="new_request", in_list_view=True, in_standard_filter=True),
+    F("assigned_to", "Link", "Assigned to", "User", in_list_view=True, in_standard_filter=True),
+    F("received_on", "Datetime", "Received on", default="now", reqd=True),
+    F("sla_due", "Date", "Reply by", in_list_view=True, description="Received on + the grievance days in Anumati Settings"),
+    F("dpo_since", "Datetime", "With the DPO since", read_only=True,
+      description="Set when no final answer was given in time, or the person was not happy with it"),
+    sec("answer_section", "Answer"),
+    F("outcome", "Select", "Outcome", sel("", "put_right", "partly_put_right", "no_problem_found"), read_only=True,
+      in_standard_filter=True, description="Chosen with the final answer (Reply to the person > Send final answer)"),
+    F("internal_note", "Small Text", "What we did (internal)", description="Never shown to the person"),
+    col("c2"),
+    F("answer", "Small Text", "Final answer", read_only=True),
+    F("answered_on", "Datetime", "Answered on", read_only=True),
+    F("person_says", "Select", "Did it solve it?", sel("", "solved", "not_happy"), read_only=True, in_standard_filter=True),
+    F("person_said_on", "Datetime", "Said on", read_only=True),
+    tab("detail_tab", "Details"),
+    sec("sender_section", "Sender"),
+    F("match_confidence", "Percent", "Match confidence"),
+    F("candidates", "Small Text", "Possible matches", read_only=True,
+      description="Beneficiary IDs sharing the sender's number; use 'Who is this for?' to pick one"),
+    F("sender_hash", "Data", "Sender phone hash", read_only=True, search_index=True,
+      description="Salted hash of the sender's number; the number itself is not stored"),
+    F("raised_by", "Data", "Sender email", "Email", description="Set when the grievance arrives by email"),
+    F("paper_trail_number", "Data", "Paper-trail number"),
+    F("raw_payload", "Long Text", "As received", description="The SMS or email text"),
+    tab("consents_tab", "Beneficiary's consents"),
+    F("consents_html", "HTML", "Consents"),
+], {DPO: "E", OPR: "E", ADM: "R", FW: "C", SM: "F"},
+    autoname="format:GR-{#####}", track_changes=1, sort_field="creation", sort_order="DESC",
+    email_append_to=1, subject_field="subject", sender_field="raised_by", title_field="subject")
 
 doctype("Channel Provider", [
     F("provider_name", "Data", "Name", reqd=True, unique=True),
@@ -746,7 +797,7 @@ doctype("System Usage Log", [
 ], {ADM: "R", DPO: "R", DEV: "r", SM: "R"}, autoname="hash", in_create=1)
 
 doctype("Message Template", [
-    F("template_event", "Select", "Event", sel("receipt", "confirmation", "deferred_confirmation", "withdrawal_confirmation", "otp", "reminder", "renewal", "retention_notice", "breach_notice", "rights_update", "request_reply"), reqd=True, in_list_view=True),
+    F("template_event", "Select", "Event", sel("receipt", "confirmation", "deferred_confirmation", "withdrawal_confirmation", "otp", "reminder", "renewal", "retention_notice", "breach_notice", "rights_update", "request_reply", "grievance_received"), reqd=True, in_list_view=True),
     F("channel", "Select", "Channel", sel("sms", "whatsapp", "ivr", "email"), reqd=True, in_list_view=True),
     F("language", "Link", "Language", "Language", reqd=True, in_list_view=True),
     col("c1"),

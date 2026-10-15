@@ -400,6 +400,42 @@
    "write"
   ]
  },
+ "Grievance": {
+  "Anumati Admin": [
+   "print",
+   "read",
+   "report"
+  ],
+  "Anumati DPO": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "Anumati Field Worker": [
+   "create",
+   "read"
+  ],
+  "Anumati Operator": [
+   "create",
+   "print",
+   "read",
+   "report",
+   "write"
+  ],
+  "System Manager": [
+   "create",
+   "delete",
+   "email",
+   "export",
+   "print",
+   "read",
+   "report",
+   "share",
+   "write"
+  ]
+ },
  "Guardian Link": {
   "Anumati Admin": [
    "create",

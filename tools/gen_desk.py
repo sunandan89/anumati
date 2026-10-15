@@ -10,7 +10,7 @@ import json, os
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")
 FIX = os.path.join(REPO, "anumati", "fixtures")
-TS = "2026-10-15 10:00:00.000000"
+TS = "2026-10-16 10:00:00.000000"
 
 ADM, DPO, OPR, PM, SM = "Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager", "System Manager"
 
@@ -50,6 +50,7 @@ def card(label, doctype, filters=(), dynamic=(), color="Blue", stats=False, tota
     return label
 
 
+G_DONE = ["request_answered", "request_closed"]
 # Rights requests still waiting on staff (answered, closed and "can't do" are done).
 DONE = ["request_answered", "request_closed", "cannot_do"]
 OPEN = ["status", "not in", DONE]
@@ -69,6 +70,13 @@ CARDS = {
     "not_synced": card("Phones Not Synced", "Field Device", [["status", "=", "active"]], dynamic=[["last_sync", "<", "moment(frappe.datetime.get_today()).subtract(2, 'days').format('YYYY-MM-DD')"]], color="Orange"),
     "breaches": card("Open Breaches", "Breach Incident", [["status", "!=", "Closed"]], color="Red"),
     "unreviewed": card("Translations Not Reviewed", "Notice Translation", [["reviewer", "is", "not set"]], color="Orange"),
+    # grievances (still waiting on staff = not answered or closed)
+    "grievances_open": card("Grievances Open", "Grievance", [["status", "not in", G_DONE]], color="Orange"),
+    "grievances_dpo": card("Grievances With The DPO", "Grievance", [["status", "not in", G_DONE], ["dpo_since", "is", "set"]], color="Red"),
+    "grievances_late": card("Grievances Late", "Grievance", [["status", "not in", G_DONE]],
+                            dynamic=[["sla_due", "<", "frappe.datetime.get_today()"]], color="Red"),
+    "grievances_not_happy": card("Grievances Not Happy", "Grievance", [["person_says", "=", "not_happy"], ["status", "!=", "request_closed"]], color="Red"),
+    "requests_who": card("Requests To Match", "Rights Request", [["status", "=", "who_is_this"]], color="Red"),
     "people": card("Beneficiaries", "Data Principal", [], color="Blue"),
     # Today's "consent posture" row (prototype NGO console dashboard)
     "recorded_30": card("Recorded (30 Days)", "Consent Event", [["creation", "Timespan", "last 30 days"]], color="Blue", stats=True),
@@ -121,6 +129,10 @@ const items = [
 	  filters: { status: ["not in", ["request_answered", "request_closed", "cannot_do"]], sla_due: ["<", today] } },
 	{ dt: "Rights Request", label: __("requests need matching to a person"), tone: "red",
 	  filters: { status: "who_is_this" } },
+	{ dt: "Grievance", label: __("grievances are past their reply date"), tone: "red",
+	  filters: { status: ["not in", ["request_answered", "request_closed"]], sla_due: ["<", today] } },
+	{ dt: "Grievance", label: __("grievances are with the DPO"), tone: "amber",
+	  filters: { status: ["not in", ["request_answered", "request_closed"]], dpo_since: ["is", "set"] } },
 	{ dt: "Breach Incident", label: __("breaches are open (72-hour clock)"), tone: "red",
 	  filters: { status: ["!=", "Closed"] } },
 	{ dt: "Consent State", label: __("consents are waiting for confirmation"), tone: "amber",
@@ -260,6 +272,9 @@ LIST_FILTERS = [
     ("Rights Request", "Who is this", [["Rights Request", "status", "=", "who_is_this", False]]),
     ("Rights Request", "Open withdrawals", [["Rights Request", "request_type", "=", "withdrawal", False],
                                            ["Rights Request", "status", "not in", DONE, False]]),
+    ("Grievance", "With the DPO", [["Grievance", "dpo_since", "is", "set", False],
+                                   ["Grievance", "status", "not in", G_DONE, False]]),
+    ("Grievance", "Not happy", [["Grievance", "person_says", "=", "not_happy", False]]),
     ("Field Device", "Lost or wiped", [["Field Device", "status", "in", ["lost", "wipe_queued", "wiped"], False]]),
 ]
 
@@ -314,8 +329,8 @@ def onboarding():
 
 # ---------------------------------------------------------------- workspaces
 class WS:
-    def __init__(self, name, seq, icon, roles):
-        self.name, self.seq, self.icon, self.roles = name, seq, icon, roles
+    def __init__(self, name, seq, icon, roles, parent=""):
+        self.name, self.seq, self.icon, self.roles, self.parent = name, seq, icon, roles, parent
         self.blocks, self.links, self.shortcuts, self.cards, self.charts, self.custom = [], [], [], [], [], []
 
     def _block(self, kind, data):
@@ -380,7 +395,7 @@ class WS:
     def emit(self):
         write("workspace", self.name, {
             "doctype": "Workspace", "label": self.name, "title": self.name, "icon": self.icon,
-            "public": 1, "is_hidden": 0, "hide_custom": 1, "for_user": "", "parent_page": "",
+            "public": 1, "is_hidden": 0, "hide_custom": 1, "for_user": "", "parent_page": self.parent,
             "sequence_id": float(self.seq), "content": json.dumps(self.blocks),
             "links": self.links, "shortcuts": self.shortcuts, "number_cards": self.cards,
             "charts": self.charts, "custom_blocks": self.custom, "quick_lists": [],
@@ -392,6 +407,9 @@ DESK = [OPR, PM, DPO, ADM, SM]
 WORKSPACES = {
     # section: who sees it in the sidebar (DocType permissions still decide what they can open or change)
     "Today": DESK,
+    "Requests": [OPR, DPO, ADM, SM],
+    "Rights requests": [OPR, DPO, ADM, SM],
+    "Grievances": [OPR, DPO, ADM, SM],
     "Beneficiaries": DESK,
     "Programmes": [PM, DPO, ADM, SM],
     "Analytics": [PM, DPO, ADM, SM],
@@ -415,6 +433,32 @@ def workspaces():
         .shortcut("Beneficiaries", "Data Principal", color="Blue")
         .chart(CHARTS["per_week"])
         .card("Requests", "Rights Request", "Purge Request", "Propagation Ack")
+        .emit())
+    # Requests: rights / support requests and grievances, each its own page (as on the self-service page).
+    (WS("Requests", 1.5, "mail", r["Requests"])
+        .header("Rights / support requests")
+        .numbers(CARDS["open_requests"], CARDS["overdue"], CARDS["requests_who"], col=4)
+        .shortcut("Rights requests", "Rights Request", color="Blue", stats=[["Rights Request", *OPEN]], fmt="{} open")
+        .shortcut("Requests board", url=BOARD_URL, color="Orange")
+        .header("Grievances")
+        .numbers(CARDS["grievances_open"], CARDS["grievances_dpo"], CARDS["grievances_late"], col=4)
+        .shortcut("Grievances", "Grievance", color="Red", stats=[["Grievance", "status", "not in", G_DONE]], fmt="{} open")
+        .shortcut("Grievance register", url="/app/query-report/Grievance Register", color="Grey")
+        .emit())
+    (WS("Rights requests", 1.6, "mail", r["Rights requests"], parent="Requests")
+        .numbers(CARDS["open_requests"], CARDS["overdue"], CARDS["requests_who"], col=4)
+        .shortcut("Rights requests", "Rights Request", color="Blue", stats=[["Rights Request", *OPEN]], fmt="{} open")
+        .shortcut("Requests board", url=BOARD_URL, color="Orange")
+        .shortcut("New rights request", url="/app/rights-request/new", color="Grey")
+        .card("Rights requests", ("Rights Request", "Rights request"), ("Purge Request", "Deletion task"),
+              ("Propagation Ack", "Partner confirmation"))
+        .emit())
+    (WS("Grievances", 1.7, "mail", r["Grievances"], parent="Requests")
+        .numbers(CARDS["grievances_open"], CARDS["grievances_dpo"], CARDS["grievances_late"], CARDS["grievances_not_happy"])
+        .shortcut("Grievances", "Grievance", color="Red", stats=[["Grievance", "status", "not in", G_DONE]], fmt="{} open")
+        .shortcut("Grievance register", url="/app/query-report/Grievance Register", color="Grey")
+        .shortcut("New grievance", url="/app/grievance/new", color="Grey")
+        .card("Grievances", "Grievance", "Report:Grievance Register")
         .emit())
     (WS("Beneficiaries", 2, "users", r["Beneficiaries"])
         .numbers(CARDS["people"], CARDS["consents_week"], CARDS["unconfirmed"], CARDS["withdrawals_week"])

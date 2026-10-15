@@ -1,0 +1,22 @@
+{
+ "color": "Red",
+ "creation": "2026-10-16 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Grievance",
+ "dynamic_filters_json": "[[\"Grievance\", \"sla_due\", \"<\", \"frappe.datetime.get_today()\"]]",
+ "filters_json": "[[\"Grievance\", \"status\", \"not in\", [\"request_answered\", \"request_closed\"], false]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Grievances Late",
+ "modified": "2026-10-16 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Grievances Late",
+ "owner": "Administrator",
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Weekly",
+ "type": "Document Type"
+}

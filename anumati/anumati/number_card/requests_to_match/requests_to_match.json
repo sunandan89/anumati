@@ -1,0 +1,22 @@
+{
+ "color": "Red",
+ "creation": "2026-10-16 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Rights Request",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[[\"Rights Request\", \"status\", \"=\", \"who_is_this\", false]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Requests To Match",
+ "modified": "2026-10-16 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Requests To Match",
+ "owner": "Administrator",
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Weekly",
+ "type": "Document Type"
+}

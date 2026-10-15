@@ -1,0 +1,111 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"grieva0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances Open\", \"col\": 3}}, {\"id\": \"grieva1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances With The DPO\", \"col\": 3}}, {\"id\": \"grieva2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances Late\", \"col\": 3}}, {\"id\": \"grieva3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances Not Happy\", \"col\": 3}}, {\"id\": \"grieva4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Grievances\", \"col\": 3}}, {\"id\": \"grieva5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Grievance register\", \"col\": 3}}, {\"id\": \"grieva6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"New grievance\", \"col\": 3}}, {\"id\": \"grieva7\", \"type\": \"card\", \"data\": {\"card_name\": \"Grievances\", \"col\": 4}}]",
+ "creation": "2026-10-16 10:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 1,
+ "icon": "mail",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Grievances",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Grievances",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Grievance",
+   "link_count": 0,
+   "link_to": "Grievance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Report:Grievance Register",
+   "link_count": 0,
+   "link_to": "Grievance Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-10-16 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Grievances",
+ "number_cards": [
+  {
+   "label": "Grievances Open",
+   "number_card_name": "Grievances Open"
+  },
+  {
+   "label": "Grievances With The DPO",
+   "number_card_name": "Grievances With The DPO"
+  },
+  {
+   "label": "Grievances Late",
+   "number_card_name": "Grievances Late"
+  },
+  {
+   "label": "Grievances Not Happy",
+   "number_card_name": "Grievances Not Happy"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "Requests",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Anumati Operator"
+  },
+  {
+   "role": "Anumati DPO"
+  },
+  {
+   "role": "Anumati Admin"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 1.7,
+ "shortcuts": [
+  {
+   "color": "Red",
+   "doc_view": "List",
+   "format": "{} open",
+   "label": "Grievances",
+   "link_to": "Grievance",
+   "stats_filter": "[[\"Grievance\", \"status\", \"not in\", [\"request_answered\", \"request_closed\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "label": "Grievance register",
+   "stats_filter": "[]",
+   "type": "URL",
+   "url": "/app/query-report/Grievance Register"
+  },
+  {
+   "color": "Grey",
+   "label": "New grievance",
+   "stats_filter": "[]",
+   "type": "URL",
+   "url": "/app/grievance/new"
+  }
+ ],
+ "title": "Grievances"
+}

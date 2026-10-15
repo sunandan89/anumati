@@ -253,6 +253,12 @@ People see and change their choices, download receipts and send rights requests 
 2. **Sign-in by SMS code** uses the approved `otp` Message Template and the MSG91 account (section E). Until MSG91 is set up, the page tells people to use their receipt code and year of birth instead (that way can only turn uses off).
 3. **Years of birth.** The receipt-code sign-in, and people who share a phone with another adult, need a year of birth on the beneficiary record (asked in the field app). Without it the page asks them to see a field worker.
 4. **Tell people about it.** Add `{{ link }}` to the receipt SMS text (needs a fresh DLT approval), and say it at the end of the notice. The printed receipt already shows the address.
-5. **Messages.** Register the `request_reply` and `rights_update` texts for DLT (drafts under Setup › Message Template), enter their template IDs and tick **Approved**.
+5. **Messages.** Register the `request_reply`, `rights_update` and `grievance_received` texts for DLT (drafts under Setup › Message Template), enter their template IDs and tick **Approved**.
 6. **Try it** with a fictional beneficiary whose phone you hold (QA cases SS-01 to SS-17).
+
+### I2. Grievances
+1. **Anumati Settings**: set **DPO email** to the DPO's user (grievances go to that user), and check **Grievance reply time (days)** (30) and **Grievance goes to the DPO after (days)** (15).
+2. **Emails to the DPO** become grievances: search bar → **Email Account** → the DPO mailbox → **Append To** = `Grievance` → **Save**. A request that comes in this way can be moved: **Actions › Move to rights requests**.
+3. Say the reply time and how to complain in the notice (Rule 3 fields: DPO contact, how to complain to the Board).
+4. Staff behaviour grievances are visible to the DPO only; other grievances to the DPO, operators and admins (read only).
 

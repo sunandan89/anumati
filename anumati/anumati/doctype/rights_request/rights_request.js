@@ -19,6 +19,13 @@ frappe.ui.form.on("Rights Request", {
 		if (!frm.is_new() && open && frm.doc.request_type === "withdrawal" && frm.doc.matched_principal) {
 			frm.add_custom_button(__("Record withdrawal"), () => record_withdrawal(frm)).addClass("btn-primary");
 		}
+		if (!frm.is_new() && open && frm.perm[0] && frm.perm[0].write) {
+			// A complaint that came in as a request (e.g. an email to the DPO) belongs with grievances.
+			frm.add_custom_button(__("Move to grievances"), () => frappe.confirm(__("Move to grievances"), () => frappe.call({
+				method: "anumati.api.v1.grievance.move_from_request", args: { request: frm.doc.name }, freeze: true,
+				callback: (r) => frappe.set_route("Form", "Grievance", r.message.grievance),
+			})), __("Actions"));
+		}
 		if (!frm.is_new() && frm.doc.matched_principal && frm.doc.status !== "request_closed" && frm.perm[0] && frm.perm[0].write) {
 			const group = __("Reply to the person");
 			frm.add_custom_button(__("Send update"), () => reply(frm, "update"), group);

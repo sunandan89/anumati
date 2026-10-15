@@ -239,6 +239,10 @@ REQUEST_TEXTS = {
 		"en": "{{ code }}: there is a reply to your request. See it at {{ link }} or ask any field worker.",
 		"hi": "{{ code }}: आपके अनुरोध का जवाब आया है। {{ link }} पर देखें या किसी भी कार्यकर्ता से पूछें।",
 	},
+	"grievance_received": {
+		"en": "We got your grievance {{ code }}. We will reply by {{ date }}. See it at {{ link }}",
+		"hi": "आपकी शिकायत {{ code }} मिली। हम {{ date }} तक जवाब देंगे। {{ link }} पर देखें",
+	},
 	"rights_update": {
 		"en": "We got your request {{ code }}. We will reply by {{ date }}. See it at {{ link }}",
 		"hi": "आपका अनुरोध {{ code }} मिला। हम {{ date }} तक जवाब देंगे। {{ link }} पर देखें",
