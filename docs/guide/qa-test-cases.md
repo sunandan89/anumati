@@ -28,15 +28,16 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | AU-01 | First sign-in | Install app → enter organisation address, user, password → set a 4-digit PIN (entered twice) | Home appears with a **Choose a programme** card; tap it to pick one (picked automatically if the worker has only one programme) | P0 |
 | AU-02 | Wrong password | Enter a wrong password | Clear error; no crash; can retry | P1 |
 | AU-03 | App lock | Leave the app in the background for 5+ minutes, or close it fully, then reopen | PIN screen; correct PIN opens Home | P0 |
-| AU-04 | Wrong PIN 5 times | On the PIN screen, enter a wrong PIN 5 times | Signed out and the phone's Anumati data wiped; sign in again | P1 |
+| AU-04 | Wrong PIN 5 times | On the PIN screen, enter a wrong PIN 5 times | From the 3rd wrong PIN the screen makes you wait (30 s, then 60 s) before the next try; the 5th signs out and wipes the phone's Anumati data; sign in again | P1 |
 | AU-05 | Forgot PIN | Tap "Forgot PIN? Sign out" | Signs out and wipes the phone's data after a warning | P2 |
 | AU-06 | Sign out with unsynced records | Take a consent offline → Home menu → **Sign out** | A warning says records are not synced yet; Cancel keeps them | P1 |
 | AU-07 | Return after a long pause | Leave the app in the background 30+ minutes → reopen | Screen draws normally (no black screen) | P0 |
 | AU-08 | Screenshots blocked | Try a screenshot inside the app | Blocked or black (personal data protected) | P1 |
 | AU-09 | Lost phone wipe | Console (Admin or Programme Manager): Field phones → this phone → **Report lost** → on the phone, open the app online | Phone wipes its data and signs out; a breach incident is opened in the console | P1 |
-| AU-10 | App paused or too old | Admin: switch off the field app in Mobile Configuration (or raise the minimum version) → open the app | "The field app is paused" (or "Please update the app"); switch back on afterwards | P2 |
+| AU-10 | App paused or too old | Admin: switch off the field app in Mobile Configuration (or raise the minimum version) → open the app | "The field app is paused" (or "Please update the app", whose button opens the app's Google Play page, never a file download); switch back on afterwards | P2 |
 | AU-11 | Field worker can't use the console | Log in to the website with the field worker account | No Anumati workspaces or menus are shown | P1 |
 | AU-12 | A phone belongs to one worker at a time | Worker A signs in on a phone → worker B tries to sign in on the same phone without A signing out | B is told the phone is signed in to another field worker; after A signs out (or a coordinator sets the phone's status to logged_out in Field phones), B can sign in | P1 |
+| AU-13 | Restarting doesn't reset wrong PINs | Enter a wrong PIN 3 times → close the app fully → reopen | Still asked to wait, and the tries left are not back to 5 | P1 |
 
 ## 2. Consent: the person, who can read and has a phone
 

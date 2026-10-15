@@ -75,7 +75,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Add a use or rejoin** | A later visit: a new use, a use they withdrew or refused (**Ask again**), or rejoining after leaving; uses already agreed are not asked again |
 | **Find beneficiary** | Offline search by name, ID, receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone) or **phone number**: their own, or their parent's or guardian's, so one family phone finds the parent and the children. Each result says whose number matched; shows each use's status; tapping a person opens the withdrawal screen |
 | Offline first | Everything is saved on the phone (encrypted) and syncs when online; no duplicates even if sync is cut off |
-| App lock and lost phone | The app locks after 5 minutes away or on restart; 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
+| App lock and lost phone | The app locks after 5 minutes away or on restart; after 2 wrong PINs each try waits longer (closing the app doesn't reset this), and 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
 
 ### Beneficiary and guardian
 
