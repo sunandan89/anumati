@@ -44,6 +44,12 @@ class SignInError(frappe.AuthenticationError):
 # ------------------------------------------------------------------ session
 
 
+def _get(key: str):
+	"""Read straight from Redis: these values change within one request, so Frappe's per-request copy of
+	earlier reads must not answer."""
+	return frappe.cache.get_value(key, expires=True)
+
+
 def _skey(token: str) -> str:
 	return "anumati:ss:" + hashlib.sha256(token.encode()).hexdigest()
 
@@ -69,7 +75,7 @@ def _new_session(data: dict) -> str:
 
 def _session() -> dict:
 	token = _token_in()
-	data = frappe.cache.get_value(_skey(token)) if token else None
+	data = _get(_skey(token)) if token else None
 	if not data:
 		raise SignInError(_("Please sign in again."))
 	frappe.cache.set_value(_skey(token), data, expires_in_sec=SESSION_SECONDS)  # 15 minutes from the last use
@@ -171,7 +177,7 @@ def start(phone):
 		return {"sent": False, "reason": "not_set_up"}
 	phone_hash = pii.phone_hash(digits)
 	sends = f"anumati:ss:sends:{phone_hash}"
-	count = cint(frappe.cache.get_value(sends))
+	count = cint(_get(sends))
 	if count >= MAX_SENDS:
 		frappe.throw(_("Too many codes for this number. Please try again in 10 minutes."))
 	frappe.cache.set_value(sends, count + 1, expires_in_sec=CODE_SECONDS)
@@ -187,7 +193,7 @@ def start(phone):
 @rate_limit(limit=20, seconds=600)
 def verify(phone, code):
 	phone_hash = pii.phone_hash(pii.normalise_phone(phone))
-	stored = frappe.cache.get_value(_otp_key(phone_hash)) if phone_hash else None
+	stored = _get(_otp_key(phone_hash)) if phone_hash else None
 	if not stored:
 		frappe.throw(_("This code has expired. Ask for a new one."))
 	if stored["tries"] >= MAX_TRIES:
@@ -244,11 +250,11 @@ def code_login(code, year):
 	leave, and ask us things."""
 	code = (code or "").strip().upper()
 	tries = f"anumati:ss:codetries:{hashlib.sha256(code.encode()).hexdigest()}"
-	if cint(frappe.cache.get_value(tries)) >= MAX_TRIES:
+	if cint(_get(tries)) >= MAX_TRIES:
 		frappe.throw(_("Too many tries with this code. Please try again in an hour or ask a field worker."))
 	principal = inbox.principal_for_short_code(code)
 	if not principal or not cint(year) or _birth_year(principal) != cint(year):
-		frappe.cache.set_value(tries, cint(frappe.cache.get_value(tries)) + 1, expires_in_sec=3600)
+		frappe.cache.set_value(tries, cint(_get(tries)) + 1, expires_in_sec=3600)
 		frappe.throw(_("We couldn't find that receipt code with that year of birth."))
 	data = {"mode": "code", "phone_hash": None, "self": principal, "people": [principal],
 	        "relation": {principal: "self"}, "links": {}}

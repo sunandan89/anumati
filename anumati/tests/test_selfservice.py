@@ -105,7 +105,7 @@ class TestSelfService(FrappeTestCase):
 		home = self.sign_in()
 		self.assertEqual([p["relation"] for p in home["people"]], ["self", "child"])
 		self.assertEqual([p["name"].split()[0] for p in home["people"]], ["Sunita", "Meena"], "first names only")
-		session = frappe.cache.get_value(selfservice._skey(frappe.flags.anumati_ss))
+		session = selfservice._get(selfservice._skey(frappe.flags.anumati_ss))
 		self.assertEqual(session["people"], [self.mother.name, self.child.name])
 		self.assertNotIn(self.stranger.name, session["people"])
 		self.assertRaises(frappe.PermissionError, selfservice.overview, 2)
@@ -123,7 +123,7 @@ class TestSelfService(FrappeTestCase):
 		self.assertRaises(frappe.ValidationError, selfservice.choose, i_first, 1971)
 		self.assertRaises(frappe.ValidationError, selfservice.choose, i_second, 1975)  # no year on record
 		home = selfservice.choose(i_first, 1970)
-		session = frappe.cache.get_value(selfservice._skey(frappe.flags.anumati_ss))
+		session = selfservice._get(selfservice._skey(frappe.flags.anumati_ss))
 		self.assertEqual(session["people"], [first.name])
 		self.assertNotIn(second.name, session["people"])
 		self.assertEqual(home["people"][0]["relation"], "self")

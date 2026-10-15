@@ -9,6 +9,8 @@ Who moves the status (inbox.py statuses):
   staff "answer"   -> Answered (the answer is also kept on the request)
   person writes    -> Working on it again, if we were waiting for them or had answered"""
 
+import html
+
 import frappe
 from frappe import _
 from frappe.utils import get_url, now_datetime
@@ -86,4 +88,4 @@ def thread(doctype: str, name: str) -> list[dict]:
 		{"reference_doctype": doctype, "reference_name": name, "anumati_channel": "web"},
 		["sent_or_received", "communication_date", "content"], order_by="communication_date asc, creation asc")
 	return [{"from": "you" if r.sent_or_received == "Received" else "office",
-	         "at": str(r.communication_date), "text": frappe.utils.html2text(r.content or "").strip()} for r in rows]
+	         "at": str(r.communication_date), "text": html.unescape(frappe.utils.strip_html(r.content or "")).strip()} for r in rows]
