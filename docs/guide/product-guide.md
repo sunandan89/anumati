@@ -94,7 +94,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
 | **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log with the 72-hour steps and **Tell affected people** (SMS breach notice in each person's language, field visit list for the rest), audit log |
 | **Grievances** | Complaints in their own list (GR-), apart from rights requests: what it's about, the person's words and photo, Reply to the person with an **Outcome** on the final answer, the DPO taking over at day 15 (and straight away for staff-behaviour complaints, which only the DPO sees), "did this solve it?", and the **Grievance register** |
-| **Requests** workspace | Number cards (open, overdue and to-match rights requests; grievances open, with the DPO and late) and a sidebar with **Rights requests**, **Requests board**, **Grievances** and **Grievance register** |
+| **Requests** workspace | Number cards (open, overdue and to-match rights requests; grievances open, with the DPO and late) shortcuts to **Rights requests**, **Requests board**, **Grievances** and **Grievance register** (a report of totals by topic); in the sidebar, Rights requests and Grievances are pages under Requests |
 | **Requests inbox** | Every withdrawal or rights request with a reply-by date (30 days by default; late ones in red), plain statuses (Received, Who is this?, Working on it, Waiting for the person, Waiting for partners, Answered, Closed, Can't do this), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme) and **Reply to the person** (Send update, Ask a question, Send final answer); staff are notified of new requests and 3 days before the reply-by date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
@@ -433,6 +433,10 @@ Rules the console enforces:
 
 A request that is really a complaint (often an email): **Actions › Move to grievances**. The reverse is on the grievance.
 
+<img src="wireframes/w2-requests-workspace.png" width="100%" alt="Requests workspace: rights request and grievance counts, shortcuts, and the Needs attention box from Today">
+
+*The Needs attention box is on the Today page; it is drawn here with the Requests counts.*
+
 Withdrawals done on a field phone or on the self-service page arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 
 ### Work grievances
@@ -451,6 +455,8 @@ Grievances (complaints, DPDP Act s.13) have their own list under **Requests › 
 ### Tell people affected by a breach
 
 Open the **Breach Incident** → **Tell affected people** tab. Only the DPO sends.
+
+<img src="wireframes/w3-breach-tell.png" width="100%" alt="Tell affected people: who to tell, counts only, message in Hindi and English, previews, send buttons, field visit list">
 
 1. **Who to tell**: people whose data was on the lost phone (the default for a lost phone), everyone in the programme, people with the affected uses, or a list of beneficiary IDs. People who withdrew or left are included: telling them is a legal duty, not a use of their data.
 2. The tab shows counts only, never names or numbers: how many by SMS (own phone or the guardian's, for a child or a guarded adult), how many have no phone, and the languages.
