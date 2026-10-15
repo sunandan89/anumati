@@ -207,6 +207,12 @@ A person with a disability who **can** decide with support consents for themself
 
 Wireframes of the field app with its own wording (fictional names). They are drawn to match the built screens (not screenshots) and regenerated with `tools/guide_wireframes.py` whenever a screen changes. Step labels show "of 3"; in a programme with extra questions (like Village Health Camps) they show "of 4", and guardians save on the About the person screen.
 
+### Sign in and app lock
+
+| Sign in | Choose a PIN | Unlock |
+| --- | --- | --- |
+| <img src="wireframes/m1-sign-in.png" width="200" alt="Organisation address, user ID, password, English or Hindi, wrong-password error"> | <img src="wireframes/m2-set-pin.png" width="200" alt="Choose a 4-digit PIN after the first sign-in"> | <img src="wireframes/m3-unlock.png" width="200" alt="Enter your PIN, tries left, Forgot PIN? Sign out"> |
+
 ### Home
 
 | Home |
@@ -221,9 +227,9 @@ Wireframes of the field app with its own wording (fictional names). They are dra
 
 No internet, or the programme set to "Worker's phone": the Confirm screen asks for the code from the worker's phone **and** the voice "haan" before Save.
 
-| 3. Confirm and save (offline / worker's phone) |
-| --- |
-| <img src="wireframes/a5-confirm-offline.png" width="200" alt="Confirm offline: SMS code from the worker's phone plus voice, both needed"> |
+| 3. Confirm and save (offline / worker's phone) | 2. Notice with no recording |
+| --- | --- |
+| <img src="wireframes/a5-confirm-offline.png" width="200" alt="Confirm offline: SMS code from the worker's phone plus voice, both needed"> | <img src="wireframes/a6-notice-phone-voice.png" width="200" alt="The phone reads the notice aloud; choices locked until They have read the whole notice"> |
 
 ### Journey B: needs help reading, or no phone
 
@@ -239,15 +245,21 @@ No internet, or the programme set to "Worker's phone": the Confirm screen asks f
 
 ### Journey D: guardian for an adult who can't decide alone
 
-| 2. Guardian's details | No order yet |
-| --- | --- |
-| <img src="wireframes/d2-guardian.png" width="200" alt="Appointed by, order number, relation, guardian"> | <img src="wireframes/d3-no-order.png" width="200" alt="Consent can't be taken; inform coordinator"> |
+| 1. Who (adult with a guardian) | 2. Guardian's details | No order yet |
+| --- | --- | --- |
+| <img src="wireframes/d1-who-guardian.png" width="200" alt="Screen 1 for a guardian of an adult who can't decide alone"> | <img src="wireframes/d2-guardian.png" width="200" alt="Appointed by, order number, relation, guardian"> | <img src="wireframes/d3-no-order.png" width="200" alt="Consent can't be taken; inform coordinator"> |
 
 ### Extra questions and withdrawal
 
 | About the person | Stop a use or leave | Leave the programme | Withdrawal noted |
 | --- | --- | --- | --- |
 | <img src="wireframes/e1-about.png" width="200" alt="Extra questions after the choices"> | <img src="wireframes/f1-withdraw.png" width="200" alt="Find the person, switch off uses, leave, or other requests"> | <img src="wireframes/f2-leave.png" width="200" alt="Confirm leaving the programme"> | <img src="wireframes/f3-noted.png" width="200" alt="What was stopped, with Send by SMS"> |
+
+### Find and sync issues
+
+| Find beneficiary | Records that need attention |
+| --- | --- |
+| <img src="wireframes/k1-find.png" width="200" alt="Search by phone; each use with its status; whose number matched"> | <img src="wireframes/k2-sync-issues.png" width="200" alt="Records the server could not save, with the reason, Try again or Discard"> |
 
 ## After consent
 
