@@ -33,7 +33,7 @@ def feed(since, limit=100):
 	} for e in events]
 	for r in frappe.get_all("Rights Request", {"modified": (">", since)},
 	                        ["name", "request_type", "status", "creation", "modified"], order_by="modified asc", limit=limit):
-		out.append({"event": "rights.closed" if r.status in ("Closed", "Rejected") else "rights.created",
+		out.append({"event": "rights.closed" if r.status in ("request_closed", "cannot_do") else "rights.created",
 		            "at": r.modified, "request": r.name, "request_type": r.request_type, "status": r.status})
 	out.sort(key=lambda x: x["at"])
 	return {"events": out[:limit], "until": out[:limit][-1]["at"] if out else now_datetime()}

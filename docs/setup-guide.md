@@ -134,7 +134,7 @@ For each message and language: search bar → **Message Template** → **+ Add**
 - **Event**: `receipt`, `withdrawal_confirmation`, `otp` or `deferred_confirmation`.
 - **Channel** `sms`, **Language** (e.g. `hi`).
 - **DLT template ID**: the MSG91 **flow template ID** from E1 step 4.
-- **Body**: the same text, with these placeholders: `{{ code }}` (receipt code), `{{ programme }}`, `{{ purposes }}`, `{{ date }}`, `{{ otp }}`. They go to MSG91 in this order as var1…var5. The breach notice (event `breach_notice`) also uses `{{ org }}`, `{{ what_happened }}`, `{{ can_do }}` and `{{ helpline }}` (var6…var9). The demo data adds unapproved breach-notice texts to copy.
+- **Body**: the same text, with these placeholders: `{{ code }}` (receipt code), `{{ programme }}`, `{{ purposes }}`, `{{ date }}`, `{{ otp }}`. They go to MSG91 in this order as var1…var5. The breach notice (event `breach_notice`) also uses `{{ org }}`, `{{ what_happened }}`, `{{ can_do }}` and `{{ helpline }}` (var6…var9). `{{ link }}` (var10) is the self-service page address; add it to the receipt text so people can find the page. The self-service page uses `request_reply` ("there is a reply to your request") and `rights_update` ("we got your request"). The demo data adds unapproved drafts of these texts to copy.
 - Tick **Approved** only once DLT has approved the template. Unapproved templates are never sent.
 
 ### E4. Inbound SMS and missed calls (in MSG91)
@@ -223,6 +223,7 @@ Useful places:
 - **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
 - **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.
 - **A breach**: the form shows the hours left of the 72-hour deadline. Click **Board told now** when you have told the Board.
+- **Requests**: open one → **Reply to the person** → **Send update**, **Ask a question** or **Send final answer**. The person reads it on the self-service page and can write back; the thread is on the request's timeline.
 - **Telling people about a breach** (DPO): the incident's **Tell affected people** tab. Put your mobile in **My Settings** to get a test SMS, and set **Helpline for beneficiaries** in Anumati Settings so the notice gives a number to call.
 
 ### Hindi Desk
@@ -243,3 +244,15 @@ Anyone can switch Desk to Hindi: avatar (top right) → **My Settings** → **La
 When a worker records someone's "haan", the app shows what Sarvam heard and "Sounds like yes / no / not clear". The worker still decides; the clip and the words are not stored anywhere by Anumati.
 
 **Demo site shortcut.** On a site with the fictional demo programmes, Anumati Settings → **Actions** → **Record demo audio (Sarvam)** records every demo notice and its Hindi translation in both voices and approves them (demo only). It takes a few minutes and shows a message when done; press it again to fill any gaps. Nothing is ever recorded on its own.
+
+## I. Self-service page for beneficiaries (`/my-consent`)
+
+People see and change their choices, download receipts and send rights requests at `https://<your-site>/my-consent`. Nothing to install; it is a page of the Anumati app.
+
+1. **Language picker.** Search bar → **Website Settings** → tick **Show Language Picker** → **Save**. The page then has हिन्दी / English in its header.
+2. **Sign-in by SMS code** uses the approved `otp` Message Template and the MSG91 account (section E). Until MSG91 is set up, the page tells people to use their receipt code and year of birth instead (that way can only turn uses off).
+3. **Years of birth.** The receipt-code sign-in, and people who share a phone with another adult, need a year of birth on the beneficiary record (asked in the field app). Without it the page asks them to see a field worker.
+4. **Tell people about it.** Add `{{ link }}` to the receipt SMS text (needs a fresh DLT approval), and say it at the end of the notice. The printed receipt already shows the address.
+5. **Messages.** Register the `request_reply` and `rights_update` texts for DLT (drafts under Setup › Message Template), enter their template IDs and tick **Approved**.
+6. **Try it** with a fictional beneficiary whose phone you hold (QA cases SS-01 to SS-17).
+

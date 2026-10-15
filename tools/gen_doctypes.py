@@ -9,7 +9,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-10-14 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-15 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -18,6 +18,9 @@ CAPTURE_MODES = sel("self_digital", "self_worker_device", "assisted_verbal", "as
                     "assisted_witnessed", "guardian_minor", "guardian_pwd", "paper")
 VERIFY_METHODS = sel("server_otp", "device_sms_otp", "reverse_sms", "missed_call", "deferred", "evidence_only")
 VERIFY_STATUS = sel("captured", "recorded", "confirmed", "unconfirmed", "evidence_only")
+# Plain words for staff and the person (rights requests, and grievances later).
+REQUEST_STATUS = sel("new_request", "who_is_this", "working_on_it", "waiting_for_person", "waiting_for_partners",
+                     "request_answered", "request_closed", "cannot_do")
 WITHDRAW_CH = ["field_worker", "slip", "sms", "missed_call", "ivr", "whatsapp", "web", "email", "community", "api", "ussd"]
 EVENT_CH = sel("app", "hosted_page", "connector", *WITHDRAW_CH)
 LANG_NOTE = "Link to Frappe's Language (code, e.g. hi, mr, en)"
@@ -494,18 +497,24 @@ doctype("Rights Request", [
     tab("request_tab", "Request"),
     F("request_type", "Select", "Type", sel("withdrawal", "access", "correction", "erasure", "grievance", "nomination"), default="grievance", reqd=True, in_list_view=True, in_standard_filter=True),
     F("channel", "Select", "Channel", sel(*WITHDRAW_CH), default="email", reqd=True, in_list_view=True),
-    F("status", "Select", "Status", sel("Open", "Unmatched", "In Progress", "Awaiting Acknowledgement", "Closed", "Rejected"), default="Open", in_list_view=True, in_standard_filter=True),
-    F("received_on", "Datetime", "Received on", default="now", reqd=True, description="SLA clock starts here, not at match"),
-    F("sla_due", "Date", "Due by", in_list_view=True, description="Received on + the SLA days in Anumati Settings, unless set"),
+    F("status", "Select", "Status", REQUEST_STATUS, default="new_request", in_list_view=True, in_standard_filter=True),
+    F("received_on", "Datetime", "Received on", default="now", reqd=True, description="The reply-by clock starts here, not at match"),
+    F("sla_due", "Date", "Reply by", in_list_view=True, description="Received on + the days in Anumati Settings, unless set"),
     F("subject", "Data", "Subject"),
     col("c1"),
     F("matched_principal", "Link", "Beneficiary", "Data Principal", in_standard_filter=True),
+    F("raised_by_role", "Select", "Raised by", sel("", "by_self", "by_guardian", "by_nominee", "by_field_worker", "by_staff"),
+      description="Who asked: the person, their guardian or nominee, a field worker or staff"),
     F("match_confidence", "Percent", "Match confidence"),
     F("candidates", "Small Text", "Possible matches", read_only=True,
       description="Beneficiary IDs sharing the sender's number; use 'Who is this for?' to pick one"),
     F("assigned_to", "Link", "Assigned to", "User", in_standard_filter=True),
     F("paper_trail_number", "Data", "Paper-trail number", description="Printed on slips so offline requests reconcile"),
     F("linked_event", "Link", "Resulting consent event", "Consent Event", read_only=True),
+    sec("answer_section", "Answer to the person"),
+    F("answer", "Small Text", "Answer", read_only=True,
+      description="The final answer sent with Reply to the person. The whole conversation is in the timeline below"),
+    F("answered_on", "Datetime", "Answered on", read_only=True),
     sec("sender_section", "Sender", collapsible=True),
     F("raised_by", "Data", "Sender email", "Email", description="Set when the request arrives by email"),
     F("sender_hash", "Data", "Sender phone hash", read_only=True, search_index=True,
@@ -737,7 +746,7 @@ doctype("System Usage Log", [
 ], {ADM: "R", DPO: "R", DEV: "r", SM: "R"}, autoname="hash", in_create=1)
 
 doctype("Message Template", [
-    F("template_event", "Select", "Event", sel("receipt", "confirmation", "deferred_confirmation", "withdrawal_confirmation", "otp", "reminder", "renewal", "retention_notice", "breach_notice", "rights_update"), reqd=True, in_list_view=True),
+    F("template_event", "Select", "Event", sel("receipt", "confirmation", "deferred_confirmation", "withdrawal_confirmation", "otp", "reminder", "renewal", "retention_notice", "breach_notice", "rights_update", "request_reply"), reqd=True, in_list_view=True),
     F("channel", "Select", "Channel", sel("sms", "whatsapp", "ivr", "email"), reqd=True, in_list_view=True),
     F("language", "Link", "Language", "Language", reqd=True, in_list_view=True),
     col("c1"),

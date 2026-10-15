@@ -49,7 +49,13 @@ assisted_verbal,Assisted: said yes (voice)
 assisted_witnessed,Assisted: with a witness
 beneficiary,Beneficiary
 breach_notice,Breach notice
+by_field_worker,Field worker
+by_guardian,Guardian
+by_nominee,Nominee
+by_self,The person
+by_staff,Staff
 cancel,Cancelled
+cannot_do,Can't do this
 captured,Captured
 child,Child
 choice,Choose one
@@ -114,6 +120,7 @@ missed_call,Missed call
 months,Months
 neha,Neha
 neighbour,Neighbour
+new_request,Received
 no_phone,No phone
 no_processing,Stop using their data
 nomination,Nomination
@@ -144,6 +151,9 @@ relative,Relative
 reminder,Reminder
 renew,Renewed
 renewal,Renewal
+request_answered,Answered
+request_closed,Closed
+request_reply,Reply to a request
 retention_notice,Data about to be deleted
 reverse_sms,Reply by SMS
 rights_update,Request update
@@ -174,8 +184,11 @@ unknown,Not known
 update,Changed
 ussd,USSD
 validity_expiry,Consent about to expire
+waiting_for_partners,Waiting for partners
+waiting_for_person,Waiting for the person
 web,Website
 whatsapp,WhatsApp
+who_is_this,Who is this?
 whole_programme,Everyone in the programme
 wipe_queued,Wipe queued
 wiped,Wiped
@@ -184,5 +197,6 @@ withdrawal,Withdrawal
 withdrawal_confirmation,Withdrawal done
 withdrawn,Withdrawn
 witness,Witness
+working_on_it,Working on it
 year,Year
 years,Years

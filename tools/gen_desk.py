@@ -10,7 +10,7 @@ import json, os
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")
 FIX = os.path.join(REPO, "anumati", "fixtures")
-TS = "2026-10-01 10:00:00.000000"
+TS = "2026-10-15 10:00:00.000000"
 
 ADM, DPO, OPR, PM, SM = "Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager", "System Manager"
 
@@ -50,13 +50,15 @@ def card(label, doctype, filters=(), dynamic=(), color="Blue", stats=False, tota
     return label
 
 
-OPEN = ["status", "not in", ["Closed", "Rejected"]]
+# Rights requests still waiting on staff (answered, closed and "can't do" are done).
+DONE = ["request_answered", "request_closed", "cannot_do"]
+OPEN = ["status", "not in", DONE]
 CARDS = {
     # existing cards, rewritten so the whole console lives in one place
     "consents_week": card("Consents This Week", "Consent Event", [["action", "in", ["grant", "renew"]], ["creation", "Timespan", "this week"]], color="Green", stats=True),
     "withdrawals_week": card("Withdrawals This Week", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "this week"]], color="Red", stats=True),
     "open_requests": card("Open Rights Requests", "Rights Request", [OPEN], color="Orange"),
-    "unmatched": card("Unmatched Requests", "Rights Request", [["status", "=", "Unmatched"]], color="Red"),
+    "unmatched": card("Unmatched Requests", "Rights Request", [["status", "=", "who_is_this"]], color="Red"),
     "heard": card("Notice Heard In Full", "Consent Event", [["notice_completed", "=", 1], ["creation", "Timespan", "this week"]], stats=True),
     # new
     "overdue": card("Overdue Requests", "Rights Request", [OPEN], dynamic=[["sla_due", "<", "frappe.datetime.get_today()"]], color="Red"),
@@ -116,9 +118,9 @@ ATTENTION_SCRIPT = r"""
 const today = frappe.datetime.get_today();
 const items = [
 	{ dt: "Rights Request", label: __("requests are past their due date"), tone: "red",
-	  filters: { status: ["not in", ["Closed", "Rejected"]], sla_due: ["<", today] } },
+	  filters: { status: ["not in", ["request_answered", "request_closed", "cannot_do"]], sla_due: ["<", today] } },
 	{ dt: "Rights Request", label: __("requests need matching to a person"), tone: "red",
-	  filters: { status: "Unmatched" } },
+	  filters: { status: "who_is_this" } },
 	{ dt: "Breach Incident", label: __("breaches are open (72-hour clock)"), tone: "red",
 	  filters: { status: ["!=", "Closed"] } },
 	{ dt: "Consent State", label: __("consents are waiting for confirmation"), tone: "amber",
@@ -241,8 +243,9 @@ PROGRAMMES_CSS = """.anumati-prog-title { font-weight: 600; font-size: var(--tex
 .anumati-prog .pill.grey { background: var(--gray-100); color: var(--gray-700); }"""
 
 REQUESTS_BOARD = "Requests"
-KANBAN_COLUMNS = [("Open", "Blue"), ("Unmatched", "Red"), ("In Progress", "Orange"),
-                  ("Awaiting Acknowledgement", "Purple"), ("Closed", "Green"), ("Rejected", "Gray")]
+KANBAN_COLUMNS = [("new_request", "Blue"), ("who_is_this", "Red"), ("working_on_it", "Orange"),
+                  ("waiting_for_person", "Yellow"), ("waiting_for_partners", "Purple"), ("request_answered", "Cyan"),
+                  ("request_closed", "Green"), ("cannot_do", "Gray")]
 
 LIST_FILTERS = [
     ("Consent Event", "Consents this week", [["Consent Event", "creation", "Timespan", "this week", False]]),
@@ -254,9 +257,9 @@ LIST_FILTERS = [
     ("Data Principal", "Minors", [["Data Principal", "is_minor", "=", 1, False]]),
     ("Data Principal", "Shared phone", [["Data Principal", "shared_phone", "=", 1, False]]),
     ("Data Principal", "Needs help to read", [["Data Principal", "needs_assistance", "=", 1, False]]),
-    ("Rights Request", "Unmatched", [["Rights Request", "status", "=", "Unmatched", False]]),
+    ("Rights Request", "Who is this", [["Rights Request", "status", "=", "who_is_this", False]]),
     ("Rights Request", "Open withdrawals", [["Rights Request", "request_type", "=", "withdrawal", False],
-                                           ["Rights Request", "status", "not in", ["Closed", "Rejected"], False]]),
+                                           ["Rights Request", "status", "not in", DONE, False]]),
     ("Field Device", "Lost or wiped", [["Field Device", "status", "in", ["lost", "wipe_queued", "wiped"], False]]),
 ]
 
@@ -407,7 +410,7 @@ def workspaces():
         .chart(CHARTS["pipeline"], 4).chart(CHARTS["withdrawals_by_channel"], 4).attention(4)
         .block(PROGRAMMES_BLOCK)
         .shortcut("Requests board", url=BOARD_URL, color="Orange")
-        .shortcut("Inbox", "Rights Request", color="Orange", stats=[["Rights Request", "status", "not in", ["Closed", "Rejected"]]], fmt="{} open")
+        .shortcut("Inbox", "Rights Request", color="Orange", stats=[["Rights Request", *OPEN]], fmt="{} open")
         .shortcut("Find a receipt", "Consent Event", color="Green")
         .shortcut("Beneficiaries", "Data Principal", color="Blue")
         .chart(CHARTS["per_week"])

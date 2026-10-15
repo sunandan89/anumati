@@ -119,7 +119,7 @@ class TestChannels(FrappeTestCase):
 		self.assertEqual(out["outcome"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
-		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "Closed")
+		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "request_closed")
 
 	def test_inbound_stop_n_and_stop_code_with_devanagari_digits(self):
 		p = self.person("9000077007")
@@ -140,7 +140,7 @@ class TestChannels(FrappeTestCase):
 		self.person("9000077009"), self.person("9000077009")
 		out = channel.inbound_sms(provider="MSG91 test", token=SECRET, sender="9000077009", message="STOP")
 		self.assertEqual(out["outcome"], "unmatched")
-		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "Unmatched")
+		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "who_is_this")
 
 	def test_data_help_and_missed_call_open_requests(self):
 		p = self.person("9000077010")
@@ -149,7 +149,7 @@ class TestChannels(FrappeTestCase):
 		missed = channel.missed_call(provider="MSG91 test", token=SECRET, caller="9000077010")
 		req = frappe.get_doc("Rights Request", missed["request"])
 		self.assertEqual((req.request_type, req.channel, req.matched_principal), ("withdrawal", "missed_call", p.name))
-		self.assertNotEqual(req.status, "Closed", "a missed call is confirmed by a person, never auto-applied")
+		self.assertNotEqual(req.status, "request_closed", "a missed call is confirmed by a person, never auto-applied")
 
 	def test_callbacks_reject_a_wrong_secret(self):
 		for fn, kw in ((channel.inbound_sms, {"sender": "9000077011", "message": "STOP"}),
