@@ -67,7 +67,7 @@ class TestSdkSync(FrappeTestCase):
 	def test_an_sdk_insert_is_named_by_its_mobile_uuid_and_sealed_by_the_server(self):
 		mid = str(uuid.uuid4())
 		out = self.push(mobile_uuid=mid, verification_status="confirmed", server_time="2020-01-01 00:00:00",
-		                chain_seq=1, hash="f" * 64, signature="forged", captured_by="someone.else@example.com")
+		                chain_seq=1, hash="f" * 64, signature="forged", captured_by=OTHER)
 		self.assertEqual(out["name"], mid)
 		doc = frappe.get_doc("Consent Event", mid)
 		self.assertEqual(doc.event_uuid, mid)
