@@ -65,6 +65,12 @@ Receipts, confirmation requests and withdrawal confirmations for a child, or an 
 ## rights.withdrawable (GET, staff)
 `request` returns the uses currently on for the request's person: `[{programme, programme_name, code, title, essential}]`. It feeds the Record withdrawal checklist and carries no personal data.
 
+## grievance.submit (POST)
+`category` (used_without_consent | did_not_stop | wrong_details | shared_or_leaked | staff_behaviour | request_not_answered | something_else), `channel`, `principal_ref?`, `description?`, `about_request?`, `consent_code?`, `paper_trail_number?` returns `{grievance, status, sla_due}`. A grievance is a complaint and is kept apart from rights requests, so routine requests never count as complaints. Without `principal_ref`, a receipt code in `consent_code` matches the person when it is unambiguous. With no final answer after 15 days (**Anumati Settings → grievance_dpo_after_days**) it goes to the DPO; answered with no word from the person for 30 days, it closes. *Staff behaviour* grievances are seen by the DPO only. Needs Grievance create permission (field worker, operator, DPO).
+
+## grievance.reply, grievance.move_from_request, grievance.move_to_request (POST, staff)
+`grievance, message, kind?` (update | question | answer), `outcome?` (put_right | partly_put_right | no_problem_found, with `answer`) replies to the person. `move_from_request` turns a rights request that is really a complaint into a grievance and closes the request; `move_to_request` (`grievance_name, request_type`) does the reverse.
+
 ## notifications.feed (GET)
 `since` (ISO datetime), `limit?` (at most 500) returns `{events: [...], until}`. It mirrors the webhook events (`consent.recorded`, `consent.withdrawn`, `rights.created`, `rights.closed`) for hosts that can't receive webhooks. Pass `until` back as the next `since`. It carries identifiers and purpose codes only.
 
