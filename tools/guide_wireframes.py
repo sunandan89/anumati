@@ -1,7 +1,8 @@
 """Wireframes of the field app's screens for the product guide (docs/guide/wireframes/*.png).
 
 Each screen is a small HTML mock in the field app's look (colours from lib/core/theme.dart) with the app's
-own wording, rendered to PNG. When a screen changes, update its mock here and re-run, in the same PR:
+own wording, rendered to PNG. DESK holds Desk (web console) screens, 1280 wide, following the server's
+workspace, DocType JSON and form scripts. When a screen changes, update its mock here and re-run, in the same PR:
     pip install playwright && python3 tools/guide_wireframes.py   (CHROME=/path/to/chrome to use another Chromium)
 (needs Chromium; fonts: Noto Sans + Noto Sans Devanagari). All names are fictional."""
 
@@ -347,6 +348,118 @@ NEW_SCREENS = {
 SCREENS.update(NEW_SCREENS)
 
 
+# ---------------------------------------------------------------- Desk (web console) screens, 1280 wide
+DESK_CSS = """
+body{margin:0;background:#F4F5F6;font-family:Inter,'Noto Sans','Noto Sans Devanagari',sans-serif;color:#1F272E;font-size:13px}
+.capband{background:#2A2118;color:#F3EADB;padding:14px 24px;font-size:14.5px;line-height:1.5}.capband b{color:#F2A97F}
+.nav{background:#fff;border-bottom:1px solid #E2E6E9;height:48px;display:flex;align-items:center;gap:14px;padding:0 24px}
+.logo{width:24px;height:24px;border-radius:6px;background:#B4532A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.srch{margin-left:auto;width:360px;background:#F3F3F3;border-radius:8px;padding:8px 12px;color:#8D99A6}
+.av{width:28px;height:28px;border-radius:14px;background:#E2E6E9;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px}
+.wrap{display:flex;gap:24px;padding:20px 24px}
+.side{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:2px}
+.side div{padding:7px 10px;border-radius:6px;color:#383838}.side .on{background:#fff;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06)}.side .sub{padding-left:26px}
+.main{flex:1;display:flex;flex-direction:column;gap:14px}
+.wh{font-size:15px;font-weight:700;margin-top:6px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.nc{background:#fff;border:1px solid #E2E6E9;border-radius:10px;padding:14px 16px}.nc .l{color:#6B7785;font-size:12.5px}.nc .v{font-size:24px;font-weight:600;margin-top:6px}
+.nc .v.red{color:#C62828}.nc .v.or{color:#C76B00}
+.scs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sc{background:#fff;border:1px solid #E2E6E9;border-radius:10px;padding:12px 16px;font-weight:600;display:flex;justify-content:space-between}
+.sc span{color:#8D99A6;font-weight:400}
+.panel{background:#fff;border:1px solid #E2E6E9;border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.att .row{padding:8px 10px;border-radius:6px;font-size:13.5px}.att .red{background:#FDECEA;color:#9E2F24}.att .amber{background:#FFF4E0;color:#8A5300}
+.tag{font-size:11.5px;color:#8D99A6;text-transform:uppercase;letter-spacing:.5px}
+.ttl{display:flex;align-items:center;gap:10px}.ttl h2{margin:0;font-size:21px}
+.pill{font-size:12px;padding:2px 8px;border-radius:10px;background:#FFF4E0;color:#C76B00}
+.btns{margin-left:auto;display:flex;gap:8px;align-items:flex-start}
+.bt{background:#F3F3F3;border-radius:6px;padding:7px 12px;font-weight:500}.bt.dk{background:#171717;color:#fff}
+.menu{position:absolute;right:0;top:36px;background:#fff;border:1px solid #E2E6E9;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:6px;width:240px;z-index:2}
+.menu div{padding:8px 10px;border-radius:5px}.menu .hv{background:#F3F3F3}
+.alert{padding:10px 14px;border-radius:8px;background:#FDECEA;color:#C62828}
+.form{background:#fff;border:1px solid #E2E6E9;border-radius:10px}
+.tabs{display:flex;gap:24px;padding:0 20px;border-bottom:1px solid #E2E6E9}.tabs div{padding:14px 0;color:#6B7785}.tabs .on{color:#1F272E;border-bottom:2px solid #1F272E;font-weight:500}
+.sec{padding:18px 20px;border-bottom:1px solid #E2E6E9;display:flex;flex-direction:column;gap:12px}
+.sec h3{margin:0;font-size:14px}.desc{color:#6B7785;font-size:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.fl{display:flex;flex-direction:column;gap:5px}.fl .lb{color:#525252;font-size:12.5px}.fl .in{background:#F3F3F3;border-radius:6px;padding:8px 10px;min-height:18px}
+.big3{display:flex;gap:28px}.big3 b{font-size:20px;display:block}.big3 span{color:#6B7785;font-size:12px}
+.bubble{background:#F3F3F3;border-radius:12px 12px 12px 3px;padding:10px 12px;max-width:560px;line-height:1.45}
+table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #E2E6E9}th{color:#6B7785;font-weight:500;background:#F9FAFA}
+.ck{display:inline-block;width:14px;height:14px;border:1.5px solid #8D99A6;border-radius:3px;vertical-align:middle}.ck.on{background:#171717;border-color:#171717}
+"""
+
+
+def desk(cap, crumb, body, side=None):
+    nav = (f'<div class="capband">{cap}</div><div class="nav"><span class="logo">अ</span><span style="color:#525252">{crumb}</span>'
+           '<span class="srch">Search or type a command (Ctrl + G)</span><span class="av">PM</span></div>')
+    if side is None:
+        return nav + f'<div style="padding:16px 24px;display:flex;flex-direction:column;gap:14px">{body}</div>'
+    return nav + f'<div class="wrap"><div class="side">{side}</div><div class="main">{body}</div></div>'
+
+
+def nc(label, v, tone=""):
+    return f'<div class="nc"><div class="l">{label}</div><div class="v {tone}">{v}</div></div>'
+
+
+SIDE = "".join(f'<div class="{c}">{t}</div>' for c, t in [
+    ("", "Today"), ("on", "Requests"), ("sub", "Rights requests"), ("sub", "Grievances"), ("", "Beneficiaries"),
+    ("", "Programmes"), ("", "Analytics"), ("", "Notices and Compliance"), ("", "Setup")])
+
+ATT = ('<div class="panel att"><div class="tag">On the Today page</div><b style="font-size:14px">Needs attention</b>'
+       '<div class="row red"><b>3</b> requests are past their due date</div>'
+       '<div class="row red"><b>1</b> requests need matching to a person</div>'
+       '<div class="row red"><b>2</b> grievances are past their reply date</div>'
+       '<div class="row amber"><b>1</b> grievances are with the DPO</div>'
+       '<div class="row amber"><b>4</b> consents are waiting for confirmation</div></div>')
+
+DESK = {
+    "w2-requests-workspace": desk(
+        "<b>Staff · the Requests workspace</b> · counts only, never names. Rights requests and grievances each have "
+        "three numbers; a red number needs action. <b>Requests board</b> shows requests by stage; <b>Grievance register</b> "
+        "is a report of totals by what each grievance was about, for the DPO and audits. Today's <b>Needs attention</b> box links to the same lists.",
+        "Requests",
+        '<div class="wh">Rights / support requests</div><div class="cards">' + nc("Open Rights Requests", 7, "or")
+        + nc("Overdue Requests", 3, "red") + nc("Requests To Match", 1, "red") + '</div>'
+        '<div class="scs"><div class="sc">Rights requests<span style="color:#C76B00">7 open</span></div><div class="sc">Requests board<span>↗</span></div></div>'
+        '<div class="wh">Grievances</div><div class="cards">' + nc("Grievances Open", 4, "or")
+        + nc("Grievances With The DPO", 1, "red") + nc("Grievances Late", 2, "red") + '</div>'
+        '<div class="scs"><div class="sc">Grievances<span style="color:#C76B00">4 open</span></div><div class="sc">Grievance register<span>↗</span></div></div>'
+        + '<div style="max-width:520px;margin-top:8px">' + ATT + '</div>', side=SIDE),
+    "w3-breach-tell": desk(
+        "<b>Staff · tell people affected by a breach</b> · choose <b>who to tell</b>, fill the blanks of the approved notice in "
+        "each language, check the <b>preview</b>, send a test, then <b>Send to affected people…</b>. People without a phone "
+        "(or whose SMS failed) go on the <b>field visit list</b>, by ID only.",
+        "Notices and Compliance / Breach Incident / BR-003",
+        '<div class="ttl"><h2>BR-003</h2><span class="pill">● Notifying</span><div class="btns" style="position:relative">'
+        '<span class="bt">Board told now</span><span class="bt" style="background:#E2E6E9">Tell affected people ▾</span><span class="bt dk">Save</span>'
+        '<div class="menu" style="right:58px"><div class="hv">Send a test to my phone</div><div>Send to affected people…</div>'
+        '<div>Download field visit list</div><div>Print notice for visits</div></div></div></div>'
+        '<div class="alert"><b>41 hours left to tell the Data Protection Board (deadline 17-10-2026 15:30:00)</b></div>'
+        '<div class="form"><div class="tabs"><div>Incident</div><div>72-hour steps</div><div class="on">Tell affected people</div></div>'
+        '<div class="sec"><h3>Who was affected</h3><div class="cols"><div class="fl"><span class="lb">Who to tell</span>'
+        '<span class="in">People whose data was on the lost phone</span><span class="desc">People whose data was on the lost phone, everyone in the programme, people with the affected uses, or a list of IDs</span></div>'
+        '<div class="fl"><span class="lb">Who will be told</span><div class="big3"><div><b>38</b><span>people affected</span></div>'
+        '<div><b>31</b><span>by SMS (26 own · 5 guardian’s)</span></div><div><b>7</b><span>no phone: field visit</span></div></div>'
+        '<span class="desc">हिन्दी 29 · English 9. Includes people who withdrew or left: a breach notice is a legal duty, not a use of their data. '
+        'A child’s or guarded adult’s message goes to the guardian.</span></div></div></div>'
+        '<div class="sec"><h3>Message</h3><span class="desc">The words around these blanks are the approved breach notice (Message Template). Say only what you know; the Board report has the detail.</span>'
+        '<div class="cols"><div class="fl"><span class="lb">What happened (English)</span><span class="in">a field phone with consent records was lost on 14 Oct</span>'
+        '<span class="lb">What you can do (English)</span><span class="in">ignore calls asking for your code or OTP</span></div>'
+        '<div class="fl"><span class="lb">What happened (Hindi)</span><span class="in">14 अक्टूबर को सहमति रिकॉर्ड वाला एक फ़ोन खो गया</span>'
+        '<span class="lb">What you can do (Hindi)</span><span class="in">कोड या OTP माँगने वाले कॉल पर ध्यान न दें</span></div></div></div>'
+        '<div class="sec"><h3>Preview</h3>'
+        '<div><span class="desc">हिन्दी · 29 people · 4 SMS parts</span><div class="bubble">Aaroh (sample): आपकी जानकारी से जुड़ी एक घटना हुई: 14 अक्टूबर को सहमति रिकॉर्ड वाला एक फ़ोन खो गया। हमने इसे सुरक्षित किया है। आप: कोड या OTP माँगने वाले कॉल पर ध्यान न दें। मदद: 1800 000 000 (sample)। कोड AN-XXXXXX</div></div>'
+        '<div><span class="desc">English · 9 people · 2 SMS parts</span><div class="bubble">Aaroh (sample): an incident affected your data: a field phone with consent records was lost on 14 Oct. We have secured it. You can: ignore calls asking for your code or OTP. Help: 1800 000 000 (sample). Ref AN-XXXXXX</div></div>'
+        '<span class="desc">The code at the end is each person’s own latest receipt code, so they can quote it.</span></div>'
+        '<div class="sec" style="border-bottom:0"><h3>Field visit list</h3><span class="desc">People without a phone, and anyone whose SMS failed. IDs only: field workers find each person in the app by ID.</span>'
+        '<table><tr><th>Beneficiary ID</th><th>Language</th><th>Why</th><th>Told in person</th><th>Told on</th></tr>'
+        '<tr><td>AC-4XK2M7PQ</td><td>hi</td><td>No phone</td><td><span class="ck on"></span></td><td>16-10-2026</td></tr>'
+        '<tr><td>AC-3MN6Q2LD</td><td>hi</td><td>No phone</td><td><span class="ck"></span></td><td></td></tr>'
+        '<tr><td>AC-2LK7T5WE</td><td>en</td><td>SMS failed</td><td><span class="ck"></span></td><td></td></tr></table></div></div>'),
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     with sync_playwright() as p:
@@ -357,6 +470,11 @@ def main():
             page.set_content(f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head>'
                              f'<body><div class="phone">{body}</div></body></html>')
             page.screenshot(path=os.path.join(OUT, f"{name}.png"), clip={"x": 0, "y": 0, "width": W, "height": H})
+            print("wrote", f"docs/guide/wireframes/{name}.png")
+        page = browser.new_page(viewport={"width": 1280, "height": 860}, device_scale_factor=1)
+        for name, body in DESK.items():
+            page.set_content(f'<!doctype html><html><head><meta charset="utf-8"><style>{DESK_CSS}</style></head><body>{body}</body></html>')
+            page.screenshot(path=os.path.join(OUT, f"{name}.png"), full_page=True)
             print("wrote", f"docs/guide/wireframes/{name}.png")
         browser.close()
 
