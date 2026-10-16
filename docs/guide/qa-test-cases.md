@@ -224,6 +224,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-09 | The phone can't confirm its own consent | API: record a consent with `verification_status: confirmed` | Saved as `recorded`; only the server's code check or a delivery report confirms it | P0 |
 | SE-10 | Evidence must be this person's file | API: record an `evidence_only` consent whose evidence is another person's file, a missing file or a wrong sha256 | Refused. With no evidence at all it is saved as `recorded`, not `evidence_only` | P0 |
 | SE-11 | A retried request is filed once | API: send the same `rights.submit` (or `grievance.submit`) twice with the same `client_request_id` | One request, one reply-by date; the second call returns the first | P1 |
+| SE-12 | Every door follows the consent rules | API (field worker's key): create a Consent Event directly with `POST /api/resource/Consent Event`, sending `verification_status: confirmed`, a made-up `server_time`, and a child without a guardian link | The child's event is refused; an adult's event is saved as `recorded`, with the server's own time and the worker as Recorded by | P0 |
 
 ## 11. Self-service page (`/my-consent`)
 
@@ -265,6 +266,17 @@ Sign in as in section 11.
 | GV-08 | Only once | After a second final answer | Only **Yes, this solves it** is offered, with the Board line | P1 |
 | GV-09 | Solved | **Yes, this solves it** | "Thank you. We have closed it."; status Closed, no more messages | P1 |
 | GV-10 | Hindi | Switch to Hindi | Grievance form, categories, outcome lines and buttons are in Hindi | P2 |
+
+## 13. New consent data path (developer check)
+
+Needs: the field app's test build, a user with both the Field Worker and Anumati Developer roles, and Mobile Configuration on the site listing Consent Event, Consent State, Programme, Purpose and Notice Template. Use a test beneficiary: this saves a real consent.
+
+| ID | Scenario | Steps | Expected | Priority |
+| --- | --- | --- | --- | --- |
+| SK-01 | Menu only for developers | Sign in as a plain field worker, open the Home menu; then as the developer user | Only the developer sees **SDK test (developer)** | P2 |
+| SK-02 | Save and sync through the SDK | SDK test: enter a test beneficiary's ID and one use code → **1. Save through the SDK** → **2. Sync and check** | The log shows the receipt code, then "On the server" with a chain number and hash, "Receipt code matches the server" and "Verification set by the server (recorded)"; in Desk the consent is listed with the same receipt code | P1 |
+| SK-03 | Saved offline first | Turn data off → **1. Save** → turn data on → **2. Sync and check** | The receipt code appears straight away offline; after sync the same code is on the server | P1 |
+| SK-04 | Server rules apply | Save for a child (under 18 on record) with no guardian | Sync reports the server's refusal in the log; nothing is saved on the server | P2 |
 
 ## Reporting a bug
 
