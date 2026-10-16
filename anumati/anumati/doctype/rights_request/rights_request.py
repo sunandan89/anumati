@@ -5,7 +5,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import add_days, getdate
 
-from anumati import inbox
+from anumati import inbox, intake
 
 
 TITLES = {"withdrawal": "Withdrawal", "access": "Data access request", "correction": "Correction request",
@@ -16,6 +16,9 @@ CHANNELS = {"field_worker": "field worker", "slip": "paper slip", "sms": "SMS", 
 
 
 class RightsRequest(Document):
+	def before_insert(self):
+		intake.prepare(self)
+
 	def validate(self):
 		# SLA clock starts at receipt, not at match (spec section 6).
 		if not self.sla_due:

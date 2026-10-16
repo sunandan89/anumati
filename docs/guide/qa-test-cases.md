@@ -225,6 +225,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-10 | Evidence must be this person's file | API: record an `evidence_only` consent whose evidence is another person's file, a missing file or a wrong sha256 | Refused. With no evidence at all it is saved as `recorded`, not `evidence_only` | P0 |
 | SE-11 | A retried request is filed once | API: send the same `rights.submit` (or `grievance.submit`) twice with the same `client_request_id` | One request, one reply-by date; the second call returns the first | P1 |
 | SE-12 | Every door follows the consent rules | API (field worker's key): create a Consent Event directly with `POST /api/resource/Consent Event`, sending `verification_status: confirmed`, a made-up `server_time`, and a child without a guardian link | The child's event is refused; an adult's event is saved as `recorded`, with the server's own time and the worker as Recorded by | P0 |
+| SE-13 | A field worker can't close or answer a request | API (field worker's key): create a Rights Request or Grievance directly, sending a closed status, an old received date, an answer or an outcome | Saved as a new request received now, with no answer or outcome; what the person said is kept. Sending the same `mobile_uuid` twice is refused the second time | P1 |
 
 ## 11. Self-service page (`/my-consent`)
 

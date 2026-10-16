@@ -62,6 +62,9 @@ Receipts, confirmation requests and withdrawal confirmations for a child, or an 
 ## device.register / device.sign_out (POST, field workers)
 `device_id` checks a phone in on sign-in and every sync, or frees it on sign-out. Only users with the Field Worker role may call them, and a phone stays with the worker signed in on it until they sign out or a coordinator sets its status to `logged_out`; anyone else is refused.
 
+## Rights Request and Grievance by standard insert
+Field workers and connected systems can also create these as plain records (REST or the Frappe Mobile SDK). Only what the person or worker says is kept: the request type or category, channel, who it is about, their words and any paper-trail number. Status, received time, reply-by date, assignment, answer, outcome and the person's response are set by the server and staff (`anumati.intake`). The SDK's `mobile_uuid` becomes `client_request_id`, so the same record pushed twice is refused the second time.
+
 ## rights.fulfil_withdrawal (POST, staff)
 `request, programme, purposes?, leave_programme?` records one signed withdrawal for a matched request and closes it. An essential purpose in `purposes` without `leave_programme` is refused: it stops only when the person leaves. Calling it twice returns the same event. In Desk this is the **Record withdrawal** button on the request.
 
