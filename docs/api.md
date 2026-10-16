@@ -23,6 +23,9 @@ Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, s
 
 The server, not the caller, sets `verification_status`: whatever is sent, a new consent is `recorded`, or `evidence_only` when `verification_method` is `evidence_only` and at least one evidence item checks out (or the guardian link carries the order or ID). It becomes `confirmed` only through `verification.verify_otp` or a delivery report. Each `evidence` item must name a private file uploaded for this person (or their guardian link) and the `sha256` of its original bytes; anything else is refused. Decisions are ordered by `device_time`, capped at the time the server received them.
 
+## Consent Event by standard insert (Frappe Mobile SDK, REST)
+A Consent Event can also be created as a plain record: `POST /api/resource/Consent Event`, `frappe.client.insert`, or the Frappe Mobile SDK's own sync. The same rules run whichever way it arrives, because they live in the record itself (`anumati.consent_rules`): purposes, who may consent, the notice, evidence, and the server-set fields. Send `principal` (the Data Principal's name), `programme`, `action` (grant, refuse, renew or withdraw), `purposes_granted` / `purposes_denied`, and either `event_uuid` or the SDK's `mobile_uuid` (it becomes the event's ID and receipt code). Whatever is sent for `verification_status`, `server_time`, the chain fields, `short_code`, `notice_version`, `witness_digest` or `captured_by` is replaced by the server. Evidence uploaded beforehand and not attached to anything counts when the same user uploaded it; it is then attached to the person and encrypted.
+
 ## consent.withdraw (POST)
 `principal_ref, programme, channel, event_uuid, purposes?, paper_trail_number?, leave_programme?` plus any capture fields. With no `purposes`, it withdraws every optional purpose currently granted (spec section 6). Idempotent on `event_uuid`. With `channel` `field_worker` or `slip`, it also files one **Closed** withdrawal Rights Request linked to the event, carrying the slip number, so the inbox lists every withdrawal. `leave_programme` (with no `purposes`) withdraws every purpose of the programme, essential ones and those already off included (so an older grant synced later cannot turn one back on), and marks the person's relationship ended once nothing is granted in any programme. A newer grant of an essential purpose clears it; an older one arriving late does not.
 
@@ -59,11 +62,20 @@ Receipts, confirmation requests and withdrawal confirmations for a child, or an 
 ## device.register / device.sign_out (POST, field workers)
 `device_id` checks a phone in on sign-in and every sync, or frees it on sign-out. Only users with the Field Worker role may call them, and a phone stays with the worker signed in on it until they sign out or a coordinator sets its status to `logged_out`; anyone else is refused.
 
+## Rights Request and Grievance by standard insert
+Field workers and connected systems can also create these as plain records (REST or the Frappe Mobile SDK). Only what the person or worker says is kept: the request type or category, channel, who it is about, their words and any paper-trail number. Status, received time, reply-by date, assignment, answer, outcome and the person's response are set by the server and staff (`anumati.intake`). The SDK's `mobile_uuid` becomes `client_request_id`, so the same record pushed twice is refused the second time.
+
 ## rights.fulfil_withdrawal (POST, staff)
 `request, programme, purposes?, leave_programme?` records one signed withdrawal for a matched request and closes it. An essential purpose in `purposes` without `leave_programme` is refused: it stops only when the person leaves. Calling it twice returns the same event. In Desk this is the **Record withdrawal** button on the request.
 
 ## rights.withdrawable (GET, staff)
 `request` returns the uses currently on for the request's person: `[{programme, programme_name, code, title, essential}]`. It feeds the Record withdrawal checklist and carries no personal data.
+
+## grievance.submit (POST)
+`category` (used_without_consent | did_not_stop | wrong_details | shared_or_leaked | staff_behaviour | request_not_answered | something_else), `channel`, `principal_ref?`, `description?`, `about_request?`, `consent_code?`, `paper_trail_number?` returns `{grievance, status, sla_due}`. A grievance is a complaint and is kept apart from rights requests, so routine requests never count as complaints. Without `principal_ref`, a receipt code in `consent_code` matches the person when it is unambiguous. With no final answer after 15 days (**Anumati Settings → grievance_dpo_after_days**) it goes to the DPO; answered with no word from the person for 30 days, it closes. *Staff behaviour* grievances are seen by the DPO only. Needs Grievance create permission (field worker, operator, DPO).
+
+## grievance.reply, grievance.move_from_request, grievance.move_to_request (POST, staff)
+`grievance, message, kind?` (update | question | answer), `outcome?` (put_right | partly_put_right | no_problem_found, with `answer`) replies to the person. `move_from_request` turns a rights request that is really a complaint into a grievance and closes the request; `move_to_request` (`grievance_name, request_type`) does the reverse.
 
 ## notifications.feed (GET)
 `since` (ISO datetime), `limit?` (at most 500) returns `{events: [...], until}`. It mirrors the webhook events (`consent.recorded`, `consent.withdrawn`, `rights.created`, `rights.closed`) for hosts that can't receive webhooks. Pass `until` back as the next `since`. It carries identifiers and purpose codes only.

@@ -88,8 +88,10 @@ class EvidenceError(frappe.ValidationError):
 
 def check_event_evidence(principal: str, entries, guardian_link: str | None = None) -> int:
 	"""Every evidence entry on a consent event must be an uploaded private file of this person (or their
-	guardian link) whose bytes hash to the sha256 the event signs (review C3). Returns how many entries
-	were checked; raises EvidenceError on the first that fails. Error messages name the entry, never a value."""
+	guardian link) whose bytes hash to the sha256 the event signs (review C3). The Frappe Mobile SDK uploads
+	files before the record and without attaching them, so a private file that is not attached to anything
+	yet counts when the same user uploaded it; adopt_uploads then attaches and encrypts it. Returns how many
+	entries were checked; raises EvidenceError on the first that fails. Messages name the entry, never a value."""
 	owners = {("Data Principal", principal)}
 	if guardian_link:
 		owners.add(("Guardian Link", guardian_link))
@@ -98,8 +100,9 @@ def check_event_evidence(principal: str, entries, guardian_link: str | None = No
 		if not url or not digest:
 			frappe.throw(frappe._("Evidence {0} needs both its file and its sha256").format(i), EvidenceError)
 		files = frappe.get_all("File", {"file_url": url, "is_private": 1, "is_folder": 0},
-		                       ["name", "attached_to_doctype", "attached_to_name"])
-		match = next((f for f in files if (f.attached_to_doctype, f.attached_to_name) in owners), None)
+		                       ["name", "attached_to_doctype", "attached_to_name", "owner"])
+		match = next((f for f in files if (f.attached_to_doctype, f.attached_to_name) in owners), None) or next(
+			(f for f in files if not f.attached_to_doctype and f.owner == frappe.session.user), None)
 		if not match:
 			frappe.throw(frappe._("Evidence {0} is not a file uploaded for this person").format(i), EvidenceError)
 		if sha256_of(frappe.get_doc("File", match.name)) != digest:
@@ -116,3 +119,16 @@ def guardian_link_has_evidence(guardian_link: str | None, principal: str) -> boo
 		"file_url": ("in", urls), "is_private": 1,
 		"attached_to_doctype": ("in", ["Data Principal", "Guardian Link"]),
 		"attached_to_name": ("in", [principal, guardian_link])}))
+
+
+def adopt_uploads(principal: str, entries, uploader: str):
+	"""After a consent event is saved: evidence the SDK uploaded unattached is attached to the person and
+	encrypted on disk, like evidence uploaded the older way."""
+	for entry in entries or []:
+		url = (entry or {}).get("file")
+		if not url:
+			continue
+		for name in frappe.get_all("File", {"file_url": url, "is_private": 1, "is_folder": 0, "owner": uploader,
+		                                     "attached_to_doctype": ("is", "not set")}, pluck="name"):
+			frappe.db.set_value("File", name, {"attached_to_doctype": "Data Principal", "attached_to_name": principal})
+			encrypt_file(frappe.get_doc("File", name))

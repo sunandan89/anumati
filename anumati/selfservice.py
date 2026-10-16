@@ -484,6 +484,7 @@ def _grant(data, person, programme, codes) -> str:
 		"notice_delivery": "read_on_screen", "ip_address": getattr(frappe.local, "request_ip", None), "captured_by": frappe.session.user,
 	})
 	doc.flags.ignore_permissions = True
+	doc.flags.anumati_trusted = True  # checked above; signed in with an SMS code, so confirmed
 	doc.insert()
 	# The SMS code they signed in with is the confirmation: keep it with the consent, as for a field consent.
 	frappe.get_doc({"doctype": "Verification Attempt", "consent_event": doc.name, "verification_method": "server_otp",

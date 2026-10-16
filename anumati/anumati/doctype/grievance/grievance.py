@@ -6,7 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_days, getdate, now_datetime
 
-from anumati import grievance, inbox
+from anumati import grievance, inbox, intake
 
 
 class Grievance(Document):
@@ -25,6 +25,7 @@ class Grievance(Document):
 			self.subject = _(self.category or "something_else")
 
 	def before_insert(self):
+		intake.prepare(self)
 		# A complaint about staff goes straight to the DPO, who alone can see it.
 		if self.category == grievance.STAFF_ONLY_DPO and not self.dpo_since:
 			self.assigned_to = grievance.dpo_user() or self.assigned_to
