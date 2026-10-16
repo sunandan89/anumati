@@ -38,6 +38,7 @@
   "raised_by",
   "paper_trail_number",
   "raw_payload",
+  "client_request_id",
   "consents_tab",
   "consents_html"
  ],
@@ -240,6 +241,14 @@
    "fieldname": "raw_payload",
    "fieldtype": "Long Text",
    "label": "As received"
+  },
+  {
+   "description": "Sent by the field app or host system, so a retried grievance is not filed twice",
+   "fieldname": "client_request_id",
+   "fieldtype": "Data",
+   "label": "Client request ID",
+   "read_only": 1,
+   "unique": 1
   },
   {
    "fieldname": "consents_tab",

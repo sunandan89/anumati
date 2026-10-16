@@ -75,7 +75,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | **Add a use or rejoin** | A later visit: a new use, a use they withdrew or refused (**Ask again**), or rejoining after leaving; uses already agreed are not asked again |
 | **Find beneficiary** | Offline search by name, ID, receipt code (any consent taken on this phone, or a person's latest code if they were enrolled on another phone) or **phone number**: their own, or their parent's or guardian's, so one family phone finds the parent and the children. Each result says whose number matched; shows each use's status; tapping a person opens the withdrawal screen |
 | Offline first | Everything is saved on the phone (encrypted) and syncs when online; no duplicates even if sync is cut off |
-| App lock and lost phone | The app locks after 5 minutes away or on restart; 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
+| App lock and lost phone | The app locks after 5 minutes away or on restart; after 2 wrong PINs each try waits longer (closing the app doesn't reset this), and 5 wrong PINs sign out and wipe the phone's data. An admin or programme manager can mark a phone lost; it wipes itself on its next contact |
 
 ### Beneficiary and guardian
 
@@ -268,6 +268,15 @@ flowchart LR
 ```
 
 Each step can be repeated safely: a sync cut off halfway resumes without duplicates.
+
+What the server checks on every synced consent:
+
+- **Which decision wins.** The phone's time is used to order decisions made offline, but never later than the moment the record reached the server. A phone whose clock runs ahead can't make an old "yes" outrank a later "stop".
+- **Who confirms.** The phone never decides that a consent is confirmed. Only the server's own SMS code check, a delivered "confirm later" SMS, or a signed-in self-service visit confirms it. "Evidence only" counts only when the voice or thumbprint file checks out; otherwise the consent is simply recorded.
+- **Evidence.** Each voice clip or photo must be a file uploaded for this person, with the same fingerprint (sha256) the consent signs. Anything else is refused and stays in the phone's sync issues list.
+- **Nothing lost.** If two records ever race for the same place in the ledger, the loser is refused, not marked synced, so the phone keeps it and tries again.
+- **One phone, one worker.** A phone belongs to the worker signed in on it until they sign out or a coordinator releases it (Field phones → status **logged_out**). Nobody else can check it in or cancel its wipe.
+- **No duplicates.** Requests and grievances from the app carry a request ID, so a retried send files them once.
 
 ### Withdrawal and requests
 

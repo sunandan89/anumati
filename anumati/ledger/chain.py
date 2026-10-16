@@ -6,9 +6,10 @@ tenant key signs its own hash.
 
     hash = sha256(canonical_json(payload) + prev_hash)
 
-Concurrency: the chain head is read with Frappe's `get_value(..., for_update=True)`, which waits for
-any uncommitted insert further up the chain. Unique indexes on `chain_seq` and `hash` make a fork
-impossible even if two writers race; the loser gets a duplicate-entry error and can retry.
+Concurrency: sealing is serialised by one lock per chain, a `SELECT ... FOR UPDATE` on the chain's own
+DocType row, held until the transaction ends. It works on an empty chain too (a head-row lock does not:
+there is no row to lock yet). Unique indexes on `chain_seq` and `hash` stay as the backstop: a clash
+raises, and the caller treats it as an error, never as a replay (review C4).
 
 Admin actions are not hooked: Frappe already records every change in Version (Track Changes) and
 every deletion in Deleted Document. `seal_audit_trail` copies new ones into the Audit Entry chain as
@@ -106,6 +107,11 @@ def check_sealable(doc):
 			frappe.throw(f"{doc.meta.get_label(field)} must not contain < or >", ChainError)
 
 
+def lock_chain(doctype: str):
+	"""Hold this chain's lock until the transaction commits or rolls back."""
+	frappe.db.sql("select name from `tabDocType` where name=%s for update", doctype)
+
+
 def seal(doc):
 	"""Assign chain position, hash and signature to a new ledger record, in place."""
 	schema = CHAINS[doc.doctype]
@@ -115,12 +121,13 @@ def seal(doc):
 		if field not in _UNSEALED:
 			doc.set(field, to_storage(doc.get(field), kind))
 
+	lock_chain(doc.doctype)
 	head = frappe.db.get_value(
 		doc.doctype,
 		{"chain_seq": (">", 0)},
 		["chain_seq", "hash"],
 		order_by="chain_seq desc",
-		for_update=True,
+		for_update=True,  # a locking read sees the latest commit, not this transaction's older snapshot
 		as_dict=True,
 	)
 	key_id, private_b64 = keystore.active_key()

@@ -40,13 +40,17 @@ def feed(since, limit=100):
 
 
 @frappe.whitelist(methods=["POST"])
-def guardian_needed(programme):
+def guardian_needed(programme, client_request_id=None):
 	"""Field app: a worker met an adult who can't decide alone and has no guardian appointed by a court or
 	the Local Level Committee, so no consent was taken and nothing about the person was saved. Tells the
-	programme's coordinators (Programme Managers) so they can help the family apply. No personal data."""
+	programme's coordinators (Programme Managers) so they can help the family apply. No personal data.
+	A retry with the same `client_request_id` within 30 days tells nobody again (review C10)."""
 	frappe.has_permission("Consent Event", "create", throw=True)
 	if not frappe.db.exists("Programme", programme):
 		frappe.throw(_("Unknown programme {0}").format(programme), frappe.DoesNotExistError)
+	seen_key = f"anumati:guardian_needed:{frappe.session.user}:{(client_request_id or '')[:64]}"
+	if client_request_id and (told := frappe.cache.get_value(seen_key, expires=True)) is not None:
+		return {"told": told}
 	name = frappe.db.get_value("Programme", programme, "programme_name")
 	worker = frappe.utils.get_fullname(frappe.session.user)
 	managers = {u for u in frappe.get_all("Has Role", {"role": "Anumati Programme Manager", "parenttype": "User"},
@@ -64,4 +68,6 @@ def guardian_needed(programme):
 			                   "the Local Level Committee (National Trust) or a court for a guardian. Ask {0} which "
 			                   "family it was.").format(worker),
 		}).insert(ignore_permissions=True)
+	if client_request_id:
+		frappe.cache.set_value(seen_key, len(to), expires_in_sec=30 * 24 * 3600)
 	return {"told": len(to)}

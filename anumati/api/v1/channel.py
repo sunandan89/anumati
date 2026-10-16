@@ -1,7 +1,9 @@
 """Inbound channel callbacks (spec sections 6 and 8): /api/method/anumati.api.v1.channel.<name>
 
-Open to guests because SMS gateways call them, so each call must carry the Channel Provider's inbound
-secret (compared in constant time) and is rate-limited. Nothing here echoes personal data back.
+Open to guests because SMS gateways call them, so each call must be a POST carrying the Channel
+Provider's inbound secret in the X-Anumati-Token header (compared in constant time; never in the URL,
+where it would land in access logs), may be limited to the provider's IP addresses, and is rate-limited
+(review C8). Nothing here echoes personal data back.
 
 SMS keywords (case-insensitive, Devanagari digits accepted):
   STOP            withdraw every optional purpose (if the number maps to exactly one person)
@@ -25,10 +27,17 @@ from anumati.api.v1 import consent
 DEVANAGARI = str.maketrans("०१२३४५६७८९", "0123456789")
 
 
-def _provider(provider, token):
+TOKEN_HEADER = "X-Anumati-Token"
+
+
+def _provider(provider):
 	doc = frappe.get_doc("Channel Provider", provider) if provider and frappe.db.exists("Channel Provider", provider) else None
 	secret = doc.get_password("webhook_secret", raise_exception=False) if doc else None
+	token = frappe.get_request_header(TOKEN_HEADER)
 	if not (doc and doc.enabled and secret and token and hmac.compare_digest(str(secret), str(token))):
+		raise frappe.PermissionError
+	allowed = {ip.strip() for ip in (doc.get("allowed_ips") or "").splitlines() if ip.strip()}
+	if allowed and frappe.local.request_ip not in allowed:
 		raise frappe.PermissionError
 	return doc
 
@@ -106,21 +115,21 @@ def _text(kwargs):
 	return ""
 
 
-@frappe.whitelist(allow_guest=True, methods=["GET", "POST"])
+@frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=600, seconds=60)
-def inbound_sms(provider=None, token=None, **kwargs):
-	prov = _provider(provider, token)
+def inbound_sms(provider=None, **kwargs):
+	prov = _provider(provider)
 	sender = _sender(kwargs)
 	if not sender:
 		frappe.throw("sender missing")
 	return handle_sms(prov, sender, _text(kwargs))
 
 
-@frappe.whitelist(allow_guest=True, methods=["GET", "POST"])
+@frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=600, seconds=60)
-def missed_call(provider=None, token=None, **kwargs):
+def missed_call(provider=None, **kwargs):
 	"""A missed call is a withdrawal request; it is confirmed by a call-back or SMS, never auto-applied."""
-	prov = _provider(provider, token)
+	prov = _provider(provider)
 	sender = _sender(kwargs)
 	if not sender:
 		frappe.throw("caller missing")
@@ -132,11 +141,11 @@ def missed_call(provider=None, token=None, **kwargs):
 	return {"outcome": "request", "request": req.name}
 
 
-@frappe.whitelist(allow_guest=True, methods=["GET", "POST"])
+@frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=1200, seconds=60)
-def delivery_report(provider=None, token=None, request_id=None, status=None, **kwargs):
+def delivery_report(provider=None, request_id=None, status=None, **kwargs):
 	"""Delivery receipts: a delivered deferred-confirmation SMS confirms that consent (spec section 5)."""
-	_provider(provider, token)
+	_provider(provider)
 	comm = frappe.db.get_value("Communication", {"message_id": request_id}, "name") if request_id else None
 	if not comm:
 		return {"outcome": "unknown"}

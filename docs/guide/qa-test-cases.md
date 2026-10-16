@@ -28,14 +28,16 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | AU-01 | First sign-in | Install app → enter organisation address, user, password → set a 4-digit PIN (entered twice) | Home appears with a **Choose a programme** card; tap it to pick one (picked automatically if the worker has only one programme) | P0 |
 | AU-02 | Wrong password | Enter a wrong password | Clear error; no crash; can retry | P1 |
 | AU-03 | App lock | Leave the app in the background for 5+ minutes, or close it fully, then reopen | PIN screen; correct PIN opens Home | P0 |
-| AU-04 | Wrong PIN 5 times | On the PIN screen, enter a wrong PIN 5 times | Signed out and the phone's Anumati data wiped; sign in again | P1 |
+| AU-04 | Wrong PIN 5 times | On the PIN screen, enter a wrong PIN 5 times | From the 3rd wrong PIN the screen makes you wait (30 s, then 60 s) before the next try; the 5th signs out and wipes the phone's Anumati data; sign in again | P1 |
 | AU-05 | Forgot PIN | Tap "Forgot PIN? Sign out" | Signs out and wipes the phone's data after a warning | P2 |
 | AU-06 | Sign out with unsynced records | Take a consent offline → Home menu → **Sign out** | A warning says records are not synced yet; Cancel keeps them | P1 |
 | AU-07 | Return after a long pause | Leave the app in the background 30+ minutes → reopen | Screen draws normally (no black screen) | P0 |
 | AU-08 | Screenshots blocked | Try a screenshot inside the app | Blocked or black (personal data protected) | P1 |
 | AU-09 | Lost phone wipe | Console (Admin or Programme Manager): Field phones → this phone → **Report lost** → on the phone, open the app online | Phone wipes its data and signs out; a breach incident is opened in the console | P1 |
-| AU-10 | App paused or too old | Admin: switch off the field app in Mobile Configuration (or raise the minimum version) → open the app | "The field app is paused" (or "Please update the app"); switch back on afterwards | P2 |
+| AU-10 | App paused or too old | Admin: switch off the field app in Mobile Configuration (or raise the minimum version) → open the app | "The field app is paused" (or "Please update the app", whose button opens the app's Google Play page, never a file download); switch back on afterwards | P2 |
 | AU-11 | Field worker can't use the console | Log in to the website with the field worker account | No Anumati workspaces or menus are shown | P1 |
+| AU-12 | A phone belongs to one worker at a time | Worker A signs in on a phone → worker B tries to sign in on the same phone without A signing out | B is told the phone is signed in to another field worker; after A signs out (or a coordinator sets the phone's status to logged_out in Field phones), B can sign in | P1 |
+| AU-13 | Restarting doesn't reset wrong PINs | Enter a wrong PIN 3 times → close the app fully → reopen | Still asked to wait, and the tries left are not back to 5 | P1 |
 
 ## 2. Consent: the person, who can read and has a phone
 
@@ -126,6 +128,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SY-03 | Older record arrives late | Withdraw a use on phone A; on phone B (offline) grant the same use with an earlier time; sync B after A | The withdrawal stays: an older record never overrides a newer one | P1 |
 | SY-04 | Rejected record | (Developer can force) a record the server refuses | Home shows "… records could not be saved on the server"; the list shows the reason; Try again / Discard | P1 |
 | SY-05 | Older consent arrives after leaving | Phone B (offline): Add a use or rejoin for a person → Yes. Phone A: that person leaves the programme → Sync A. Then sync B | Everything stays withdrawn, including uses that were off before; the person's record keeps **Relationship ended** | P1 |
+| SY-07 | Phone clock ahead | Set phone A's date a year ahead → take a consent and sync → reset the date → from the console or by SMS, stop one of its uses | The stop holds: a phone whose clock runs ahead never outranks a later decision | P0 |
 | FI-01 | Find offline | Find beneficiary → search by name, then ID (offline); then by receipt code of a consent taken **on this phone** | Person found; each use's status shown. A downloaded person (consent taken on another phone) is found by their latest receipt code too | P0 |
 | FI-02 | Find by phone | Find beneficiary → type a person's mobile number, then the same with +91, then only its last 4 digits, then +91 and only the first 7 digits | The person is found each time, labelled "Their number". Three digits or fewer search names only | P0 |
 | FI-03 | Find by guardian's phone | Take a parent consent for a child with the mother's number (journey C) → Find → type the mother's number. Repeat on another phone after both sync | The child is found, labelled "Guardian's number (Mother)"; if the mother is also enrolled, both appear. Works on the other phone too | P0 |
@@ -205,6 +208,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SM-03 | STOP with code | From the person's phone send `STOP <code>` | That consent's optional uses withdrawn; a withdrawal confirmation SMS | P2 |
 | SM-04 | STOP n, DATA, HELP | Send `STOP 2`, `DATA`, `HELP` | Withdraws use number 2; opens an access request; opens a grievance | P2 |
 | SM-05 | Missed call | Give a missed call to the missed-call number | A withdrawal request opens in the inbox (never applied without staff) | P2 |
+| SM-06 | Callbacks need the header | Developer: call `channel.inbound_sms` by GET, or by POST with the secret only in the URL | Refused (403); only a POST with the `X-Anumati-Token` header works | P1 |
 
 ## 10. Security and data protection
 
@@ -217,6 +221,9 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-05 | Worker-phone code needs voice | API: record a consent with `device_sms_otp` and no audio evidence | Refused | P1 |
 | SE-06 | Names encrypted | Database / report view of Beneficiary | Name and phone stored encrypted; whole-word name search still works | P1 |
 | SE-07 | Check before use | API `consent.check` for an adult's granted, unconfirmed use with "Allow processing before confirmation" off | `allow: false`, `awaiting_confirmation`; on: `allow: true` | P1 |
+| SE-09 | The phone can't confirm its own consent | API: record a consent with `verification_status: confirmed` | Saved as `recorded`; only the server's code check or a delivery report confirms it | P0 |
+| SE-10 | Evidence must be this person's file | API: record an `evidence_only` consent whose evidence is another person's file, a missing file or a wrong sha256 | Refused. With no evidence at all it is saved as `recorded`, not `evidence_only` | P0 |
+| SE-11 | A retried request is filed once | API: send the same `rights.submit` (or `grievance.submit`) twice with the same `client_request_id` | One request, one reply-by date; the second call returns the first | P1 |
 
 ## 11. Self-service page (`/my-consent`)
 

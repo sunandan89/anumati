@@ -12,13 +12,18 @@ from anumati.api import schema
 
 @frappe.whitelist(methods=["POST"])
 def submit(category, channel, principal_ref=None, description=None, about_request=None, consent_code=None,
-           paper_trail_number=None):
-	"""A grievance from a field worker or a connected system."""
+           paper_trail_number=None, client_request_id=None):
+	"""A grievance from a field worker or a connected system. A retry with the same `client_request_id`
+	returns the first grievance (review C10)."""
 	frappe.has_permission("Grievance", "create", throw=True)
 	schema.validate("GrievanceSubmit", {k: v for k, v in {
 		"category": category, "channel": channel, "principal_ref": principal_ref, "description": description,
 		"about_request": about_request, "consent_code": consent_code, "paper_trail_number": paper_trail_number,
+		"client_request_id": client_request_id,
 	}.items() if v is not None})
+	if client_request_id and (seen := frappe.db.get_value(
+			"Grievance", {"client_request_id": client_request_id}, ["name", "status", "sla_due"], as_dict=True)):
+		return {"grievance": seen.name, "status": seen.status, "sla_due": seen.sla_due}
 	principal = None
 	if principal_ref:
 		principal = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
@@ -28,7 +33,7 @@ def submit(category, channel, principal_ref=None, description=None, about_reques
 		principal = inbox.principal_for_short_code(consent_code)
 	doc = grievance.create(category, channel, principal, description=description, about_request=about_request,
 	                       raw_payload=description, paper_trail_number=paper_trail_number,
-	                       raised_by_role="by_field_worker" if channel in ("field_worker", "slip") else None)
+	                       client_request_id=client_request_id, raised_by_role="by_field_worker" if channel in ("field_worker", "slip") else None)
 	return {"grievance": doc.name, "status": doc.status, "sla_due": doc.sla_due}
 
 

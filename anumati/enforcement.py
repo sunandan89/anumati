@@ -4,7 +4,9 @@ Consent Events are the truth; Consent State is a per-purpose projection rebuilt 
 hash per principal serves `consent.check` without touching the database.
 
 Out-of-order sync (spec section 9): an event only moves a purpose's state if it is newer than the event
-that last set it, ordered by device_time, then server_time.
+that last set it, ordered by when it happened, then server_time. "When it happened" is the phone's
+device_time, but never later than server_time: an event cannot happen after it reached us, so a phone
+whose clock runs ahead cannot make an old "yes" outrank a later "stop" (review C1).
 """
 
 import json
@@ -28,8 +30,9 @@ def _codes(value) -> list[str]:
 
 
 def _order_key(device_time, server_time):
+	server = get_datetime(server_time)
 	device = get_datetime(device_time) if device_time else None
-	return (device or get_datetime(server_time), get_datetime(server_time))
+	return (min(device, server) if device else server, server)
 
 
 def apply_event(event):

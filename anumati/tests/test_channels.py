@@ -12,7 +12,8 @@ from frappe.utils import now_datetime
 
 from anumati import channels, enforcement, pii
 from anumati.api.v1 import channel, consent, verification
-from anumati.tests.utils import ensure_language, make_principal, make_programme, make_purpose
+from anumati.tests.utils import (call_webhook, ensure_language, make_evidence, make_principal, make_programme,
+                                 make_purpose, webhook_call)
 
 PROG, SECRET = "SMS", "test-inbound-secret"
 TEMPLATES = {
@@ -98,7 +99,7 @@ class TestChannels(FrappeTestCase):
 		with fake_post() as post:
 			channels.on_consent_event(art["consent_id"])
 		request_id = post.return_value.json.return_value["request_id"]
-		channel.delivery_report(provider="MSG91 test", token=SECRET, request_id=request_id, status="delivered")
+		call_webhook(channel.delivery_report, provider="MSG91 test", token=SECRET, request_id=request_id, status="delivered")
 		self.assertTrue(consent.check(p.principal_ref, "follow", programme=PROG)["allow"])
 		self.assertEqual(consent.state(p.principal_ref, programme=PROG)[0]["verification_status"], "confirmed")
 
@@ -115,7 +116,7 @@ class TestChannels(FrappeTestCase):
 	def test_inbound_stop_withdraws_optional_purposes(self):
 		p = self.person("9000077006")
 		self.grant(p)
-		out = channel.inbound_sms(provider="MSG91 test", token=SECRET, sender="+91 90000 77006", message="stop")
+		out = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="+91 90000 77006", message="stop")
 		self.assertEqual(out["outcome"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
@@ -124,39 +125,59 @@ class TestChannels(FrappeTestCase):
 	def test_inbound_stop_n_and_stop_code_with_devanagari_digits(self):
 		p = self.person("9000077007")
 		art = self.grant(p)
-		out = channel.inbound_sms(provider="MSG91 test", token=SECRET, sender="9000077007", message="STOP ३")
+		out = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077007", message="STOP ३")
 		self.assertEqual(out["outcome"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "photos", programme=PROG)["status"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "granted")
 
 		shared_a, shared_b = self.person("9000077008"), self.person("9000077008")
 		art_b = self.grant(shared_b)
-		out = channel.inbound_sms(provider="MSG91 test", token=SECRET, sender="9000077008", message=f"STOP {art_b['short_code']}")
+		out = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077008", message=f"STOP {art_b['short_code']}")
 		self.assertEqual(out["outcome"], "withdrawn")
 		self.assertEqual(consent.check(shared_b.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
 		self.assertIsNotNone(art)
 
 	def test_shared_number_without_code_goes_to_a_person(self):
 		self.person("9000077009"), self.person("9000077009")
-		out = channel.inbound_sms(provider="MSG91 test", token=SECRET, sender="9000077009", message="STOP")
+		out = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077009", message="STOP")
 		self.assertEqual(out["outcome"], "unmatched")
 		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "who_is_this")
 
 	def test_data_help_and_missed_call_open_requests(self):
 		p = self.person("9000077010")
-		data = channel.inbound_sms(provider="MSG91 test", token=SECRET, sender="9000077010", message="DATA")
+		data = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077010", message="DATA")
 		self.assertEqual(frappe.db.get_value("Rights Request", data["request"], "request_type"), "access")
-		missed = channel.missed_call(provider="MSG91 test", token=SECRET, caller="9000077010")
+		missed = call_webhook(channel.missed_call, provider="MSG91 test", token=SECRET, caller="9000077010")
 		req = frappe.get_doc("Rights Request", missed["request"])
 		self.assertEqual((req.request_type, req.channel, req.matched_principal), ("withdrawal", "missed_call", p.name))
 		self.assertNotEqual(req.status, "request_closed", "a missed call is confirmed by a person, never auto-applied")
 
+	CALLBACKS = ((channel.inbound_sms, {"sender": "9000077011", "message": "STOP"}),
+	             (channel.missed_call, {"caller": "9000077011"}),
+	             (channel.delivery_report, {"request_id": "x", "status": "delivered"}))
+
 	def test_callbacks_reject_a_wrong_secret(self):
-		for fn, kw in ((channel.inbound_sms, {"sender": "9000077011", "message": "STOP"}),
-		               (channel.missed_call, {"caller": "9000077011"}),
-		               (channel.delivery_report, {"request_id": "x", "status": "delivered"})):
-			self.assertRaises(frappe.PermissionError, fn, provider="MSG91 test", token="wrong", **kw)
-			self.assertRaises(frappe.PermissionError, fn, provider="MSG91 test", token=None, **kw)
+		for fn, kw in self.CALLBACKS:
+			self.assertRaises(frappe.PermissionError, call_webhook, fn, provider="MSG91 test", token="wrong", **kw)
+			self.assertRaises(frappe.PermissionError, call_webhook, fn, provider="MSG91 test", token=None, **kw)
+
+	def test_callbacks_take_the_secret_from_the_header_only_and_accept_post_only(self):
+		# Review C8: a token in the URL lands in access logs, so it no longer counts.
+		for fn, kw in self.CALLBACKS:
+			with webhook_call(None):
+				self.assertRaises(frappe.PermissionError, fn, provider="MSG91 test", token=SECRET, **kw)
+			self.assertEqual(frappe.allowed_http_methods_for_whitelisted_func[fn], ["POST"], fn.__name__)
+
+	def test_callbacks_from_an_address_not_on_the_list_are_refused(self):
+		frappe.db.set_value("Channel Provider", "MSG91 test", "allowed_ips", "198.51.100.7\n198.51.100.8")
+		try:
+			self.assertRaises(frappe.PermissionError, call_webhook, channel.delivery_report, provider="MSG91 test",
+			                  token=SECRET, request_id="x", status="delivered")
+			out = call_webhook(channel.delivery_report, provider="MSG91 test", token=SECRET, ip="198.51.100.8",
+			                   request_id="x", status="delivered")
+			self.assertEqual(out["outcome"], "unknown")
+		finally:
+			frappe.db.set_value("Channel Provider", "MSG91 test", "allowed_ips", None)
 
 	def test_message_bodies_never_contain_names(self):
 		p = make_principal(full_name="Gauri P. (fictional)", phone="9000077012", preferred_language="en")
@@ -222,8 +243,7 @@ class TestChannels(FrappeTestCase):
 	def test_a_phone_cannot_claim_a_code_confirmed(self):
 		for method in ("device_sms_otp", "server_otp"):
 			p = self.person("90000772" + ("01" if method == "device_sms_otp" else "02"))
-			self.grant(p, verification_method=method, verification_status="confirmed",
-			           evidence=[{"file": "/private/files/haan-sample.m4a", "kind": "audio"}])
+			self.grant(p, verification_method=method, verification_status="confirmed", evidence=[make_evidence(p.name)])
 			self.assertEqual(consent.state(p.principal_ref, programme=PROG)[0]["verification_status"], "recorded", method)
 
 	def test_notice_tells_the_app_whether_the_server_can_send_codes(self):

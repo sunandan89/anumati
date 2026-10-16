@@ -10,21 +10,37 @@ from frappe import _
 from frappe.utils import cint, now_datetime
 
 WIPE_STATES = ("lost", "wipe_queued")
+FREE_STATES = ("logged_out", "wiped")
+FIELD_ROLE = "Anumati Field Worker"
+
+
+class DeviceTakenError(frappe.PermissionError):
+	pass
+
+
+def _device(device_id):
+	"""Only field workers check in a phone, and a phone belongs to the worker signed in on it until they
+	sign out or a coordinator releases it (review C9). So nobody else can register it, or use up its wipe."""
+	if frappe.session.user == "Guest" or FIELD_ROLE not in frappe.get_roles():
+		raise frappe.PermissionError
+	device_id = (device_id or "").strip()[:140]
+	if not device_id:
+		frappe.throw(_("device_id is required"))
+	if not frappe.db.exists("Field Device", device_id):
+		doc = frappe.new_doc("Field Device")
+		doc.device_id = device_id
+		return doc
+	doc = frappe.get_doc("Field Device", device_id)
+	if doc.user and doc.user != frappe.session.user and doc.status not in FREE_STATES:
+		frappe.throw(_("This phone is signed in to another field worker. Ask your coordinator to release it "
+		               "(Field Device > Status: logged_out)."), DeviceTakenError)
+	return doc
 
 
 @frappe.whitelist(methods=["POST"])
 def register(device_id, app_version=None, model=None, pending=0):
 	"""Called by the field app on sign-in and every sync. Returns {"status", "wipe"}."""
-	if frappe.session.user == "Guest":
-		raise frappe.PermissionError
-	device_id = (device_id or "").strip()[:140]
-	if not device_id:
-		frappe.throw(_("device_id is required"))
-	if frappe.db.exists("Field Device", device_id):
-		doc = frappe.get_doc("Field Device", device_id)
-	else:
-		doc = frappe.new_doc("Field Device")
-		doc.device_id = device_id
+	doc = _device(device_id)
 	wipe = doc.status in WIPE_STATES
 	if wipe:
 		doc.status = "wiped"
@@ -44,6 +60,18 @@ def register(device_id, app_version=None, model=None, pending=0):
 	gender = (frappe.db.get_value("User", frappe.session.user, "gender") or "").lower()
 	return {"status": doc.status, "wipe": wipe, "voice_helper": helper and not wipe,
 	        "voice": "male" if gender == "male" else "female"}
+
+
+@frappe.whitelist(methods=["POST"])
+def sign_out(device_id):
+	"""The field app signs out: the phone is free for the next worker to sign in on."""
+	doc = _device(device_id)
+	if doc.is_new() or doc.status in WIPE_STATES:
+		return {"status": doc.status or "unknown"}
+	doc.status = "logged_out"
+	doc.flags.ignore_permissions = True
+	doc.save()
+	return {"status": doc.status}
 
 
 @frappe.whitelist(methods=["POST"])

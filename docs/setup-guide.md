@@ -126,8 +126,9 @@ Nothing is sent until all four pieces exist: an MSG91 account, DLT-approved temp
 2. **Name** `MSG91`, **Type** `SMS`, **Provider** `MSG91`, tick **Enabled**.
 3. **Sender ID**: your DLT header. **DLT entity ID**: from the DLT portal.
 4. **API key**: paste the MSG91 Auth Key. It's stored encrypted and shows as dots afterwards.
-5. **Inbound webhook secret**: type a long random phrase (20+ characters). SMS callbacks must carry it.
-6. **Save**.
+5. **Inbound webhook secret**: type a long random phrase (20+ characters). MSG91 sends it in a header with every callback (E4).
+6. **Callback IP addresses** (optional): MSG91's callback addresses, one per line. Callbacks from any other address are refused. Leave blank to allow any.
+7. **Save**.
 
 ### E3. Message Templates (in Anumati)
 For each message and language: search bar → **Message Template** → **+ Add**:
@@ -138,11 +139,13 @@ For each message and language: search bar → **Message Template** → **+ Add**
 - Tick **Approved** only once DLT has approved the template. Unapproved templates are never sent.
 
 ### E4. Inbound SMS and missed calls (in MSG91)
-MSG91 → **Inbound SMS** (long code or virtual number) → set the callback URL:
+MSG91 → **Inbound SMS** (long code or virtual number) → set the callback, method **POST**:
 ```
-https://<your-site>/api/method/anumati.api.v1.channel.inbound_sms?provider=MSG91&token=<your inbound secret>
+https://<your-site>/api/method/anumati.api.v1.channel.inbound_sms?provider=MSG91
 ```
-For missed calls, point your missed-call number's webhook to `…/anumati.api.v1.channel.missed_call?provider=MSG91&token=<secret>`. For delivery reports, use `…/anumati.api.v1.channel.delivery_report?provider=MSG91&token=<secret>`.
+Add one header to it: **X-Anumati-Token** = your inbound webhook secret (E2). The secret never goes in the URL: URLs are kept in access logs. Callbacks by GET, or without the header, are refused.
+
+For missed calls, point your missed-call number's webhook to `…/anumati.api.v1.channel.missed_call?provider=MSG91`. For delivery reports, add an MSG91 **Webhook (New)** for SMS, event **Report Received**, to `…/anumati.api.v1.channel.delivery_report?provider=MSG91`. Both are POST with the same **X-Anumati-Token** header.
 
 What people can text to the number (English or Devanagari digits):
 - `STOP`: stop all optional uses. If several people share that phone, it goes to your inbox to resolve.

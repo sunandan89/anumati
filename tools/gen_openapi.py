@@ -67,6 +67,7 @@ SCHEMAS = {
 			"request_type": S(enum=["withdrawal", "access", "correction", "erasure", "grievance", "nomination"]),
 			"channel": S(enum=CHANNELS), "principal_ref": S(maxLength=140), "payload": S(maxLength=5000),
 			"paper_trail_number": S(maxLength=140), "consent_code": S(maxLength=20),
+			"client_request_id": S(minLength=8, maxLength=64),
 		},
 	},
 	"GrievanceSubmit": {
@@ -76,6 +77,7 @@ SCHEMAS = {
 			                    "staff_behaviour", "request_not_answered", "something_else"]),
 			"channel": S(enum=CHANNELS), "principal_ref": S(maxLength=140), "description": S(maxLength=5000),
 			"about_request": S(maxLength=140), "consent_code": S(maxLength=20), "paper_trail_number": S(maxLength=140),
+			"client_request_id": S(minLength=8, maxLength=64),
 		},
 	},
 	"Artefact": {"type": "object", "properties": {k: S() for k in (
@@ -122,16 +124,17 @@ PATHS = {
 	BASE + "notifications.feed": op("Polling feed mirroring webhooks", query=[("since", True), ("limit", False)], method="get"),
 	BASE + "verification.send_otp": op("Send a one-time code for a consent event (server OTP)", query=[("consent_id", True)]),
 	BASE + "verification.verify_otp": op("Check the code; confirms the consent", query=[("consent_id", True), ("code", True)]),
-	BASE + "channel.inbound_sms": op("SMS gateway callback: keywords STOP / STOP <code> / STOP <n> / DATA / HELP",
-	                                query=[("provider", True), ("token", True), ("sender", True), ("message", True)], public=True),
-	BASE + "channel.missed_call": op("Missed-call callback: opens a withdrawal request",
-	                                query=[("provider", True), ("token", True), ("caller", True)], public=True),
-	BASE + "channel.delivery_report": op("Delivery receipt callback: confirms deferred confirmations",
-	                                    query=[("provider", True), ("token", True), ("request_id", True), ("status", True)], public=True),
+	BASE + "channel.inbound_sms": op("SMS gateway callback (POST, X-Anumati-Token header): keywords STOP / STOP <code> / STOP <n> / DATA / HELP",
+	                                query=[("provider", True), ("sender", True), ("message", True)], public=True),
+	BASE + "channel.missed_call": op("Missed-call callback (POST, X-Anumati-Token header): opens a withdrawal request",
+	                                query=[("provider", True), ("caller", True)], public=True),
+	BASE + "channel.delivery_report": op("Delivery receipt callback (POST, X-Anumati-Token header): confirms deferred confirmations",
+	                                    query=[("provider", True), ("request_id", True), ("status", True)], public=True),
 	BASE + "principal.for_device": op("People in a programme with their choices, for a field worker's phone",
 	                                 query=[("programme", True), ("since", False), ("limit", False)], method="get"),
 	BASE + "device.register": op("Field app check-in; returns whether the phone must wipe itself",
 	                            query=[("device_id", True), ("app_version", False), ("model", False), ("pending", False)]),
+	BASE + "device.sign_out": op("Field app sign-out; frees the phone for the next worker", query=[("device_id", True)]),
 	BASE + "device.report_lost": op("Mark a phone lost (staff): wipe on next contact, opens a breach incident",
 	                               query=[("device", True)]),
 	BASE + "principal.reveal": op("Name and masked phone for a Desk form (logged)", query=[("principal", True)], method="get"),
@@ -145,7 +148,7 @@ PATHS = {
 	BASE + "voice.hear": op("Field app: what Sarvam heard in a short consent clip, and yes / no / unclear (a hint; nothing stored)",
 	                       body=None, query=[("audio", True), ("language", False), ("filename", False)]),
 	BASE + "notifications.guardian_needed": op("Field app: tell the programme's coordinators that an adult who can't decide alone "
-	                                          "has no lawful guardian yet (no personal data)", query=[("programme", True)]),
+	                                          "has no lawful guardian yet (no personal data)", query=[("programme", True), ("client_request_id", False)]),
 	BASE + "chain.verify": op("Verify a ledger chain (DPO/Admin)", query=[("ledger", False)], method="get"),
 }
 

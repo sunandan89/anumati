@@ -15,7 +15,7 @@ from anumati import evidence, grievance, inbox, selfservice
 from anumati.anumati.report.grievance_register import grievance_register
 from anumati.api.v1 import channel, rights
 from anumati.api.v1 import grievance as api
-from anumati.tests.utils import make_event, make_principal, make_programme, make_purpose
+from anumati.tests.utils import call_webhook, make_event, make_principal, make_programme, make_purpose
 
 PROG = "GRV"
 SECRET = "grievance-test-inbound-secret"
@@ -89,7 +89,7 @@ class TestGrievance(FrappeTestCase):
 		doc = frappe.get_doc("Grievance", out["request"])
 		self.assertEqual((doc.category, doc.raised_by_role, doc.matched_principal), ("something_else", "by_field_worker", self.person.name))
 		self.assertFalse(frappe.db.exists("Rights Request", {"matched_principal": self.person.name}))
-		sms = channel.inbound_sms(provider="MSG91 grievance test", token=SECRET, sender=self.phone, message="HELP please call")
+		sms = call_webhook(channel.inbound_sms, provider="MSG91 grievance test", token=SECRET, sender=self.phone, message="HELP please call")
 		self.assertEqual(sms["outcome"], "grievance")
 		self.assertEqual(frappe.db.get_value("Grievance", sms["request"], "matched_principal"), self.person.name)
 
