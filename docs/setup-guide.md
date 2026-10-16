@@ -149,7 +149,7 @@ For missed calls, point your missed-call number's webhook to `…/anumati.api.v1
 
 What people can text to the number (English or Devanagari digits):
 - `STOP`: stop all optional uses. If several people share that phone, it goes to your inbox to resolve.
-- `STOP AN-7K2Q9C`: stop the consent on that receipt.
+- `STOP AN-7K2Q4C`: stop the consent on that receipt.
 - `STOP 2`: stop only the 2nd item on the receipt.
 - `DATA`: ask what you hold. `HELP`: ask for a call-back.
 
@@ -202,7 +202,7 @@ On that migrate, the site switches on Mobile Configuration, creates three fictio
 Every phone that signs in appears under **Field Device** with its user, app version, last sync and how many records it still holds. If a phone is lost or stolen: open it → **Report lost** → **Yes**. The phone signs out and deletes its data the next time it connects, and a **Breach Incident** (lost device) opens with the number of records it hadn't synced, so the 72-hour clock starts.
 
 ### Receipt codes work offline
-The code on the slip (e.g. `AN-7K2Q9C`) is worked out on the phone from the consent's ID, so the worker can write it down before the phone syncs. The server gets the same code. Codes are short, so two people can rarely share one: an SMS `STOP <code>` is then matched by the sender's number, or goes to the inbox for a person to resolve.
+The code on the slip (e.g. `AN-7K2Q4C`) is worked out on the phone from the consent's ID, so the worker can write it down before the phone syncs. The server gets the same code. Codes are short, so two people can rarely share one: an SMS `STOP <code>` is then matched by the sender's number, or goes to the inbox for a person to resolve.
 
 ## G. The Desk menu: who sees what
 
@@ -223,7 +223,7 @@ Useful places:
 - **Beneficiaries list**: type in the **Name or phone** box at the top. It matches whole words of a name ("Kavita", or "Kavita Yadav", not "Kav"), a complete phone number, a receipt code or an ID. Each row shows the name and the phone with the last three digits hidden; every list page you open is recorded in the access log. Names and phones stay encrypted in the database.
 - Any field where you pick a beneficiary (for example on a request) accepts the same searches.
 - **Today → Requests board**: drag a request between columns to change its status. Red cards are overdue.
-- **Consents list**: type a receipt code (e.g. `AN-7K2Q9C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
+- **Consents list**: type a receipt code (e.g. `AN-7K2Q4C`) in the box at the top. Saved views such as *Withdrawals* and *Guardian consents* are in the left sidebar under **Saved Filters**.
 - **A request from a shared phone**: open it → **Who is this for?** → pick the person → **Match**.
 - **A breach**: the form shows the hours left of the 72-hour deadline. Click **Board told now** when you have told the Board.
 - **Requests**: open one → **Reply to the person** → **Send update**, **Ask a question** or **Send final answer**. The person reads it on the self-service page and can write back; the thread is on the request's timeline.

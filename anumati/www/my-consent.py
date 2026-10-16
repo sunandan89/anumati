@@ -47,7 +47,7 @@ STRINGS = {
 	"tries_left": "That code is not right. {0} tries left.",
 	"not_set_up": "Sign-in by SMS is not ready yet. Use your receipt code, or ask a field worker.",
 	"use_receipt": "Use your receipt code",
-	"receipt_help": "It's on the paper slip you were given, like AN-7K2Q9C.",
+	"receipt_help": "It's on the paper slip you were given, like AN-7K2Q4C.",
 	"receipt_code": "Receipt code",
 	"birth_year": "Year of birth",
 	"code_mode_note": "Signed in with a receipt code: you can turn uses off and ask us things. To turn a use on, sign in with your phone or ask a field worker.",

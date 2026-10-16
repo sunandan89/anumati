@@ -100,7 +100,7 @@
 		code.focus();
 	}
 	function render_receipt_sign_in() {
-		const code = h("input", { class: "form-control", type: "text", autocapitalize: "characters", placeholder: "AN-7K2Q9C", maxlength: 12 });
+		const code = h("input", { class: "form-control", type: "text", autocapitalize: "characters", placeholder: "AN-7K2Q4C", maxlength: 12 });
 		const year = h("input", { class: "form-control", type: "number", inputmode: "numeric", min: 1900, max: 2100 });
 		const go = button(T("continue"));
 		go.onclick = busy(go, async () => after_sign_in(await call("code_login", { code: code.value, year: year.value })));

@@ -64,7 +64,7 @@ def _artefact(event) -> dict:
 
 
 def short_code(event_uuid: str) -> str:
-	"""The code printed on receipts and slips, e.g. AN-7K2Q9C: the first 30 bits of sha256(event_uuid) in
+	"""The code printed on receipts and slips, e.g. AN-7K2Q4C: the first 30 bits of sha256(event_uuid) in
 	base32. It depends only on the event_uuid the capture device generates, so an offline field app can
 	write the same code on the slip before the event reaches the server. Codes are short and can collide;
 	lookups resolve a collision by the sender's phone hash or leave it for a person (inbox)."""
