@@ -318,13 +318,13 @@ function renderSite(){
 function heroReceipt(){
   return `<div class="stitch-box" style="background:var(--surface);border-radius:20px;padding:28px;box-shadow:var(--shadow);max-width:420px;justify-self:center;width:100%">
     <div class="row" style="justify-content:space-between"><span class="eyebrow">Consent receipt</span><span class="chip c-ok">Confirmed</span></div>
-    <div class="mono" style="font-size:34px;letter-spacing:.08em;margin:10px 0 4px;font-weight:500">AN-7K2Q9C</div>
+    <div class="mono" style="font-size:34px;letter-spacing:.08em;margin:10px 0 4px;font-weight:500">AN-7K2Q4C</div>
     <div class="hi" style="font-size:17px">सुनीता डी. · स्वास्थ्य जाँच</div>
     <div class="stack small" style="gap:8px;margin-top:16px">
       ${[['leaf','Captured offline · Khairi village · 11:20'],['leaf','Notice played in Hindi · 1:42'],['leaf','Voice “haan” + witness (ASHA)'],['leaf','SMS code read back from her phone'],['terra','Signed and chained on sync']].map(([c,t]) => `<div class="row"><span class="dot" style="background:var(--${c})"></span>${t}</div>`).join('')}
     </div>
     <hr class="stitch" style="margin:18px 0 12px">
-    <div class="small muted">To withdraw: tell any worker · show this slip · SMS STOP AN-7K2Q9C</div>
+    <div class="small muted">To withdraw: tell any worker · show this slip · SMS STOP AN-7K2Q4C</div>
   </div>`;
 }
 const secHead = (eyebrow, title, lede) => `<span class="eyebrow">${eyebrow}</span><h2 style="max-width:19em">${title}</h2>${lede?`<p class="lede" style="margin:0">${lede}</p>`:''}`;

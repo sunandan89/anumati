@@ -54,7 +54,7 @@ Verify an artefact's hash and signature without seeing personal data. `public_ke
 Receipts, confirmation requests and withdrawal confirmations for a child, or an adult with a lawful guardian, go to the guardian's phone (from the latest Guardian Link). "STOP" or a missed call from a guardian's phone also finds the people they consented for.
 
 ## rights.submit (POST)
-`request_type` (withdrawal | access | correction | erasure | grievance | nomination), `channel`, `principal_ref?`, `payload?`, `paper_trail_number?`, `consent_code?` returns `{request, status, sla_due}`. The SLA clock starts at receipt. Without `principal_ref`, a receipt code (`AN-7K2Q9C` or `7K2Q9C`) in `consent_code` matches the person when it is unambiguous. `client_request_id` (a UUID made once per request, as `grievance.submit` also takes) makes a retry return the first request instead of filing a second one.
+`request_type` (withdrawal | access | correction | erasure | grievance | nomination), `channel`, `principal_ref?`, `payload?`, `paper_trail_number?`, `consent_code?` returns `{request, status, sla_due}`. The SLA clock starts at receipt. Without `principal_ref`, a receipt code (`AN-7K2Q4C` or `7K2Q4C`) in `consent_code` matches the person when it is unambiguous. `client_request_id` (a UUID made once per request, as `grievance.submit` also takes) makes a retry return the first request instead of filing a second one.
 
 ## device.register / device.sign_out (POST, field workers)
 `device_id` checks a phone in on sign-in and every sync, or frees it on sign-out. Only users with the Field Worker role may call them, and a phone stays with the worker signed in on it until they sign out or a coordinator sets its status to `logged_out`; anyone else is refused.

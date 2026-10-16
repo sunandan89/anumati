@@ -13,7 +13,7 @@ frappe.listview_settings["Consent Event"] = {
 	onload(listview) {
 		// Receipt code search: type AN-XXXXXX (or just the six letters) to find a record.
 		listview.page.add_field({
-			fieldtype: "Data", fieldname: "receipt", label: __("Receipt code, e.g. AN-7K2Q9C"),
+			fieldtype: "Data", fieldname: "receipt", label: __("Receipt code, e.g. AN-7K2Q4C"),
 			change() {
 				let code = (this.get_value() || "").trim().toUpperCase();
 				if (code && !code.startsWith("AN-")) code = "AN-" + code;
