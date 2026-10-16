@@ -65,6 +65,9 @@ Receipts, confirmation requests and withdrawal confirmations for a child, or an 
 ## Rights Request and Grievance by standard insert
 Field workers and connected systems can also create these as plain records (REST or the Frappe Mobile SDK). Only what the person or worker says is kept: the request type or category, channel, who it is about, their words and any paper-trail number. Status, received time, reply-by date, assignment, answer, outcome and the person's response are set by the server and staff (`anumati.intake`). The SDK's `mobile_uuid` becomes `client_request_id`, so the same record pushed twice is refused the second time.
 
+## Notices by standard read (Frappe Mobile SDK, REST)
+Field workers can also read notices as plain records (Notice Template with its purposes, Notice Translation, Purpose), which is how the Frappe Mobile SDK pulls them. A field worker sees only published notices for their own programmes (their User Permissions on Programme; none means every programme) and only the translations of those notices; drafts and retired versions stay with staff (`anumati.notice_access`). Unlike `notice.get_active`, a plain read does not hold back unreviewed translations or unreviewed machine-made audio: the phone checks `reviewer` and `audio_reviewed_by` itself.
+
 ## rights.fulfil_withdrawal (POST, staff)
 `request, programme, purposes?, leave_programme?` records one signed withdrawal for a matched request and closes it. An essential purpose in `purposes` without `leave_programme` is refused: it stops only when the person leaves. Calling it twice returns the same event. In Desk this is the **Record withdrawal** button on the request.
 
