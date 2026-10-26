@@ -14,10 +14,10 @@ Anything ambiguous becomes a Rights Request for a person to resolve; the SLA clo
 
 import hmac
 import json
-import re
-import uuid
+from typing import Any
 
 import frappe
+from frappe import _
 from frappe.rate_limiter import rate_limit
 from frappe.utils import now_datetime
 
@@ -117,22 +117,22 @@ def _text(kwargs):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=600, seconds=60)
-def inbound_sms(provider=None, **kwargs):
+def inbound_sms(provider: str | None = None, **kwargs: Any):
 	prov = _provider(provider)
 	sender = _sender(kwargs)
 	if not sender:
-		frappe.throw("sender missing")
+		frappe.throw(_("sender missing"))
 	return handle_sms(prov, sender, _text(kwargs))
 
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=600, seconds=60)
-def missed_call(provider=None, **kwargs):
+def missed_call(provider: str | None = None, **kwargs: Any):
 	"""A missed call is a withdrawal request; it is confirmed by a call-back or SMS, never auto-applied."""
 	prov = _provider(provider)
 	sender = _sender(kwargs)
 	if not sender:
-		frappe.throw("caller missing")
+		frappe.throw(_("caller missing"))
 	phone_hash = pii.phone_hash(sender)
 	channels.log(prov, "Received", "Missed call", phone_hash, channel="missed_call")
 	found = inbox.principals_for_phone_hash(phone_hash)
@@ -143,7 +143,7 @@ def missed_call(provider=None, **kwargs):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=1200, seconds=60)
-def delivery_report(provider=None, request_id=None, status=None, **kwargs):
+def delivery_report(provider: str | None = None, request_id: str | int | None = None, status: str | None = None, **kwargs: Any):
 	"""Delivery receipts: a delivered deferred-confirmation SMS confirms that consent (spec section 5)."""
 	_provider(provider)
 	comm = frappe.db.get_value("Communication", {"message_id": request_id}, "name") if request_id else None

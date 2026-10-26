@@ -45,8 +45,8 @@ def _key() -> str:
 def _post(path, **kwargs):
 	try:
 		r = requests.post(f"{API}/{path}", headers={"api-subscription-key": _key()}, timeout=90, **kwargs)
-	except requests.RequestException:
-		raise VoiceError(_("Could not reach Sarvam. Try again in a minute."))
+	except requests.RequestException as e:
+		raise VoiceError(_("Could not reach Sarvam. Try again in a minute.")) from e
 	if r.status_code == 403 or r.status_code == 401:
 		raise VoiceError(_("Sarvam refused the API key. Check it in the site config."))
 	if not r.ok:
@@ -57,7 +57,7 @@ def _post(path, **kwargs):
 
 
 # ---------------------------------------------------------------- 1. notice audio
-def chunks(text: str, size: int = CHUNK) -> list[str]:
+def chunks(text: str, size: int  =  CHUNK) -> list[str]:
 	"""Split at sentence ends (., ।, ?, !) so no request is longer than the model allows."""
 	parts, current = [], ""
 	for sentence in re.split(r"(?<=[.।?!])\s+", text.strip()):
@@ -84,7 +84,7 @@ def speaker_for(gender: str) -> str:
 	return settings().get(field) or default
 
 
-def speak(text: str, language: str, speaker: str | None = None, pace: float | None = None) -> bytes:
+def speak(text: str, language: str, speaker: str | None  =  None, pace: float | None  =  None) -> bytes:
 	"""MP3 of the text, in one piece (MP3 frames can simply be joined)."""
 	code = LANGUAGES.get((language or "en").split("-")[0])
 	if not code:
@@ -143,7 +143,7 @@ def _check(doctype, name, for_review=False):
 
 
 @frappe.whitelist(methods=["POST"])
-def generate_notice_audio(doctype, name):
+def generate_notice_audio(doctype: str, name: str):
 	"""Desk button: read the notice aloud with Sarvam, attach the MP3, mark it machine-made (not yet
 	approved). Returns the file URL."""
 	flag = settings().get("voice_notice_audio")
@@ -177,7 +177,7 @@ def _save(doc, **values):
 
 
 @frappe.whitelist(methods=["POST"])
-def approve_notice_audio(doctype, name):
+def approve_notice_audio(doctype: str, name: str):
 	"""A reviewer has listened to the whole recording and it matches the text."""
 	doc = _check(doctype, name, for_review=True)
 	if not doc.audio_file:
@@ -204,7 +204,7 @@ def meaning(transcript: str) -> str:
 	return "yes" if yes and not no else "no" if no and not yes else "unclear"
 
 
-def hear(audio: bytes, filename: str = "clip.m4a", language: str | None = None) -> dict:
+def hear(audio: bytes, filename: str  =  "clip.m4a", language: str | None  =  None) -> dict:
 	out = _post("speech-to-text", data={
 		"model": STT_MODEL, "mode": "codemix",
 		"language_code": LANGUAGES.get((language or "").split("-")[0], "unknown"),

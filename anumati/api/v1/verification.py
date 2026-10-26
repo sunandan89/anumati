@@ -41,7 +41,7 @@ def _event_for_caller(consent_id):
 
 
 @frappe.whitelist(methods=["POST"])
-def send_otp(consent_id):
+def send_otp(consent_id: str):
 	event = _event_for_caller(consent_id)
 	recent = frappe.db.count("Anumati Verification Attempt", {
 		"consent_event": event.name, "verification_method": "server_otp",
@@ -64,7 +64,7 @@ def send_otp(consent_id):
 
 
 @frappe.whitelist(methods=["POST"])
-def verify_otp(consent_id, code):
+def verify_otp(consent_id: str, code: str | int):
 	_event_for_caller(consent_id)
 	stored = frappe.cache.get_value(_key(consent_id))
 	attempt = frappe.db.get_value("Anumati Verification Attempt",

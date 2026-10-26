@@ -158,7 +158,7 @@ def send_one(doc, row, provider) -> tuple[str, str | None]:
 	template = channels.template_for(EVENT, "sms", row["language"]) or channels.template_for(EVENT, "sms", "en")
 	lang = template.language if template.language in LANGS else "en"
 	ctx = context(doc, lang, latest_code(row["principal"], doc.programme))
-	body = frappe.render_template(template.body, ctx)
+	body = frappe.render_template(template.body, ctx, restrict_globals=True)  # staff-written SMS template, globals restricted; nosemgrep
 	adapter = frappe.get_module(channels.PROVIDERS.get(provider.provider, "anumati.channels.msg91"))
 	outcome, message_id = "sent", None
 	try:

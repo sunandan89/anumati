@@ -68,7 +68,7 @@ def send_sms(principal: str, event: str, context: dict, reference=None, link=Non
 	if not (provider and template and phone):
 		return None
 	# The log keeps what was said, never a one-time code.
-	body = frappe.render_template(template.body, {**context, **({"otp": "******"} if context.get("otp") else {})})
+	body = frappe.render_template(template.body, {**context, **({"otp": "******"} if context.get("otp") else {})}, restrict_globals=True)  # staff-written SMS template, globals restricted; nosemgrep
 	adapter = frappe.get_module(PROVIDERS.get(provider.provider, "anumati.channels.msg91"))
 	status, message_id = "Sent", None
 	try:

@@ -85,7 +85,8 @@ def execute():
 
 	audit_table = "Anumati Audit Entry" if frappe.db.table_exists("Anumati Audit Entry") else "Audit Entry"
 	for row in sealed:
-		frappe.db.sql(
+		# The table name is one of two fixed names above, never input.
+		frappe.db.sql(  # nosemgrep
 			f"update `tab{audit_table}` set ref_doctype = %s where name = %s", (row.ref_doctype, row.name)
 		)
 	frappe.db.commit()

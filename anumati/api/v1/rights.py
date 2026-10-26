@@ -9,8 +9,7 @@ from anumati.api.v1 import consent
 
 
 @frappe.whitelist(methods=["POST"])
-def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_number=None, consent_code=None,
-           client_request_id=None):
+def submit(request_type: str, channel: str, principal_ref: str | None = None, payload: dict | str | None = None, paper_trail_number: str | None = None, consent_code: str | None = None, client_request_id: str | None = None):
 	"""A rights request from a host system, connector or field worker (spec section 8). A receipt code
 	(`consent_code`, from the person's slip) finds the person when `principal_ref` is not known.
 	`client_request_id` (a UUID the caller makes once per request) makes a retry return the first one
@@ -50,7 +49,7 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 
 
 @frappe.whitelist(methods=["GET"])
-def withdrawable(request):
+def withdrawable(request: str):
 	"""The uses currently on for the request's person, by programme, for the console's Record withdrawal
 	checklist: [{programme, programme_name, code, title, essential}]. Titles and codes only, no personal data."""
 	doc = frappe.get_doc("Anumati Rights Request", request)
@@ -72,7 +71,7 @@ def withdrawable(request):
 
 
 @frappe.whitelist(methods=["POST"])
-def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
+def fulfil_withdrawal(request: str, programme: str, purposes: list | str | None = None, leave_programme: bool | int | str = 0):
 	"""Carry out a withdrawal request: record the signed withdrawal event and close the request.
 	Idempotent: the event UUID is derived from the request. `leave_programme` withdraws every granted
 	purpose, essential ones included (see consent.withdraw_for)."""
@@ -100,7 +99,7 @@ def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
 
 
 @frappe.whitelist(methods=["POST"])
-def reply(request, message, kind="update"):
+def reply(request: str, message: str, kind: str = 'update'):
 	"""Reply to the person on a request (staff, from Desk). `kind`: update (stays Working on it), question
 	(Waiting for the person) or answer (Answered). The message joins the conversation the person sees on the
 	self-service page; an SMS only says there is a reply."""

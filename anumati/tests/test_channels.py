@@ -12,8 +12,15 @@ from frappe.utils import now_datetime
 
 from anumati import channels, enforcement, pii
 from anumati.api.v1 import channel, consent, verification
-from anumati.tests.utils import (call_webhook, ensure_language, make_evidence, make_principal, make_programme,
-                                 make_purpose, webhook_call)
+from anumati.tests.utils import (
+	call_webhook,
+	ensure_language,
+	make_evidence,
+	make_principal,
+	make_programme,
+	make_purpose,
+	webhook_call,
+)
 
 PROG, SECRET = "SMS", "test-inbound-secret"
 TEMPLATES = {
@@ -130,7 +137,7 @@ class TestChannels(IntegrationTestCase):
 		self.assertEqual(consent.check(p.principal_ref, "photos", programme=PROG)["status"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "granted")
 
-		shared_a, shared_b = self.person("9000077008"), self.person("9000077008")
+		_shared_a, shared_b = self.person("9000077008"), self.person("9000077008")
 		art_b = self.grant(shared_b)
 		out = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077008", message=f"STOP {art_b['short_code']}")
 		self.assertEqual(out["outcome"], "withdrawn")

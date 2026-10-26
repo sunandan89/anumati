@@ -11,8 +11,7 @@ from anumati.api import schema
 
 
 @frappe.whitelist(methods=["POST"])
-def submit(category, channel, principal_ref=None, description=None, about_request=None, consent_code=None,
-           paper_trail_number=None, client_request_id=None):
+def submit(category: str, channel: str, principal_ref: str | None = None, description: str | None = None, about_request: str | None = None, consent_code: str | None = None, paper_trail_number: str | None = None, client_request_id: str | None = None):
 	"""A grievance from a field worker or a connected system. A retry with the same `client_request_id`
 	returns the first grievance (review C10)."""
 	frappe.has_permission("Anumati Grievance", "create", throw=True)
@@ -38,7 +37,7 @@ def submit(category, channel, principal_ref=None, description=None, about_reques
 
 
 @frappe.whitelist(methods=["POST"])
-def reply(grievance, message, kind="update", outcome=None):
+def reply(grievance: str, message: str, kind: str = 'update', outcome: str | None = None):
 	"""Reply to the person (staff): update, question, or the final answer with its outcome
 	(put_right, partly_put_right, no_problem_found)."""
 	doc = frappe.get_doc("Anumati Grievance", grievance)
@@ -47,7 +46,7 @@ def reply(grievance, message, kind="update", outcome=None):
 
 
 @frappe.whitelist(methods=["POST"])
-def move_from_request(request):
+def move_from_request(request: str):
 	"""Staff: a rights request that is really a complaint becomes a grievance; the request is closed."""
 	doc = frappe.get_doc("Anumati Rights Request", request)
 	frappe.has_permission("Anumati Grievance", "create", throw=True)
@@ -59,7 +58,7 @@ def move_from_request(request):
 
 
 @frappe.whitelist(methods=["POST"])
-def move_to_request(grievance_name, request_type):
+def move_to_request(grievance_name: str, request_type: str):
 	"""Staff: a grievance that is really a rights request moves to the requests inbox; the grievance is closed."""
 	doc = frappe.get_doc("Anumati Grievance", grievance_name)
 	return {"request": grievance.move_to_request(doc, request_type).name}

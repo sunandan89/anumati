@@ -17,7 +17,7 @@ class SchemaError(frappe.ValidationError):
 
 @lru_cache(maxsize=1)
 def _schemas() -> dict:
-	with open(frappe.get_app_path("anumati", "public", "openapi.json")) as fh:
+	with open(frappe.get_app_path("anumati", "public", "openapi.json")) as fh:  # fixed app file; nosemgrep
 		return json.load(fh)["components"]["schemas"]
 
 

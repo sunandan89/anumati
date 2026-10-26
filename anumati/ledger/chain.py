@@ -98,7 +98,7 @@ class ChainError(frappe.ValidationError):
 
 def check_sealable(doc):
 	"""Frappe sanitises markup after before_save; refuse it up front so stored == hashed."""
-	for field, kind in CHAINS[doc.doctype].items():
+	for field in CHAINS[doc.doctype]:
 		if field in _UNSEALED or doc.get(field) in (None, ""):
 			continue
 		value = doc.get(field)

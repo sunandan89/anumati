@@ -8,7 +8,12 @@ a bundled file only when its own notice text hashes the same, so edited notices 
 Run from the repo root with SARVAM_API_KEY in the environment or .env:
     python3 tools/gen_demo_audio.py
 Only notice text is sent to Sarvam. Existing files are reused; nothing is re-recorded needlessly."""
-import base64, importlib.util, json, os, sys, types
+import base64
+import importlib.util
+import json
+import os
+import sys
+import types
 
 import requests
 

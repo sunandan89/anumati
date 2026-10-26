@@ -8,7 +8,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, getdate, nowdate
 
-WHAT = {"name": _("Saw the full name"), "list": _("Searched the list")}
+# Translated when the report runs, in the viewer's language (not once at import).
+WHAT = {"name": "Saw the full name", "list": "Searched the list"}
 
 
 def execute(filters=None):
@@ -23,7 +24,7 @@ def execute(filters=None):
 	data = [{"when": r.creation, "who": r.viewed_by, "what": _("Opened the record"),
 	         "record_type": r.reference_doctype, "record": r.reference_name}
 	        for r in frappe.get_all("View Log", views, ["creation", "viewed_by", "reference_doctype", "reference_name"])]
-	data += [{"when": r.creation, "who": r.user, "what": WHAT.get(r.file_type) or _("Opened evidence"),
+	data += [{"when": r.creation, "who": r.user, "what": _(WHAT.get(r.file_type) or "Opened evidence"),
 	          "record_type": r.export_from, "record": r.reference_document}
 	         for r in frappe.get_all("Access Log", access, ["creation", "user", "file_type", "export_from", "reference_document"])]
 	data.sort(key=lambda r: r["when"], reverse=True)

@@ -194,6 +194,12 @@ function print_notice(frm, s) {
 	w.print();
 }
 
-frappe.realtime.on("anumati_breach_sent", (data) => {
-	if (cur_frm && cur_frm.doctype === "Anumati Breach Incident" && cur_frm.doc.name === data.incident) cur_frm.reload_doc();
+// When the background send finishes, reload the incident that is open.
+frappe.ui.form.on("Anumati Breach Incident", {
+	setup(frm) {
+		frappe.realtime.off("anumati_breach_sent");
+		frappe.realtime.on("anumati_breach_sent", (data) => {
+			if (frm.doc && frm.doc.name === data.incident) frm.reload_doc();
+		});
+	},
 });

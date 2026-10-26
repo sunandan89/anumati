@@ -5,7 +5,8 @@ Module Onboarding (module folders), plus fixtures for the Custom HTML Block, Kan
 List Filters and Custom DocPerm. Nothing here replaces a Frappe page or view.
 
 Edit here, run `python3 tools/gen_desk.py` from the repo root, commit the JSON. Bump TS on every change."""
-import json, os
+import json
+import os
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")

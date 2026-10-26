@@ -28,6 +28,9 @@ fixtures = [
 	{"dt": "List Filter", "filters": [["name", "like", "anumati-%"]]},
 ]
 
+# Every whitelisted method has type hints (Frappe v16 checks request arguments against them).
+require_type_annotated_api_methods = True
+
 after_install = "anumati.install.after_install"
 # Removes what Anumati added to stock DocTypes (custom fields, saved filters, board, blocks, workflows).
 before_uninstall = "anumati.install.before_uninstall"

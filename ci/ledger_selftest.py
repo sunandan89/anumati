@@ -3,7 +3,14 @@
 from datetime import datetime
 
 from anumati.ledger import signing
-from anumati.ledger.canonical import GENESIS_HASH, canonical_json, compute_hash, normalise, payload, to_storage
+from anumati.ledger.canonical import (
+	GENESIS_HASH,
+	canonical_json,
+	compute_hash,
+	normalise,
+	payload,
+	to_storage,
+)
 
 schema = {"a": "str", "n": "int", "t": "datetime", "j": "json"}
 row_from_client = {"a": "x", "n": "3", "t": "2026-09-20 11:20:00", "j": ["b", "a"]}

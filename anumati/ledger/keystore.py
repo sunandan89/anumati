@@ -12,6 +12,7 @@ Public keys for verification = the active key + Anumati Settings `retired_signin
 import json
 
 import frappe
+from frappe import _
 from frappe.utils.password import get_decrypted_password
 
 from anumati.ledger import signing
@@ -30,7 +31,7 @@ def active_key() -> tuple[str, str]:
 		return cached
 	private_b64 = frappe.conf.get("anumati_signing_key") or _settings_private_key()
 	if not private_b64:
-		frappe.throw("Anumati signing key is not set up. Run migrate or reinstall the app.")
+		frappe.throw(_("Anumati signing key is not set up. Run migrate or reinstall the app."))
 	key_id = signing.key_id_for(signing.public_from_private(private_b64))
 	frappe.local.anumati_active_key = (key_id, private_b64)
 	return frappe.local.anumati_active_key
@@ -78,7 +79,7 @@ def ensure_keys():
 def rotate():
 	"""Retire the active settings key (its public half keeps verifying old events) and create a new one."""
 	if frappe.conf.get("anumati_signing_key"):
-		frappe.throw("This site's signing key comes from site config; rotate it there.")
+		frappe.throw(_("This site's signing key comes from site config; rotate it there."))
 	settings = frappe.get_single(SETTINGS)
 	retired = json.loads(settings.retired_signing_keys or "{}")
 	old_private = _settings_private_key()

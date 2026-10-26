@@ -3,6 +3,7 @@
 Responses never echo personal data; name and phone go straight into encrypted fields."""
 
 import json
+from typing import Any
 
 import frappe
 from frappe import _
@@ -17,7 +18,7 @@ FIELDS = (
 
 
 @frappe.whitelist(methods=["POST"])
-def upsert(principal_ref, **values):
+def upsert(principal_ref: str, **values: Any):
 	"""Create or update a principal by the host system's reference. Idempotent.
 
 	`profile` carries answers to the programme's extra questions ({code: answer}); `programme` says which
@@ -46,7 +47,7 @@ FLAGS = ("is_minor", "pwd_guarded", "needs_assistance", "shared_phone", "no_phon
 
 
 @frappe.whitelist(methods=["GET"])
-def for_device(programme, since=None, limit=500):
+def for_device(programme: str, since: str | None = None, limit: int | str = 500):
 	"""People in a programme with their current choices, for a field worker's phone (spec A5, offline find,
 	withdrawal and add-a-purpose). The phone stores them in its encrypted database.
 
@@ -115,7 +116,7 @@ def mask_phone(phone: str | None) -> str:
 
 
 @frappe.whitelist(methods=["GET"])
-def reveal(principal):
+def reveal(principal: str):
 	"""Name and masked phone for Desk forms. Needs read on the Data Principal; each view goes to the Access
 	Log. The full number is never sent to the browser."""
 	doc = frappe.get_doc("Anumati Data Principal", principal)
@@ -129,7 +130,7 @@ def reveal(principal):
 
 
 # ---------------------------------------------------------------- Desk search (names stay encrypted)
-def match(q: str, limit: int = 50) -> list[str]:
+def match(q: str, limit: int  =  50) -> list[str]:
 	"""Beneficiary names (record IDs) for a search: a full phone number, a receipt code, a beneficiary ID,
 	or whole words of a name (every word must match). Nothing personal is stored or returned in clear."""
 	from anumati import inbox, pii
@@ -157,7 +158,7 @@ def match(q: str, limit: int = 50) -> list[str]:
 
 
 @frappe.whitelist(methods=["GET"])
-def search(q):
+def search(q: str):
 	"""Desk: find beneficiaries by whole-word name, full phone number, receipt code or ID.
 	Returns record IDs only; the list then shows names through reveal_many (logged)."""
 	frappe.has_permission("Anumati Data Principal", "read", throw=True)
@@ -165,7 +166,7 @@ def search(q):
 
 
 @frappe.whitelist(methods=["POST"])
-def reveal_many(principals):
+def reveal_many(principals: list | str):
 	"""Desk list: name and masked phone for the rows on screen (at most 100). Needs read on each record;
 	every record shown gets an Access Log entry. The full number never reaches the browser."""
 	from frappe.core.doctype.access_log.access_log import make_access_log
@@ -190,7 +191,8 @@ def reveal_many(principals):
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
-def link_query(doctype, txt, searchfield, start, page_len, filters, **kwargs):
+def link_query(doctype: str, txt: str | None, searchfield: str | None, start: int | str, page_len: int | str,
+               filters: dict | list | str | None, **kwargs: Any):
 	"""Link fields to a Beneficiary (e.g. on a request) search by name, phone, receipt code or ID too.
 	Shows the beneficiary ID only, so picking someone does not reveal names."""
 	txt = (txt or "").strip()

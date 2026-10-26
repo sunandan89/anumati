@@ -29,7 +29,7 @@ def _values(values):
 
 
 @frappe.whitelist(methods=["POST"])
-def summary(name, values=None):
+def summary(name: str, values: dict | str | None = None):
 	"""Counts, preview and readiness for the Tell affected people tab. Counts and texts only: no names, no numbers."""
 	doc = frappe.get_doc("Anumati Breach Incident", name)
 	doc.check_permission("read")
@@ -44,7 +44,7 @@ def summary(name, values=None):
 	previews, parts = [], 0
 	for lang in languages:
 		template = breach.any_template(lang)
-		text = frappe.render_template(template.body, breach.context(doc, lang, SAMPLE_CODE)) if template else ""
+		text = frappe.render_template(template.body, breach.context(doc, lang, SAMPLE_CODE), restrict_globals=True) if template else ""  # staff-written SMS template, globals restricted; nosemgrep
 		people = counts["languages"].get(lang, 0)
 		n = breach.sms_parts(text) if text else 0
 		parts += n * sum(1 for r in rows if r["language"] == lang and r["route"] != "none")
@@ -68,7 +68,7 @@ def _for_dpo(name):
 
 
 @frappe.whitelist(methods=["POST"])
-def send(name, confirm):
+def send(name: str, confirm: bool | int | str):
 	"""Send the breach notice to everyone in the plan, in the background. `confirm` must equal the SMS count."""
 	doc = _for_dpo(name)
 	if doc.notify_sent_on:
@@ -95,7 +95,7 @@ def send(name, confirm):
 
 
 @frappe.whitelist(methods=["POST"])
-def send_test(name):
+def send_test(name: str):
 	"""Send the notice to the signed-in DPO's own mobile (from their user profile), in each language used."""
 	doc = _for_dpo(name)
 	mobile = frappe.db.get_value("User", frappe.session.user, "mobile_no")
@@ -116,7 +116,7 @@ def send_test(name):
 
 
 @frappe.whitelist(methods=["POST"])
-def retry(name):
+def retry(name: str):
 	doc = _for_dpo(name)
 	if not doc.notify_sent_on:
 		frappe.throw(_("Nothing has been sent yet."))
