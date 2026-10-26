@@ -17,11 +17,11 @@ STAFF_ROLES = {"Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Prog
 # What only staff (or the server) set on a new record. Everything else is what the person or the
 # field worker says: the request type or category, the channel, who it is about, their words.
 STAFF_ONLY = {
-	"Rights Request": (
+	"Anumati Rights Request": (
 		"status", "received_on", "sla_due", "assigned_to", "match_confidence", "candidates", "sender_hash",
 		"linked_event", "answer", "answered_on", "resolution", "raised_by",
 	),
-	"Grievance": (
+	"Anumati Grievance": (
 		"status", "received_on", "sla_due", "assigned_to", "match_confidence", "candidates", "sender_hash",
 		"dpo_since", "outcome", "internal_note", "answer", "answered_on", "person_says", "person_said_on",
 		"raised_by",

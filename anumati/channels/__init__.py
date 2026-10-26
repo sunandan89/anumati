@@ -18,18 +18,18 @@ class ChannelError(frappe.ValidationError):
 
 
 def provider_for(provider_type="SMS"):
-	name = frappe.db.get_value("Channel Provider", {"provider_type": provider_type, "enabled": 1}, "name")
-	return frappe.get_doc("Channel Provider", name) if name else None
+	name = frappe.db.get_value("Anumati Channel Provider", {"provider_type": provider_type, "enabled": 1}, "name")
+	return frappe.get_doc("Anumati Channel Provider", name) if name else None
 
 
 def template_for(event: str, channel: str, language: str | None):
 	for lang in dict.fromkeys([language, frappe.db.get_single_value("System Settings", "language"), "en"]):
 		if not lang:
 			continue
-		name = frappe.db.get_value("Message Template",
+		name = frappe.db.get_value("Anumati Message Template",
 		                           {"template_event": event, "channel": channel, "language": lang, "approved": 1})
 		if name:
-			return frappe.get_doc("Message Template", name)
+			return frappe.get_doc("Anumati Message Template", name)
 	return None
 
 
@@ -49,9 +49,9 @@ def contact_phone(doc) -> str | None:
 	own = doc.get_password("phone", raise_exception=False)
 	guarded = (doc.is_minor and not doc.get("renewal_due")) or doc.pwd_guarded
 	if guarded or not own:
-		guardian = frappe.db.get_value("Guardian Link", {"principal": doc.name}, "guardian", order_by="creation desc")
+		guardian = frappe.db.get_value("Anumati Guardian Link", {"principal": doc.name}, "guardian", order_by="creation desc")
 		if guardian:
-			theirs = frappe.get_doc("Data Principal", guardian).get_password("phone", raise_exception=False)
+			theirs = frappe.get_doc("Anumati Data Principal", guardian).get_password("phone", raise_exception=False)
 			if theirs:
 				return theirs
 	return own
@@ -62,7 +62,7 @@ def send_sms(principal: str, event: str, context: dict, reference=None, link=Non
 	(no provider, no approved template, no phone). Never raises for a missing setup: capture must not
 	fail because a receipt could not be sent."""
 	provider = provider_for("SMS")
-	doc = frappe.get_doc("Data Principal", principal)
+	doc = frappe.get_doc("Anumati Data Principal", principal)
 	phone = contact_phone(doc)
 	template = template_for(event, "sms", doc.preferred_language)
 	if not (provider and template and phone):
@@ -84,8 +84,8 @@ def log(provider, direction, body, phone_hash, template=None, status=None, messa
         channel="sms", link=None, delivery=None):
 	"""A stock Communication with the Anumati custom fields; phone_no is deliberately left empty. `link` is a
 	(doctype, name) the message is about when it isn't a Consent Event (e.g. a Breach Incident)."""
-	is_event = bool(reference and frappe.db.exists("Consent Event", reference))
-	ref_doctype, ref_name = ("Consent Event", reference) if is_event else (link or (None, None))
+	is_event = bool(reference and frappe.db.exists("Anumati Consent Event", reference))
+	ref_doctype, ref_name = ("Anumati Consent Event", reference) if is_event else (link or (None, None))
 	comm = frappe.get_doc({
 		"doctype": "Communication",
 		"communication_type": "Communication",
@@ -113,9 +113,9 @@ def log(provider, direction, body, phone_hash, template=None, status=None, messa
 def event_context(event) -> dict:
 	import json
 
-	programme = frappe.get_cached_doc("Programme", event.programme)
+	programme = frappe.get_cached_doc("Anumati Programme", event.programme)
 	codes = json.loads(event.purposes_granted or "[]") or json.loads(event.purposes_denied or "[]")
-	titles = [frappe.db.get_value("Purpose", f"{event.programme}-{c}", "purpose_title") or c for c in codes]
+	titles = [frappe.db.get_value("Anumati Purpose", f"{event.programme}-{c}", "purpose_title") or c for c in codes]
 	return {"code": event.short_code, "programme": programme.programme_name, "purposes": ", ".join(titles),
 	        "purpose_list": titles, "date": formatdate(event.server_time), "action": event.action,
 	        "link": get_url("/my-consent")}
@@ -124,8 +124,8 @@ def event_context(event) -> dict:
 def on_consent_event(event: str):
 	"""Background job after a consent event commits: receipt, withdrawal confirmation, or deferred
 	confirmation request (spec sections 5 and 6)."""
-	doc = frappe.get_doc("Consent Event", event)
-	if not frappe.db.get_value("Programme", doc.programme, "sms_receipts"):
+	doc = frappe.get_doc("Anumati Consent Event", event)
+	if not frappe.db.get_value("Anumati Programme", doc.programme, "sms_receipts"):
 		return
 	context = event_context(doc)
 	if doc.action == "withdraw":
@@ -133,7 +133,7 @@ def on_consent_event(event: str):
 	elif doc.verification_method == "deferred":
 		comm = send_sms(doc.principal, "deferred_confirmation", context, reference=doc.name)
 		if comm:
-			frappe.get_doc({"doctype": "Verification Attempt", "consent_event": doc.name, "verification_method": "deferred",
+			frappe.get_doc({"doctype": "Anumati Verification Attempt", "consent_event": doc.name, "verification_method": "deferred",
 			                "channel": "sms", "sent_at": now_datetime(), "result": "pending",
 			                "response": comm}).insert(ignore_permissions=True)
 	else:

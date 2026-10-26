@@ -13,18 +13,18 @@ LABELS = ("label_yes_all", "label_no_all", "label_manage", "label_save")
 def get_active(programme, language=None):
 	"""The live notice for a programme: purposes, Rule 3 contents, and a reviewed translation if one exists.
 	Machine-made translations or audio that no reviewer signed off are never served (spec A1, T13)."""
-	frappe.has_permission("Notice Template", "read", throw=True)
+	frappe.has_permission("Anumati Notice Template", "read", throw=True)
 	name = frappe.db.get_value(
-		"Notice Template", {"programme": programme, "docstatus": 1, "status": "Published"},
+		"Anumati Notice Template", {"programme": programme, "docstatus": 1, "status": "Published"},
 		order_by="creation desc",
 	)
 	if not name:
 		frappe.throw(_("Programme {0} has no published notice").format(programme), frappe.DoesNotExistError)
-	notice = frappe.get_doc("Notice Template", name)
+	notice = frappe.get_doc("Anumati Notice Template", name)
 	purposes = []
 	for row in notice.purposes:
 		p = frappe.db.get_value(
-			"Purpose", row.purpose, ["code", "purpose_title", "description", "essential", "child_allowed", "needs_phone"],
+			"Anumati Purpose", row.purpose, ["code", "purpose_title", "description", "essential", "child_allowed", "needs_phone"],
 			as_dict=True,
 		)
 		purposes.append(p)
@@ -44,7 +44,7 @@ def get_active(programme, language=None):
 	}
 	if language:
 		t = frappe.db.get_value(
-			"Notice Translation", {"notice": name, "language": language},
+			"Anumati Notice Translation", {"notice": name, "language": language},
 			["name", "summary", "full_text", "machine_translated", "reviewer", "audio_file", "audio_file_male", "audio_machine_made",
 			 "audio_reviewed_by", "pictorial_card", *LABELS, *RULE3], as_dict=True,
 		)
@@ -70,9 +70,9 @@ def _audio(doc) -> dict:
 
 
 def _purpose_labels(translation: str) -> list[dict]:
-	rows = frappe.get_all("Notice Purpose Translation", {"parent": translation, "parenttype": "Notice Translation"},
+	rows = frappe.get_all("Anumati Notice Purpose Translation", {"parent": translation, "parenttype": "Anumati Notice Translation"},
 	                      ["purpose", "purpose_title", "description"], order_by="idx asc")
-	codes = dict(frappe.get_all("Purpose", {"name": ("in", [r.purpose for r in rows] or ["-"])}, ["name", "code"],
+	codes = dict(frappe.get_all("Anumati Purpose", {"name": ("in", [r.purpose for r in rows] or ["-"])}, ["name", "code"],
 	                            as_list=True))
 	return [{"code": codes.get(r.purpose), "purpose_title": r.purpose_title, "description": r.description}
 	        for r in rows if codes.get(r.purpose) and (r.purpose_title or r.description)]

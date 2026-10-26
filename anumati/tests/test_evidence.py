@@ -19,7 +19,7 @@ class TestEvidenceAtRest(FrappeTestCase):
 	def upload(self, p, content=CLIP, name="clip.m4a"):
 		return frappe.get_doc({
 			"doctype": "File", "file_name": f"{uuid.uuid4().hex[:6]}-{name}", "content": content, "is_private": 1,
-			"attached_to_doctype": "Data Principal", "attached_to_name": p.name,
+			"attached_to_doctype": "Anumati Data Principal", "attached_to_name": p.name,
 		}).insert(ignore_permissions=True)
 
 	def test_uploaded_evidence_is_encrypted_on_disk_and_decrypts_to_the_signed_hash(self):

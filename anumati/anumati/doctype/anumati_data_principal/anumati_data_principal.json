@@ -1,0 +1,390 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "hash",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "overview_tab",
+  "principal_ref",
+  "full_name",
+  "phone",
+  "phone_hash",
+  "name_index",
+  "email",
+  "c1",
+  "preferred_language",
+  "persona",
+  "date_of_birth",
+  "birth_year",
+  "adult_on",
+  "age_band",
+  "phone_owner_relation",
+  "flags_tab",
+  "flags_section",
+  "is_minor",
+  "pwd_guarded",
+  "needs_assistance",
+  "c2",
+  "shared_phone",
+  "no_phone",
+  "renewal_due",
+  "lifecycle_section",
+  "relationship_ended_on",
+  "c3",
+  "merged_into",
+  "profile_tab",
+  "profile_section",
+  "profile_answers",
+  "nominee_tab",
+  "nominee_section",
+  "nominees"
+ ],
+ "fields": [
+  {
+   "fieldname": "overview_tab",
+   "fieldtype": "Tab Break",
+   "label": "Overview"
+  },
+  {
+   "description": "ID from the host system, e.g. MHU-004211. Never a name or phone number.",
+   "fieldname": "principal_ref",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Beneficiary ID",
+   "unique": 1
+  },
+  {
+   "description": "Stored encrypted; not searchable",
+   "fieldname": "full_name",
+   "fieldtype": "Password",
+   "label": "Name (encrypted)"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Password",
+   "label": "Phone (encrypted)"
+  },
+  {
+   "description": "Salted HMAC of the normalised number; used for lookups",
+   "fieldname": "phone_hash",
+   "fieldtype": "Data",
+   "label": "Phone hash",
+   "no_copy": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "description": "One salted code per word of the name, for whole-word search; the name itself stays encrypted",
+   "fieldname": "name_index",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Name search codes",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "preferred_language",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Preferred language",
+   "options": "Language"
+  },
+  {
+   "default": "beneficiary",
+   "fieldname": "persona",
+   "fieldtype": "Select",
+   "label": "Persona",
+   "options": "beneficiary\npatient\nstudent\nemployee\nmember\nother"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of birth"
+  },
+  {
+   "description": "Enough for children: consent is renewed by the person at 18",
+   "fieldname": "birth_year",
+   "fieldtype": "Int",
+   "label": "Year of birth"
+  },
+  {
+   "description": "From the date of birth, or 31 December of the year they turn 18",
+   "fieldname": "adult_on",
+   "fieldtype": "Date",
+   "label": "Turns 18 by",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "age_band",
+   "fieldtype": "Select",
+   "label": "Age band",
+   "options": "\nunder_18\n18_plus\nunknown"
+  },
+  {
+   "default": "self",
+   "fieldname": "phone_owner_relation",
+   "fieldtype": "Select",
+   "label": "Phone owner",
+   "options": "self\nspouse\nparent\nchild\nsibling\nrelative\nneighbour\nfield_worker\nother"
+  },
+  {
+   "fieldname": "flags_tab",
+   "fieldtype": "Tab Break",
+   "label": "Needs & lifecycle"
+  },
+  {
+   "fieldname": "flags_section",
+   "fieldtype": "Section Break",
+   "label": "Segment flags"
+  },
+  {
+   "fieldname": "is_minor",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Minor (under 18)"
+  },
+  {
+   "fieldname": "pwd_guarded",
+   "fieldtype": "Check",
+   "label": "Person with disability, lawful guardian"
+  },
+  {
+   "fieldname": "needs_assistance",
+   "fieldtype": "Check",
+   "label": "Needs help to read the notice"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shared_phone",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Shared phone"
+  },
+  {
+   "fieldname": "no_phone",
+   "fieldtype": "Check",
+   "label": "No phone"
+  },
+  {
+   "description": "Set on the day a child turns 18. Their guardian's consent stops counting until they consent themselves",
+   "fieldname": "renewal_due",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Turned 18: renew consent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lifecycle_section",
+   "fieldtype": "Section Break",
+   "label": "Lifecycle"
+  },
+  {
+   "description": "Cessation: starts retention clocks that run from 'relationship ended'",
+   "fieldname": "relationship_ended_on",
+   "fieldtype": "Date",
+   "label": "Relationship ended on"
+  },
+  {
+   "fieldname": "c3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "merged_into",
+   "fieldtype": "Link",
+   "label": "Merged into",
+   "options": "Anumati Data Principal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "profile_tab",
+   "fieldtype": "Tab Break",
+   "label": "About the person"
+  },
+  {
+   "description": "Reports show totals only",
+   "fieldname": "profile_section",
+   "fieldtype": "Section Break",
+   "label": "Answers to extra questions"
+  },
+  {
+   "fieldname": "profile_answers",
+   "fieldtype": "Table",
+   "label": "Answers",
+   "options": "Anumati Profile Answer"
+  },
+  {
+   "fieldname": "nominee_tab",
+   "fieldtype": "Tab Break",
+   "label": "Nominees"
+  },
+  {
+   "fieldname": "nominee_section",
+   "fieldtype": "Section Break",
+   "label": "Nominees"
+  },
+  {
+   "fieldname": "nominees",
+   "fieldtype": "Table",
+   "label": "Nominees",
+   "options": "Anumati Nominee"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [
+  {
+   "group": "Consent",
+   "link_doctype": "Anumati Consent Event",
+   "link_fieldname": "principal"
+  },
+  {
+   "group": "Consent",
+   "link_doctype": "Anumati Consent State",
+   "link_fieldname": "principal"
+  },
+  {
+   "group": "Consent",
+   "link_doctype": "Anumati Guardian Link",
+   "link_fieldname": "principal"
+  },
+  {
+   "group": "Rights",
+   "link_doctype": "Anumati Rights Request",
+   "link_fieldname": "matched_principal"
+  },
+  {
+   "group": "Rights",
+   "link_doctype": "Anumati Purge Request",
+   "link_fieldname": "principal"
+  }
+ ],
+ "modified": "2026-10-26 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Anumati Data Principal",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Programme Manager",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "search_fields": "principal_ref",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "principal_ref",
+ "track_changes": 1,
+ "track_views": 1
+}

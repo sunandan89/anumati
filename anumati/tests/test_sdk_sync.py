@@ -50,7 +50,7 @@ class TestSdkSync(FrappeTestCase):
 
 	def push(self, principal=None, **kw):
 		"""What the SDK's PushEngine sends: the local row's columns, never `name`."""
-		doc = {"doctype": "Consent Event", "mobile_uuid": kw.pop("mobile_uuid", str(uuid.uuid4())),
+		doc = {"doctype": "Anumati Consent Event", "mobile_uuid": kw.pop("mobile_uuid", str(uuid.uuid4())),
 		       "principal": (principal or self.p).name, "programme": PROG, "action": "grant",
 		       "purposes_granted": '["screen", "follow"]', "purposes_denied": "[]", "channel": "app",
 		       "capture_mode": "self_worker_device", "verification_method": "deferred",
@@ -59,7 +59,7 @@ class TestSdkSync(FrappeTestCase):
 
 	def upload(self, content, attach_to=None):
 		f = frappe.get_doc({"doctype": "File", "file_name": f"{uuid.uuid4().hex[:8]}-clip.m4a", "content": content,
-		                    "is_private": 1, **({"attached_to_doctype": "Data Principal", "attached_to_name": attach_to}
+		                    "is_private": 1, **({"attached_to_doctype": "Anumati Data Principal", "attached_to_name": attach_to}
 		                                        if attach_to else {})})
 		f.insert(ignore_permissions=True)
 		return {"file": f.file_url, "kind": "audio", "sha256": hashlib.sha256(content).hexdigest()}
@@ -69,7 +69,7 @@ class TestSdkSync(FrappeTestCase):
 		out = self.push(mobile_uuid=mid, verification_status="confirmed", server_time="2020-01-01 00:00:00",
 		                chain_seq=1, hash="f" * 64, signature="forged", captured_by=OTHER)
 		self.assertEqual(out["name"], mid)
-		doc = frappe.get_doc("Consent Event", mid)
+		doc = frappe.get_doc("Anumati Consent Event", mid)
 		self.assertEqual(doc.event_uuid, mid)
 		self.assertEqual(doc.verification_status, "recorded", "the phone can't confirm its own consent")
 		self.assertEqual(doc.captured_by, WORKER)
@@ -84,7 +84,7 @@ class TestSdkSync(FrappeTestCase):
 		mid = str(uuid.uuid4())
 		self.push(mobile_uuid=mid)
 		self.assertRaises((frappe.DuplicateEntryError, frappe.UniqueValidationError), self.push, mobile_uuid=mid)
-		self.assertEqual(frappe.db.count("Consent Event", {"event_uuid": mid}), 1)
+		self.assertEqual(frappe.db.count("Anumati Consent Event", {"event_uuid": mid}), 1)
 
 	def test_the_consent_rules_apply_to_an_sdk_insert(self):
 		frappe.set_user("Administrator")
@@ -99,7 +99,7 @@ class TestSdkSync(FrappeTestCase):
 		content = f"fictional haan {uuid.uuid4().hex}".encode() * 10
 		entry = self.upload(content)
 		out = self.push(verification_method="evidence_only", evidence=[entry])
-		self.assertEqual(frappe.db.get_value("Consent Event", out["name"], "verification_status"), "evidence_only")
+		self.assertEqual(frappe.db.get_value("Anumati Consent Event", out["name"], "verification_status"), "evidence_only")
 		frappe.set_user("Administrator")
 		name = frappe.db.get_value("File", {"file_url": entry["file"], "attached_to_name": self.p.name})
 		self.assertTrue(name, "the upload now belongs to the person")
@@ -119,5 +119,5 @@ class TestSdkSync(FrappeTestCase):
 		self.push(action="withdraw", purposes_granted="[]", purposes_denied='["follow"]',
 		          device_time="2026-10-11 10:00:00")
 		frappe.set_user("Administrator")
-		state = frappe.db.get_value("Consent State", f"{self.p.name}-{PROG}-follow", "status")
+		state = frappe.db.get_value("Anumati Consent State", f"{self.p.name}-{PROG}-follow", "status")
 		self.assertEqual(state, "withdrawn")

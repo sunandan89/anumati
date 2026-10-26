@@ -1,18 +1,5 @@
 {
- "Anumati Settings": {
-  "Anumati Admin": [
-   "read",
-   "write"
-  ],
-  "Anumati DPO": [
-   "read"
-  ],
-  "System Manager": [
-   "read",
-   "write"
-  ]
- },
- "Audit Entry": {
+ "Anumati Audit Entry": {
   "Anumati Admin": [
    "print",
    "read",
@@ -33,7 +20,7 @@
    "report"
   ]
  },
- "Audit Share": {
+ "Anumati Audit Share": {
   "Anumati Admin": [
    "print",
    "read",
@@ -62,7 +49,7 @@
    "write"
   ]
  },
- "Breach Incident": {
+ "Anumati Breach Incident": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -97,7 +84,7 @@
    "write"
   ]
  },
- "Campaign": {
+ "Anumati Campaign": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -140,7 +127,7 @@
    "write"
   ]
  },
- "Channel Provider": {
+ "Anumati Channel Provider": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -164,7 +151,7 @@
    "write"
   ]
  },
- "Consent Event": {
+ "Anumati Consent Event": {
   "Anumati Admin": [
    "export",
    "print",
@@ -196,7 +183,7 @@
    "read"
   ]
  },
- "Consent State": {
+ "Anumati Consent State": {
   "Anumati Admin": [
    "print",
    "read",
@@ -235,7 +222,7 @@
    "write"
   ]
  },
- "Data Category": {
+ "Anumati Data Category": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -277,7 +264,7 @@
    "write"
   ]
  },
- "Data Principal": {
+ "Anumati Data Principal": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -327,7 +314,7 @@
    "write"
   ]
  },
- "Field Device": {
+ "Anumati Field Device": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -366,7 +353,7 @@
    "write"
   ]
  },
- "Funder Link": {
+ "Anumati Funder Link": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -400,7 +387,7 @@
    "write"
   ]
  },
- "Grievance": {
+ "Anumati Grievance": {
   "Anumati Admin": [
    "print",
    "read",
@@ -436,7 +423,7 @@
    "write"
   ]
  },
- "Guardian Link": {
+ "Anumati Guardian Link": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -486,7 +473,7 @@
    "write"
   ]
  },
- "Message Template": {
+ "Anumati Message Template": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -529,7 +516,7 @@
    "write"
   ]
  },
- "Notice Template": {
+ "Anumati Notice Template": {
   "Anumati Admin": [
    "print",
    "read",
@@ -580,7 +567,7 @@
    "write"
   ]
  },
- "Notice Translation": {
+ "Anumati Notice Translation": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -626,7 +613,7 @@
    "write"
   ]
  },
- "Processor": {
+ "Anumati Processor": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -670,7 +657,7 @@
    "write"
   ]
  },
- "Profile Question": {
+ "Anumati Profile Question": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -719,7 +706,7 @@
    "write"
   ]
  },
- "Programme": {
+ "Anumati Programme": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -766,7 +753,7 @@
    "write"
   ]
  },
- "Propagation Ack": {
+ "Anumati Propagation Ack": {
   "Anumati Admin": [
    "print",
    "read",
@@ -801,7 +788,7 @@
    "write"
   ]
  },
- "Purge Request": {
+ "Anumati Purge Request": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -839,7 +826,7 @@
    "write"
   ]
  },
- "Purpose": {
+ "Anumati Purpose": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -886,7 +873,7 @@
    "write"
   ]
  },
- "ROPA Entry": {
+ "Anumati ROPA Entry": {
   "Anumati Admin": [
    "print",
    "read",
@@ -923,7 +910,7 @@
    "write"
   ]
  },
- "Retention Policy": {
+ "Anumati Retention Policy": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -959,7 +946,7 @@
    "write"
   ]
  },
- "Rights Request": {
+ "Anumati Rights Request": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -1010,7 +997,20 @@
    "write"
   ]
  },
- "Source System": {
+ "Anumati Settings": {
+  "Anumati Admin": [
+   "read",
+   "write"
+  ],
+  "Anumati DPO": [
+   "read"
+  ],
+  "System Manager": [
+   "read",
+   "write"
+  ]
+ },
+ "Anumati Source System": {
   "Anumati Admin": [
    "create",
    "delete",
@@ -1046,7 +1046,7 @@
    "write"
   ]
  },
- "System Usage Log": {
+ "Anumati System Usage Log": {
   "Anumati Admin": [
    "print",
    "read",
@@ -1066,7 +1066,7 @@
    "report"
   ]
  },
- "Verification Attempt": {
+ "Anumati Verification Attempt": {
   "Anumati Admin": [
    "print",
    "read",

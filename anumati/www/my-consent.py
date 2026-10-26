@@ -136,9 +136,9 @@ STRINGS = {
 	"type_erasure": "Delete my data",
 	"type_nomination": "Name someone to act for me",
 	"type_withdrawal": "Stop using my data",
-	"type_grievance": "Grievance",
+	"type_grievance": "Anumati Grievance",
 	# grievances
-	"grievance": "Grievance",
+	"grievance": "Anumati Grievance",
 	"grievance_help": "Something went wrong with your data or a request",
 	"make_grievance": "Make a grievance",
 	"what_about": "What is it about?",

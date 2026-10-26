@@ -17,13 +17,13 @@ def principals_for_phone_hash(phone_hash: str) -> list[dict]:
 	if not phone_hash:
 		return []
 	owners = frappe.get_all(
-		"Data Principal", {"phone_hash": phone_hash, "merged_into": ("is", "not set")}, ["name", "principal_ref"]
+		"Anumati Data Principal", {"phone_hash": phone_hash, "merged_into": ("is", "not set")}, ["name", "principal_ref"]
 	)
 	# A parent's or guardian's number also finds the people they consented for (a child has no phone of
 	# their own in the field app), so "STOP" or a missed call from the guardian reaches the right record.
-	wards = frappe.get_all("Guardian Link", {"guardian": ("in", [o.name for o in owners] or ["-"])}, pluck="principal")
+	wards = frappe.get_all("Anumati Guardian Link", {"guardian": ("in", [o.name for o in owners] or ["-"])}, pluck="principal")
 	seen = {o.name for o in owners}
-	for ward in frappe.get_all("Data Principal", {"name": ("in", wards or ["-"]), "merged_into": ("is", "not set")},
+	for ward in frappe.get_all("Anumati Data Principal", {"name": ("in", wards or ["-"]), "merged_into": ("is", "not set")},
 	                           ["name", "principal_ref"]):
 		if ward.name not in seen:
 			owners.append(ward)
@@ -41,7 +41,7 @@ def event_for_short_code(code: str, phone_hash: str | None = None) -> tuple[str 
 		code = "AN-" + code
 	if not code:
 		return (None, None)
-	rows = frappe.get_all("Consent Event", {"short_code": code}, ["principal", "programme"],
+	rows = frappe.get_all("Anumati Consent Event", {"short_code": code}, ["principal", "programme"],
 	                      order_by="chain_seq desc")
 	people = {r.principal for r in rows}
 	if len(people) > 1 and phone_hash:

@@ -99,14 +99,14 @@ def _person(data: dict, i) -> str:
 
 def _short_name(principal: str) -> str:
 	"""First name and initial ("Sunita D."), enough to tell people on one phone apart."""
-	full = (frappe.get_doc("Data Principal", principal).get_password("full_name", raise_exception=False) or "").split()
+	full = (frappe.get_doc("Anumati Data Principal", principal).get_password("full_name", raise_exception=False) or "").split()
 	if not full:
-		return frappe.db.get_value("Data Principal", principal, "principal_ref")
+		return frappe.db.get_value("Anumati Data Principal", principal, "principal_ref")
 	return full[0] + (f" {full[-1][0]}." if len(full) > 1 else "")
 
 
 def _birth_year(principal: str) -> int | None:
-	row = frappe.db.get_value("Data Principal", principal, ["birth_year", "date_of_birth"], as_dict=True)
+	row = frappe.db.get_value("Anumati Data Principal", principal, ["birth_year", "date_of_birth"], as_dict=True)
 	return cint(row.birth_year) or (getdate(row.date_of_birth).year if row.date_of_birth else None)
 
 
@@ -117,10 +117,10 @@ def _decides_for_self(row) -> bool:
 def _scope(me: str) -> dict:
 	"""The person and everyone they are guardian for (their latest Guardian Link to each)."""
 	people, relation, links = [me], {me: "self"}, {}
-	for link in frappe.get_all("Guardian Link", {"guardian": me}, ["name", "principal"], order_by="creation desc"):
+	for link in frappe.get_all("Anumati Guardian Link", {"guardian": me}, ["name", "principal"], order_by="creation desc"):
 		if link.principal in links or link.principal == me:
 			continue
-		ward = frappe.db.get_value("Data Principal", link.principal, ["is_minor", "renewal_due", "pwd_guarded", "merged_into"],
+		ward = frappe.db.get_value("Anumati Data Principal", link.principal, ["is_minor", "renewal_due", "pwd_guarded", "merged_into"],
 		                           as_dict=True)
 		if not ward or ward.merged_into or _decides_for_self(ward):
 			continue  # a child who turned 18 decides for themselves now
@@ -204,7 +204,7 @@ def verify(phone, code):
 		frappe.cache.set_value(_otp_key(phone_hash), stored, expires_in_sec=CODE_SECONDS)
 		return {"signed_in": False, "tries_left": MAX_TRIES - stored["tries"]}
 	frappe.cache.delete_value(_otp_key(phone_hash))
-	rows = frappe.get_all("Data Principal", {"phone_hash": phone_hash, "merged_into": ("is", "not set")},
+	rows = frappe.get_all("Anumati Data Principal", {"phone_hash": phone_hash, "merged_into": ("is", "not set")},
 	                      ["name", "is_minor", "renewal_due", "pwd_guarded"], order_by="creation asc")
 	adults = [r.name for r in rows if _decides_for_self(r)]
 	data = {"mode": "otp", "phone_hash": phone_hash}
@@ -288,15 +288,15 @@ def home():
 
 def _titles(programme: str) -> dict:
 	"""Use names in the page's language, from the live notice's reviewed translation; else the base text."""
-	notice = frappe.db.get_value("Notice Template", {"programme": programme, "docstatus": 1}, "name",
+	notice = frappe.db.get_value("Anumati Notice Template", {"programme": programme, "docstatus": 1}, "name",
 	                             order_by="creation desc")
 	if not notice or not frappe.local.lang:
 		return {}
-	translation = frappe.db.get_value("Notice Translation", {"notice": notice, "language": frappe.local.lang,
+	translation = frappe.db.get_value("Anumati Notice Translation", {"notice": notice, "language": frappe.local.lang,
 	                                                         "reviewer": ("is", "set")})
 	if not translation:
 		return {}
-	rows = frappe.get_all("Notice Purpose Translation", {"parent": translation, "parenttype": "Notice Translation"},
+	rows = frappe.get_all("Anumati Notice Purpose Translation", {"parent": translation, "parenttype": "Anumati Notice Translation"},
 	                      ["purpose", "purpose_title", "description"])
 	return {r.purpose: r for r in rows if r.purpose_title}
 
@@ -304,7 +304,7 @@ def _titles(programme: str) -> dict:
 def _can_turn_on(data: dict, person: str) -> tuple[bool, str | None]:
 	if data["mode"] != "otp":
 		return False, _("To turn a use on, sign in with your phone number or ask a field worker.")
-	row = frappe.db.get_value("Data Principal", person, ["needs_assistance", "renewal_due"], as_dict=True)
+	row = frappe.db.get_value("Anumati Data Principal", person, ["needs_assistance", "renewal_due"], as_dict=True)
 	if data["relation"].get(person) == "self" and (row.needs_assistance or row.renewal_due):
 		return False, _("To turn a use on, please ask a field worker.")
 	return True, None
@@ -313,12 +313,12 @@ def _can_turn_on(data: dict, person: str) -> tuple[bool, str | None]:
 def _programmes(data: dict, person: str) -> list[dict]:
 	states = enforcement.states_for(person)
 	can_on, why = _can_turn_on(data, person)
-	minor = frappe.db.get_value("Data Principal", person, "is_minor")
+	minor = frappe.db.get_value("Anumati Data Principal", person, "is_minor")
 	out = []
-	for programme in sorted(set(frappe.get_all("Consent State", {"principal": person}, pluck="programme"))):
+	for programme in sorted(set(frappe.get_all("Anumati Consent State", {"principal": person}, pluck="programme"))):
 		titles = _titles(programme)
 		uses = []
-		for p in frappe.get_all("Purpose", {"programme": programme},
+		for p in frappe.get_all("Anumati Purpose", {"programme": programme},
 		                        ["name", "code", "purpose_title", "description", "essential", "child_allowed"],
 		                        order_by="essential desc, creation asc"):
 			status = (states.get(p.name) or {}).get("status") or "not_asked"
@@ -330,11 +330,11 @@ def _programmes(data: dict, person: str) -> list[dict]:
 			             "status": status})
 		left = any(u["essential"] and u["status"] != "granted" for u in uses)
 		out.append({
-			"programme": programme, "name": frappe.db.get_value("Programme", programme, "programme_name"),
+			"programme": programme, "name": frappe.db.get_value("Anumati Programme", programme, "programme_name"),
 			"uses": uses, "left": left, "can_turn_on": can_on and not left, "why_not": why,
-			"since": frappe.db.get_value("Consent Event", {"principal": person, "programme": programme, "action": "grant"},
+			"since": frappe.db.get_value("Anumati Consent Event", {"principal": person, "programme": programme, "action": "grant"},
 			                             "server_time", order_by="creation asc"),
-			"code": frappe.db.get_value("Consent Event", {"principal": person, "programme": programme}, "short_code",
+			"code": frappe.db.get_value("Anumati Consent Event", {"principal": person, "programme": programme}, "short_code",
 			                            order_by="creation desc"),
 		})
 	return out
@@ -351,16 +351,16 @@ def _history(person: str) -> list[dict]:
 	import json
 
 	out = []
-	for e in frappe.get_all("Consent Event", {"principal": person},
+	for e in frappe.get_all("Anumati Consent Event", {"principal": person},
 	                        ["name", "short_code", "action", "programme", "channel", "server_time",
 	                         "purposes_granted", "purposes_denied"], order_by="creation desc", limit=100):
 		granted, denied = json.loads(e.purposes_granted or "[]"), json.loads(e.purposes_denied or "[]")
-		titles = dict(frappe.get_all("Purpose", {"programme": e.programme, "code": ("in", granted + denied or ["-"])},
+		titles = dict(frappe.get_all("Anumati Purpose", {"programme": e.programme, "code": ("in", granted + denied or ["-"])},
 		                             ["code", "purpose_title"], as_list=True))
 		named = lambda codes, t=titles: [t.get(c, c) for c in codes]  # noqa: E731
 		withdrawn = e.action == "withdraw"
 		out.append({"id": e.name, "code": e.short_code, "action": e.action, "at": str(e.server_time),
-		            "programme": frappe.db.get_value("Programme", e.programme, "programme_name"),
+		            "programme": frappe.db.get_value("Anumati Programme", e.programme, "programme_name"),
 		            "agreed": [] if withdrawn else named(granted),
 		            "said_no": [] if withdrawn else named(denied),
 		            "stopped": named(denied) if withdrawn else [],
@@ -371,15 +371,15 @@ def _history(person: str) -> list[dict]:
 def _requests(person: str) -> list[dict]:
 	"""Rights / support requests and grievances, newest first, each with its conversation."""
 	out = []
-	for r in frappe.get_all("Rights Request", {"matched_principal": person},
+	for r in frappe.get_all("Anumati Rights Request", {"matched_principal": person},
 	                        ["name", "request_type", "status", "received_on", "sla_due", "linked_event", "creation"],
 	                        order_by="creation desc", limit=50):
 		if r.request_type == "withdrawal" and r.linked_event:
 			continue  # done at once (field app or My choices); it is in the history
 		out.append({"id": r.name, "kind": "request", "type": r.request_type, "status": r.status,
 		            "received_on": str(r.received_on), "reply_by": str(r.sla_due or ""), "_at": r.creation,
-		            "messages": conversation.thread("Rights Request", r.name)})
-	for g in frappe.get_all("Grievance", {"matched_principal": person},
+		            "messages": conversation.thread("Anumati Rights Request", r.name)})
+	for g in frappe.get_all("Anumati Grievance", {"matched_principal": person},
 	                        ["name", "category", "status", "received_on", "sla_due", "outcome", "person_says",
 	                         "answered_on", "dpo_since", "about_request", "creation"],
 	                        order_by="creation desc", limit=50):
@@ -391,7 +391,7 @@ def _requests(person: str) -> list[dict]:
 		            "person_says": g.person_says, "can_respond": g.status == inbox.ANSWERED,
 		            "can_say_not_happy": bool(grievance.can_say_not_happy(doc)),
 		            "board_route": bool(g.answered_on),
-		            "messages": conversation.thread("Grievance", g.name)})
+		            "messages": conversation.thread("Anumati Grievance", g.name)})
 	out.sort(key=lambda r: r.pop("_at"), reverse=True)
 	return out
 
@@ -411,7 +411,7 @@ def _overview(data, i) -> dict:
 def _closed_request(person, raised_by, artefact, note):
 	"""Every withdrawal is listed in the inbox, done; as for withdrawals in the field app."""
 	frappe.get_doc({
-		"doctype": "Rights Request", "request_type": "withdrawal", "channel": "web", "status": inbox.CLOSED,
+		"doctype": "Anumati Rights Request", "request_type": "withdrawal", "channel": "web", "status": inbox.CLOSED,
 		"matched_principal": person, "raised_by_role": raised_by, "linked_event": artefact["consent_id"],
 		"resolution": note + " " + _("Consent event {0} ({1}).").format(artefact["consent_id"], artefact["short_code"]),
 	}).insert(ignore_permissions=True)
@@ -422,7 +422,7 @@ def _raised_by(data, person):
 
 
 def _programme_of(person: str, programme: str):
-	if not frappe.db.exists("Consent State", {"principal": person, "programme": programme}):
+	if not frappe.db.exists("Anumati Consent State", {"principal": person, "programme": programme}):
 		raise frappe.PermissionError
 
 
@@ -438,7 +438,7 @@ def save_choices(i, programme, turn_on=None, turn_off=None):
 	turn_off = [c for c in frappe.parse_json(turn_off or "[]") if isinstance(c, str)]
 	if not turn_on and not turn_off:
 		frappe.throw(_("Nothing changed."))
-	purposes = {p.code: p for p in frappe.get_all("Purpose", {"programme": programme}, ["name", "code", "essential"])}
+	purposes = {p.code: p for p in frappe.get_all("Anumati Purpose", {"programme": programme}, ["name", "code", "essential"])}
 	states = enforcement.states_for(person)
 	for code in turn_on + turn_off:
 		if code not in purposes:
@@ -472,10 +472,10 @@ def _grant(data, person, programme, codes) -> str:
 		consent._check_who(person, "grant", event)
 	except consent.ConsentRequestError:
 		frappe.throw(_("This can't be turned on here. Please ask a field worker."))
-	notice = frappe.db.get_value("Notice Template", {"programme": programme, "docstatus": 1},
+	notice = frappe.db.get_value("Anumati Notice Template", {"programme": programme, "docstatus": 1},
 	                             ["name", "version"], as_dict=True, order_by="creation desc")
 	doc = frappe.get_doc({
-		"doctype": "Consent Event", "event_uuid": str(uuid.uuid4()), "action": "grant", "principal": person,
+		"doctype": "Anumati Consent Event", "event_uuid": str(uuid.uuid4()), "action": "grant", "principal": person,
 		"programme": programme, "purposes_granted": codes, "purposes_denied": [],
 		"capture_mode": GUARDIAN_MODES.get(relation, "self_digital"), "channel": "web",
 		"guardian_link": link, "verification_method": "server_otp", "verification_status": "confirmed",
@@ -487,7 +487,7 @@ def _grant(data, person, programme, codes) -> str:
 	doc.flags.anumati_trusted = True  # checked above; signed in with an SMS code, so confirmed
 	doc.insert()
 	# The SMS code they signed in with is the confirmation: keep it with the consent, as for a field consent.
-	frappe.get_doc({"doctype": "Verification Attempt", "consent_event": doc.name, "verification_method": "server_otp",
+	frappe.get_doc({"doctype": "Anumati Verification Attempt", "consent_event": doc.name, "verification_method": "server_otp",
 	                "channel": "sms", "sent_at": now_datetime(), "delivered_at": now_datetime(), "result": "confirmed",
 	                "response": _("Signed in to the self-service page with an SMS code")}).insert(ignore_permissions=True)
 	return consent._artefact(doc)["short_code"]
@@ -514,9 +514,9 @@ def receipt(i, event):
 	"""The receipt for one of the person's consent events, as a PDF (the Consent Receipt print format)."""
 	data = _session()
 	person = _person(data, i)
-	if frappe.db.get_value("Consent Event", event, "principal") != person:
+	if frappe.db.get_value("Anumati Consent Event", event, "principal") != person:
 		raise frappe.PermissionError
-	frappe.local.response.filename = f"{frappe.db.get_value('Consent Event', event, 'short_code')}.pdf"
+	frappe.local.response.filename = f"{frappe.db.get_value('Anumati Consent Event', event, 'short_code')}.pdf"
 	frappe.local.response.filecontent = receipt_file(event, as_pdf=True)
 	frappe.local.response.type = "pdf"
 
@@ -524,7 +524,7 @@ def receipt(i, event):
 def receipt_file(event: str, as_pdf=True):
 	frappe.flags.ignore_print_permissions = True
 	try:
-		return frappe.get_print("Consent Event", event, "Consent Receipt", as_pdf=as_pdf, no_letterhead=1)
+		return frappe.get_print("Anumati Consent Event", event, "Consent Receipt", as_pdf=as_pdf, no_letterhead=1)
 	finally:
 		frappe.flags.ignore_print_permissions = False
 
@@ -542,7 +542,7 @@ def ask(i, request_type, details=None):
 	if len(details) > conversation.MAX_LENGTH:
 		frappe.throw(_("Please keep it under {0} characters.").format(conversation.MAX_LENGTH))
 	doc = frappe.get_doc({
-		"doctype": "Rights Request", "request_type": request_type, "channel": "web", "matched_principal": person,
+		"doctype": "Anumati Rights Request", "request_type": request_type, "channel": "web", "matched_principal": person,
 		"raised_by_role": _raised_by(data, person), "sender_hash": data.get("phone_hash"),
 		"received_on": now_datetime(),
 	})
@@ -551,13 +551,13 @@ def ask(i, request_type, details=None):
 		conversation.person_message(doc, details, data.get("phone_hash"))
 	channels.send_sms(person, "rights_update", {"code": doc.name, "date": frappe.utils.formatdate(doc.sla_due),
 	                                            "link": frappe.utils.get_url(conversation.PAGE)},
-	                  link=("Rights Request", doc.name))
+	                  link=("Anumati Rights Request", doc.name))
 	return {"request": doc.name, "reply_by": str(doc.sla_due), **_overview(data, i)}
 
 
 def _own(person: str, name: str):
 	"""One of the person's own requests or grievances, by its number."""
-	doctype = "Grievance" if str(name).startswith("GR-") else "Rights Request"
+	doctype = "Anumati Grievance" if str(name).startswith("GR-") else "Anumati Rights Request"
 	if not name or frappe.db.get_value(doctype, name, "matched_principal") != person:
 		raise frappe.PermissionError
 	return frappe.get_doc(doctype, name)
@@ -598,10 +598,10 @@ def _read_photo(photo: str) -> tuple[bytes, str]:
 def _attach_photo(doc, content: bytes, kind: str):
 	"""Kept private and encrypted on disk like consent evidence (evidence.py)."""
 	file = frappe.get_doc({"doctype": "File", "file_name": f"{doc.name}-evidence.{kind}", "content": content,
-	                       "is_private": 1, "attached_to_doctype": "Grievance", "attached_to_name": doc.name,
+	                       "is_private": 1, "attached_to_doctype": "Anumati Grievance", "attached_to_name": doc.name,
 	                       "attached_to_field": "evidence"})
 	file.insert(ignore_permissions=True)
-	frappe.db.set_value("Grievance", doc.name, "evidence", file.file_url)
+	frappe.db.set_value("Anumati Grievance", doc.name, "evidence", file.file_url)
 
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
@@ -610,7 +610,7 @@ def complain(i, category, details=None, about_request=None, photo=None):
 	"""A grievance: something went wrong with the person's data or a request."""
 	data = _session()
 	person = _person(data, i)
-	meta = frappe.get_meta("Grievance").get_field("category").options.split("\n")
+	meta = frappe.get_meta("Anumati Grievance").get_field("category").options.split("\n")
 	if category not in meta:
 		frappe.throw(_("Choose what it is about."))
 	details = (details or "").strip()
@@ -630,7 +630,7 @@ def complain(i, category, details=None, about_request=None, photo=None):
 		_attach_photo(doc, *upload)
 	channels.send_sms(person, "grievance_received", {"code": doc.name, "date": frappe.utils.formatdate(doc.sla_due),
 	                                                 "link": frappe.utils.get_url(conversation.PAGE)},
-	                  link=("Grievance", doc.name))
+	                  link=("Anumati Grievance", doc.name))
 	return {"grievance": doc.name, "reply_by": str(doc.sla_due), **_overview(data, i)}
 
 
@@ -641,7 +641,7 @@ def respond(i, grievance_name, solved):
 	data = _session()
 	person = _person(data, i)
 	doc = _own(person, grievance_name)
-	if doc.doctype != "Grievance":
+	if doc.doctype != "Anumati Grievance":
 		raise frappe.PermissionError
 	grievance.respond(doc, bool(cint(solved)))
 	return _overview(data, i)

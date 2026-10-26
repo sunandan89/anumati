@@ -35,14 +35,14 @@ def _parse(value):
 
 
 def _principal(principal_ref: str) -> str:
-	name = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
+	name = frappe.db.get_value("Anumati Data Principal", {"principal_ref": principal_ref})
 	if not name:
 		frappe.throw(_("Unknown principal_ref {0}; call principal.upsert first").format(principal_ref), ConsentRequestError)
 	return name
 
 
 def _programme(programme: str):
-	if not programme or not frappe.db.exists("Programme", programme):
+	if not programme or not frappe.db.exists("Anumati Programme", programme):
 		frappe.throw(_("Unknown programme {0}").format(programme), ConsentRequestError)
 	return programme
 
@@ -75,8 +75,8 @@ def short_code(event_uuid: str) -> str:
 
 
 def _existing(event_uuid: str):
-	if frappe.db.exists("Consent Event", event_uuid):
-		return _artefact(frappe.get_doc("Consent Event", event_uuid))
+	if frappe.db.exists("Anumati Consent Event", event_uuid):
+		return _artefact(frappe.get_doc("Anumati Consent Event", event_uuid))
 	return None
 
 
@@ -84,7 +84,7 @@ def _insert(values: dict, ignore_permissions=False) -> dict:
 	"""Insert and seal one event. The same event_uuid synced twice at once returns the one that won. Any
 	other clash (two writers on the same chain position, which the chain lock should make impossible)
 	raises, so the phone keeps the record and retries; it never gets an empty "synced" (review C4)."""
-	doc = frappe.get_doc({"doctype": "Consent Event", **values})
+	doc = frappe.get_doc({"doctype": "Anumati Consent Event", **values})
 	doc.flags.ignore_permissions = ignore_permissions
 	frappe.db.savepoint("anumati_record")
 	try:
@@ -101,7 +101,7 @@ def _insert(values: dict, ignore_permissions=False) -> dict:
 def record(event):
 	"""Record a grant, refusal or renewal. Returns the signed artefact; replays return the original."""
 	event = _parse(event)
-	frappe.has_permission("Consent Event", "create", throw=True)
+	frappe.has_permission("Anumati Consent Event", "create", throw=True)
 	schema.validate("ConsentRecord", {k: v for k, v in event.items() if v is not None})
 	if not event.event_uuid:
 		frappe.throw(_("event_uuid is required"), ConsentRequestError)
@@ -126,7 +126,7 @@ def record(event):
 @frappe.whitelist(methods=["POST"])
 def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **extra):
 	"""Withdraw consent. Default scope = every optional purpose currently granted (spec section 6)."""
-	frappe.has_permission("Consent Event", "create", throw=True)
+	frappe.has_permission("Anumati Consent Event", "create", throw=True)
 	payload = {"principal_ref": principal_ref, "programme": programme, "channel": channel, "event_uuid": event_uuid,
 	           **({"purposes": json.loads(purposes) if isinstance(purposes, str) else purposes} if purposes else {}),
 	           **{k: v for k, v in extra.items() if k not in ("cmd", "data") and v is not None}}
@@ -148,10 +148,10 @@ def _field_request(principal, channel, artefact, paper_trail=None, leave=False):
 	"""Keep a closed withdrawal request in the inbox, so every withdrawal, however it arrived, is listed
 	there with who logged it and the slip number (spec section 6). Once per event, so a re-sent sync
 	does not add a second one."""
-	if frappe.db.exists("Rights Request", {"linked_event": artefact["consent_id"]}):
+	if frappe.db.exists("Anumati Rights Request", {"linked_event": artefact["consent_id"]}):
 		return
 	doc = frappe.get_doc({
-		"doctype": "Rights Request", "request_type": "withdrawal", "channel": channel, "status": "request_closed",
+		"doctype": "Anumati Rights Request", "request_type": "withdrawal", "channel": channel, "status": "request_closed",
 		"matched_principal": principal, "linked_event": artefact["consent_id"],
 		"paper_trail_number": paper_trail or None,
 		"resolution": (_("Left the programme. ") if leave else "") + _(
@@ -177,13 +177,13 @@ def withdraw_for(principal, programme, channel, event_uuid, purposes=None, leave
 	if not purposes and leave:
 		# Every purpose of the programme, not only those granted now: each gets a withdrawn state at this
 		# time, so an older "yes" synced later from another phone cannot turn one back on.
-		purposes = frappe.get_all("Purpose", {"programme": programme}, pluck="code", order_by="code")
+		purposes = frappe.get_all("Anumati Purpose", {"programme": programme}, pluck="code", order_by="code")
 	elif not purposes:
 		states = enforcement.states_for(principal)
 		prefix = f"{programme}-"
 		purposes = [
 			p[len(prefix):] for p, s in states.items()
-			if p.startswith(prefix) and s["status"] == "granted" and not frappe.db.get_value("Purpose", p, "essential")
+			if p.startswith(prefix) and s["status"] == "granted" and not frappe.db.get_value("Anumati Purpose", p, "essential")
 		]
 	_check_purposes(programme, principal, [], list(purposes))
 	values = {k: extra.get(k) for k in CAPTURE_FIELDS if extra.get(k) not in (None, "")}
@@ -203,45 +203,45 @@ def _end_relationship_if_done(principal):
 	enforcement.invalidate(principal)
 	if any(s["status"] == "granted" for s in enforcement.states_for(principal).values()):
 		return
-	if not frappe.db.get_value("Data Principal", principal, "relationship_ended_on"):
-		frappe.db.set_value("Data Principal", principal, "relationship_ended_on", frappe.utils.today())
-		frappe.get_doc("Data Principal", principal).add_comment(
+	if not frappe.db.get_value("Anumati Data Principal", principal, "relationship_ended_on"):
+		frappe.db.set_value("Anumati Data Principal", principal, "relationship_ended_on", frappe.utils.today())
+		frappe.get_doc("Anumati Data Principal", principal).add_comment(
 			"Info", _("Left the programme: relationship ended, retention clocks started"))
 
 
 def _source_system(user: str):
 	return frappe.cache.get_value(
-		f"anumati:source_system:{user}", generator=lambda: frappe.db.get_value("Source System", {"api_user": user})
+		f"anumati:source_system:{user}", generator=lambda: frappe.db.get_value("Anumati Source System", {"api_user": user})
 	)
 
 
 @frappe.whitelist(methods=["GET", "POST"])
 def check(principal_ref, purpose, programme=None):
 	"""Enforcement gate: may this purpose be processed for this principal right now? Served from cache."""
-	frappe.has_permission("Consent State", "read", throw=True)
+	frappe.has_permission("Anumati Consent State", "read", throw=True)
 	purpose_name = enforcement.purpose_name(programme, purpose) if programme else purpose
 	principal = frappe.cache.get_value(
 		f"anumati:principal:{principal_ref}",
-		generator=lambda: frappe.db.get_value("Data Principal", {"principal_ref": principal_ref}),
+		generator=lambda: frappe.db.get_value("Anumati Data Principal", {"principal_ref": principal_ref}),
 	)
 	state = enforcement.states_for(principal).get(purpose_name) if principal else None
 	status = state["status"] if state else ("unknown_principal" if not principal else "not_asked")
 	allow = status == "granted"
-	if allow and frappe.get_cached_value("Data Principal", principal, "renewal_due"):
+	if allow and frappe.get_cached_value("Anumati Data Principal", principal, "renewal_due"):
 		# Turned 18 since a guardian consented: ask the person themselves. Checked first, because a
 		# confirmation of the guardian's consent would not help.
 		allow, status = False, "renewal_due"
 	if allow and state.get("verification") not in ("confirmed", "evidence_only"):
-		programme_name = frappe.get_cached_value("Purpose", purpose_name, "programme")
-		minor = frappe.get_cached_value("Data Principal", principal, "is_minor")
-		before_confirm = frappe.get_cached_value("Programme", programme_name, "allow_processing_before_confirm")
+		programme_name = frappe.get_cached_value("Anumati Purpose", purpose_name, "programme")
+		minor = frappe.get_cached_value("Anumati Data Principal", principal, "is_minor")
+		before_confirm = frappe.get_cached_value("Anumati Programme", programme_name, "allow_processing_before_confirm")
 		if minor or not before_confirm:
 			allow, status = False, "awaiting_confirmation"
 	checked_at = now_datetime()
 	if principal:
 		from frappe.deferred_insert import deferred_insert
 
-		deferred_insert("System Usage Log", [{
+		deferred_insert("Anumati System Usage Log", [{
 			"source_system": _source_system(frappe.session.user), "principal": principal, "purpose": purpose_name,
 			"checked_at": str(checked_at), "result": "allow" if allow else "deny",
 		}])
@@ -252,7 +252,7 @@ def check(principal_ref, purpose, programme=None):
 @frappe.whitelist(methods=["GET"])
 def state(principal_ref, programme=None):
 	"""Every purpose's current state for one principal (preference centre, host UIs)."""
-	frappe.has_permission("Consent State", "read", throw=True)
+	frappe.has_permission("Anumati Consent State", "read", throw=True)
 	principal = _principal(principal_ref)
 	rows = enforcement.states_for(principal)
 	return [
@@ -269,7 +269,7 @@ def verify(hash: str, signature: str | None = None):
 	Returns whether the hash is on this tenant's chain, its position, and whether the signature
 	(the one given, or the stored one) verifies with the tenant key."""
 	row = frappe.db.get_value(
-		"Consent Event", {"hash": hash}, ["chain_seq", "key_id", "signature", "server_time"], as_dict=True
+		"Anumati Consent Event", {"hash": hash}, ["chain_seq", "key_id", "signature", "server_time"], as_dict=True
 	)
 	if not row:
 		return {"in_chain": False, "signature_valid": False}

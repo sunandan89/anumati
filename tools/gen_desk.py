@@ -10,7 +10,7 @@ import json, os
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")
 FIX = os.path.join(REPO, "anumati", "fixtures")
-TS = "2026-10-16 10:00:00.000000"
+TS = "2026-10-26 10:00:00.000000"
 
 ADM, DPO, OPR, PM, SM = "Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager", "System Manager"
 
@@ -56,34 +56,34 @@ DONE = ["request_answered", "request_closed", "cannot_do"]
 OPEN = ["status", "not in", DONE]
 CARDS = {
     # existing cards, rewritten so the whole console lives in one place
-    "consents_week": card("Consents This Week", "Consent Event", [["action", "in", ["grant", "renew"]], ["creation", "Timespan", "this week"]], color="Green", stats=True),
-    "withdrawals_week": card("Withdrawals This Week", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "this week"]], color="Red", stats=True),
-    "open_requests": card("Open Rights Requests", "Rights Request", [OPEN], color="Orange"),
-    "unmatched": card("Unmatched Requests", "Rights Request", [["status", "=", "who_is_this"]], color="Red"),
-    "heard": card("Notice Heard In Full", "Consent Event", [["notice_completed", "=", 1], ["creation", "Timespan", "this week"]], stats=True),
+    "consents_week": card("Consents This Week", "Anumati Consent Event", [["action", "in", ["grant", "renew"]], ["creation", "Timespan", "this week"]], color="Green", stats=True),
+    "withdrawals_week": card("Withdrawals This Week", "Anumati Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "this week"]], color="Red", stats=True),
+    "open_requests": card("Open Rights Requests", "Anumati Rights Request", [OPEN], color="Orange"),
+    "unmatched": card("Unmatched Requests", "Anumati Rights Request", [["status", "=", "who_is_this"]], color="Red"),
+    "heard": card("Notice Heard In Full", "Anumati Consent Event", [["notice_completed", "=", 1], ["creation", "Timespan", "this week"]], stats=True),
     # new
-    "overdue": card("Overdue Requests", "Rights Request", [OPEN], dynamic=[["sla_due", "<", "frappe.datetime.get_today()"]], color="Red"),
-    "unconfirmed": card("Waiting For Confirmation", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "unconfirmed"]], color="Orange"),
-    "consents_month": card("Consents This Month", "Consent Event", [["action", "in", ["grant", "renew"]], ["creation", "Timespan", "this month"]], color="Green", stats=True),
-    "withdrawals_month": card("Withdrawals This Month", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "this month"]], color="Red", stats=True),
-    "refused_month": card("Refused This Month", "Consent Event", [["action", "=", "refuse"], ["creation", "Timespan", "this month"]], color="Grey"),
-    "not_synced": card("Phones Not Synced", "Field Device", [["status", "=", "active"]], dynamic=[["last_sync", "<", "moment(frappe.datetime.get_today()).subtract(2, 'days').format('YYYY-MM-DD')"]], color="Orange"),
-    "breaches": card("Open Breaches", "Breach Incident", [["status", "!=", "Closed"]], color="Red"),
-    "unreviewed": card("Translations Not Reviewed", "Notice Translation", [["reviewer", "is", "not set"]], color="Orange"),
+    "overdue": card("Overdue Requests", "Anumati Rights Request", [OPEN], dynamic=[["sla_due", "<", "frappe.datetime.get_today()"]], color="Red"),
+    "unconfirmed": card("Waiting For Confirmation", "Anumati Consent State", [["status", "=", "granted"], ["verification_status", "=", "unconfirmed"]], color="Orange"),
+    "consents_month": card("Consents This Month", "Anumati Consent Event", [["action", "in", ["grant", "renew"]], ["creation", "Timespan", "this month"]], color="Green", stats=True),
+    "withdrawals_month": card("Withdrawals This Month", "Anumati Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "this month"]], color="Red", stats=True),
+    "refused_month": card("Refused This Month", "Anumati Consent Event", [["action", "=", "refuse"], ["creation", "Timespan", "this month"]], color="Grey"),
+    "not_synced": card("Phones Not Synced", "Anumati Field Device", [["status", "=", "active"]], dynamic=[["last_sync", "<", "moment(frappe.datetime.get_today()).subtract(2, 'days').format('YYYY-MM-DD')"]], color="Orange"),
+    "breaches": card("Open Breaches", "Anumati Breach Incident", [["status", "!=", "Closed"]], color="Red"),
+    "unreviewed": card("Translations Not Reviewed", "Anumati Notice Translation", [["reviewer", "is", "not set"]], color="Orange"),
     # grievances (still waiting on staff = not answered or closed)
-    "grievances_open": card("Grievances Open", "Grievance", [["status", "not in", G_DONE]], color="Orange"),
-    "grievances_dpo": card("Grievances With The DPO", "Grievance", [["status", "not in", G_DONE], ["dpo_since", "is", "set"]], color="Red"),
-    "grievances_late": card("Grievances Late", "Grievance", [["status", "not in", G_DONE]],
+    "grievances_open": card("Grievances Open", "Anumati Grievance", [["status", "not in", G_DONE]], color="Orange"),
+    "grievances_dpo": card("Grievances With The DPO", "Anumati Grievance", [["status", "not in", G_DONE], ["dpo_since", "is", "set"]], color="Red"),
+    "grievances_late": card("Grievances Late", "Anumati Grievance", [["status", "not in", G_DONE]],
                             dynamic=[["sla_due", "<", "frappe.datetime.get_today()"]], color="Red"),
-    "grievances_not_happy": card("Grievances Not Happy", "Grievance", [["person_says", "=", "not_happy"], ["status", "!=", "request_closed"]], color="Red"),
-    "requests_who": card("Requests To Match", "Rights Request", [["status", "=", "who_is_this"]], color="Red"),
-    "people": card("Beneficiaries", "Data Principal", [], color="Blue"),
+    "grievances_not_happy": card("Grievances Not Happy", "Anumati Grievance", [["person_says", "=", "not_happy"], ["status", "!=", "request_closed"]], color="Red"),
+    "requests_who": card("Requests To Match", "Anumati Rights Request", [["status", "=", "who_is_this"]], color="Red"),
+    "people": card("Beneficiaries", "Anumati Data Principal", [], color="Blue"),
     # Today's "consent posture" row (prototype NGO console dashboard)
-    "recorded_30": card("Recorded (30 Days)", "Consent Event", [["creation", "Timespan", "last 30 days"]], color="Blue", stats=True),
-    "confirmed": card("Confirmed", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "confirmed"]], color="Green"),
-    "evidence_only": card("Evidence Only", "Consent State", [["status", "=", "granted"], ["verification_status", "=", "evidence_only"]], color="Purple"),
-    "to_sync": card("Waiting To Sync", "Field Device", [["status", "=", "active"]], color="Orange", total_of="pending_events"),
-    "withdrawn_30": card("Withdrawn (30 Days)", "Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "last 30 days"]], color="Red"),
+    "recorded_30": card("Recorded (30 Days)", "Anumati Consent Event", [["creation", "Timespan", "last 30 days"]], color="Blue", stats=True),
+    "confirmed": card("Confirmed", "Anumati Consent State", [["status", "=", "granted"], ["verification_status", "=", "confirmed"]], color="Green"),
+    "evidence_only": card("Evidence Only", "Anumati Consent State", [["status", "=", "granted"], ["verification_status", "=", "evidence_only"]], color="Purple"),
+    "to_sync": card("Waiting To Sync", "Anumati Field Device", [["status", "=", "active"]], color="Orange", total_of="pending_events"),
+    "withdrawn_30": card("Withdrawn (30 Days)", "Anumati Consent Event", [["action", "=", "withdraw"], ["creation", "Timespan", "last 30 days"]], color="Red"),
 }
 
 
@@ -106,15 +106,15 @@ def chart(name, doctype, kind="Bar", group_by=None, filters=(), timeseries=False
 
 
 CHARTS = {
-    "per_week": chart("Consent Events Per Week", "Consent Event", "Line", timeseries=True, color="#B4532A"),
-    "by_purpose": chart("Agreed By Purpose", "Consent State", group_by="purpose", filters=[["status", "=", "granted"]]),
-    "by_mode": chart("How People Consented", "Consent Event", "Donut", group_by="capture_mode", filters=[["action", "=", "grant"]]),
-    "by_delivery": chart("How The Notice Was Given", "Consent Event", "Donut", group_by="notice_delivery", filters=[["action", "!=", "withdraw"]]),
-    "by_worker": chart("Consents By Field Worker", "Consent Event", group_by="captured_by", filters=[["action", "=", "grant"]], color="#B4532A"),
-    "by_language": chart("Consents By Language", "Consent Event", group_by="language", filters=[["action", "=", "grant"]]),
-    "requests_by_type": chart("Requests By Type", "Rights Request", group_by="request_type", color="#B4532A"),
-    "pipeline": chart("Verification Pipeline", "Consent State", group_by="verification_status", filters=[["status", "=", "granted"]], color="#7C8FD6"),
-    "withdrawals_by_channel": chart("Withdrawals By Channel", "Consent Event", group_by="channel", filters=[["action", "=", "withdraw"]], color="#B4532A"),
+    "per_week": chart("Consent Events Per Week", "Anumati Consent Event", "Line", timeseries=True, color="#B4532A"),
+    "by_purpose": chart("Agreed By Purpose", "Anumati Consent State", group_by="purpose", filters=[["status", "=", "granted"]]),
+    "by_mode": chart("How People Consented", "Anumati Consent Event", "Donut", group_by="capture_mode", filters=[["action", "=", "grant"]]),
+    "by_delivery": chart("How The Notice Was Given", "Anumati Consent Event", "Donut", group_by="notice_delivery", filters=[["action", "!=", "withdraw"]]),
+    "by_worker": chart("Consents By Field Worker", "Anumati Consent Event", group_by="captured_by", filters=[["action", "=", "grant"]], color="#B4532A"),
+    "by_language": chart("Consents By Language", "Anumati Consent Event", group_by="language", filters=[["action", "=", "grant"]]),
+    "requests_by_type": chart("Requests By Type", "Anumati Rights Request", group_by="request_type", color="#B4532A"),
+    "pipeline": chart("Verification Pipeline", "Anumati Consent State", group_by="verification_status", filters=[["status", "=", "granted"]], color="#7C8FD6"),
+    "withdrawals_by_channel": chart("Withdrawals By Channel", "Anumati Consent Event", group_by="channel", filters=[["action", "=", "withdraw"]], color="#B4532A"),
 }
 
 
@@ -125,21 +125,21 @@ ATTENTION_SCRIPT = r"""
 // (checked from boot, so nobody sees a permission error) and something is waiting.
 const today = frappe.datetime.get_today();
 const items = [
-	{ dt: "Rights Request", label: __("requests are past their due date"), tone: "red",
+	{ dt: "Anumati Rights Request", label: __("requests are past their due date"), tone: "red",
 	  filters: { status: ["not in", ["request_answered", "request_closed", "cannot_do"]], sla_due: ["<", today] } },
-	{ dt: "Rights Request", label: __("requests need matching to a person"), tone: "red",
+	{ dt: "Anumati Rights Request", label: __("requests need matching to a person"), tone: "red",
 	  filters: { status: "who_is_this" } },
-	{ dt: "Grievance", label: __("grievances are past their reply date"), tone: "red",
+	{ dt: "Anumati Grievance", label: __("grievances are past their reply date"), tone: "red",
 	  filters: { status: ["not in", ["request_answered", "request_closed"]], sla_due: ["<", today] } },
-	{ dt: "Grievance", label: __("grievances are with the DPO"), tone: "amber",
+	{ dt: "Anumati Grievance", label: __("grievances are with the DPO"), tone: "amber",
 	  filters: { status: ["not in", ["request_answered", "request_closed"]], dpo_since: ["is", "set"] } },
-	{ dt: "Breach Incident", label: __("breaches are open (72-hour clock)"), tone: "red",
+	{ dt: "Anumati Breach Incident", label: __("breaches are open (72-hour clock)"), tone: "red",
 	  filters: { status: ["!=", "Closed"] } },
-	{ dt: "Consent State", label: __("consents are waiting for confirmation"), tone: "amber",
+	{ dt: "Anumati Consent State", label: __("consents are waiting for confirmation"), tone: "amber",
 	  filters: { status: "granted", verification_status: "unconfirmed" } },
-	{ dt: "Field Device", label: __("field phones have not synced for 2 days"), tone: "amber",
+	{ dt: "Anumati Field Device", label: __("field phones have not synced for 2 days"), tone: "amber",
 	  filters: { status: "active", last_sync: ["<", moment(today).subtract(2, "days").format("YYYY-MM-DD")] } },
-	{ dt: "Notice Translation", label: __("translations are waiting for review"), tone: "amber",
+	{ dt: "Anumati Notice Translation", label: __("translations are waiting for review"), tone: "amber",
 	  filters: { reviewer: ["is", "not set"] } },
 ];
 const list = root_element.querySelector(".anumati-attention-list");
@@ -207,23 +207,23 @@ PROGRAMMES_SCRIPT = r"""
 // current consents confirmed, status. Counts only. Shown to anyone who can read programmes and consents.
 const body = root_element.querySelector("tbody");
 const esc = (s) => frappe.utils.escape_html(s == null ? "" : String(s));
-if (!frappe.model.can_read("Programme") || !frappe.model.can_read("Consent Event")) {
+if (!frappe.model.can_read("Anumati Programme") || !frappe.model.can_read("Anumati Consent Event")) {
 	root_element.querySelector(".anumati-prog").style.display = "none";
 } else {
-	frappe.db.get_list("Programme", { fields: ["name", "programme_name", "status"], order_by: "modified desc", limit: 20 }).then(async (progs) => {
-		const readable = frappe.model.can_read("Consent State");
+	frappe.db.get_list("Anumati Programme", { fields: ["name", "programme_name", "status"], order_by: "modified desc", limit: 20 }).then(async (progs) => {
+		const readable = frappe.model.can_read("Anumati Consent State");
 		const rows = await Promise.all(progs.map(async (p) => {
 			const [notices, recorded, confirmed, granted] = await Promise.all([
-				frappe.db.get_list("Notice Template", { filters: { programme: p.name, status: ["in", ["Published", "Draft"]] }, fields: ["name", "version", "status"], limit: 5 }),
-				frappe.db.count("Consent Event", { filters: { programme: p.name } }),
-				readable ? frappe.db.count("Consent State", { filters: { programme: p.name, status: "granted", verification_status: "confirmed" } }) : 0,
-				readable ? frappe.db.count("Consent State", { filters: { programme: p.name, status: "granted" } }) : 0,
+				frappe.db.get_list("Anumati Notice Template", { filters: { programme: p.name, status: ["in", ["Published", "Draft"]] }, fields: ["name", "version", "status"], limit: 5 }),
+				frappe.db.count("Anumati Consent Event", { filters: { programme: p.name } }),
+				readable ? frappe.db.count("Anumati Consent State", { filters: { programme: p.name, status: "granted", verification_status: "confirmed" } }) : 0,
+				readable ? frappe.db.count("Anumati Consent State", { filters: { programme: p.name, status: "granted" } }) : 0,
 			]);
 			const live = notices.find((n) => n.status === "Published");
 			const draft = notices.find((n) => n.status === "Draft");
 			let langs = [];
-			if (live && frappe.model.can_read("Notice Translation")) {
-				const tr = await frappe.db.get_list("Notice Translation", { filters: { notice: live.name }, fields: ["language"], limit: 20 });
+			if (live && frappe.model.can_read("Anumati Notice Translation")) {
+				const tr = await frappe.db.get_list("Anumati Notice Translation", { filters: { notice: live.name }, fields: ["language"], limit: 20 });
 				langs = ["English"].concat(tr.map((t) => t.language === "hi" ? "हिन्दी" : t.language === "mr" ? "मराठी" : t.language));
 			}
 			return { p, live, draft, langs, recorded, pct: granted ? Math.round((100 * confirmed) / granted) + "%" : "—" };
@@ -237,7 +237,7 @@ if (!frappe.model.can_read("Programme") || !frappe.model.can_read("Consent Event
 				<td class="num">${pct}</td>
 				<td><span class="pill ${p.status === "Live" ? "green" : "grey"}">${esc(__(p.status))}</span></td>
 			</tr>`).join("") : `<tr><td colspan="6" class="muted">${__("No programmes yet.")}</td></tr>`;
-		body.querySelectorAll("tr[data-name]").forEach((tr) => tr.addEventListener("click", () => frappe.set_route("Form", "Programme", tr.dataset.name)));
+		body.querySelectorAll("tr[data-name]").forEach((tr) => tr.addEventListener("click", () => frappe.set_route("Form", "Anumati Programme", tr.dataset.name)));
 	});
 }
 """
@@ -260,22 +260,22 @@ KANBAN_COLUMNS = [("new_request", "Blue"), ("who_is_this", "Red"), ("working_on_
                   ("request_closed", "Green"), ("cannot_do", "Gray")]
 
 LIST_FILTERS = [
-    ("Consent Event", "Consents this week", [["Consent Event", "creation", "Timespan", "this week", False]]),
-    ("Consent Event", "Withdrawals", [["Consent Event", "action", "=", "withdraw", False]]),
-    ("Consent Event", "Refused all", [["Consent Event", "action", "=", "refuse", False]]),
-    ("Consent Event", "Guardian consents", [["Consent Event", "capture_mode", "in", ["guardian_minor", "guardian_pwd"], False]]),
-    ("Consent Event", "Notice not heard in full", [["Consent Event", "notice_completed", "=", 0, False]]),
-    ("Consent State", "Waiting for confirmation", [["Consent State", "verification_status", "=", "unconfirmed", False]]),
-    ("Data Principal", "Minors", [["Data Principal", "is_minor", "=", 1, False]]),
-    ("Data Principal", "Shared phone", [["Data Principal", "shared_phone", "=", 1, False]]),
-    ("Data Principal", "Needs help to read", [["Data Principal", "needs_assistance", "=", 1, False]]),
-    ("Rights Request", "Who is this", [["Rights Request", "status", "=", "who_is_this", False]]),
-    ("Rights Request", "Open withdrawals", [["Rights Request", "request_type", "=", "withdrawal", False],
-                                           ["Rights Request", "status", "not in", DONE, False]]),
-    ("Grievance", "With the DPO", [["Grievance", "dpo_since", "is", "set", False],
-                                   ["Grievance", "status", "not in", G_DONE, False]]),
-    ("Grievance", "Not happy", [["Grievance", "person_says", "=", "not_happy", False]]),
-    ("Field Device", "Lost or wiped", [["Field Device", "status", "in", ["lost", "wipe_queued", "wiped"], False]]),
+    ("Anumati Consent Event", "Consents this week", [["Anumati Consent Event", "creation", "Timespan", "this week", False]]),
+    ("Anumati Consent Event", "Withdrawals", [["Anumati Consent Event", "action", "=", "withdraw", False]]),
+    ("Anumati Consent Event", "Refused all", [["Anumati Consent Event", "action", "=", "refuse", False]]),
+    ("Anumati Consent Event", "Guardian consents", [["Anumati Consent Event", "capture_mode", "in", ["guardian_minor", "guardian_pwd"], False]]),
+    ("Anumati Consent Event", "Notice not heard in full", [["Anumati Consent Event", "notice_completed", "=", 0, False]]),
+    ("Anumati Consent State", "Waiting for confirmation", [["Anumati Consent State", "verification_status", "=", "unconfirmed", False]]),
+    ("Anumati Data Principal", "Minors", [["Anumati Data Principal", "is_minor", "=", 1, False]]),
+    ("Anumati Data Principal", "Shared phone", [["Anumati Data Principal", "shared_phone", "=", 1, False]]),
+    ("Anumati Data Principal", "Needs help to read", [["Anumati Data Principal", "needs_assistance", "=", 1, False]]),
+    ("Anumati Rights Request", "Who is this", [["Anumati Rights Request", "status", "=", "who_is_this", False]]),
+    ("Anumati Rights Request", "Open withdrawals", [["Anumati Rights Request", "request_type", "=", "withdrawal", False],
+                                           ["Anumati Rights Request", "status", "not in", DONE, False]]),
+    ("Anumati Grievance", "With the DPO", [["Anumati Grievance", "dpo_since", "is", "set", False],
+                                   ["Anumati Grievance", "status", "not in", G_DONE, False]]),
+    ("Anumati Grievance", "Not happy", [["Anumati Grievance", "person_says", "=", "not_happy", False]]),
+    ("Anumati Field Device", "Lost or wiped", [["Anumati Field Device", "status", "in", ["lost", "wipe_queued", "wiped"], False]]),
 ]
 
 # The stock Access Log and View Log (who opened a name or evidence) are System Manager only. The DPO
@@ -294,15 +294,15 @@ ONBOARDING = "Anumati"
 STEPS = [
     ("Organisation and DPO", "Update Settings", "Anumati Settings",
      "Legal name, the DPO's contact and default languages. These print on every notice."),
-    ("First programme", "Create Entry", "Programme",
+    ("First programme", "Create Entry", "Anumati Programme",
      "A programme is one activity, like a health camp. Say which ways of giving consent it allows."),
-    ("Purposes and records of processing", "Create Entry", "ROPA Entry",
+    ("Purposes and records of processing", "Create Entry", "Anumati ROPA Entry",
      "One record per purpose. The DPO approves each one; a notice cannot publish without them."),
-    ("Publish the notice in English and Hindi", "Create Entry", "Notice Template",
+    ("Publish the notice in English and Hindi", "Create Entry", "Anumati Notice Template",
      "The Rule 3 checklist says what is missing. A named person reviews each translation."),
     ("Add field workers", "Create Entry", "User",
      "Give each worker the Anumati Field Worker and Mobile User roles, then switch on Mobile Configuration."),
-    ("Connect SMS (optional for the pilot)", "Create Entry", "Channel Provider",
+    ("Connect SMS (optional for the pilot)", "Create Entry", "Anumati Channel Provider",
      "Receipts, STOP and missed calls. Keys go in the form's password fields, never in chat or email."),
 ]
 
@@ -416,7 +416,7 @@ WORKSPACES = {
     "Notices and Compliance": [PM, DPO, ADM, SM],
     "Setup": [ADM, SM],
 }
-BOARD_URL = "/app/rights-request/view/kanban/" + REQUESTS_BOARD
+BOARD_URL = "/app/anumati-rights-request/view/kanban/" + REQUESTS_BOARD
 
 
 def workspaces():
@@ -428,61 +428,61 @@ def workspaces():
         .chart(CHARTS["pipeline"], 4).chart(CHARTS["withdrawals_by_channel"], 4).attention(4)
         .block(PROGRAMMES_BLOCK)
         .shortcut("Requests board", url=BOARD_URL, color="Orange")
-        .shortcut("Inbox", "Rights Request", color="Orange", stats=[["Rights Request", *OPEN]], fmt="{} open")
-        .shortcut("Find a receipt", "Consent Event", color="Green")
-        .shortcut("Beneficiaries", "Data Principal", color="Blue")
+        .shortcut("Inbox", "Anumati Rights Request", color="Orange", stats=[["Anumati Rights Request", *OPEN]], fmt="{} open")
+        .shortcut("Find a receipt", "Anumati Consent Event", color="Green")
+        .shortcut("Beneficiaries", "Anumati Data Principal", color="Blue")
         .chart(CHARTS["per_week"])
-        .card("Requests", "Rights Request", "Purge Request", "Propagation Ack")
+        .card("Requests", "Anumati Rights Request", "Anumati Purge Request", "Anumati Propagation Ack")
         .emit())
     # Requests: rights / support requests and grievances, each its own page (as on the self-service page).
     (WS("Requests", 1.5, "mail", r["Requests"])
         .header("Rights / support requests")
         .numbers(CARDS["open_requests"], CARDS["overdue"], CARDS["requests_who"], col=4)
-        .shortcut("Rights requests", "Rights Request", color="Blue", stats=[["Rights Request", *OPEN]], fmt="{} open")
+        .shortcut("Rights requests", "Anumati Rights Request", color="Blue", stats=[["Anumati Rights Request", *OPEN]], fmt="{} open")
         .shortcut("Requests board", url=BOARD_URL, color="Orange")
         .header("Grievances")
         .numbers(CARDS["grievances_open"], CARDS["grievances_dpo"], CARDS["grievances_late"], col=4)
-        .shortcut("Grievances", "Grievance", color="Red", stats=[["Grievance", "status", "not in", G_DONE]], fmt="{} open")
+        .shortcut("Grievances", "Anumati Grievance", color="Red", stats=[["Anumati Grievance", "status", "not in", G_DONE]], fmt="{} open")
         .shortcut("Grievance register", url="/app/query-report/Grievance Register", color="Grey")
         .emit())
     (WS("Rights requests", 1.6, "mail", r["Rights requests"], parent="Requests")
         .numbers(CARDS["open_requests"], CARDS["overdue"], CARDS["requests_who"], col=4)
-        .shortcut("Rights requests", "Rights Request", color="Blue", stats=[["Rights Request", *OPEN]], fmt="{} open")
+        .shortcut("Rights requests", "Anumati Rights Request", color="Blue", stats=[["Anumati Rights Request", *OPEN]], fmt="{} open")
         .shortcut("Requests board", url=BOARD_URL, color="Orange")
-        .shortcut("New rights request", url="/app/rights-request/new", color="Grey")
-        .card("Rights requests", ("Rights Request", "Rights request"), ("Purge Request", "Deletion task"),
-              ("Propagation Ack", "Partner confirmation"))
+        .shortcut("New rights request", url="/app/anumati-rights-request/new", color="Grey")
+        .card("Rights requests", ("Anumati Rights Request", "Rights request"), ("Anumati Purge Request", "Deletion task"),
+              ("Anumati Propagation Ack", "Partner confirmation"))
         .emit())
     (WS("Grievances", 1.7, "mail", r["Grievances"], parent="Requests")
         .numbers(CARDS["grievances_open"], CARDS["grievances_dpo"], CARDS["grievances_late"], CARDS["grievances_not_happy"])
-        .shortcut("Grievances", "Grievance", color="Red", stats=[["Grievance", "status", "not in", G_DONE]], fmt="{} open")
+        .shortcut("Grievances", "Anumati Grievance", color="Red", stats=[["Anumati Grievance", "status", "not in", G_DONE]], fmt="{} open")
         .shortcut("Grievance register", url="/app/query-report/Grievance Register", color="Grey")
-        .shortcut("New grievance", url="/app/grievance/new", color="Grey")
-        .card("Grievances", "Grievance", "Report:Grievance Register")
+        .shortcut("New grievance", url="/app/anumati-grievance/new", color="Grey")
+        .card("Grievances", "Anumati Grievance", "Report:Grievance Register")
         .emit())
     (WS("Beneficiaries", 2, "users", r["Beneficiaries"])
         .numbers(CARDS["people"], CARDS["consents_week"], CARDS["unconfirmed"], CARDS["withdrawals_week"])
-        .shortcut("Beneficiaries", "Data Principal", color="Blue")
-        .shortcut("Consents", "Consent Event", color="Green")
-        .shortcut("Waiting for confirmation", "Consent State", color="Orange",
-                  stats=[["Consent State", "verification_status", "=", "unconfirmed"]], fmt="{} waiting")
-        .shortcut("Guardians", "Guardian Link", color="Purple")
-        .shortcut("Turned 18: renew consent", "Data Principal", color="Orange",
-                  stats=[["Data Principal", "renewal_due", "=", 1]], fmt="{} to renew")
-        .card("People", ("Data Principal", "Beneficiary"), ("Guardian Link", "Guardian"),
+        .shortcut("Beneficiaries", "Anumati Data Principal", color="Blue")
+        .shortcut("Consents", "Anumati Consent Event", color="Green")
+        .shortcut("Waiting for confirmation", "Anumati Consent State", color="Orange",
+                  stats=[["Anumati Consent State", "verification_status", "=", "unconfirmed"]], fmt="{} waiting")
+        .shortcut("Guardians", "Anumati Guardian Link", color="Purple")
+        .shortcut("Turned 18: renew consent", "Anumati Data Principal", color="Orange",
+                  stats=[["Anumati Data Principal", "renewal_due", "=", 1]], fmt="{} to renew")
+        .card("People", ("Anumati Data Principal", "Beneficiary"), ("Anumati Guardian Link", "Guardian"),
               ("Report:Profile Answer Totals", "About the people (totals)"))
-        .card("Consent records", ("Consent Event", "Consent"), ("Consent State", "Current consent per purpose"),
-              ("Verification Attempt", "Confirmation attempt"))
+        .card("Consent records", ("Anumati Consent Event", "Consent"), ("Anumati Consent State", "Current consent per purpose"),
+              ("Anumati Verification Attempt", "Confirmation attempt"))
         .emit())
     (WS("Programmes", 3, "folder-normal", r["Programmes"])
         .numbers(CARDS["consents_week"], CARDS["not_synced"])
-        .shortcut("Programmes", "Programme", color="Green")
-        .shortcut("Re-consent", "Campaign", color="Orange")
-        .shortcut("Field phones", "Field Device", color="Blue")
-        .shortcut("Extra questions", "Profile Question", color="Purple")
-        .card("Programmes", "Programme", ("Campaign", "Re-consent campaign"),
-              ("Profile Question", "Extra questions library"), ("Report:Profile Answer Totals", "Extra questions: totals"))
-        .card("Field team", ("Field Device", "Field phone"))
+        .shortcut("Programmes", "Anumati Programme", color="Green")
+        .shortcut("Re-consent", "Anumati Campaign", color="Orange")
+        .shortcut("Field phones", "Anumati Field Device", color="Blue")
+        .shortcut("Extra questions", "Anumati Profile Question", color="Purple")
+        .card("Programmes", "Anumati Programme", ("Anumati Campaign", "Re-consent campaign"),
+              ("Anumati Profile Question", "Extra questions library"), ("Report:Profile Answer Totals", "Extra questions: totals"))
+        .card("Field team", ("Anumati Field Device", "Field phone"))
         .emit())
     (WS("Analytics", 4, "dashboard", r["Analytics"])
         .numbers(CARDS["consents_month"], CARDS["withdrawals_month"], CARDS["refused_month"], CARDS["heard"])
@@ -493,22 +493,22 @@ def workspaces():
         .emit())
     (WS("Notices and Compliance", 5, "lock", r["Notices and Compliance"])
         .numbers(CARDS["breaches"], CARDS["unreviewed"], CARDS["overdue"])
-        .shortcut("Notices", "Notice Template", color="Green")
-        .shortcut("Breaches", "Breach Incident", color="Red", stats=[["Breach Incident", "status", "!=", "Closed"]], fmt="{} open")
-        .shortcut("Records of processing", "ROPA Entry", color="Blue")
-        .shortcut("Audit log", "Audit Entry", color="Grey")
-        .card("Notices", ("Notice Template", "Notice"), ("Notice Translation", "Translation"), "Purpose",
-              "Message Template")
-        .card("Records and risk", ("ROPA Entry", "Records of processing and DPIA"), "Data Category",
-              "Retention Policy", "Processor", "Purge Request")
-        .card("Incidents and audit", ("Breach Incident", "Breach"), ("Audit Entry", "Audit log"),
-              ("Access Log", "Access log (names and evidence)"), ("View Log", "Record views"), "Audit Share")
+        .shortcut("Notices", "Anumati Notice Template", color="Green")
+        .shortcut("Breaches", "Anumati Breach Incident", color="Red", stats=[["Anumati Breach Incident", "status", "!=", "Closed"]], fmt="{} open")
+        .shortcut("Records of processing", "Anumati ROPA Entry", color="Blue")
+        .shortcut("Audit log", "Anumati Audit Entry", color="Grey")
+        .card("Notices", ("Anumati Notice Template", "Notice"), ("Anumati Notice Translation", "Translation"), "Anumati Purpose",
+              "Anumati Message Template")
+        .card("Records and risk", ("Anumati ROPA Entry", "Records of processing and DPIA"), "Anumati Data Category",
+              "Anumati Retention Policy", "Anumati Processor", "Anumati Purge Request")
+        .card("Incidents and audit", ("Anumati Breach Incident", "Breach"), ("Anumati Audit Entry", "Audit log"),
+              ("Access Log", "Access log (names and evidence)"), ("View Log", "Record views"), "Anumati Audit Share")
         .emit())
     (WS("Setup", 6, "setting-gear", r["Setup"])
         .onboarding()
         .card("Organisation", "Anumati Settings", ("User", "Team"), "Role")
-        .card("Messaging", ("Channel Provider", "SMS and messaging"), "Message Template")
-        .card("Connected systems", "Source System", ("Mobile Configuration", "Field app"), "Funder Link")
+        .card("Messaging", ("Anumati Channel Provider", "SMS and messaging"), "Anumati Message Template")
+        .card("Connected systems", "Anumati Source System", ("Mobile Configuration", "Field app"), "Anumati Funder Link")
         .emit())
 
 
@@ -522,7 +522,7 @@ def fixtures():
     }])
     fixture("kanban_board", [{
         "doctype": "Kanban Board", "name": REQUESTS_BOARD, "kanban_board_name": REQUESTS_BOARD,
-        "reference_doctype": "Rights Request", "field_name": "status", "private": 0, "show_labels": 1,
+        "reference_doctype": "Anumati Rights Request", "field_name": "status", "private": 0, "show_labels": 1,
         "filters": "[]", "fields": json.dumps(["request_type", "channel", "sla_due", "assigned_to"]),
         "columns": [{"doctype": "Kanban Board Column", "column_name": c, "status": "Active", "indicator": i, "order": "[]"}
                     for c, i in KANBAN_COLUMNS],

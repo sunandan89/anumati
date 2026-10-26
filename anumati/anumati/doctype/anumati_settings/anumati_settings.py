@@ -12,7 +12,7 @@ class AnumatiSettings(Document):
 	def validate(self):
 		# The spoken yes/no helper sends the person's voice to Sarvam, so Sarvam must be a named Processor
 		# (with its agreement) before it can be switched on; notices then list it (Rule 3).
-		if self.voice_listen_helper and not frappe.db.exists("Processor", {"processor_name": ("like", "%Sarvam%")}):
+		if self.voice_listen_helper and not frappe.db.exists("Anumati Processor", {"processor_name": ("like", "%Sarvam%")}):
 			frappe.throw(_("Add Sarvam AI as a Processor, with its data processing agreement, and list it in your notices before switching on the spoken yes/no helper."))
 
 	@frappe.whitelist()

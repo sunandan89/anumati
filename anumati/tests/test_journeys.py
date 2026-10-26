@@ -23,15 +23,15 @@ def uid():
 
 
 def publish_notice(programme, purposes, full_text):
-	if not frappe.db.exists("Data Category", "Health readings"):
-		frappe.get_doc({"doctype": "Data Category", "category_name": "Health readings"}).insert()
+	if not frappe.db.exists("Anumati Data Category", "Health readings"):
+		frappe.get_doc({"doctype": "Anumati Data Category", "category_name": "Health readings"}).insert()
 	for purpose in purposes:
-		if not frappe.db.exists("ROPA Entry", {"purpose": purpose, "status": "Approved"}):
-			ropa = frappe.get_doc({"doctype": "ROPA Entry", "purpose": purpose, "retention": "24 months",
+		if not frappe.db.exists("Anumati ROPA Entry", {"purpose": purpose, "status": "Approved"}):
+			ropa = frappe.get_doc({"doctype": "Anumati ROPA Entry", "purpose": purpose, "retention": "24 months",
 			                       "safeguards": "Encrypted", "data_categories": [{"data_category": "Health readings"}]}).insert()
 			apply_workflow(ropa, "Approve")
 	doc = frappe.get_doc({
-		"doctype": "Notice Template", "programme": programme, "version": f"1.0.{frappe.db.count('Notice Template')}",
+		"doctype": "Anumati Notice Template", "programme": programme, "version": f"1.0.{frappe.db.count('Anumati Notice Template')}",
 		"summary": "We screen your health.", "full_text": full_text, "purposes": [{"purpose": p} for p in purposes],
 		"withdrawal_methods": "SMS STOP", "rights_text": "Access, correction", "board_complaint_route": "Data Protection Board",
 		"dpo_contact": "DPO (fictional)", "security_summary": "Encrypted",
@@ -59,7 +59,7 @@ class TestJourneys(FrappeTestCase):
 
 	def link(self, person, **kw):
 		guardian = make_principal()
-		return frappe.get_doc({"doctype": "Guardian Link", "principal": person.name, "guardian": guardian.name,
+		return frappe.get_doc({"doctype": "Anumati Guardian Link", "principal": person.name, "guardian": guardian.name,
 		                       "verification_method": "device_sms_otp", **kw}).insert().name
 
 	# -- A1: someone who needs help to read -----------------------------------
@@ -109,10 +109,10 @@ class TestJourneys(FrappeTestCase):
 		self.assertRaises(frappe.MandatoryError, self.link, p, guardian_type="committee")
 		# A link saved before the order rule (no number) is still refused at consent.
 		old = self.link(p, guardian_type="committee", authority_ref="X")
-		frappe.db.set_value("Guardian Link", old, "authority_ref", "")
+		frappe.db.set_value("Anumati Guardian Link", old, "authority_ref", "")
 		self.assertRaises(ConsentRequestError, self.grant, p.principal_ref, capture_mode="guardian_pwd", guardian_link=old)
 		# ...but staff can still edit that old link in Desk (e.g. its validity date).
-		doc = frappe.get_doc("Guardian Link", old)
+		doc = frappe.get_doc("Anumati Guardian Link", old)
 		doc.valid_until = "2030-12-31"
 		doc.save()
 		art = self.grant(p.principal_ref, capture_mode="guardian_pwd",
@@ -138,9 +138,9 @@ class TestJourneys(FrappeTestCase):
 
 	def test_notice_says_which_uses_need_a_phone_and_serves_translated_names(self):
 		ensure_language("hi", "Hindi")
-		if not frappe.db.exists("Notice Translation", {"notice": self.notice, "language": "hi"}):
+		if not frappe.db.exists("Anumati Notice Translation", {"notice": self.notice, "language": "hi"}):
 			frappe.get_doc({
-				"doctype": "Notice Translation", "notice": self.notice, "language": "hi", "summary": "हम जाँच करते हैं।",
+				"doctype": "Anumati Notice Translation", "notice": self.notice, "language": "hi", "summary": "हम जाँच करते हैं।",
 				"reviewer": "Administrator",
 				"purposes": [{"purpose": self.follow, "purpose_title": "फ़ॉलो-अप कॉल", "description": "फ़ोन पर हाल पूछना"}],
 			}).insert()
@@ -153,12 +153,12 @@ class TestJourneys(FrappeTestCase):
 	# -- extra questions ---------------------------------------------------------
 
 	def test_library_has_about_twenty_questions_and_flags_sensitive_ones(self):
-		self.assertGreaterEqual(frappe.db.count("Profile Question", {"is_standard": 1}), 20)
-		self.assertTrue(frappe.db.get_value("Profile Question", "social_category", "is_sensitive"))
-		self.assertFalse(frappe.db.get_value("Profile Question", "age", "is_sensitive"))
+		self.assertGreaterEqual(frappe.db.count("Anumati Profile Question", {"is_standard": 1}), 20)
+		self.assertTrue(frappe.db.get_value("Anumati Profile Question", "social_category", "is_sensitive"))
+		self.assertFalse(frappe.db.get_value("Anumati Profile Question", "age", "is_sensitive"))
 
 	def test_questions_are_off_by_default_and_only_ones_the_notice_lists_can_be_switched_on(self):
-		prog = frappe.get_doc("Programme", PROG)
+		prog = frappe.get_doc("Anumati Programme", PROG)
 		prog.set("profile_questions", [])
 		prog.save()
 		self.assertEqual(notice.get_active(PROG)["profile_questions"], [])
@@ -178,7 +178,7 @@ class TestJourneys(FrappeTestCase):
 		ref = f"JRN-{uuid.uuid4().hex[:8]}"
 		principal.upsert(ref, full_name="Kamla D. (fictional)", programme=PROG,
 		                 profile={"age": "41", "occupation": "Daily wage work"})
-		doc = frappe.get_doc("Data Principal", {"principal_ref": ref})
+		doc = frappe.get_doc("Anumati Data Principal", {"principal_ref": ref})
 		self.assertEqual({a.question: a.answer for a in doc.profile_answers}, {"age": "41", "occupation": "Daily wage work"})
 		principal.upsert(ref, programme=PROG, profile={"age": "42"})
 		doc.reload()
@@ -191,11 +191,11 @@ class TestJourneys(FrappeTestCase):
 		self.assertRaises(SchemaError, principal.upsert, ref, profile={"Bad Code!": "1"})
 
 	def test_question_codes_are_safe_for_the_phone_and_notice_terms_match_whole_words(self):
-		q = frappe.get_doc({"doctype": "Profile Question", "code": "Ration-Card Type", "question": "Ration card type (sample)",
+		q = frappe.get_doc({"doctype": "Anumati Profile Question", "code": "Ration-Card Type", "question": "Ration card type (sample)",
 		                    "answer_type": "text", "notice_term": "ration card"}).insert()
 		self.assertEqual(q.name, "ration_card_type")
 		self.assertRaises(frappe.ValidationError, frappe.get_doc({
-			"doctype": "Profile Question", "code": "कोड", "question": "x", "answer_type": "text", "notice_term": "x"}).insert)
+			"doctype": "Anumati Profile Question", "code": "कोड", "question": "x", "answer_type": "text", "notice_term": "x"}).insert)
 		self.assertTrue(profile.mentions("name, age and phone", "age"))
 		self.assertFalse(profile.mentions("village health camp", "age"))
 
@@ -205,26 +205,26 @@ class TestJourneys(FrappeTestCase):
 		year = getdate(today()).year - 10
 		ref = f"JRN-{uuid.uuid4().hex[:8]}"
 		principal.upsert(ref, full_name="Child (fictional)", birth_year=year)
-		doc = frappe.get_doc("Data Principal", {"principal_ref": ref})
+		doc = frappe.get_doc("Anumati Data Principal", {"principal_ref": ref})
 		self.assertTrue(doc.is_minor)
 		self.assertEqual(getdate(doc.adult_on), datetime.date(year + 18, 12, 31))
 
 	def test_turning_18_needs_the_persons_own_consent(self):
 		child = make_principal(is_minor=1)
 		self.grant(child.principal_ref, capture_mode="guardian_minor", guardian_link=self.link(child, guardian_type="parent"))
-		frappe.db.set_value("Programme", PROG, "allow_processing_before_confirm", 1)
+		frappe.db.set_value("Anumati Programme", PROG, "allow_processing_before_confirm", 1)
 		consent.record({"event_uuid": uid(), "principal_ref": child.principal_ref, "programme": PROG, "action": "renew",
 		                "purposes_granted": ["follow"], "verification_status": "confirmed", "channel": "app",
 		                "guardian_link": self.link(child, guardian_type="parent")})
-		frappe.db.set_value("Data Principal", child.name, "adult_on", add_days(today(), -1))
+		frappe.db.set_value("Anumati Data Principal", child.name, "adult_on", add_days(today(), -1))
 		enforcement.flag_new_adults()
-		self.assertTrue(frappe.db.get_value("Data Principal", child.name, "renewal_due"))
+		self.assertTrue(frappe.db.get_value("Anumati Data Principal", child.name, "renewal_due"))
 		verdict = consent.check(child.principal_ref, "follow", programme=PROG)
 		self.assertFalse(verdict["allow"])
 		self.assertEqual(verdict["status"], "renewal_due")
 		# Now 18, they consent themselves: no guardian, and they are an adult record from here on.
 		self.grant(child.principal_ref, verification_status="confirmed")
-		flags = frappe.db.get_value("Data Principal", child.name, ["is_minor", "renewal_due"], as_dict=True)
+		flags = frappe.db.get_value("Anumati Data Principal", child.name, ["is_minor", "renewal_due"], as_dict=True)
 		self.assertEqual((flags.is_minor, flags.renewal_due), (0, 0))
 		self.assertTrue(consent.check(child.principal_ref, "follow", programme=PROG)["allow"])
 
@@ -247,9 +247,9 @@ class TestJourneys(FrappeTestCase):
 
 		child = make_principal(is_minor=1)
 		guardian = make_principal(phone="5550001234")
-		frappe.get_doc({"doctype": "Guardian Link", "principal": child.name, "guardian": guardian.name,
+		frappe.get_doc({"doctype": "Anumati Guardian Link", "principal": child.name, "guardian": guardian.name,
 		                "guardian_type": "parent", "verification_method": "device_sms_otp"}).insert()
-		self.assertEqual(channels.contact_phone(frappe.get_doc("Data Principal", child.name)), "5550001234")
+		self.assertEqual(channels.contact_phone(frappe.get_doc("Anumati Data Principal", child.name)), "5550001234")
 		adult = make_principal(phone="5550005678")
 		self.assertEqual(channels.contact_phone(adult), "5550005678")
 		found = {p.name for p in inbox.principals_for_phone_hash(pii.phone_hash("5550001234"))}
@@ -263,4 +263,4 @@ class TestJourneys(FrappeTestCase):
 		art = self.grant(p.principal_ref, verification_method="device_sms_otp", verification_status="confirmed",
 		                 evidence=[make_evidence(p.name)])
 		self.assertEqual(art["verification_status"], "recorded", "the worker saw the code: never 'confirmed'")
-		self.assertEqual(frappe.db.get_value("Programme", PROG, "sms_code_route"), "MSG91 when online")
+		self.assertEqual(frappe.db.get_value("Anumati Programme", PROG, "sms_code_route"), "MSG91 when online")

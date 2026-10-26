@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"progra0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Consents This Week\", \"col\": 3}}, {\"id\": \"progra1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Phones Not Synced\", \"col\": 3}}, {\"id\": \"progra2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Programmes\", \"col\": 3}}, {\"id\": \"progra3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Re-consent\", \"col\": 3}}, {\"id\": \"progra4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Field phones\", \"col\": 3}}, {\"id\": \"progra5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Extra questions\", \"col\": 3}}, {\"id\": \"progra6\", \"type\": \"card\", \"data\": {\"card_name\": \"Programmes\", \"col\": 4}}, {\"id\": \"progra7\", \"type\": \"card\", \"data\": {\"card_name\": \"Field team\", \"col\": 4}}]",
- "creation": "2026-10-16 10:00:00.000000",
+ "creation": "2026-10-26 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -23,9 +23,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Programme",
+   "label": "Anumati Programme",
    "link_count": 0,
-   "link_to": "Programme",
+   "link_to": "Anumati Programme",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -35,7 +35,7 @@
    "is_query_report": 0,
    "label": "Re-consent campaign",
    "link_count": 0,
-   "link_to": "Campaign",
+   "link_to": "Anumati Campaign",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -45,7 +45,7 @@
    "is_query_report": 0,
    "label": "Extra questions library",
    "link_count": 0,
-   "link_to": "Profile Question",
+   "link_to": "Anumati Profile Question",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -73,13 +73,13 @@
    "is_query_report": 0,
    "label": "Field phone",
    "link_count": 0,
-   "link_to": "Field Device",
+   "link_to": "Anumati Field Device",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-10-16 10:00:00.000000",
+ "modified": "2026-10-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Programmes",
@@ -117,7 +117,7 @@
    "color": "Green",
    "doc_view": "List",
    "label": "Programmes",
-   "link_to": "Programme",
+   "link_to": "Anumati Programme",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -125,7 +125,7 @@
    "color": "Orange",
    "doc_view": "List",
    "label": "Re-consent",
-   "link_to": "Campaign",
+   "link_to": "Anumati Campaign",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -133,7 +133,7 @@
    "color": "Blue",
    "doc_view": "List",
    "label": "Field phones",
-   "link_to": "Field Device",
+   "link_to": "Anumati Field Device",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -141,7 +141,7 @@
    "color": "Purple",
    "doc_view": "List",
    "label": "Extra questions",
-   "link_to": "Profile Question",
+   "link_to": "Anumati Profile Question",
    "stats_filter": "[]",
    "type": "DocType"
   }

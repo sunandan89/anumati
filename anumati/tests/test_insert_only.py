@@ -7,7 +7,7 @@ from anumati.ledger import chain, keystore, signing
 from anumati.ledger.insert_only import InsertOnlyError
 from anumati.tests.utils import make_event, make_programme
 
-LEDGERS = ("Consent Event", "Audit Entry")
+LEDGERS = ("Anumati Consent Event", "Anumati Audit Entry")
 
 
 class TestInsertOnly(FrappeTestCase):
@@ -20,40 +20,40 @@ class TestInsertOnly(FrappeTestCase):
 
 	def test_saving_existing_consent_event_raises(self):
 		name = make_event().name
-		event = frappe.get_doc("Consent Event", name)
+		event = frappe.get_doc("Anumati Consent Event", name)
 		event.gps = "21.1,79.0"
 		self.assertRaises(InsertOnlyError, event.save)
 
 	def test_saving_existing_consent_event_unchanged_raises(self):
-		event = frappe.get_doc("Consent Event", make_event().name)
+		event = frappe.get_doc("Anumati Consent Event", make_event().name)
 		self.assertRaises(InsertOnlyError, event.save)
 
 	def test_deleting_consent_event_raises(self):
 		name = make_event().name
-		self.assertRaises(InsertOnlyError, frappe.delete_doc, "Consent Event", name)
-		self.assertTrue(frappe.db.exists("Consent Event", name))
+		self.assertRaises(InsertOnlyError, frappe.delete_doc, "Anumati Consent Event", name)
+		self.assertTrue(frappe.db.exists("Anumati Consent Event", name))
 
 	def test_duplicate_event_uuid_is_rejected(self):
 		event = make_event()
 		self.assertRaises((frappe.DuplicateEntryError, frappe.UniqueValidationError), make_event, event_uuid=event.event_uuid)
 
 	def _audit_entry(self):
-		programme = frappe.get_doc("Programme", make_programme())
+		programme = frappe.get_doc("Anumati Programme", make_programme())
 		programme.programme_name = "Test Health Camp (renamed)"
 		programme.save(ignore_version=False)  # Frappe skips Version in tests by default
 		chain.seal_audit_trail()
-		name = frappe.db.get_value("Audit Entry", {"ref_doctype": "Programme", "ref_name": programme.name})
+		name = frappe.db.get_value("Anumati Audit Entry", {"ref_doctype": "Anumati Programme", "ref_name": programme.name})
 		self.assertTrue(name, "editing a Programme should produce a sealed Audit Entry")
 		return name
 
 	def test_saving_existing_audit_entry_raises(self):
-		entry = frappe.get_doc("Audit Entry", self._audit_entry())
+		entry = frappe.get_doc("Anumati Audit Entry", self._audit_entry())
 		entry.remarks = "edited"
 		self.assertRaises(InsertOnlyError, entry.save)
 
 	def test_deleting_audit_entry_raises(self):
 		name = self._audit_entry()
-		self.assertRaises(InsertOnlyError, frappe.delete_doc, "Audit Entry", name)
+		self.assertRaises(InsertOnlyError, frappe.delete_doc, "Anumati Audit Entry", name)
 
 	def test_no_role_may_edit_or_delete_ledgers(self):
 		for doctype in LEDGERS:

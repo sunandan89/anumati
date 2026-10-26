@@ -77,7 +77,7 @@ for site in (site_a, site_b):
 			r = call(method, site, path)
 			expect(r.status_code in DENIED, f"{site} unauthenticated {method} {path} -> {r.status_code}")
 
-	r = call("GET", site, f"/api/resource/{quote('Consent Event')}/{creds[site]['event']}")
+	r = call("GET", site, f"/api/resource/{quote('Anumati Consent Event')}/{creds[site]['event']}")
 	expect(r.status_code in DENIED, f"{site} unauthenticated read of a real consent event -> {r.status_code}")
 
 	for cb in ("inbound_sms", "missed_call", "delivery_report"):
@@ -102,7 +102,7 @@ for site in (site_a, site_b):
 expect(set(inv["guest"]) == GUEST_ALLOWLIST, f"guest methods changed: {sorted(set(inv['guest']) ^ GUEST_ALLOWLIST)}")
 
 # 3. tenant isolation
-ev = quote("Consent Event")
+ev = quote("Anumati Consent Event")
 for own, other in ((site_a, site_b), (site_b, site_a)):
 	me, them = creds[own], creds[other]
 	r = call("GET", own, f"/api/resource/{ev}/{me['event']}", token=me)

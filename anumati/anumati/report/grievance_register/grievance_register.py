@@ -17,7 +17,7 @@ def execute(filters=None):
 	filters = frappe._dict(filters or {})
 	start = getdate(filters.from_date or add_days(nowdate(), -365))
 	end = getdate(filters.to_date or nowdate())
-	rows = frappe.get_all("Grievance", {"received_on": ("between", [start, add_days(end, 1)])},
+	rows = frappe.get_all("Anumati Grievance", {"received_on": ("between", [start, add_days(end, 1)])},
 	                      ["category", "status", "received_on", "answered_on", "sla_due", "dpo_since", "person_says"])
 	today = getdate(nowdate())
 	by = {}
@@ -32,7 +32,7 @@ def execute(filters=None):
 		still_late = not r.answered_on and r.status not in (inbox.CLOSED,) and r.sla_due and getdate(r.sla_due) < today
 		b["late"] += 1 if (answered_late or still_late) else 0
 		b["not_happy"] += 1 if r.person_says == "not_happy" else 0
-	order = frappe.get_meta("Grievance").get_field("category").options.split("\n")
+	order = frappe.get_meta("Anumati Grievance").get_field("category").options.split("\n")
 	data = [{"category": _(c), "received": b["received"], "answered": b["answered"],
 	         "typical_days": statistics.median(b["days"]) if b["days"] else None,
 	         "dpo": b["dpo"], "late": b["late"], "not_happy": b["not_happy"]}

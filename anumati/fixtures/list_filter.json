@@ -1,128 +1,128 @@
 [
  {
   "doctype": "List Filter",
-  "name": "anumati-consent_event-consents_this_week",
+  "name": "anumati-anumati_consent_event-consents_this_week",
   "filter_name": "Consents this week",
-  "reference_doctype": "Consent Event",
+  "reference_doctype": "Anumati Consent Event",
   "for_user": "",
-  "filters": "[[\"Consent Event\", \"creation\", \"Timespan\", \"this week\", false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Consent Event\", \"creation\", \"Timespan\", \"this week\", false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-consent_event-withdrawals",
+  "name": "anumati-anumati_consent_event-withdrawals",
   "filter_name": "Withdrawals",
-  "reference_doctype": "Consent Event",
+  "reference_doctype": "Anumati Consent Event",
   "for_user": "",
-  "filters": "[[\"Consent Event\", \"action\", \"=\", \"withdraw\", false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Consent Event\", \"action\", \"=\", \"withdraw\", false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-consent_event-refused_all",
+  "name": "anumati-anumati_consent_event-refused_all",
   "filter_name": "Refused all",
-  "reference_doctype": "Consent Event",
+  "reference_doctype": "Anumati Consent Event",
   "for_user": "",
-  "filters": "[[\"Consent Event\", \"action\", \"=\", \"refuse\", false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Consent Event\", \"action\", \"=\", \"refuse\", false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-consent_event-guardian_consents",
+  "name": "anumati-anumati_consent_event-guardian_consents",
   "filter_name": "Guardian consents",
-  "reference_doctype": "Consent Event",
+  "reference_doctype": "Anumati Consent Event",
   "for_user": "",
-  "filters": "[[\"Consent Event\", \"capture_mode\", \"in\", [\"guardian_minor\", \"guardian_pwd\"], false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Consent Event\", \"capture_mode\", \"in\", [\"guardian_minor\", \"guardian_pwd\"], false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-consent_event-notice_not_heard_in_full",
+  "name": "anumati-anumati_consent_event-notice_not_heard_in_full",
   "filter_name": "Notice not heard in full",
-  "reference_doctype": "Consent Event",
+  "reference_doctype": "Anumati Consent Event",
   "for_user": "",
-  "filters": "[[\"Consent Event\", \"notice_completed\", \"=\", 0, false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Consent Event\", \"notice_completed\", \"=\", 0, false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-consent_state-waiting_for_confirmation",
+  "name": "anumati-anumati_consent_state-waiting_for_confirmation",
   "filter_name": "Waiting for confirmation",
-  "reference_doctype": "Consent State",
+  "reference_doctype": "Anumati Consent State",
   "for_user": "",
-  "filters": "[[\"Consent State\", \"verification_status\", \"=\", \"unconfirmed\", false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Consent State\", \"verification_status\", \"=\", \"unconfirmed\", false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-data_principal-minors",
+  "name": "anumati-anumati_data_principal-minors",
   "filter_name": "Minors",
-  "reference_doctype": "Data Principal",
+  "reference_doctype": "Anumati Data Principal",
   "for_user": "",
-  "filters": "[[\"Data Principal\", \"is_minor\", \"=\", 1, false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Data Principal\", \"is_minor\", \"=\", 1, false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-data_principal-shared_phone",
+  "name": "anumati-anumati_data_principal-shared_phone",
   "filter_name": "Shared phone",
-  "reference_doctype": "Data Principal",
+  "reference_doctype": "Anumati Data Principal",
   "for_user": "",
-  "filters": "[[\"Data Principal\", \"shared_phone\", \"=\", 1, false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Data Principal\", \"shared_phone\", \"=\", 1, false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-data_principal-needs_help_to_read",
+  "name": "anumati-anumati_data_principal-needs_help_to_read",
   "filter_name": "Needs help to read",
-  "reference_doctype": "Data Principal",
+  "reference_doctype": "Anumati Data Principal",
   "for_user": "",
-  "filters": "[[\"Data Principal\", \"needs_assistance\", \"=\", 1, false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Data Principal\", \"needs_assistance\", \"=\", 1, false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-rights_request-who_is_this",
+  "name": "anumati-anumati_rights_request-who_is_this",
   "filter_name": "Who is this",
-  "reference_doctype": "Rights Request",
+  "reference_doctype": "Anumati Rights Request",
   "for_user": "",
-  "filters": "[[\"Rights Request\", \"status\", \"=\", \"who_is_this\", false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Rights Request\", \"status\", \"=\", \"who_is_this\", false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-rights_request-open_withdrawals",
+  "name": "anumati-anumati_rights_request-open_withdrawals",
   "filter_name": "Open withdrawals",
-  "reference_doctype": "Rights Request",
+  "reference_doctype": "Anumati Rights Request",
   "for_user": "",
-  "filters": "[[\"Rights Request\", \"request_type\", \"=\", \"withdrawal\", false], [\"Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"], false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Rights Request\", \"request_type\", \"=\", \"withdrawal\", false], [\"Anumati Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"], false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-grievance-with_the_dpo",
+  "name": "anumati-anumati_grievance-with_the_dpo",
   "filter_name": "With the DPO",
-  "reference_doctype": "Grievance",
+  "reference_doctype": "Anumati Grievance",
   "for_user": "",
-  "filters": "[[\"Grievance\", \"dpo_since\", \"is\", \"set\", false], [\"Grievance\", \"status\", \"not in\", [\"request_answered\", \"request_closed\"], false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Grievance\", \"dpo_since\", \"is\", \"set\", false], [\"Anumati Grievance\", \"status\", \"not in\", [\"request_answered\", \"request_closed\"], false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-grievance-not_happy",
+  "name": "anumati-anumati_grievance-not_happy",
   "filter_name": "Not happy",
-  "reference_doctype": "Grievance",
+  "reference_doctype": "Anumati Grievance",
   "for_user": "",
-  "filters": "[[\"Grievance\", \"person_says\", \"=\", \"not_happy\", false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Grievance\", \"person_says\", \"=\", \"not_happy\", false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  },
  {
   "doctype": "List Filter",
-  "name": "anumati-field_device-lost_or_wiped",
+  "name": "anumati-anumati_field_device-lost_or_wiped",
   "filter_name": "Lost or wiped",
-  "reference_doctype": "Field Device",
+  "reference_doctype": "Anumati Field Device",
   "for_user": "",
-  "filters": "[[\"Field Device\", \"status\", \"in\", [\"lost\", \"wipe_queued\", \"wiped\"], false]]",
-  "modified": "2026-10-16 10:00:00.000000"
+  "filters": "[[\"Anumati Field Device\", \"status\", \"in\", [\"lost\", \"wipe_queued\", \"wiped\"], false]]",
+  "modified": "2026-10-26 10:00:00.000000"
  }
 ]

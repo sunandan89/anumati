@@ -3,7 +3,7 @@
 
 frappe.query_reports["Profile Answer Totals"] = {
 	filters: [
-		{ fieldname: "programme", label: __("Programme"), fieldtype: "Link", options: "Programme" },
-		{ fieldname: "question", label: __("Question"), fieldtype: "Link", options: "Profile Question" },
+		{ fieldname: "programme", label: __("Programme"), fieldtype: "Link", options: "Anumati Programme" },
+		{ fieldname: "question", label: __("Question"), fieldtype: "Link", options: "Anumati Profile Question" },
 	],
 };

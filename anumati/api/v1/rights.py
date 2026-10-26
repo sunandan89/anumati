@@ -15,19 +15,19 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 	(`consent_code`, from the person's slip) finds the person when `principal_ref` is not known.
 	`client_request_id` (a UUID the caller makes once per request) makes a retry return the first one
 	instead of filing it twice with its own reply-by clock (review C10)."""
-	frappe.has_permission("Rights Request", "create", throw=True)
+	frappe.has_permission("Anumati Rights Request", "create", throw=True)
 	schema.validate("RightsSubmit", {k: v for k, v in {
 		"request_type": request_type, "channel": channel, "principal_ref": principal_ref, "payload": payload,
 		"paper_trail_number": paper_trail_number, "consent_code": consent_code,
 		"client_request_id": client_request_id}.items() if v is not None})
 	if client_request_id:
-		for doctype, key in (("Rights Request", "request"), ("Grievance", "request")):
+		for doctype, key in (("Anumati Rights Request", "request"), ("Anumati Grievance", "request")):
 			if (seen := frappe.db.get_value(doctype, {"client_request_id": client_request_id},
 			                                ["name", "status", "sla_due"], as_dict=True)):
 				return {key: seen.name, "status": seen.status, "sla_due": seen.sla_due}
 	principal = None
 	if principal_ref:
-		principal = frappe.db.get_value("Data Principal", {"principal_ref": principal_ref})
+		principal = frappe.db.get_value("Anumati Data Principal", {"principal_ref": principal_ref})
 		if not principal:
 			frappe.throw(_("Unknown principal_ref {0}").format(principal_ref))
 	elif consent_code:
@@ -36,12 +36,12 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 		# Complaints are grievances now (grievance.submit); older field apps still send them here.
 		from anumati import grievance
 
-		frappe.has_permission("Grievance", "create", throw=True)
+		frappe.has_permission("Anumati Grievance", "create", throw=True)
 		doc = grievance.create("something_else", channel, principal, description=payload, raw_payload=payload,
 		                       paper_trail_number=paper_trail_number, client_request_id=client_request_id,
 		                       raised_by_role="by_field_worker" if channel in ("field_worker", "slip") else None)
 		return {"request": doc.name, "status": doc.status, "sla_due": doc.sla_due}
-	doc = frappe.new_doc("Rights Request")
+	doc = frappe.new_doc("Anumati Rights Request")
 	doc.update({"request_type": request_type, "channel": channel, "raw_payload": payload,
 	            "paper_trail_number": paper_trail_number, "matched_principal": principal,
 	            "client_request_id": client_request_id})
@@ -53,15 +53,15 @@ def submit(request_type, channel, principal_ref=None, payload=None, paper_trail_
 def withdrawable(request):
 	"""The uses currently on for the request's person, by programme, for the console's Record withdrawal
 	checklist: [{programme, programme_name, code, title, essential}]. Titles and codes only, no personal data."""
-	doc = frappe.get_doc("Rights Request", request)
+	doc = frappe.get_doc("Anumati Rights Request", request)
 	doc.check_permission("read")
 	if not doc.matched_principal:
 		return []
-	rows = frappe.get_all("Consent State", {"principal": doc.matched_principal, "status": "granted"},
+	rows = frappe.get_all("Anumati Consent State", {"principal": doc.matched_principal, "status": "granted"},
 	                      ["programme", "purpose"], order_by="programme, purpose")
 	purposes = {p.name: p for p in frappe.get_all(
-		"Purpose", {"name": ("in", [r.purpose for r in rows] or ["-"])}, ["name", "code", "purpose_title", "essential"])}
-	names = dict(frappe.get_all("Programme", {"name": ("in", list({r.programme for r in rows}) or ["-"])},
+		"Anumati Purpose", {"name": ("in", [r.purpose for r in rows] or ["-"])}, ["name", "code", "purpose_title", "essential"])}
+	names = dict(frappe.get_all("Anumati Programme", {"name": ("in", list({r.programme for r in rows}) or ["-"])},
 	                            ["name", "programme_name"], as_list=True))
 	return [
 		{"programme": r.programme, "programme_name": names.get(r.programme) or r.programme,
@@ -76,7 +76,7 @@ def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
 	"""Carry out a withdrawal request: record the signed withdrawal event and close the request.
 	Idempotent: the event UUID is derived from the request. `leave_programme` withdraws every granted
 	purpose, essential ones included (see consent.withdraw_for)."""
-	doc = frappe.get_doc("Rights Request", request)
+	doc = frappe.get_doc("Anumati Rights Request", request)
 	doc.check_permission("write")
 	if doc.request_type != "withdrawal":
 		frappe.throw(_("Only withdrawal requests can be fulfilled this way"))
@@ -84,7 +84,7 @@ def fulfil_withdrawal(request, programme, purposes=None, leave_programme=0):
 		frappe.throw(_("Match the request to a principal first"))
 	purposes = frappe.parse_json(purposes) if isinstance(purposes, str) else purposes
 	if purposes and not frappe.utils.cint(leave_programme) and frappe.get_all(
-			"Purpose", {"programme": programme, "code": ("in", purposes), "essential": 1}, limit=1):
+			"Anumati Purpose", {"programme": programme, "code": ("in", purposes), "essential": 1}, limit=1):
 		# As in the field app: an essential use stops only when the person leaves the programme.
 		frappe.throw(_("An essential use stops only when the person leaves the programme. Tick Leave the programme."))
 	artefact = consent.withdraw_for(
@@ -106,6 +106,6 @@ def reply(request, message, kind="update"):
 	self-service page; an SMS only says there is a reply."""
 	from anumati import conversation
 
-	doc = frappe.get_doc("Rights Request", request)
+	doc = frappe.get_doc("Anumati Rights Request", request)
 	doc.check_permission("write")
 	return {"message": conversation.staff_message(doc, message, kind), "status": doc.status}

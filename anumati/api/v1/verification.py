@@ -33,8 +33,8 @@ def _hash(event, code):
 
 def _event_for_caller(consent_id):
 	"""The worker who captured the consent, or staff, may verify it; nobody else."""
-	frappe.has_permission("Consent Event", "create", throw=True)
-	event = frappe.get_doc("Consent Event", consent_id)
+	frappe.has_permission("Anumati Consent Event", "create", throw=True)
+	event = frappe.get_doc("Anumati Consent Event", consent_id)
 	if event.captured_by != frappe.session.user and not STAFF & set(frappe.get_roles()):
 		raise frappe.PermissionError
 	return event
@@ -43,7 +43,7 @@ def _event_for_caller(consent_id):
 @frappe.whitelist(methods=["POST"])
 def send_otp(consent_id):
 	event = _event_for_caller(consent_id)
-	recent = frappe.db.count("Verification Attempt", {
+	recent = frappe.db.count("Anumati Verification Attempt", {
 		"consent_event": event.name, "verification_method": "server_otp",
 		"sent_at": (">", now_datetime() - timedelta(seconds=TTL_SECONDS))})
 	if recent >= MAX_SENDS:
@@ -55,11 +55,11 @@ def send_otp(consent_id):
 		# Not set up (no provider, template or phone) or the provider refused: nothing to check against.
 		return {"sent": False, "reason": "not_sent" if comm else "not_set_up"}
 	frappe.cache.set_value(_key(event.name), {"hash": _hash(event.name, code), "tries": 0}, expires_in_sec=TTL_SECONDS)
-	attempt = frappe.get_doc({"doctype": "Verification Attempt", "consent_event": event.name,
+	attempt = frappe.get_doc({"doctype": "Anumati Verification Attempt", "consent_event": event.name,
 	                          "verification_method": "server_otp", "channel": "sms", "sent_at": now_datetime(),
 	                          "code_hash": _hash(event.name, code), "result": "pending", "response": comm})
 	attempt.insert(ignore_permissions=True)
-	phone = channels.contact_phone(frappe.get_doc("Data Principal", event.principal)) or ""
+	phone = channels.contact_phone(frappe.get_doc("Anumati Data Principal", event.principal)) or ""
 	return {"attempt": attempt.name, "sent": True, "expires_in": TTL_SECONDS, "to": mask_phone(phone)}
 
 
@@ -67,19 +67,19 @@ def send_otp(consent_id):
 def verify_otp(consent_id, code):
 	_event_for_caller(consent_id)
 	stored = frappe.cache.get_value(_key(consent_id))
-	attempt = frappe.db.get_value("Verification Attempt",
+	attempt = frappe.db.get_value("Anumati Verification Attempt",
 	                              {"consent_event": consent_id, "verification_method": "server_otp", "result": "pending"},
 	                              order_by="creation desc")
 	if not stored or not attempt:
 		frappe.throw(_("No active code; send a new one"))
 	if stored["tries"] >= MAX_TRIES:
-		frappe.db.set_value("Verification Attempt", attempt, "result", "failed")
+		frappe.db.set_value("Anumati Verification Attempt", attempt, "result", "failed")
 		frappe.throw(_("Too many attempts; send a new code"))
 	if not hmac.compare_digest(stored["hash"], _hash(consent_id, str(code).strip())):
 		stored["tries"] += 1
 		frappe.cache.set_value(_key(consent_id), stored, expires_in_sec=TTL_SECONDS)
 		return {"confirmed": False, "tries_left": MAX_TRIES - stored["tries"]}
 	frappe.cache.delete_value(_key(consent_id))
-	frappe.db.set_value("Verification Attempt", attempt, {"result": "confirmed", "delivered_at": now_datetime()})
+	frappe.db.set_value("Anumati Verification Attempt", attempt, {"result": "confirmed", "delivered_at": now_datetime()})
 	enforcement.set_verification(consent_id, "confirmed")
 	return {"confirmed": True}

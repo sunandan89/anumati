@@ -69,7 +69,7 @@ AUDIT_SCHEMA = {
 	"remarks": "str",
 }
 
-CHAINS = {"Consent Event": CONSENT_SCHEMA, "Audit Entry": AUDIT_SCHEMA}
+CHAINS = {"Anumati Consent Event": CONSENT_SCHEMA, "Anumati Audit Entry": AUDIT_SCHEMA}
 _UNSEALED = {"name", "chain_seq", "key_id"}
 
 # Stock Frappe doctypes whose history is part of the admin audit trail (access control and config).
@@ -115,7 +115,7 @@ def lock_chain(doctype: str):
 def seal(doc):
 	"""Assign chain position, hash and signature to a new ledger record, in place."""
 	schema = CHAINS[doc.doctype]
-	if doc.doctype == "Consent Event" and not doc.server_time:
+	if doc.doctype == "Anumati Consent Event" and not doc.server_time:
 		doc.server_time = now_datetime()
 	for field, kind in schema.items():  # store exactly what gets hashed
 		if field not in _UNSEALED:
@@ -200,7 +200,7 @@ def seal_audit_trail(limit: int = 500) -> int:
 	sealed = 0
 	for source, dt_field, fields, build in sources:
 		last = frappe.get_all(
-			"Audit Entry", {"source_doctype": source}, pluck="logged_at", order_by="logged_at desc", limit=1
+			"Anumati Audit Entry", {"source_doctype": source}, pluck="logged_at", order_by="logged_at desc", limit=1
 		)
 		cursor = last[0] if last else None
 		filters = {dt_field: ("in", doctypes)}
@@ -208,10 +208,10 @@ def seal_audit_trail(limit: int = 500) -> int:
 			filters["creation"] = (">=", cursor)
 		rows = frappe.get_all(source, filters=filters, fields=fields, order_by="creation asc, name asc", limit=limit)
 		for row in rows:
-			if frappe.db.exists("Audit Entry", {"source_name": row.name}):
+			if frappe.db.exists("Anumati Audit Entry", {"source_name": row.name}):
 				continue
 			entry = frappe.get_doc(
-				{"doctype": "Audit Entry", "source_doctype": source, "source_name": row.name,
+				{"doctype": "Anumati Audit Entry", "source_doctype": source, "source_name": row.name,
 				 "actor": row.owner, "logged_at": row.creation, **build(row)}
 			)
 			entry.flags.ignore_links = True
@@ -280,7 +280,7 @@ def nightly_verify():
 	"""Scheduler job: verify both chains against the last checkpoints; failures go to Error Log."""
 	settings = "Anumati Settings"
 	summary = []
-	for doctype, anchor_field in (("Consent Event", "consent_anchor"), ("Audit Entry", "audit_anchor")):
+	for doctype, anchor_field in (("Anumati Consent Event", "consent_anchor"), ("Anumati Audit Entry", "audit_anchor")):
 		raw = frappe.db.get_single_value(settings, anchor_field)
 		anchor = json.loads(raw) if raw else None
 		res = verify_chain(doctype, anchor=anchor if anchor and anchor.get("seq") else None)

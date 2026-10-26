@@ -116,7 +116,7 @@ class TestPilotSafety(FrappeTestCase):
 
 	def test_a_chain_position_clash_raises_instead_of_returning_nothing(self):
 		self.grant()
-		head = frappe.db.get_value("Consent Event", {"chain_seq": (">", 0)}, "chain_seq", order_by="chain_seq desc")
+		head = frappe.db.get_value("Anumati Consent Event", {"chain_seq": (">", 0)}, "chain_seq", order_by="chain_seq desc")
 
 		def clash(doc):
 			chain.seal(doc)
@@ -126,13 +126,13 @@ class TestPilotSafety(FrappeTestCase):
 		with patch.object(InsertOnlyDocument, "before_save", clash):
 			self.assertRaises((frappe.DuplicateEntryError, frappe.UniqueValidationError), self.grant,
 			                  event_uuid=event_uuid)
-		self.assertFalse(frappe.db.exists("Consent Event", event_uuid))
+		self.assertFalse(frappe.db.exists("Anumati Consent Event", event_uuid))
 		self.assertEqual(self.grant(event_uuid=event_uuid)["event_uuid"], event_uuid, "the retry goes through")
 
 	def test_chain_lock_is_taken_when_sealing(self):
 		with patch("anumati.ledger.chain.lock_chain", wraps=chain.lock_chain) as lock:
 			self.grant()
-		lock.assert_called_with("Consent Event")
+		lock.assert_called_with("Anumati Consent Event")
 
 	# -- C9: field devices ---------------------------------------------------------
 
@@ -148,7 +148,7 @@ class TestPilotSafety(FrappeTestCase):
 		self.assertEqual(device.sign_out(dev)["status"], "logged_out")
 		frappe.set_user(field_worker("ravi"))
 		self.assertEqual(device.register(dev)["status"], "active", "after sign-out the next worker can sign in")
-		self.assertEqual(frappe.db.get_value("Field Device", dev, "user"), field_worker("ravi"))
+		self.assertEqual(frappe.db.get_value("Anumati Field Device", dev, "user"), field_worker("ravi"))
 
 	def test_someone_else_cannot_use_up_a_lost_phones_wipe(self):
 		dev = f"DEV-{uuid.uuid4().hex[:6]}"
@@ -158,7 +158,7 @@ class TestPilotSafety(FrappeTestCase):
 		device.report_lost(dev)
 		frappe.set_user(field_worker("ravi"))
 		self.assertRaises(device.DeviceTakenError, device.register, dev)
-		self.assertEqual(frappe.db.get_value("Field Device", dev, "status"), "wipe_queued")
+		self.assertEqual(frappe.db.get_value("Anumati Field Device", dev, "status"), "wipe_queued")
 		frappe.set_user(field_worker("asha"))
 		self.assertTrue(device.register(dev)["wipe"])
 
@@ -169,7 +169,7 @@ class TestPilotSafety(FrappeTestCase):
 		first = rights.submit("access", "field_worker", principal_ref=self.p.principal_ref, client_request_id=rid)
 		again = rights.submit("access", "field_worker", principal_ref=self.p.principal_ref, client_request_id=rid)
 		self.assertEqual(first["request"], again["request"])
-		self.assertEqual(frappe.db.count("Rights Request", {"client_request_id": rid}), 1)
+		self.assertEqual(frappe.db.count("Anumati Rights Request", {"client_request_id": rid}), 1)
 
 		gid = uid()
 		first = rights.submit("grievance", "field_worker", principal_ref=self.p.principal_ref, payload="Calls continued",
@@ -177,7 +177,7 @@ class TestPilotSafety(FrappeTestCase):
 		again = rights.submit("grievance", "field_worker", principal_ref=self.p.principal_ref, payload="Calls continued",
 		                      client_request_id=gid)
 		self.assertEqual(first["request"], again["request"])
-		self.assertEqual(frappe.db.count("Grievance", {"client_request_id": gid}), 1)
+		self.assertEqual(frappe.db.count("Anumati Grievance", {"client_request_id": gid}), 1)
 
 		hid = uid()
 		one = grievance.submit("did_not_stop", "field_worker", principal_ref=self.p.principal_ref, client_request_id=hid)

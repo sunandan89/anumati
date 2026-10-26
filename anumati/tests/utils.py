@@ -13,22 +13,22 @@ def ensure_language(code="hi", name="Hindi"):
 
 
 def make_programme(code="TST", name="Test Health Camp"):
-	if not frappe.db.exists("Programme", code):
-		frappe.get_doc({"doctype": "Programme", "code": code, "programme_name": name}).insert()
+	if not frappe.db.exists("Anumati Programme", code):
+		frappe.get_doc({"doctype": "Anumati Programme", "code": code, "programme_name": name}).insert()
 	return code
 
 
 def make_purpose(programme="TST", code="screen", title="Health screening", **kw):
 	name = f"{programme}-{code}"
-	if not frappe.db.exists("Purpose", name):
+	if not frappe.db.exists("Anumati Purpose", name):
 		frappe.get_doc(
-			{"doctype": "Purpose", "programme": programme, "code": code, "purpose_title": title, **kw}
+			{"doctype": "Anumati Purpose", "programme": programme, "code": code, "purpose_title": title, **kw}
 		).insert()
 	return name
 
 
 def make_principal(ref=None, **kw):
-	doc = frappe.get_doc({"doctype": "Data Principal", "principal_ref": ref or f"TST-{uuid.uuid4().hex[:8]}", **kw})
+	doc = frappe.get_doc({"doctype": "Anumati Data Principal", "principal_ref": ref or f"TST-{uuid.uuid4().hex[:8]}", **kw})
 	doc.insert()
 	return doc
 
@@ -40,7 +40,7 @@ def make_event(principal=None, programme="TST", **kw):
 	principal = principal or make_principal().name
 	doc = frappe.get_doc(
 		{
-			"doctype": "Consent Event",
+			"doctype": "Anumati Consent Event",
 			"event_uuid": str(uuid.uuid4()),
 			"action": "grant",
 			"principal": principal,
@@ -78,7 +78,7 @@ def webhook_call(token=None, ip="203.0.113.10"):
 		frappe.local.request, frappe.local.request_ip = saved
 
 
-def make_evidence(principal_name, content=None, kind="audio", attach_to="Data Principal"):
+def make_evidence(principal_name, content=None, kind="audio", attach_to="Anumati Data Principal"):
 	"""Upload a private evidence file for a person, as the field app does; returns the event's evidence entry."""
 	import hashlib
 

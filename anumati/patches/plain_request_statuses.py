@@ -14,7 +14,7 @@ OLD_TO_NEW = {
 
 def execute():
 	for old, new in OLD_TO_NEW.items():
-		frappe.db.sql("update `tabRights Request` set status=%s where status=%s", (new, old))
+		frappe.db.sql("update `tabAnumati Rights Request` set status=%s where status=%s", (new, old))
 	# The old Requests board columns are rebuilt from the fixture.
 	if frappe.db.exists("Kanban Board", "Requests"):
 		frappe.delete_doc("Kanban Board", "Requests", force=True, ignore_permissions=True)

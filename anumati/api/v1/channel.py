@@ -31,7 +31,7 @@ TOKEN_HEADER = "X-Anumati-Token"
 
 
 def _provider(provider):
-	doc = frappe.get_doc("Channel Provider", provider) if provider and frappe.db.exists("Channel Provider", provider) else None
+	doc = frappe.get_doc("Anumati Channel Provider", provider) if provider and frappe.db.exists("Anumati Channel Provider", provider) else None
 	secret = doc.get_password("webhook_secret", raise_exception=False) if doc else None
 	token = frappe.get_request_header(TOKEN_HEADER)
 	if not (doc and doc.enabled and secret and token and hmac.compare_digest(str(secret), str(token))):
@@ -43,7 +43,7 @@ def _provider(provider):
 
 
 def _request(request_type, channel, phone_hash, text, status=None, principal=None):
-	req = frappe.get_doc({"doctype": "Rights Request", "request_type": request_type, "channel": channel,
+	req = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": request_type, "channel": channel,
 	                      "sender_hash": phone_hash, "raw_payload": text, "matched_principal": principal,
 	                      **({"status": status} if status else {})})
 	req.flags.ignore_permissions = True
@@ -52,7 +52,7 @@ def _request(request_type, channel, phone_hash, text, status=None, principal=Non
 
 
 def _latest_grant(principal):
-	return frappe.db.get_value("Consent Event", {"principal": principal, "action": ("in", ["grant", "renew"])},
+	return frappe.db.get_value("Anumati Consent Event", {"principal": principal, "action": ("in", ["grant", "renew"])},
 	                           ["name", "programme", "purposes_granted"], order_by="chain_seq desc", as_dict=True)
 
 
@@ -90,7 +90,7 @@ def handle_sms(provider, sender, text):
 			return {"outcome": "request", "request": req.name}
 		purposes, programme = [codes[n - 1]], grant.programme
 	programmes = [programme] if programme else sorted(
-		{p.programme for p in frappe.get_all("Consent State", {"principal": principal, "status": "granted"}, ["programme"])})
+		{p.programme for p in frappe.get_all("Anumati Consent State", {"principal": principal, "status": "granted"}, ["programme"])})
 	artefacts = [consent.withdraw_for(principal, prog, "sms", f"sms-{req.name}-{prog}", purposes)
 	             for prog in programmes]
 	req.reload()
@@ -154,9 +154,9 @@ def delivery_report(provider=None, request_id=None, status=None, **kwargs):
 	if delivered or failed:
 		# Counted on the Breach Incident (and any other message) as delivered or failed.
 		frappe.db.set_value("Communication", comm, "anumati_delivery", "sms_delivered" if delivered else "sms_failed")
-	for att in frappe.get_all("Verification Attempt", {"response": comm, "result": "pending"}, ["name", "consent_event"]):
+	for att in frappe.get_all("Anumati Verification Attempt", {"response": comm, "result": "pending"}, ["name", "consent_event"]):
 		if delivered:
-			frappe.db.set_value("Verification Attempt", att.name, {"result": "confirmed", "delivered_at": now_datetime()})
+			frappe.db.set_value("Anumati Verification Attempt", att.name, {"result": "confirmed", "delivered_at": now_datetime()})
 			from anumati import enforcement
 
 			enforcement.set_verification(att.consent_event, "confirmed")

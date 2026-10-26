@@ -49,13 +49,13 @@ def apply_event(event):
 	for code, status in changes.items():
 		purpose = purpose_name(event.programme, code)
 		name = f"{event.principal}-{purpose}"
-		if frappe.db.exists("Consent State", name):
-			state = frappe.get_doc("Consent State", name, for_update=True)
-			last = frappe.db.get_value("Consent Event", state.last_event, ["device_time", "server_time"], as_dict=True)
+		if frappe.db.exists("Anumati Consent State", name):
+			state = frappe.get_doc("Anumati Consent State", name, for_update=True)
+			last = frappe.db.get_value("Anumati Consent Event", state.last_event, ["device_time", "server_time"], as_dict=True)
 			if last and _order_key(last.device_time, last.server_time) > incoming:
 				continue  # an older event arriving late never overrides a newer decision
 		else:
-			state = frappe.new_doc("Consent State")
+			state = frappe.new_doc("Anumati Consent State")
 			state.update({"principal": event.principal, "programme": event.programme, "purpose": purpose})
 		state.update(
 			{"status": status, "verification_status": event.verification_status,
@@ -80,7 +80,7 @@ def states_for(principal: str) -> dict[str, dict]:
 	if cached is not None:
 		return cached
 	rows = frappe.get_all(
-		"Consent State", {"principal": principal}, ["purpose", "status", "last_event", "verification_status"]
+		"Anumati Consent State", {"principal": principal}, ["purpose", "status", "last_event", "verification_status"]
 	)
 	value = {r.purpose: {"status": r.status, "event": r.last_event, "verification": r.verification_status} for r in rows}
 	frappe.cache.set_value(key, value)
@@ -90,17 +90,17 @@ def states_for(principal: str) -> dict[str, dict]:
 def rebuild(principal: str | None = None):
 	"""Rebuild Consent State from the ledger (all principals, or one). Safe to re-run."""
 	filters = {"principal": principal} if principal else {}
-	frappe.db.delete("Consent State", filters)
-	for name in frappe.get_all("Consent Event", filters, pluck="name", order_by="chain_seq asc"):
-		apply_event(frappe.get_doc("Consent Event", name))
+	frappe.db.delete("Anumati Consent State", filters)
+	for name in frappe.get_all("Anumati Consent Event", filters, pluck="name", order_by="chain_seq asc"):
+		apply_event(frappe.get_doc("Anumati Consent Event", name))
 
 
 def set_verification(event_name: str, status: str):
 	"""Record a later verification outcome (confirmed / unconfirmed) on the states this event set.
 	The event itself never changes (D4); only the projection does."""
-	principal = frappe.db.get_value("Consent Event", event_name, "principal")
-	for name in frappe.get_all("Consent State", {"last_event": event_name}, pluck="name"):
-		frappe.db.set_value("Consent State", name, {"verification_status": status, "updated": now_datetime()})
+	principal = frappe.db.get_value("Anumati Consent Event", event_name, "principal")
+	for name in frappe.get_all("Anumati Consent State", {"last_event": event_name}, pluck="name"):
+		frappe.db.set_value("Anumati Consent State", name, {"verification_status": status, "updated": now_datetime()})
 	if principal:
 		invalidate(principal)
 
@@ -109,12 +109,12 @@ def expire_unconfirmed():
 	"""Daily: deferred confirmations with no delivery after the programme's window become 'unconfirmed'."""
 	from frappe.utils import add_days
 
-	for att in frappe.get_all("Verification Attempt", {"result": "pending", "verification_method": "deferred"},
+	for att in frappe.get_all("Anumati Verification Attempt", {"result": "pending", "verification_method": "deferred"},
 	                          ["name", "consent_event", "sent_at"]):
-		programme = frappe.db.get_value("Consent Event", att.consent_event, "programme")
-		days = frappe.db.get_value("Programme", programme, "confirm_window_days") or 7
+		programme = frappe.db.get_value("Anumati Consent Event", att.consent_event, "programme")
+		days = frappe.db.get_value("Anumati Programme", programme, "confirm_window_days") or 7
 		if att.sent_at and add_days(att.sent_at, days) < now_datetime():
-			frappe.db.set_value("Verification Attempt", att.name, "result", "expired")
+			frappe.db.set_value("Anumati Verification Attempt", att.name, "result", "expired")
 			set_verification(att.consent_event, "unconfirmed")
 
 
@@ -123,7 +123,7 @@ def flag_new_adults():
 	(consent.check answers "renewal_due") until they consent themselves."""
 	from frappe.utils import today
 
-	for name in frappe.get_all("Data Principal", {"is_minor": 1, "renewal_due": 0, "adult_on": ("<=", today())}, pluck="name"):
-		frappe.get_doc("Data Principal", name).db_set("renewal_due", 1)
-		frappe.clear_document_cache("Data Principal", name)
+	for name in frappe.get_all("Anumati Data Principal", {"is_minor": 1, "renewal_due": 0, "adult_on": ("<=", today())}, pluck="name"):
+		frappe.get_doc("Anumati Data Principal", name).db_set("renewal_due", 1)
+		frappe.clear_document_cache("Anumati Data Principal", name)
 		invalidate(name)

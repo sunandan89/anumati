@@ -83,7 +83,7 @@ class TestRoleMatrix(FrappeTestCase):
 			self.assertEqual(bool(frappe.db.get_value("Role", role, "two_factor_auth")), role in TWO_FACTOR_ROLES, role)
 
 	def test_field_worker_cannot_read_audit_or_governance(self):
-		for doctype in ("Audit Entry", "ROPA Entry", "Breach Incident", "Channel Provider", "Anumati Settings"):
+		for doctype in ("Anumati Audit Entry", "Anumati ROPA Entry", "Anumati Breach Incident", "Anumati Channel Provider", "Anumati Settings"):
 			roles = expected_matrix()[doctype]
 			self.assertNotIn("Anumati Field Worker", roles, doctype)
 
@@ -127,9 +127,9 @@ class TestGuestAccess(FrappeTestCase):
 class TestFormConnections(FrappeTestCase):
 	def test_forms_show_related_records(self):
 		expect = {
-			"Programme": {"Purpose", "Notice Template", "Consent Event"},
-			"Notice Template": {"Notice Translation", "Consent Event"},
-			"Data Principal": {"Consent Event", "Consent State", "Guardian Link", "Rights Request"},
+			"Anumati Programme": {"Anumati Purpose", "Anumati Notice Template", "Anumati Consent Event"},
+			"Anumati Notice Template": {"Anumati Notice Translation", "Anumati Consent Event"},
+			"Anumati Data Principal": {"Anumati Consent Event", "Anumati Consent State", "Anumati Guardian Link", "Anumati Rights Request"},
 		}
 		for doctype, linked in expect.items():
 			got = {link.link_doctype for link in frappe.get_meta(doctype).links}

@@ -1,6 +1,9 @@
 """Generator for Anumati DocType JSON and the reviewed role matrix (config-first).
 
-The JSON it writes is the source of truth Frappe loads; this script just keeps 28 DocTypes consistent.
+The JSON it writes is the source of truth Frappe loads; this script just keeps the DocTypes consistent.
+DocTypes are declared here by their short names ("Purpose"); every one is written with the app prefix
+("Anumati Purpose"), and so are Link and Table options that point at them, so the app never clashes
+with a host app's DocTypes (review A2, A3).
 Edit here, run `python3 tools/gen_doctypes.py` from the repo root, commit the JSON. Bump TS on every
 schema change so `bench migrate` re-syncs the DocTypes. Editing a DocType in the Desk builder also
 works; then update this file to match."""
@@ -9,7 +12,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-10-16 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-26 10:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -873,6 +876,22 @@ doctype("Funder Link", [
 
 
 # ---------------------------------------------------------------- emit
+PREFIX = "Anumati "
+OURS = {dt["name"] for dt in DOCTYPES}
+
+def full(n):
+    """The DocType's real name: short names declared here get the app prefix."""
+    return PREFIX + n if n in OURS and not n.startswith(PREFIX) else n
+
+def prefixed(fields):
+    out = []
+    for f in fields:
+        f = dict(f)
+        if f.get("fieldtype") in ("Link", "Table", "Table MultiSelect") and f.get("options") in OURS:
+            f["options"] = full(f["options"])
+        out.append(f)
+    return out
+
 def scrub(n):
     return n.lower().replace(" ", "_").replace("-", "_")
 
@@ -907,7 +926,8 @@ TRACK_VIEWS = {"Data Principal", "Guardian Link", "Consent Event", "Rights Reque
 def emit():
     counts = {"doctype": 0, "child": 0}
     for dt in DOCTYPES:
-        name, fields, props = dt["name"], dt["fields"], dt["props"]
+        short, fields, props = dt["name"], prefixed(dt["fields"]), dt["props"]
+        name = full(short)
         folder = os.path.join(ROOT, scrub(name))
         os.makedirs(folder, exist_ok=True)
         istable = props.get("istable")
@@ -921,7 +941,7 @@ def emit():
             "field_order": [f["fieldname"] for f in fields],
             "fields": fields,
             "index_web_pages_for_search": 0,
-            "links": [{"group": g, "link_doctype": dt, "link_fieldname": f} for g, dt, f in LINKS.get(name, [])],
+            "links": [{"group": g, "link_doctype": full(dt), "link_fieldname": f} for g, dt, f in LINKS.get(short, [])],
             "modified": TS,
             "modified_by": "Administrator",
             "module": "Anumati",
@@ -935,9 +955,9 @@ def emit():
         auto = props.get("autoname")
         if auto:
             d["naming_rule"] = {"hash": "Random"}.get(auto) or ("By fieldname" if auto.startswith("field:") else "Expression")
-        if not istable and name not in NO_VERSION:
+        if not istable and short not in NO_VERSION:
             d["track_changes"] = 1
-        if name in TRACK_VIEWS:
+        if short in TRACK_VIEWS:
             d["track_views"] = 1  # stock View Log = PII access log (who opened which record)
         d.update(props)
         with open(os.path.join(folder, scrub(name) + ".json"), "w") as fh:
@@ -957,7 +977,7 @@ if __name__ == "__main__":
         if dt["props"].get("istable"):
             continue
         single = bool(dt["props"].get("issingle"))
-        matrix[dt["name"]] = {p["role"]: sorted(k for k, v in p.items() if v == 1 and k != "permlevel")
+        matrix[full(dt["name"])] = {p["role"]: sorted(k for k, v in p.items() if v == 1 and k != "permlevel")
                               for p in perms(dt["matrix"], single)}
     with open(os.path.join(REPO, "anumati", "tests", "role_matrix.json"), "w") as fh:
         json.dump(matrix, fh, indent=1, sort_keys=True)

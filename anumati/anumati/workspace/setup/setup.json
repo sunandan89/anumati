@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"setup0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"setup1\", \"type\": \"card\", \"data\": {\"card_name\": \"Organisation\", \"col\": 4}}, {\"id\": \"setup2\", \"type\": \"card\", \"data\": {\"card_name\": \"Messaging\", \"col\": 4}}, {\"id\": \"setup3\", \"type\": \"card\", \"data\": {\"card_name\": \"Connected systems\", \"col\": 4}}]",
- "creation": "2026-10-16 10:00:00.000000",
+ "creation": "2026-10-26 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -63,7 +63,7 @@
    "is_query_report": 0,
    "label": "SMS and messaging",
    "link_count": 0,
-   "link_to": "Channel Provider",
+   "link_to": "Anumati Channel Provider",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -71,9 +71,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Message Template",
+   "label": "Anumati Message Template",
    "link_count": 0,
-   "link_to": "Message Template",
+   "link_to": "Anumati Message Template",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -89,9 +89,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Source System",
+   "label": "Anumati Source System",
    "link_count": 0,
-   "link_to": "Source System",
+   "link_to": "Anumati Source System",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -109,15 +109,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Funder Link",
+   "label": "Anumati Funder Link",
    "link_count": 0,
-   "link_to": "Funder Link",
+   "link_to": "Anumati Funder Link",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-10-16 10:00:00.000000",
+ "modified": "2026-10-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Setup",
