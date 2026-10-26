@@ -7,7 +7,8 @@ with a host app's DocTypes (review A2, A3).
 Edit here, run `python3 tools/gen_doctypes.py` from the repo root, commit the JSON. Bump TS on every
 schema change so `bench migrate` re-syncs the DocTypes. Editing a DocType in the Desk builder also
 works; then update this file to match."""
-import json, os, re, sys
+import json
+import os
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")

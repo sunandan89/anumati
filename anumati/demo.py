@@ -368,7 +368,7 @@ def create_sample_data() -> dict:
 	optional = [p[0] for p in PURPOSES if not p[3]]
 	made = {"people": 0, "consents": 0, "withdrawals": 0, "requests": 0}
 	admin = frappe.session.user
-	frappe.set_user(FIELD_WORKER)  # capture as the field worker, with a field worker's permissions
+	frappe.set_user(FIELD_WORKER)  # fictional demo data is captured as the field worker, with their permissions; nosemgrep
 	try:
 		for i, (suffix, name, lang, flags) in enumerate(SAMPLE_PEOPLE):
 			ref = f"{PROGRAMME}-{suffix}"
@@ -424,7 +424,7 @@ def create_sample_data() -> dict:
 				              payload=f"Asked in person; consent {art['short_code']} (sample)")
 				made["requests"] += 1
 	finally:
-		frappe.set_user(admin)
+		frappe.set_user(admin)  # back to the user who ran it; nosemgrep
 	return made
 
 
@@ -492,7 +492,7 @@ def attach_bundled_audio() -> int:
 	manifest_path = os.path.join(folder, "manifest.json")
 	if not os.path.exists(manifest_path):
 		return 0
-	with open(manifest_path) as fh:
+	with open(manifest_path) as fh:  # fixed app file; nosemgrep
 		manifest = json.load(fh)
 	attached = 0
 	for doctype, name in _demo_targets():
@@ -502,7 +502,7 @@ def attach_bundled_audio() -> int:
 			continue
 		urls = {}
 		for gender, field in (("female", "audio_file"), ("male", "audio_file_male")):
-			with open(os.path.join(folder, entry[gender]), "rb") as fh:
+			with open(os.path.join(folder, entry[gender]), "rb") as fh:  # names from the app's own manifest; nosemgrep
 				urls[field] = frappe.get_doc({
 					"doctype": "File", "file_name": entry[gender], "content": fh.read(), "is_private": 1,
 					"attached_to_doctype": doctype, "attached_to_name": name,

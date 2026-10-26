@@ -10,8 +10,8 @@ from frappe.model.workflow import apply_workflow
 from frappe.tests import IntegrationTestCase
 
 from anumati import enforcement
-from anumati.api.v1 import consent, notice, principal
 from anumati.api.schema import SchemaError
+from anumati.api.v1 import consent, notice, principal
 from anumati.api.v1.consent import ConsentRequestError
 from anumati.tests.utils import ensure_language, make_principal, make_programme, make_purpose
 

@@ -34,8 +34,7 @@ def _label(doctype, field, value):
 
 
 @frappe.whitelist()
-def breakdown(chart_name=None, chart=None, no_cache=None, filters=None, from_date=None, to_date=None,
-			  timespan=None, time_interval=None, heatmap_year=None, refresh=None):
+def breakdown(chart_name: str | None = None, chart: dict | str | None = None, no_cache: bool | int | str | None = None, filters: dict | list | str | None = None, from_date: str | None = None, to_date: str | None = None, timespan: str | None = None, time_interval: str | None = None, heatmap_year: int | str | None = None, refresh: bool | int | str | None = None):
 	if chart_name not in BREAKDOWNS:
 		frappe.throw(_("Unknown chart"))
 	frappe.get_doc("Dashboard Chart", chart_name).check_permission("read")

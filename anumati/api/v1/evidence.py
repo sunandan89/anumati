@@ -16,7 +16,7 @@ STAFF_ROLES = {"Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Prog
 
 
 @frappe.whitelist(methods=["GET"])
-def view(file_url):
+def view(file_url: str):
 	if not STAFF_ROLES & set(frappe.get_roles()):
 		raise frappe.PermissionError
 	name = frappe.db.get_value("File", {"file_url": file_url, "is_private": 1}, "name")

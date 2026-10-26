@@ -1,6 +1,7 @@
 """Chain verification for DPOs and auditors. /api/v2/method/anumati.api.v1.chain.verify"""
 
 import frappe
+from frappe import _
 
 from anumati.ledger import chain
 
@@ -16,5 +17,5 @@ def verify(ledger: str = "Anumati Consent Event"):
 	frappe.only_for(ALLOWED)
 	ledger = OLD_NAMES.get(ledger, ledger)
 	if ledger not in chain.CHAINS:
-		frappe.throw("ledger must be Anumati Consent Event or Anumati Audit Entry")
+		frappe.throw(_("ledger must be Anumati Consent Event or Anumati Audit Entry"))
 	return chain.verify_chain(ledger)

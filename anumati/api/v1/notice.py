@@ -10,7 +10,7 @@ LABELS = ("label_yes_all", "label_no_all", "label_manage", "label_save")
 
 
 @frappe.whitelist(methods=["GET"])
-def get_active(programme, language=None):
+def get_active(programme: str, language: str | None = None):
 	"""The live notice for a programme: purposes, Rule 3 contents, and a reviewed translation if one exists.
 	Machine-made translations or audio that no reviewer signed off are never served (spec A1, T13)."""
 	frappe.has_permission("Anumati Notice Template", "read", throw=True)

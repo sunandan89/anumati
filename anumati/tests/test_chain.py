@@ -30,7 +30,7 @@ class TestChain(IntegrationTestCase):
 		self.assertEqual(result["head_hash"], self.events[-1].hash)
 
 	def test_links_follow_each_other(self):
-		for prev, cur in zip(self.events, self.events[1:]):
+		for prev, cur in zip(self.events, self.events[1:], strict=False):
 			self.assertEqual(cur.prev_hash, prev.hash)
 			self.assertEqual(cur.chain_seq, prev.chain_seq + 1)
 

@@ -7,7 +7,6 @@ from frappe.utils import add_days, getdate
 
 from anumati import inbox, intake
 
-
 TITLES = {"withdrawal": "Withdrawal", "access": "Data access request", "correction": "Correction request",
           "erasure": "Erasure request", "nomination": "Nomination"}
 CHANNELS = {"field_worker": "field worker", "slip": "paper slip", "sms": "SMS", "missed_call": "missed call",

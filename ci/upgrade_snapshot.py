@@ -35,11 +35,13 @@ def snapshot(site, path):
 		out = subprocess.check_output(
 			["bench", "--site", site, "execute", "anumati.ledger.chain.verify_chain", "--args", json.dumps([names[short]])]
 		).decode()
-		line = next(l for l in reversed(out.splitlines()) if l.strip().startswith("{"))
+		line = next(ln for ln in reversed(out.splitlines()) if ln.strip().startswith("{"))
 		verify[short] = json.loads(line)
 	# Install hygiene: Anumati no longer changes Access Log / View Log permissions, and a site that had
 	# two-factor sign-in switched on by the old install keeps it, now through the Anumati Settings box.
-	single = lambda dt, field: (sql(db, f"select value from tabSingles where doctype='{dt}' and field='{field}'") or [["0"]])[0][0]
+	def single(dt, field):
+		return (sql(db, f"select value from tabSingles where doctype='{dt}' and field='{field}'") or [["0"]])[0][0]
+
 	hygiene = {
 		"log_docperms": int(sql(db, "select count(*) from `tabCustom DocPerm` where name like 'anumati-%' "
 		                            "and parent in ('Access Log', 'View Log')")[0][0]),

@@ -12,7 +12,10 @@ CAPTURE_MODES = ["self_digital", "self_worker_device", "assisted_verbal", "assis
 METHODS = ["server_otp", "device_sms_otp", "reverse_sms", "missed_call", "deferred", "evidence_only"]
 CHANNELS = ["app", "hosted_page", "connector", "field_worker", "slip", "sms", "missed_call", "ivr", "whatsapp",
             "web", "email", "community", "api", "ussd"]
-S = lambda **kw: {"type": "string", **kw}
+def S(**kw):
+    return {"type": "string", **kw}
+
+
 CODES = {"type": "array", "items": S(maxLength=64), "maxItems": 50}
 EVIDENCE = {"type": "array", "maxItems": 20, "items": {"type": "object", "additionalProperties": False,
             "required": ["file"], "properties": {"file": S(maxLength=500), "sha256": S(pattern="^[0-9a-f]{64}$"),

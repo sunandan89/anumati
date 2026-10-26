@@ -8,7 +8,8 @@ Hindi is a first draft for a named reviewer to check before the pilot. Words Fra
 translates well (Open, Draft, Today, ...) are left to Frappe.
 
 Edit here, run `python3 tools/gen_labels.py` from the repo root, commit the CSVs."""
-import csv, os
+import csv
+import os
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO, "anumati", "translations")

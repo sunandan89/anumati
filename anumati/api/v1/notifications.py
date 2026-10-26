@@ -13,7 +13,7 @@ EVENT_FOR_ACTION = {"grant": "consent.recorded", "renew": "consent.recorded", "r
 
 
 @frappe.whitelist(methods=["GET"])
-def feed(since, limit=100):
+def feed(since: str, limit: int | str = 100):
 	"""Events after `since` (ISO datetime), oldest first. Page by passing the last `at` back as `since`."""
 	frappe.has_permission("Anumati Consent State", "read", throw=True)
 	since, limit = get_datetime(since), min(int(limit or 100), 500)
@@ -40,7 +40,7 @@ def feed(since, limit=100):
 
 
 @frappe.whitelist(methods=["POST"])
-def guardian_needed(programme, client_request_id=None):
+def guardian_needed(programme: str, client_request_id: str | None = None):
 	"""Field app: a worker met an adult who can't decide alone and has no guardian appointed by a court or
 	the Local Level Committee, so no consent was taken and nothing about the person was saved. Tells the
 	programme's coordinators (Programme Managers) so they can help the family apply. No personal data.

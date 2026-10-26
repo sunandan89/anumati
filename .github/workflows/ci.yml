@@ -35,6 +35,21 @@ jobs:
         run: |
           pip install -q cryptography
           PYTHONPATH=. python ci/ledger_selftest.py
+      - name: Ruff (lint and import order)
+        run: |
+          pip install -q "ruff==0.16.9"
+          ruff check anumati tools ci
+      - name: Semgrep (Frappe's security and correctness rules)
+        # Rules pinned to a commit. The guest-method rule is left out: every guest method is intended and
+        # test_only_allowlisted_methods_are_open_to_guests pins the exact list. Exceptions carry "; nosemgrep"
+        # with the reason on the same line.
+        run: |
+          pip install -q "semgrep==1.182.1"
+          git clone -q https://github.com/frappe/semgrep-rules.git semgrep-rules
+          git -C semgrep-rules checkout -q 81a6e3d47a328249e8ddf04c586e493dd5553002
+          semgrep scan --metrics=off --error --config semgrep-rules/rules \
+            --exclude-rule semgrep-rules.rules.security.guest-whitelisted-method \
+            --exclude anumati/tests --exclude anumati/public/demo_audio anumati/
 
   server:
     name: Frappe tests and security gates
@@ -122,6 +137,71 @@ jobs:
       - name: Server log on failure
         if: failure()
         run: tail -n 200 /tmp/serve.log || true
+
+  erpnext:
+    name: Installs beside ERPNext v16
+    runs-on: ubuntu-latest
+    needs: checks
+    timeout-minutes: 60
+    services:
+      redis-cache:
+        image: redis:alpine
+        ports: ["13000:6379"]
+      redis-queue:
+        image: redis:alpine
+        ports: ["11000:6379"]
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports: ["3306:3306"]
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install MariaDB client
+        run: sudo apt-get update -q && sudo apt-get install -y -q mariadb-client
+
+      - name: Set up bench (Frappe v16) with ERPNext
+        run: |
+          pip install -q frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch version-16 --python "$(which python)" ~/frappe-bench
+          cd ~/frappe-bench && bench get-app --branch version-16 --skip-assets erpnext
+          mysql --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
+          mysql --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
+
+      - name: ERPNext first, then Anumati, on one site
+        working-directory: /home/runner/frappe-bench
+        env:
+          CI: "Yes"
+        run: |
+          bench get-app anumati "$GITHUB_WORKSPACE"
+          bench setup requirements --dev
+          bench new-site --db-root-password root --admin-password admin both.localhost
+          bench --site both.localhost install-app erpnext
+          bench --site both.localhost install-app anumati
+          bench --site both.localhost set-config allow_tests true
+          bench --site both.localhost migrate
+
+      - name: Anumati tests with ERPNext installed
+        working-directory: /home/runner/frappe-bench
+        run: |
+          set -o pipefail
+          bench --site both.localhost run-tests --app anumati 2>&1 | tee /tmp/tests.log
+
+      - name: Failing tests, in short
+        if: failure()
+        run: |
+          grep -E '^ ?(ERROR|FAIL):? |^[A-Za-z_.]+(Error|Exception): ' /tmp/tests.log | head -200 || true
 
   upgrade:
     name: Upgrade from main (migration patches keep data and chains)

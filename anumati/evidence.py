@@ -45,13 +45,13 @@ def encrypt_file(doc, method=None):
 	path = _path(doc)
 	if not path:
 		return
-	with open(path, "rb") as fh:
+	with open(path, "rb") as fh:  # path from File.get_full_path, inside the site's files; nosemgrep
 		data = fh.read()
 	if data.startswith(MAGIC):
 		return
 	token = _fernet().encrypt(data)
 	tmp = path + ".anumati-tmp"
-	with open(tmp, "wb") as fh:
+	with open(tmp, "wb") as fh:  # next to that same file; nosemgrep
 		fh.write(MAGIC + token)
 	os.replace(tmp, path)
 
@@ -61,7 +61,7 @@ def read_plain(file_doc) -> bytes:
 	path = _path(file_doc)
 	if not path:
 		raise frappe.DoesNotExistError
-	with open(path, "rb") as fh:
+	with open(path, "rb") as fh:  # path from File.get_full_path, inside the site's files; nosemgrep
 		data = fh.read()
 	if data.startswith(MAGIC):
 		return _fernet().decrypt(data[len(MAGIC):])

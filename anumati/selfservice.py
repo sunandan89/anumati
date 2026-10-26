@@ -160,14 +160,14 @@ def _send_code(digits: str, phone_hash: str, code: str) -> bool:
 	except Exception:
 		status = "Error"
 		frappe.log_error(title="Anumati self-service code not sent", message=f"provider={provider.name}")
-	channels.log(provider, "Sent", frappe.render_template(template.body, {"otp": "******"}), phone_hash,
+	channels.log(provider, "Sent", frappe.render_template(template.body, {"otp": "******"}, restrict_globals=True), phone_hash,  # staff-written SMS template, globals restricted; nosemgrep
 	             template=template.name, status=status)
 	return status == "Sent"
 
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=10, seconds=600)
-def start(phone):
+def start(phone: str | int):
 	"""Text a sign-in code. The answer is the same whether or not we know the number, so the page can't be
 	used to find out who is a beneficiary; a code is only sent to a number we hold."""
 	digits = pii.normalise_phone(phone)
@@ -191,7 +191,7 @@ def start(phone):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=20, seconds=600)
-def verify(phone, code):
+def verify(phone: str | int, code: str | int):
 	phone_hash = pii.phone_hash(pii.normalise_phone(phone))
 	stored = _get(_otp_key(phone_hash)) if phone_hash else None
 	if not stored:
@@ -220,7 +220,7 @@ def verify(phone, code):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=30, seconds=600)
-def choose(i, year):
+def choose(i: int | str, year: int | str):
 	"""Several adults share this number: the person picks their name and confirms their year of birth."""
 	data = _session()
 	candidates = data.get("choose") or []
@@ -245,7 +245,7 @@ def choose(i, year):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=10, seconds=600)
-def code_login(code, year):
+def code_login(code: str | int, year: int | str):
 	"""Sign in with a receipt code and year of birth (for people without a phone). Can only turn uses off,
 	leave, and ask us things."""
 	code = (code or "").strip().upper()
@@ -398,7 +398,7 @@ def _requests(person: str) -> list[dict]:
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=120, seconds=60)
-def overview(i):
+def overview(i: int | str):
 	return _overview(_session(), i)
 
 
@@ -428,7 +428,7 @@ def _programme_of(person: str, programme: str):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=30, seconds=60)
-def save_choices(i, programme, turn_on=None, turn_off=None):
+def save_choices(i: int | str, programme: str, turn_on: list | str | None = None, turn_off: list | str | None = None):
 	"""Turn uses on or off in one programme. Off: a withdrawal event (essential uses stop only by leaving).
 	On: a grant event, confirmed by the SMS code they signed in with."""
 	data = _session()
@@ -495,7 +495,7 @@ def _grant(data, person, programme, codes) -> str:
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=10, seconds=60)
-def leave(i, programme, confirm=0):
+def leave(i: int | str, programme: str, confirm: bool | int | str = 0):
 	"""Leave a programme: every use stops, essential ones too (as Record withdrawal > Leave the programme)."""
 	data = _session()
 	person = _person(data, i)
@@ -510,7 +510,7 @@ def leave(i, programme, confirm=0):
 
 @frappe.whitelist(allow_guest=True, methods=["GET"])
 @rate_limit(limit=30, seconds=60)
-def receipt(i, event):
+def receipt(i: int | str, event: str):
 	"""The receipt for one of the person's consent events, as a PDF (the Consent Receipt print format)."""
 	data = _session()
 	person = _person(data, i)
@@ -531,7 +531,7 @@ def receipt_file(event: str, as_pdf=True):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=10, seconds=600)
-def ask(i, request_type, details=None):
+def ask(i: int | str, request_type: str, details: str | None = None):
 	"""A rights / support request: see, correct or delete my data, or name someone. (Stopping a use is done
 	on My choices, at once.)"""
 	data = _session()
@@ -565,7 +565,7 @@ def _own(person: str, name: str):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=20, seconds=600)
-def write(i, request, text):
+def write(i: int | str, request: str, text: str):
 	"""Write to us on one of the person's requests or grievances."""
 	data = _session()
 	person = _person(data, i)
@@ -606,7 +606,7 @@ def _attach_photo(doc, content: bytes, kind: str):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=10, seconds=600)
-def complain(i, category, details=None, about_request=None, photo=None):
+def complain(i: int | str, category: str, details: str | None = None, about_request: str | None = None, photo: str | None = None):
 	"""A grievance: something went wrong with the person's data or a request."""
 	data = _session()
 	person = _person(data, i)
@@ -636,7 +636,7 @@ def complain(i, category, details=None, about_request=None, photo=None):
 
 @frappe.whitelist(allow_guest=True, methods=["POST"])
 @rate_limit(limit=10, seconds=600)
-def respond(i, grievance_name, solved):
+def respond(i: int | str, grievance_name: str, solved: bool | int | str):
 	"""Did the answer solve it? Yes closes it; No (once) sends it back to the DPO."""
 	data = _session()
 	person = _person(data, i)

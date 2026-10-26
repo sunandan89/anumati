@@ -38,7 +38,7 @@ def _device(device_id):
 
 
 @frappe.whitelist(methods=["POST"])
-def register(device_id, app_version=None, model=None, pending=0):
+def register(device_id: str, app_version: str | None = None, model: str | None = None, pending: bool | int | str = 0):
 	"""Called by the field app on sign-in and every sync. Returns {"status", "wipe"}."""
 	doc = _device(device_id)
 	wipe = doc.status in WIPE_STATES
@@ -63,7 +63,7 @@ def register(device_id, app_version=None, model=None, pending=0):
 
 
 @frappe.whitelist(methods=["POST"])
-def sign_out(device_id):
+def sign_out(device_id: str):
 	"""The field app signs out: the phone is free for the next worker to sign in on."""
 	doc = _device(device_id)
 	if doc.is_new() or doc.status in WIPE_STATES:
@@ -75,7 +75,7 @@ def sign_out(device_id):
 
 
 @frappe.whitelist(methods=["POST"])
-def report_lost(device):
+def report_lost(device: str):
 	"""Desk: Field Device > Report lost. Needs write on Field Device (Programme Manager, Admin)."""
 	doc = frappe.get_doc("Anumati Field Device", device)
 	doc.check_permission("write")

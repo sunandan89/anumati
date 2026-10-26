@@ -21,7 +21,7 @@ MAX_BYTES = 2 * 1024 * 1024  # a 60-second clip from the app is about 360 KB
 
 @frappe.whitelist(methods=["POST"])
 @rate_limit(limit=30, seconds=60)
-def hear(audio, language=None, filename="clip.m4a"):
+def hear(audio: str, language: str | None = None, filename: str = 'clip.m4a'):
 	if frappe.session.user == "Guest" or not ROLES & set(frappe.get_roles()):
 		raise frappe.PermissionError
 	if not cint(voice.settings().voice_listen_helper):

@@ -7,6 +7,7 @@ import hmac
 import re
 
 import frappe
+from frappe import _
 from frappe.utils.password import get_decrypted_password
 
 
@@ -30,7 +31,7 @@ def _salt() -> str:
 		"Anumati Settings", "Anumati Settings", "phone_hash_salt", raise_exception=False
 	)
 	if not salt:
-		frappe.throw("Anumati phone-hash salt is not set up. Run migrate or reinstall the app.")
+		frappe.throw(_("Anumati phone-hash salt is not set up. Run migrate or reinstall the app."))
 	return salt
 
 

@@ -140,3 +140,17 @@ class TestFormConnections(IntegrationTestCase):
 		for doctype, linked in expect.items():
 			got = {link.link_doctype for link in frappe.get_meta(doctype).links}
 			self.assertTrue(linked <= got, f"{doctype} connections missing {linked - got}")
+
+
+class TestApiTypes(IntegrationTestCase):
+	def test_every_whitelisted_method_is_type_annotated(self):
+		"""Frappe v16 checks request arguments against these hints, so every parameter carries one."""
+		import inspect
+
+		import_app_modules()
+		for fn in frappe.whitelisted:
+			if not fn.__module__.startswith("anumati."):
+				continue
+			params = inspect.signature(fn).parameters.items()
+			missing = [n for n, p in params if n not in ("self", "cls") and p.annotation is inspect.Parameter.empty]
+			self.assertFalse(missing, f"{fn.__module__}.{fn.__qualname__}: {missing}")

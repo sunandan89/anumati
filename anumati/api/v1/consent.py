@@ -6,6 +6,7 @@ Authorisation uses stock Frappe permissions on the API user's roles (spec gap 10
 Every write is idempotent on the client-generated event_uuid (spec section 8)."""
 
 import json
+from typing import Any
 
 import frappe
 from frappe import _
@@ -13,8 +14,8 @@ from frappe.rate_limiter import rate_limit
 from frappe.utils import now_datetime
 
 from anumati import consent_rules, enforcement
-from anumati.consent_rules import ConsentRequestError  # noqa: F401 (re-exported for callers)
 from anumati.api import schema
+from anumati.consent_rules import ConsentRequestError  # noqa: F401 (re-exported for callers)
 from anumati.ledger import keystore, signing
 
 CAPTURE_FIELDS = (
@@ -98,7 +99,7 @@ def _insert(values: dict, ignore_permissions=False) -> dict:
 
 
 @frappe.whitelist(methods=["POST"])
-def record(event):
+def record(event: dict | str):
 	"""Record a grant, refusal or renewal. Returns the signed artefact; replays return the original."""
 	event = _parse(event)
 	frappe.has_permission("Anumati Consent Event", "create", throw=True)
@@ -124,7 +125,7 @@ def record(event):
 
 
 @frappe.whitelist(methods=["POST"])
-def withdraw(principal_ref, programme, channel, event_uuid, purposes=None, **extra):
+def withdraw(principal_ref: str, programme: str, channel: str, event_uuid: str, purposes: list | str | None = None, **extra: Any):
 	"""Withdraw consent. Default scope = every optional purpose currently granted (spec section 6)."""
 	frappe.has_permission("Anumati Consent Event", "create", throw=True)
 	payload = {"principal_ref": principal_ref, "programme": programme, "channel": channel, "event_uuid": event_uuid,
@@ -154,7 +155,7 @@ def _field_request(principal, channel, artefact, paper_trail=None, leave=False):
 		"doctype": "Anumati Rights Request", "request_type": "withdrawal", "channel": channel, "status": "request_closed",
 		"matched_principal": principal, "linked_event": artefact["consent_id"],
 		"paper_trail_number": paper_trail or None,
-		"resolution": (_("Left the programme. ") if leave else "") + _(
+		"resolution": (_("Left the programme.") + " " if leave else "") + _(
 			"Withdrawn in the field by {0}: consent event {1} ({2}).").format(
 			frappe.session.user, artefact["consent_id"], artefact["short_code"]),
 	})
@@ -216,7 +217,7 @@ def _source_system(user: str):
 
 
 @frappe.whitelist(methods=["GET", "POST"])
-def check(principal_ref, purpose, programme=None):
+def check(principal_ref: str, purpose: str, programme: str | None = None):
 	"""Enforcement gate: may this purpose be processed for this principal right now? Served from cache."""
 	frappe.has_permission("Anumati Consent State", "read", throw=True)
 	purpose_name = enforcement.purpose_name(programme, purpose) if programme else purpose
@@ -250,7 +251,7 @@ def check(principal_ref, purpose, programme=None):
 
 
 @frappe.whitelist(methods=["GET"])
-def state(principal_ref, programme=None):
+def state(principal_ref: str, programme: str | None = None):
 	"""Every purpose's current state for one principal (preference centre, host UIs)."""
 	frappe.has_permission("Anumati Consent State", "read", throw=True)
 	principal = _principal(principal_ref)
@@ -263,7 +264,7 @@ def state(principal_ref, programme=None):
 
 @frappe.whitelist(allow_guest=True, methods=["GET", "POST"])
 @rate_limit(limit=60, seconds=60)
-def verify(hash: str, signature: str | None = None):
+def verify(hash: str, signature: str | None  =  None):
 	"""Verify a consent artefact without seeing any personal data.
 
 	Returns whether the hash is on this tenant's chain, its position, and whether the signature

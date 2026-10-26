@@ -12,8 +12,8 @@ from frappe.tests import IntegrationTestCase
 from frappe.utils import get_datetime, now_datetime
 
 from anumati import evidence
-from anumati.consent_rules import ConsentRequestError
 from anumati.api.v1 import consent
+from anumati.consent_rules import ConsentRequestError
 from anumati.tests.utils import make_principal, make_programme, make_purpose
 
 PROG = "SDK"
