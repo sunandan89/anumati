@@ -102,8 +102,14 @@ class TestGuestAccess(IntegrationTestCase):
 	def test_guest_list_query_is_refused(self):
 		frappe.set_user("Guest")
 		try:
+			from frappe.client import get as client_get
+
 			for doctype in anumati_doctypes():
-				self.assertRaises(frappe.PermissionError, frappe.get_list, doctype)
+				if frappe.get_meta(doctype).issingle:
+					# Single records (Anumati Settings) have no list; a guest reads them through frappe.client.get.
+					self.assertRaises(frappe.PermissionError, client_get, doctype)
+				else:
+					self.assertRaises(frappe.PermissionError, frappe.get_list, doctype)
 		finally:
 			frappe.set_user("Administrator")
 

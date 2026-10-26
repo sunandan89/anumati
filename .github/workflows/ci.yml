@@ -208,6 +208,9 @@ jobs:
           bench setup requirements --dev
           # Same database: the site folder moves to the new bench, as a Frappe Cloud bench upgrade does.
           cp -r ~/bench-base/sites/upgrade.localhost sites/
+          # v16 migrate checks Redis first; point this bench at the job's Redis services.
+          bench set-config -g redis_cache redis://127.0.0.1:13000
+          bench set-config -g redis_queue redis://127.0.0.1:11000
           bench --site upgrade.localhost migrate
           python3 "$GITHUB_WORKSPACE/ci/upgrade_snapshot.py" upgrade.localhost /tmp/after.json
           python3 "$GITHUB_WORKSPACE/ci/upgrade_snapshot.py" --compare /tmp/before.json /tmp/after.json
