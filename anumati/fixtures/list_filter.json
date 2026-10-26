@@ -6,7 +6,7 @@
   "reference_doctype": "Anumati Consent Event",
   "for_user": "",
   "filters": "[[\"Anumati Consent Event\", \"creation\", \"Timespan\", \"this week\", false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -15,7 +15,7 @@
   "reference_doctype": "Anumati Consent Event",
   "for_user": "",
   "filters": "[[\"Anumati Consent Event\", \"action\", \"=\", \"withdraw\", false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -24,7 +24,7 @@
   "reference_doctype": "Anumati Consent Event",
   "for_user": "",
   "filters": "[[\"Anumati Consent Event\", \"action\", \"=\", \"refuse\", false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -33,7 +33,7 @@
   "reference_doctype": "Anumati Consent Event",
   "for_user": "",
   "filters": "[[\"Anumati Consent Event\", \"capture_mode\", \"in\", [\"guardian_minor\", \"guardian_pwd\"], false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -42,7 +42,7 @@
   "reference_doctype": "Anumati Consent Event",
   "for_user": "",
   "filters": "[[\"Anumati Consent Event\", \"notice_completed\", \"=\", 0, false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -51,7 +51,7 @@
   "reference_doctype": "Anumati Consent State",
   "for_user": "",
   "filters": "[[\"Anumati Consent State\", \"verification_status\", \"=\", \"unconfirmed\", false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -60,7 +60,7 @@
   "reference_doctype": "Anumati Data Principal",
   "for_user": "",
   "filters": "[[\"Anumati Data Principal\", \"is_minor\", \"=\", 1, false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -69,7 +69,7 @@
   "reference_doctype": "Anumati Data Principal",
   "for_user": "",
   "filters": "[[\"Anumati Data Principal\", \"shared_phone\", \"=\", 1, false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -78,7 +78,7 @@
   "reference_doctype": "Anumati Data Principal",
   "for_user": "",
   "filters": "[[\"Anumati Data Principal\", \"needs_assistance\", \"=\", 1, false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -87,7 +87,7 @@
   "reference_doctype": "Anumati Rights Request",
   "for_user": "",
   "filters": "[[\"Anumati Rights Request\", \"status\", \"=\", \"who_is_this\", false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -96,7 +96,7 @@
   "reference_doctype": "Anumati Rights Request",
   "for_user": "",
   "filters": "[[\"Anumati Rights Request\", \"request_type\", \"=\", \"withdrawal\", false], [\"Anumati Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"], false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -105,7 +105,7 @@
   "reference_doctype": "Anumati Grievance",
   "for_user": "",
   "filters": "[[\"Anumati Grievance\", \"dpo_since\", \"is\", \"set\", false], [\"Anumati Grievance\", \"status\", \"not in\", [\"request_answered\", \"request_closed\"], false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -114,7 +114,7 @@
   "reference_doctype": "Anumati Grievance",
   "for_user": "",
   "filters": "[[\"Anumati Grievance\", \"person_says\", \"=\", \"not_happy\", false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  },
  {
   "doctype": "List Filter",
@@ -123,6 +123,6 @@
   "reference_doctype": "Anumati Field Device",
   "for_user": "",
   "filters": "[[\"Anumati Field Device\", \"status\", \"in\", [\"lost\", \"wipe_queued\", \"wiped\"], false]]",
-  "modified": "2026-10-26 10:00:00.000000"
+  "modified": "2026-10-26 12:00:00.000000"
  }
 ]

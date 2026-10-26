@@ -10,3 +10,5 @@ anumati.patches.backfill_search_fields
 anumati.patches.rename_demo_programmes
 anumati.patches.plain_request_statuses
 anumati.patches.grievances_from_requests
+anumati.patches.drop_log_permissions
+anumati.patches.staff_two_factor_setting

@@ -10,7 +10,7 @@ import json, os
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, "anumati", "anumati")
 FIX = os.path.join(REPO, "anumati", "fixtures")
-TS = "2026-10-26 10:00:00.000000"
+TS = "2026-10-26 12:00:00.000000"
 
 ADM, DPO, OPR, PM, SM = "Anumati Admin", "Anumati DPO", "Anumati Operator", "Anumati Programme Manager", "System Manager"
 
@@ -278,17 +278,6 @@ LIST_FILTERS = [
     ("Anumati Field Device", "Lost or wiped", [["Anumati Field Device", "status", "in", ["lost", "wipe_queued", "wiped"], False]]),
 ]
 
-# The stock Access Log and View Log (who opened a name or evidence) are System Manager only. The DPO
-# needs to read them; the stock way is Role Permissions (Custom DocPerm). The System Manager row
-# repeats Frappe's own, because a custom permission set replaces the standard one.
-LOG_PERMS = [
-    ("Access Log", SM, dict(read=1, report=1, export=1, print=1, email=1, share=1, delete=1)),
-    ("Access Log", DPO, dict(read=1, report=1, export=1)),
-    ("View Log", SM, dict(read=1, report=1, export=1, print=1, email=1, share=1)),
-    ("View Log", DPO, dict(read=1, report=1, export=1)),
-]
-
-
 # ---------------------------------------------------------------- onboarding
 ONBOARDING = "Anumati"
 STEPS = [
@@ -502,7 +491,7 @@ def workspaces():
         .card("Records and risk", ("Anumati ROPA Entry", "Records of processing and DPIA"), "Anumati Data Category",
               "Anumati Retention Policy", "Anumati Processor", "Anumati Purge Request")
         .card("Incidents and audit", ("Anumati Breach Incident", "Breach"), ("Anumati Audit Entry", "Audit log"),
-              ("Access Log", "Access log (names and evidence)"), ("View Log", "Record views"), "Anumati Audit Share")
+              ("Report:Who Opened Personal Records", "Who opened personal records"), "Anumati Audit Share")
         .emit())
     (WS("Setup", 6, "setting-gear", r["Setup"])
         .onboarding()
@@ -531,13 +520,6 @@ def fixtures():
         "doctype": "List Filter", "name": f"anumati-{scrub(dt)}-{scrub(label)}", "filter_name": label,
         "reference_doctype": dt, "for_user": "", "filters": json.dumps(f),
     } for dt, label, f in LIST_FILTERS])
-    fixture("custom_docperm", [{
-        "doctype": "Custom DocPerm", "name": f"anumati-{scrub(parent)}-{scrub(role)}", "parent": parent,
-        "role": role, "permlevel": 0,
-        **{k: p.get(k, 0) for k in ("read", "write", "create", "delete", "submit", "cancel", "amend",
-                                    "report", "export", "import", "print", "email", "share", "if_owner",
-                                    "set_user_permissions", "select")},
-    } for parent, role, p in LOG_PERMS])
 
 
 if __name__ == "__main__":

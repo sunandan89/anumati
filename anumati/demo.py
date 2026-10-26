@@ -442,6 +442,8 @@ def setup_field_app():
 	mobile = configure_mobile_app()
 	notice = create_demo_programme()
 	password = create_field_worker()
+	set_demo_genders()
+	attach_bundled_audio()  # shipped recordings, no Sarvam call
 	return {
 		"mobile_control": mobile,
 		"programme": PROGRAMME,
@@ -580,26 +582,25 @@ def prepare_demo_voice(notify: str | None = None) -> dict:
 
 
 def after_migrate():
-	"""On every migrate (each Frappe Cloud deploy or "Migrate" action):
-	- keep Mobile Configuration switched on for Anumati Collect once Mobile Control is installed;
-	- if the site config has `anumati_demo_password` (set in the Frappe Cloud dashboard, never in the repo),
-	  create the DEMO programme and the test field worker with that password. Remove the key to stop."""
+	"""Demo set-up on migrate, only when the site config has `anumati_demo_password` (set in the Frappe Cloud
+	dashboard, never in the repo): switch on Mobile Configuration for Anumati Collect, create the DEMO
+	programme and the test field worker with that password, and attach the bundled demo audio. Remove the
+	key to stop. Without it, a migrate changes nothing outside Anumati's own records."""
+	password = frappe.conf.get("anumati_demo_password")
+	if not password:
+		return
 	try:
 		configure_mobile_app()
 	except Exception:
 		frappe.log_error(title="Anumati: could not configure Mobile Control")
-	# Demo voice set-up calls Sarvam, so it runs from the hourly scheduler, never during a deploy.
-	try:
-		if frappe.db.exists("Anumati Programme", PROGRAMME):
-			set_demo_genders()
-			attach_bundled_audio()  # recordings shipped with the app; no Sarvam call during a deploy
-	except Exception:
-		frappe.log_error(title="Anumati: could not set up the demo field worker or demo audio")
-	password = frappe.conf.get("anumati_demo_password")
-	if not password:
-		return
 	try:
 		create_demo_programme()
 		create_field_worker(str(password))
 	except Exception:
 		frappe.log_error(title="Anumati: demo setup from site config failed")
+	# Recordings shipped with the app; no Sarvam call during a deploy.
+	try:
+		set_demo_genders()
+		attach_bundled_audio()
+	except Exception:
+		frappe.log_error(title="Anumati: could not set up the demo field worker or demo audio")

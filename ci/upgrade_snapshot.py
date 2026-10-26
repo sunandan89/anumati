@@ -37,7 +37,16 @@ def snapshot(site, path):
 		).decode()
 		line = next(l for l in reversed(out.splitlines()) if l.strip().startswith("{"))
 		verify[short] = json.loads(line)
-	json.dump({"counts": counts, "names": names, "verify": verify}, open(path, "w"), indent=1)
+	# Install hygiene: Anumati no longer changes Access Log / View Log permissions, and a site that had
+	# two-factor sign-in switched on by the old install keeps it, now through the Anumati Settings box.
+	single = lambda dt, field: (sql(db, f"select value from tabSingles where doctype='{dt}' and field='{field}'") or [["0"]])[0][0]
+	hygiene = {
+		"log_docperms": int(sql(db, "select count(*) from `tabCustom DocPerm` where name like 'anumati-%' "
+		                            "and parent in ('Access Log', 'View Log')")[0][0]),
+		"site_two_factor": single("System Settings", "enable_two_factor_auth"),
+		"staff_two_factor": single("Anumati Settings", "staff_two_factor"),
+	}
+	json.dump({"counts": counts, "names": names, "verify": verify, "hygiene": hygiene}, open(path, "w"), indent=1)
 	print(json.dumps({"counts": counts, "verify": {k: v["ok"] for k, v in verify.items()}}))
 
 
@@ -59,11 +68,17 @@ def compare(before_path, after_path):
 	for short, name in after["names"].items():
 		if not name.startswith("Anumati "):
 			problems.append(f"{short} was not renamed")
-	print(json.dumps({"before": before["counts"], "after": after["counts"]}, indent=1))
+	hygiene = after.get("hygiene", {})
+	if hygiene.get("log_docperms"):
+		problems.append("Anumati's Access Log / View Log permissions were not removed")
+	if before.get("hygiene", {}).get("site_two_factor") == "1" and (
+		hygiene.get("site_two_factor") != "1" or hygiene.get("staff_two_factor") != "1"):
+		problems.append("two-factor sign-in was on before the upgrade and is not kept by the Anumati Settings box")
+	print(json.dumps({"before": before["counts"], "after": after["counts"], "hygiene": hygiene}, indent=1))
 	if problems:
 		print("\n".join(problems))
 		sys.exit(1)
-	print("Upgrade kept every row and both chains verify.")
+	print("Upgrade kept every row, both chains verify, and install hygiene holds.")
 
 
 if __name__ == "__main__":

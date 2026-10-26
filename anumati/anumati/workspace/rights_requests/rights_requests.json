@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"rights0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 4}}, {\"id\": \"rights1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 4}}, {\"id\": \"rights2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Requests To Match\", \"col\": 4}}, {\"id\": \"rights3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rights requests\", \"col\": 3}}, {\"id\": \"rights4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"rights5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"New rights request\", \"col\": 3}}, {\"id\": \"rights6\", \"type\": \"card\", \"data\": {\"card_name\": \"Rights requests\", \"col\": 4}}]",
- "creation": "2026-10-26 10:00:00.000000",
+ "creation": "2026-10-26 12:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -51,7 +51,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-26 10:00:00.000000",
+ "modified": "2026-10-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Rights requests",

@@ -11,7 +11,7 @@ For QA testing of the field app (Anumati Collect) and the web console. Each case
 | Site | `https://anumati.nvi.frappe.cloud` (latest code deployed) |
 | App | `app-release.apk` from GitHub → `anumati_collect` → Releases → **test-latest** (uninstall any older build first) |
 | Field worker login | The demo field worker (ask the admin for the password) |
-| Web console logins | One account per role you test: **DPO** (publishes notices), **Programme Manager**, **Operator**, **Admin**. Frappe Cloud → **Login as Administrator** also works. If two-factor login is on, have the authenticator ready |
+| Web console logins | One account per role you test: **DPO** (publishes notices), **Programme Manager**, **Operator**, **Admin**. Frappe Cloud → **Login as Administrator** also works. If **Two-factor sign-in for Anumati staff** is ticked in Anumati Settings, have the authenticator ready |
 | Test phones | Phone A runs the app. Phone B is "the person's" phone and must receive SMS. Use your own numbers only |
 | Sample data | Anumati Settings → **Actions → Add sample data** (System Manager only): 20 fictional people in Village Health Camps. Their numbers start with 555 and can't receive SMS, so cases that need a code use people you create in the app |
 | SMS codes | Until `msg91_auth_key` is set on the site, the app sends codes **from the worker's phone with the voice "haan"**, even online. Cases marked **[MSG91]** need the key |
@@ -165,10 +165,10 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | --- | --- | --- | --- | --- |
 | WC-01 | Menus by role | Log in as Programme Manager, DPO, Operator, Admin in turn | Each sees only its workspaces (Setup only for Admin) | P1 |
 | WC-02 | Today dashboard | Open Today | Number cards and charts load with sample data; Needs attention lists overdue requests and the chain check | P1 |
-| WC-03 | Search beneficiaries | Search by whole first name, full phone number, receipt code | Correct person found; the list shows names and masked phones; each view is logged in the access log | P0 |
+| WC-03 | Search beneficiaries | Search by whole first name, full phone number, receipt code | Correct person found; the list shows names and masked phones; each view is listed in **Who opened personal records** (Notices and compliance) | P0 |
 | WC-04 | Consent record view | Open a consent | Summary: agreed / said no, how, verified by, notice version and delivery; Evidence tab with labels ("Voice: their “haan”", "Thumbprint", "Signature or thumbprint"); **Check signature** button; the record can't be edited | P0 |
 | WC-05 | Guardian photos | Open a guardian link from a guardian consent | Buttons "View order or document" and "View guardian's ID" | P1 |
-| WC-06 | Evidence view logged | Open a voice or photo | Plays / shows; an Access Log entry is created | P1 |
+| WC-06 | Evidence view logged | Open a voice or photo | Plays / shows; **Who opened personal records** lists it as "Opened evidence" with your name | P1 |
 | WC-07 | Insert-only | Try to edit and save an existing consent record | Refused | P0 |
 | WC-08 | Publish a notice (as **DPO**) | Create a notice with a purpose whose record of processing is not approved, or with a Rule 3 field empty | The **Publish** action is not offered until every record of processing is approved and all five Rule 3 fields are filled | P0 |
 | WC-09 | Translation review | Clear the **Reviewer** on the existing Hindi translation → app: Sync → Hindi consent | The app shows the English notice with the note "This language has no reviewed notice yet…"; set the reviewer back afterwards | P0 |
@@ -227,6 +227,10 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-12 | Every door follows the consent rules | API (field worker's key): create a Consent Event directly with `POST /api/resource/Anumati Consent Event`, sending `verification_status: confirmed`, a made-up `server_time`, and a child without a guardian link | The child's event is refused; an adult's event is saved as `recorded`, with the server's own time and the worker as Recorded by | P0 |
 | SE-13 | A field worker can't close or answer a request | API (field worker's key): create a Rights Request or Grievance directly, sending a closed status, an old received date, an answer or an outcome | Saved as a new request received now, with no answer or outcome; what the person said is kept. Sending the same `mobile_uuid` twice is refused the second time | P1 |
 | SE-14 | Upgrade keeps every record and the chains | On a test site with data from before the `Anumati` prefix, deploy and run Migrate. Open Consent records, Beneficiaries, Rights requests; run **Verify chain** for both ledgers | Every record is still there under the same names in Desk (the lists keep their friendly titles); both chains verify. In URLs and the API the DocTypes now read `Anumati …` (for example `/app/anumati-consent-event`) | P0 |
+| SE-15 | Two-factor sign-in is the admin's choice | On a new site, install Anumati and sign in as an Operator; then Anumati Settings → Sign-in → tick **Two-factor sign-in for Anumati staff** → Save, and sign in again as the Operator and as a Field worker | Before ticking: no code asked. After: the Operator is asked to set up an authenticator code; the Field worker is not. Untick → no code asked again | P0 |
+| SE-16 | Who opened personal records | As DPO: open a Beneficiary, show a full name, open a voice file. Then Notices and compliance → **Who opened personal records** | Each shows with your name and time ("Opened the record", "Saw the full name", "Opened evidence"); only Anumati records are listed. An Operator can't open the report. Access Log and View Log themselves stay System Manager only | P1 |
+| SE-17 | Migrate leaves the client's site alone | On a site with another app using workflow state "Draft" (change its colour) and no `anumati_demo_password`: deploy and run Migrate | Draft keeps the other app's colour; Mobile Configuration is not changed; no demo programme or field worker is created | P1 |
+| SE-18 | Uninstall cleans up | On a test site: `bench --site … uninstall-app anumati` | Communication and Translation lose their Anumati fields; the Requests board, the Needs attention and Programmes at a glance blocks, saved list filters, Anumati notifications and the two Anumati workflows are gone. Workflow states and actions stay | P2 |
 
 ## 11. Self-service page (`/my-consent`)
 
