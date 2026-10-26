@@ -198,6 +198,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | WC-33 | DPO at day 15 | Ask a developer to set a grievance's Received on 16 days back and run the daily job (or wait) | Assigned to the DPO, DPO tag, a timeline note and a notification | P1 |
 | WC-34 | Move between lists | On a rights request: **Actions › Move to grievances**; on the new grievance: **Actions › Move to rights requests** | Each move closes the old one with a note and carries the messages over | P2 |
 | WC-35 | Complaint from the field app or SMS | Field app: **Complaint** on a person; SMS `HELP` from a known number | Both arrive under Grievances (Something else), matched to the person | P1 |
+| WC-36 | Anumati on the Frappe v16 home screen | Sign in as a DPO, an Operator, then a Field worker, and open the home screen (Apps) | DPO and Operator see the **Anumati** tile with the अ mark; it opens **Today**, and the sidebar lists only that role's sections. A Field worker sees no Anumati tile | P1 |
 
 ## 9. SMS channels (need an SMS account and inbound number)
 
@@ -231,6 +232,7 @@ Use fictional names only, for example "Test Person 01". Record the receipt code 
 | SE-16 | Who opened personal records | As DPO: open a Beneficiary, show a full name, open a voice file. Then Notices and compliance → **Who opened personal records** | Each shows with your name and time ("Opened the record", "Saw the full name", "Opened evidence"); only Anumati records are listed. An Operator can't open the report. Access Log and View Log themselves stay System Manager only | P1 |
 | SE-17 | Migrate leaves the client's site alone | On a site with another app using workflow state "Draft" (change its colour) and no `anumati_demo_password`: deploy and run Migrate | Draft keeps the other app's colour; Mobile Configuration is not changed; no demo programme or field worker is created | P1 |
 | SE-18 | Uninstall cleans up | On a test site: `bench --site … uninstall-app anumati` | Communication and Translation lose their Anumati fields; the Requests board, the Needs attention and Programmes at a glance blocks, saved list filters, Anumati notifications and the two Anumati workflows are gone. Workflow states and actions stay | P2 |
+| SE-19 | A Frappe v15 site moves to v16 | On a test copy of a v15 site with data: move its bench group to Frappe Version 16 and deploy (Migrate runs). Open Consent records, Beneficiaries and Rights requests; run **Verify chain** for both ledgers | Every record is still there; both chains verify; two-factor sign-in is as it was before the move | P0 |
 
 ## 11. Self-service page (`/my-consent`)
 

@@ -46,4 +46,6 @@ def inventory(path):
 	"""Every Anumati DocType and whitelisted method, for the unauthenticated-route sweep."""
 	_guard()
 	methods = {m for m in whitelisted() if m.count(".") and not any(p[:1].isupper() for p in m.split("."))}
-	_write(path, {"doctypes": anumati_doctypes(), "methods": sorted(methods), "guest": sorted(whitelisted(guest_only=True))})
+	singles = [dt for dt in anumati_doctypes() if frappe.get_meta(dt).issingle]
+	_write(path, {"doctypes": anumati_doctypes(), "singles": singles, "methods": sorted(methods),
+	              "guest": sorted(whitelisted(guest_only=True))})

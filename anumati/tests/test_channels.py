@@ -7,7 +7,7 @@ from datetime import timedelta
 from unittest.mock import MagicMock, patch
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import now_datetime
 
 from anumati import channels, enforcement, pii
@@ -31,7 +31,7 @@ def fake_post():
 	return patch("anumati.channels.msg91.requests.post", return_value=response)
 
 
-class TestChannels(FrappeTestCase):
+class TestChannels(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

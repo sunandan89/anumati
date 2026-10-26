@@ -4,7 +4,7 @@ shipped as fixtures."""
 
 import frappe
 from frappe.model.workflow import WorkflowTransitionError, apply_workflow
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati.tests.utils import make_programme, make_purpose
 
@@ -33,7 +33,7 @@ def make_ropa(purpose, **kw):
 	).insert()
 
 
-class TestPublishGate(FrappeTestCase):
+class TestPublishGate(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

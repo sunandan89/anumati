@@ -6,6 +6,15 @@ app_email = ""
 app_license = "agpl-3.0"
 required_apps = ["frappe"]
 
+# The Anumati tile on the Frappe v16 home screen (apps screen and desktop icons).
+add_to_apps_screen = [{
+	"name": "anumati",
+	"logo": "/assets/anumati/images/anumati-logo.svg",
+	"title": "Anumati",
+	"route": "/app/today",
+	"has_permission": "anumati.apps_screen.has_app_permission",
+}]
+
 # Configuration shipped as standard Frappe records (spec: config before code).
 fixtures = [
 	{"dt": "Role", "filters": [["name", "like", "Anumati %"]]},

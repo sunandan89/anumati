@@ -1,7 +1,7 @@
 """PII is encrypted at rest and phone lookups use a salted hash (spec section 9). Sample data is fictional."""
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import pii
 from anumati.tests.utils import make_event, make_principal
@@ -9,7 +9,7 @@ from anumati.tests.utils import make_event, make_principal
 NAME, PHONE = "Kamla Devi (fictional)", "+91 90000 12345"
 
 
-class TestPII(FrappeTestCase):
+class TestPII(IntegrationTestCase):
 	def test_name_and_phone_are_not_stored_in_clear(self):
 		doc = make_principal(full_name=NAME, phone=PHONE)
 		row = frappe.db.sql("select * from `tabAnumati Data Principal` where name=%s", doc.name, as_dict=True)[0]

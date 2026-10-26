@@ -20,8 +20,9 @@ def execute(filters=None):
 		conditions["programme"] = ("in", allowed or ["-"])
 	if filters.question:
 		conditions["question"] = filters.question
-	rows = frappe.get_all("Anumati Profile Answer", conditions, ["question", "answer", "count(*) as people"],
-	                      group_by="question, answer", order_by="question asc, people desc")
+	rows = frappe.get_all("Anumati Profile Answer", conditions, ["question", "answer", {"COUNT": "*", "as": "people"}],
+	                      group_by="question, answer")
+	rows.sort(key=lambda r: (r.question or "", -r.people))
 	labels = dict(frappe.get_all("Anumati Profile Question", ["name", "question"], as_list=True))
 	data = [{"question": labels.get(r.question, r.question), "answer": r.answer,
 	         "people": r.people if r.people >= SMALL else _("fewer than {0}").format(SMALL)} for r in rows]

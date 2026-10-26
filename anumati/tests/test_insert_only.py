@@ -1,7 +1,7 @@
 """CI gate: Consent Event and Audit Entry are insert-only (saving or deleting an existing one raises)."""
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati.ledger import chain, keystore, signing
 from anumati.ledger.insert_only import InsertOnlyError
@@ -10,7 +10,7 @@ from anumati.tests.utils import make_event, make_programme
 LEDGERS = ("Anumati Consent Event", "Anumati Audit Entry")
 
 
-class TestInsertOnly(FrappeTestCase):
+class TestInsertOnly(IntegrationTestCase):
 	def test_new_event_is_sealed_and_signed(self):
 		event = make_event()
 		self.assertGreater(event.chain_seq, 0)

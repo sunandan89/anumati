@@ -54,10 +54,12 @@ A custom app needs a **private bench group** on Frappe Cloud, which is on a paid
 
 1. Go to **frappecloud.com** → **Log in** (or **Sign up**; Google login works).
 2. Left sidebar → **Bench Groups** → **New Bench Group** (top right).
-3. **Title**: `anumati-v15`.
-4. **Version**: **Version 15**.
+3. **Title**: `anumati-v16`.
+4. **Version**: **Version 16**. Anumati runs on Frappe v16 only.
 5. **Region**: **Mumbai** (India, ap-south-1). This keeps data in India (spec §9, residency).
 6. Leave **Frappe** as the only app for now → **Create Bench Group**.
+
+**Already have a Version 15 bench group?** Anumati no longer installs on Version 15, so deploys to it fail. Your site and its data stay as they are. Move the bench group to **Version 16** in Frappe Cloud (it may be offered as a version upgrade, or as moving the site to a new Version 16 bench group), then deploy. The migration keeps every record and both chains (QA case SE-19).
 
 ### D2. Connect the GitHub repo and add the app
 

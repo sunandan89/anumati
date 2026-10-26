@@ -7,7 +7,7 @@ import json
 from unittest.mock import patch
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import demo, voice
 from anumati.api.v1 import device, notice
@@ -36,7 +36,7 @@ def fake_sarvam(url, **kwargs):
 	return FakeResponse({"transcript": "हाँ जी, ठीक है", "language_code": "hi-IN"})
 
 
-class TestVoice(FrappeTestCase):
+class TestVoice(IntegrationTestCase):
 	def setUp(self):
 		frappe.conf.sarvam_api_key = "test-key-not-real"
 		self.notice = demo.create_demo_programme()

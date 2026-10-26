@@ -5,7 +5,7 @@ import hashlib
 import uuid
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import demo, evidence
 from anumati.api.v1 import evidence as evidence_api
@@ -15,7 +15,7 @@ from anumati.tests.utils import make_principal
 CLIP = b"fictional voice clip bytes " * 40
 
 
-class TestEvidenceAtRest(FrappeTestCase):
+class TestEvidenceAtRest(IntegrationTestCase):
 	def upload(self, p, content=CLIP, name="clip.m4a"):
 		return frappe.get_doc({
 			"doctype": "File", "file_name": f"{uuid.uuid4().hex[:6]}-{name}", "content": content, "is_private": 1,
@@ -60,7 +60,7 @@ class TestEvidenceAtRest(FrappeTestCase):
 			self.assertEqual(fh.read(), b"plain note")
 
 
-class TestMaskedPhone(FrappeTestCase):
+class TestMaskedPhone(IntegrationTestCase):
 	def test_mask_hides_the_last_three_digits(self):
 		self.assertEqual(principal_api.mask_phone("9876543210"), "9876543XXX")
 		self.assertEqual(principal_api.mask_phone("+91 98765 43210"), "919876543XXX")

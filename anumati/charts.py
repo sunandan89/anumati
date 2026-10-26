@@ -40,9 +40,9 @@ def breakdown(chart_name=None, chart=None, no_cache=None, filters=None, from_dat
 		frappe.throw(_("Unknown chart"))
 	frappe.get_doc("Dashboard Chart", chart_name).check_permission("read")
 	doctype, field, base = BREAKDOWNS[chart_name]
-	rows = frappe.get_list(doctype, fields=[f"`{field}` as value", "count(*) as count"],
-						   filters=base, group_by=f"`tab{doctype}`.`{field}`", order_by="count desc",
-						   limit_page_length=20)
+	rows = frappe.get_list(doctype, fields=[f"`{field}` as value", {"COUNT": "*", "as": "count"}],
+						   filters=base, group_by=f"`tab{doctype}`.`{field}`", limit_page_length=0)
+	rows = sorted(rows, key=lambda r: -r.count)[:20]
 	if not rows:
 		return None
 	if chart_name in ORDER:

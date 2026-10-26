@@ -4,14 +4,14 @@ contents, and how the notice was given (coaching data, never signed). Sample dat
 import uuid
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import demo
 from anumati.api.v1 import consent, device, notice, principal
 from anumati.ledger import chain
 
 
-class TestFieldAppMVP(FrappeTestCase):
+class TestFieldAppMVP(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

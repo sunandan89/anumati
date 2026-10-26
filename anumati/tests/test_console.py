@@ -7,7 +7,7 @@ import json
 import os
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 HERE = os.path.dirname(__file__)
 OPTIONAL_DOCTYPES = {"Mobile Configuration"}  # from the Frappe Mobile Control app, absent in CI
@@ -26,7 +26,7 @@ def user_with_role(role):
 	return email
 
 
-class TestConsole(FrappeTestCase):
+class TestConsole(IntegrationTestCase):
 	def test_workspaces_have_the_reviewed_roles(self):
 		self.assertFalse(frappe.db.exists("Workspace", "Anumati"), "old single workspace should be removed")
 		for name, roles in expected_sections().items():
@@ -35,18 +35,33 @@ class TestConsole(FrappeTestCase):
 			self.assertEqual(ws.module, "Anumati")
 
 	def test_each_role_sees_only_its_sections(self):
-		from frappe.desk.desktop import get_workspace_sidebar_items
+		from frappe.desk.desktop import get_workspaces
 
 		sections = expected_sections()
 		roles = {r for rs in sections.values() for r in rs if r != "System Manager"} | {"Anumati Field Worker"}
 		for role in roles:
 			frappe.set_user(user_with_role(role))
 			try:
-				pages = {p["name"] for p in get_workspace_sidebar_items()["pages"]}
+				# get_workspaces is cached per request; each user here is a new request.
+				getattr(frappe.local, "request_cache", {}).clear()
+				pages = {p["name"] for p in get_workspaces()["pages"]}
 			finally:
 				frappe.set_user("Administrator")
 			want = {name for name, rs in sections.items() if role in rs}
 			self.assertEqual(pages & set(sections), want, role)
+
+	def test_home_screen_tile_is_for_staff_only(self):
+		from frappe.apps import get_apps
+
+		for role, shown in (("Anumati DPO", True), ("Anumati Operator", True), ("Anumati Field Worker", False),
+		                    ("Anumati Auditor", False)):
+			frappe.set_user(user_with_role(role))
+			try:
+				getattr(frappe.local, "request_cache", {}).clear()
+				names = {a["name"] for a in get_apps()}
+			finally:
+				frappe.set_user("Administrator")
+			self.assertEqual("anumati" in names, shown, role)
 
 	def test_workspace_widgets_exist_and_links_resolve(self):
 		for name in expected_sections():

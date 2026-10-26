@@ -6,7 +6,7 @@ import uuid
 from unittest.mock import MagicMock, patch
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import enforcement, inbox, selfservice
 from anumati.api.v1 import rights
@@ -30,7 +30,7 @@ def number():
 	return "555" + "".join(random.choice("0123456789") for _ in range(7))
 
 
-class TestSelfService(FrappeTestCase):
+class TestSelfService(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

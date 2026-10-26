@@ -7,7 +7,7 @@ import json
 import os
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import pii
 from anumati.api.v1 import principal
@@ -15,7 +15,7 @@ from anumati.tests.test_console import user_with_role
 from anumati.tests.utils import make_event, make_principal
 
 
-class TestBeneficiarySearch(FrappeTestCase):
+class TestBeneficiarySearch(IntegrationTestCase):
 	def setUp(self):
 		self.p = make_principal(full_name="Kavita Yadav", phone="9000011111")
 
@@ -69,7 +69,7 @@ class TestBeneficiarySearch(FrappeTestCase):
 		self.assertNotIn("9000011111", out)
 
 
-class TestListReveal(FrappeTestCase):
+class TestListReveal(IntegrationTestCase):
 	def test_masked_phone_and_one_access_log_per_row(self):
 		p = make_principal(full_name="Meena Kumari", phone="9000022222")
 		before = frappe.db.count("Access Log", {"reference_document": p.name})
@@ -89,7 +89,7 @@ class TestListReveal(FrappeTestCase):
 			frappe.set_user("Administrator")
 
 
-class TestReadableDesk(FrappeTestCase):
+class TestReadableDesk(IntegrationTestCase):
 	def test_sms_requests_get_a_subject(self):
 		req = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": "withdrawal", "channel": "sms"}).insert()
 		self.assertEqual(req.subject, "Withdrawal by SMS")

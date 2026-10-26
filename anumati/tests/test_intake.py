@@ -6,7 +6,7 @@ import uuid
 
 import frappe
 from frappe.client import insert as client_insert
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import get_datetime, now_datetime
 
 from anumati.tests.utils import make_principal
@@ -22,7 +22,7 @@ def user(email, role):
 	return email
 
 
-class TestIntake(FrappeTestCase):
+class TestIntake(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

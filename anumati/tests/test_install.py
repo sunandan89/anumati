@@ -4,14 +4,14 @@ own records unless an admin asks for it, and uninstalling removes what Anumati a
 from unittest.mock import patch
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import demo, hooks, install
 from anumati.anumati.report.who_opened_personal_records import who_opened_personal_records as report
 from anumati.tests.test_console import user_with_role
 
 
-class TestInstall(FrappeTestCase):
+class TestInstall(IntegrationTestCase):
 	def test_install_leaves_two_factor_sign_in_to_the_admin(self):
 		frappe.db.set_single_value("System Settings", "enable_two_factor_auth", 0)
 		install.after_install()
