@@ -19,6 +19,8 @@
   "grievance_sla_days",
   "grievance_dpo_after_days",
   "consent_record_retention_years",
+  "sign_in_section",
+  "staff_two_factor",
   "signing_section",
   "signing_key_id",
   "signing_public_key",
@@ -127,6 +129,18 @@
    "fieldname": "consent_record_retention_years",
    "fieldtype": "Int",
    "label": "Consent record retention (years)"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sign_in_section",
+   "fieldtype": "Section Break",
+   "label": "Sign-in"
+  },
+  {
+   "description": "Anumati Admins, DPOs, Operators and Programme Managers enter a code from an authenticator app when they sign in. Ticking this turns on Frappe's two-factor sign-in (System Settings); only users whose roles ask for it are affected. Field workers are not asked.",
+   "fieldname": "staff_two_factor",
+   "fieldtype": "Check",
+   "label": "Two-factor sign-in for Anumati staff"
   },
   {
    "collapsible": 1,
@@ -261,7 +275,7 @@
  "index_web_pages_for_search": 0,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-26 10:00:00.000000",
+ "modified": "2026-10-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Anumati Settings",

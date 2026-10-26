@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"reques0\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Rights / support requests</b></span>\", \"col\": 12}}, {\"id\": \"reques1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 4}}, {\"id\": \"reques2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 4}}, {\"id\": \"reques3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Requests To Match\", \"col\": 4}}, {\"id\": \"reques4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rights requests\", \"col\": 3}}, {\"id\": \"reques5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"reques6\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Grievances</b></span>\", \"col\": 12}}, {\"id\": \"reques7\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances Open\", \"col\": 4}}, {\"id\": \"reques8\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances With The DPO\", \"col\": 4}}, {\"id\": \"reques9\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Grievances Late\", \"col\": 4}}, {\"id\": \"reques10\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Grievances\", \"col\": 3}}, {\"id\": \"reques11\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Grievance register\", \"col\": 3}}]",
- "creation": "2026-10-26 10:00:00.000000",
+ "creation": "2026-10-26 12:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Requests",
  "links": [],
- "modified": "2026-10-26 10:00:00.000000",
+ "modified": "2026-10-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Requests",

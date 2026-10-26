@@ -9,24 +9,26 @@ required_apps = ["frappe"]
 # Configuration shipped as standard Frappe records (spec: config before code).
 fixtures = [
 	{"dt": "Role", "filters": [["name", "like", "Anumati %"]]},
-	{"dt": "Workflow State", "filters": [["name", "in", ["Draft", "Published", "Retired", "Approved"]]]},
-	{"dt": "Workflow Action Master", "filters": [["name", "in", ["Publish", "Retire", "Approve", "Send Back"]]]},
+	# Workflow states and actions are shared records: install.ensure_workflow_masters adds missing ones only.
 	{"dt": "Workflow", "filters": [["name", "in", ["Notice Publishing", "ROPA Approval"]]]},
 	{"dt": "Custom Field", "filters": [["name", "like", "%-anumati_%"]]},
 	{"dt": "Notification", "filters": [["name", "like", "Anumati - %"]]},
-	# Desk console (tools/gen_desk.py): Needs attention block, Requests board, saved filters,
-	# and DPO read access to the stock Access Log / View Log.
+	# Desk console (tools/gen_desk.py): Needs attention block, Requests board, saved filters.
 	{"dt": "Custom HTML Block", "filters": [["name", "in", ["Needs Attention", "Programmes At A Glance"]]]},
 	{"dt": "Kanban Board", "filters": [["name", "in", ["Requests"]]]},
 	{"dt": "List Filter", "filters": [["name", "like", "anumati-%"]]},
-	{"dt": "Custom DocPerm", "filters": [["name", "like", "anumati-%"]]},
 ]
 
 after_install = "anumati.install.after_install"
+# Removes what Anumati added to stock DocTypes (custom fields, saved filters, board, blocks, workflows).
+before_uninstall = "anumati.install.before_uninstall"
 after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate", "anumati.evidence.encrypt_existing"]
 
-# Shared form helper for notice audio (Notice and Notice Translation forms).
-app_include_js = ["/assets/anumati/js/notice_audio.js"]
+# Notice audio buttons, loaded only on the two notice forms (not on every Desk page).
+doctype_js = {
+	"Anumati Notice Template": "public/js/notice_audio.js",
+	"Anumati Notice Translation": "public/js/notice_audio.js",
+}
 
 # Link fields to a beneficiary also search by whole-word name, full phone number or receipt code.
 standard_queries = {"Anumati Data Principal": "anumati.api.v1.principal.link_query"}

@@ -137,11 +137,18 @@ class TestConsole(FrappeTestCase):
 			step = frappe.get_doc("Onboarding Step", row.step)
 			self.assertTrue(frappe.db.exists("DocType", step.reference_document), step.title)
 
-	def test_dpo_can_read_access_logs(self):
+	def test_access_logs_keep_frappe_permissions_and_the_dpo_reads_them_through_a_report(self):
 		for doctype in ("Access Log", "View Log"):
-			self.assertTrue(frappe.has_permission(doctype, "read", user=user_with_role("Anumati DPO")), doctype)
-			self.assertFalse(frappe.has_permission(doctype, "read", user=user_with_role("Anumati Operator")), doctype)
-			self.assertFalse(frappe.has_permission(doctype, "write", user=user_with_role("Anumati DPO")), doctype)
+			self.assertFalse(frappe.get_all("Custom DocPerm", {"parent": doctype, "name": ("like", "anumati-%")}), doctype)
+			self.assertFalse(frappe.has_permission(doctype, "read", user=user_with_role("Anumati DPO")), doctype)
+		report = frappe.get_doc("Report", "Who Opened Personal Records")
+		for role, allowed in (("Anumati DPO", True), ("Anumati Admin", True), ("Anumati Operator", False),
+		                      ("Anumati Field Worker", False)):
+			frappe.set_user(user_with_role(role))
+			try:
+				self.assertEqual(bool(report.is_permitted()), allowed, role)
+			finally:
+				frappe.set_user("Administrator")
 
 	def test_forms_open_on_a_tab(self):
 		for doctype in ("Anumati Programme", "Anumati Notice Template", "Anumati Data Principal", "Anumati Consent Event", "Anumati Rights Request", "Anumati Breach Incident"):

@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"notice0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Breaches\", \"col\": 3}}, {\"id\": \"notice1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Translations Not Reviewed\", \"col\": 3}}, {\"id\": \"notice2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"notice3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Notices\", \"col\": 3}}, {\"id\": \"notice4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Breaches\", \"col\": 3}}, {\"id\": \"notice5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Records of processing\", \"col\": 3}}, {\"id\": \"notice6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Audit log\", \"col\": 3}}, {\"id\": \"notice7\", \"type\": \"card\", \"data\": {\"card_name\": \"Notices\", \"col\": 4}}, {\"id\": \"notice8\", \"type\": \"card\", \"data\": {\"card_name\": \"Records and risk\", \"col\": 4}}, {\"id\": \"notice9\", \"type\": \"card\", \"data\": {\"card_name\": \"Incidents and audit\", \"col\": 4}}]",
- "creation": "2026-10-26 10:00:00.000000",
+ "creation": "2026-10-26 12:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -122,7 +122,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Incidents and audit",
-   "link_count": 5,
+   "link_count": 4,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -148,21 +148,11 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Access log (names and evidence)",
+   "is_query_report": 1,
+   "label": "Who opened personal records",
    "link_count": 0,
-   "link_to": "Access Log",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Record views",
-   "link_count": 0,
-   "link_to": "View Log",
-   "link_type": "DocType",
+   "link_to": "Who Opened Personal Records",
+   "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   },
@@ -177,7 +167,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-10-26 10:00:00.000000",
+ "modified": "2026-10-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notices and Compliance",

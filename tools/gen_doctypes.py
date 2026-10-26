@@ -12,7 +12,7 @@ import json, os, re, sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.join(REPO, "anumati", "anumati", "doctype")
 CREATED = "2026-09-27 10:00:00.000000"
-TS = "2026-10-26 10:00:00.000000"  # bump on every schema change so migrate re-syncs
+TS = "2026-10-26 12:00:00.000000"  # bump on every schema change so migrate re-syncs
 
 def sel(*opts):
     return "\n".join(opts)
@@ -182,6 +182,11 @@ doctype("Anumati Settings", [
       description="A grievance with no final answer by then is assigned to the DPO"),
     F("consent_record_retention_years", "Int", "Consent record retention (years)", default="7",
       description="Default 7 years, pending counsel. Programmes may override."),
+    sec("sign_in_section", "Sign-in", collapsible=True),
+    F("staff_two_factor", "Check", "Two-factor sign-in for Anumati staff",
+      description="Anumati Admins, DPOs, Operators and Programme Managers enter a code from an authenticator app when they "
+                  "sign in. Ticking this turns on Frappe's two-factor sign-in (System Settings); only users whose roles ask "
+                  "for it are affected. Field workers are not asked."),
     sec("signing_section", "Signing key", collapsible=True,
         description="Generated on install. The private key never leaves the server; a site-config key (anumati_signing_key) overrides it."),
     F("signing_key_id", "Data", "Active key ID", read_only=True),
