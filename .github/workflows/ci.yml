@@ -91,7 +91,14 @@ jobs:
 
       - name: Unit tests (insert-only, chain, roles, PII, workflows)
         working-directory: /home/runner/frappe-bench
-        run: bench --site tenant-a.localhost run-tests --app anumati
+        run: |
+          set -o pipefail
+          bench --site tenant-a.localhost run-tests --app anumati 2>&1 | tee /tmp/tests.log
+
+      - name: Failing tests, in short
+        if: failure()
+        run: |
+          grep -E '^ ?(ERROR|FAIL):? |^[A-Za-z_.]+(Error|Exception): ' /tmp/tests.log | head -200 || true
 
       - name: Start server
         working-directory: /home/runner/frappe-bench
@@ -180,11 +187,9 @@ jobs:
         env:
           CI: "Yes"
         run: |
-          bench get-app anumati "$GITHUB_WORKSPACE"
-          # On pull_request runs the clone can sit on upgrade-head; detach so git may update both branches.
-          git -C apps/anumati checkout -q --detach
-          git -C apps/anumati fetch -q "$GITHUB_WORKSPACE" upgrade-base:upgrade-base
-          git -C apps/anumati checkout -q upgrade-base
+          # bench installs the branch its source is on, so hand it a copy already on main's code.
+          git clone -q --branch upgrade-base "$GITHUB_WORKSPACE" /tmp/src-base
+          bench get-app anumati /tmp/src-base
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin upgrade.localhost
           bench --site upgrade.localhost install-app anumati
@@ -198,10 +203,8 @@ jobs:
         env:
           CI: "Yes"
         run: |
-          bench get-app anumati "$GITHUB_WORKSPACE"
-          git -C apps/anumati checkout -q --detach
-          git -C apps/anumati fetch -q "$GITHUB_WORKSPACE" upgrade-head:upgrade-head
-          git -C apps/anumati checkout -q upgrade-head
+          git clone -q --branch upgrade-head "$GITHUB_WORKSPACE" /tmp/src-head
+          bench get-app anumati /tmp/src-head
           bench setup requirements --dev
           # Same database: the site folder moves to the new bench, as a Frappe Cloud bench upgrade does.
           cp -r ~/bench-base/sites/upgrade.localhost sites/
