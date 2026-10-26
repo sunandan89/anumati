@@ -38,13 +38,13 @@ class TestSelfService(FrappeTestCase):
 		make_purpose(PROG, "screen", "Health screening", essential=1)
 		make_purpose(PROG, "photos", "Photos and stories")
 		make_purpose(PROG, "calls", "Follow-up calls")
-		if not frappe.db.exists("Channel Provider", {"provider_type": "SMS", "enabled": 1}):
-			frappe.get_doc({"doctype": "Channel Provider", "provider_name": "MSG91 self-service test", "provider_type": "SMS",
+		if not frappe.db.exists("Anumati Channel Provider", {"provider_type": "SMS", "enabled": 1}):
+			frappe.get_doc({"doctype": "Anumati Channel Provider", "provider_name": "MSG91 self-service test", "provider_type": "SMS",
 			                "provider": "MSG91", "enabled": 1, "api_key": "test-key"}).insert()
-		if frappe.db.exists("Message Template", "otp-sms-en"):
-			frappe.db.set_value("Message Template", "otp-sms-en", "approved", 1)
+		if frappe.db.exists("Anumati Message Template", "otp-sms-en"):
+			frappe.db.set_value("Anumati Message Template", "otp-sms-en", "approved", 1)
 		else:
-			frappe.get_doc({"doctype": "Message Template", "template_event": "otp", "channel": "sms", "language": "en",
+			frappe.get_doc({"doctype": "Anumati Message Template", "template_event": "otp", "channel": "sms", "language": "en",
 			                "body": "Your OTP is ##OTP##", "approved": 1, "dlt_template_id": "otp-test",
 			                "send_via": "SendOTP"}).insert()
 
@@ -55,7 +55,7 @@ class TestSelfService(FrappeTestCase):
 		self.mother = make_principal(full_name="Sunita Devi (fictional)", phone=self.phone, birth_year=1988,
 		                             preferred_language="en")
 		self.child = make_principal(full_name="Meena Kumari (fictional)", is_minor=1, birth_year=2016)
-		self.link = frappe.get_doc({"doctype": "Guardian Link", "principal": self.child.name, "guardian": self.mother.name,
+		self.link = frappe.get_doc({"doctype": "Anumati Guardian Link", "principal": self.child.name, "guardian": self.mother.name,
 		                            "guardian_type": "parent", "verification_method": "device_sms_otp"}).insert()
 		self.event = make_event(self.mother.name, PROG, purposes_granted=["screen", "photos"], purposes_denied=["calls"])
 		make_event(self.child.name, PROG, purposes_granted=["screen"], purposes_denied=[], guardian_link=self.link.name,
@@ -163,11 +163,11 @@ class TestSelfService(FrappeTestCase):
 		states = enforcement.states_for(self.mother.name)
 		self.assertEqual(states[f"{PROG}-photos"]["status"], "withdrawn")
 		self.assertEqual(states[f"{PROG}-calls"]["status"], "granted")
-		grant = frappe.get_all("Consent Event", {"principal": self.mother.name, "action": "grant", "channel": "web"},
+		grant = frappe.get_all("Anumati Consent Event", {"principal": self.mother.name, "action": "grant", "channel": "web"},
 		                       ["name", "verification_status", "capture_mode", "captured_by"])[0]
 		self.assertEqual((grant.verification_status, grant.capture_mode), ("confirmed", "self_digital"))
-		self.assertTrue(frappe.db.exists("Verification Attempt", {"consent_event": grant.name, "result": "confirmed"}))
-		closed = frappe.get_all("Rights Request", {"matched_principal": self.mother.name, "channel": "web"},
+		self.assertTrue(frappe.db.exists("Anumati Verification Attempt", {"consent_event": grant.name, "result": "confirmed"}))
+		closed = frappe.get_all("Anumati Rights Request", {"matched_principal": self.mother.name, "channel": "web"},
 		                        ["request_type", "status", "raised_by_role"])
 		self.assertEqual([(r.request_type, r.status, r.raised_by_role) for r in closed],
 		                 [("withdrawal", inbox.CLOSED, "by_self")], "every withdrawal is listed in the inbox, done")
@@ -179,7 +179,7 @@ class TestSelfService(FrappeTestCase):
 	def test_guardian_turns_on_a_use_for_their_child_with_the_guardian_link(self):
 		self.sign_in()
 		selfservice.save_choices(1, PROG, turn_on=["photos"])
-		event = frappe.get_all("Consent Event", {"principal": self.child.name, "channel": "web"},
+		event = frappe.get_all("Anumati Consent Event", {"principal": self.child.name, "channel": "web"},
 		                       ["guardian_link", "capture_mode"])[0]
 		self.assertEqual((event.guardian_link, event.capture_mode), (self.link.name, "guardian_minor"))
 
@@ -189,7 +189,7 @@ class TestSelfService(FrappeTestCase):
 		out = selfservice.leave(0, PROG, 1)
 		self.assertTrue(out["programmes"][0]["left"])
 		self.assertFalse(out["programmes"][0]["can_turn_on"])
-		self.assertTrue(frappe.db.get_value("Data Principal", self.mother.name, "relationship_ended_on"))
+		self.assertTrue(frappe.db.get_value("Anumati Data Principal", self.mother.name, "relationship_ended_on"))
 		self.assertRaises(frappe.ValidationError, selfservice.save_choices, 0, PROG, turn_on=["photos"])
 
 	def test_a_programme_they_are_not_in_is_refused(self):
@@ -229,16 +229,16 @@ class TestSelfService(FrappeTestCase):
 		self.sign_in()
 		out = selfservice.ask(0, "access", "Please send me what you hold")
 		request = out["request"]
-		doc = frappe.get_doc("Rights Request", request)
+		doc = frappe.get_doc("Anumati Rights Request", request)
 		self.assertEqual((doc.request_type, doc.channel, doc.raised_by_role, doc.status, doc.matched_principal),
 		                 ("access", "web", "by_self", inbox.NEW, self.mother.name))
 		self.assertRaises(frappe.ValidationError, selfservice.ask, 0, "withdrawal")
 
 		frappe.set_user("Administrator")
 		rights.reply(request, "Which programme is this about?", "question")
-		self.assertEqual(frappe.db.get_value("Rights Request", request, "status"), inbox.WAITING_PERSON)
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", request, "status"), inbox.WAITING_PERSON)
 		out = selfservice.write(0, request, "The health camp")
-		self.assertEqual(frappe.db.get_value("Rights Request", request, "status"), inbox.WORKING)
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", request, "status"), inbox.WORKING)
 		rights.reply(request, "Your summary is attached to the SMS we sent today.", "answer")
 		doc.reload()
 		self.assertEqual(doc.status, inbox.ANSWERED)
@@ -249,7 +249,7 @@ class TestSelfService(FrappeTestCase):
 
 	def test_cannot_write_on_someone_elses_request(self):
 		frappe.set_user("Administrator")
-		other = frappe.get_doc({"doctype": "Rights Request", "request_type": "access", "channel": "email",
+		other = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": "access", "channel": "email",
 		                        "matched_principal": self.stranger.name}).insert()
 		self.sign_in()
 		self.assertRaises(frappe.PermissionError, selfservice.write, 0, other.name, "hello")

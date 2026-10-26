@@ -17,7 +17,7 @@ from cryptography.fernet import Fernet
 from frappe.utils.password import get_encryption_key
 
 MAGIC = b"ANUMATI-ENC1\n"
-EVIDENCE_DOCTYPES = ("Data Principal", "Guardian Link", "Consent Event", "Grievance")
+EVIDENCE_DOCTYPES = ("Anumati Data Principal", "Anumati Guardian Link", "Anumati Consent Event", "Anumati Grievance")
 
 
 def _fernet() -> Fernet:
@@ -92,9 +92,9 @@ def check_event_evidence(principal: str, entries, guardian_link: str | None = No
 	files before the record and without attaching them, so a private file that is not attached to anything
 	yet counts when the same user uploaded it; adopt_uploads then attaches and encrypts it. Returns how many
 	entries were checked; raises EvidenceError on the first that fails. Messages name the entry, never a value."""
-	owners = {("Data Principal", principal)}
+	owners = {("Anumati Data Principal", principal)}
 	if guardian_link:
-		owners.add(("Guardian Link", guardian_link))
+		owners.add(("Anumati Guardian Link", guardian_link))
 	for i, entry in enumerate(entries or [], start=1):
 		url, digest = (entry or {}).get("file"), ((entry or {}).get("sha256") or "").lower()
 		if not url or not digest:
@@ -114,10 +114,10 @@ def guardian_link_has_evidence(guardian_link: str | None, principal: str) -> boo
 	"""The guardian's order or ID photo, uploaded for this person, counts as evidence for evidence_only."""
 	if not guardian_link:
 		return False
-	urls = [u for u in frappe.db.get_value("Guardian Link", guardian_link, ["evidence", "id_document"]) or () if u]
+	urls = [u for u in frappe.db.get_value("Anumati Guardian Link", guardian_link, ["evidence", "id_document"]) or () if u]
 	return bool(urls) and bool(frappe.db.exists("File", {
 		"file_url": ("in", urls), "is_private": 1,
-		"attached_to_doctype": ("in", ["Data Principal", "Guardian Link"]),
+		"attached_to_doctype": ("in", ["Anumati Data Principal", "Anumati Guardian Link"]),
 		"attached_to_name": ("in", [principal, guardian_link])}))
 
 
@@ -130,5 +130,5 @@ def adopt_uploads(principal: str, entries, uploader: str):
 			continue
 		for name in frappe.get_all("File", {"file_url": url, "is_private": 1, "is_folder": 0, "owner": uploader,
 		                                     "attached_to_doctype": ("is", "not set")}, pluck="name"):
-			frappe.db.set_value("File", name, {"attached_to_doctype": "Data Principal", "attached_to_name": principal})
+			frappe.db.set_value("File", name, {"attached_to_doctype": "Anumati Data Principal", "attached_to_name": principal})
 			encrypt_file(frappe.get_doc("File", name))

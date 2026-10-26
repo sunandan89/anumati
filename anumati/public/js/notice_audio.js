@@ -6,7 +6,7 @@
 window.anumati_notice_audio = function (frm) {
 	if (frm.is_new()) return;
 	const reviewer = frappe.user.has_role(["Anumati DPO", "Anumati Admin", "System Manager"]);
-	const can_make = frm.doctype === "Notice Template" ? reviewer : frm.perm[0] && frm.perm[0].write;
+	const can_make = frm.doctype === "Anumati Notice Template" ? reviewer : frm.perm[0] && frm.perm[0].write;
 	const call = (method, message) =>
 		frappe.call({ method, args: { doctype: frm.doctype, name: frm.doc.name }, freeze: true, freeze_message: message })
 			.then(() => frm.reload_doc());

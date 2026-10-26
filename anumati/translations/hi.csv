@@ -16,7 +16,35 @@ Agreed By Purpose,उद्देश्य के अनुसार सहम�
 Agreed to,इनके लिए सहमति
 Analytics,विश्लेषण
 Answered,जवाब दिया
+Anumati Audit Entry,ऑडिट लॉग प्रविष्टि
+Anumati Audit Share,ऑडिटर लिंक
+Anumati Breach Incident,डेटा उल्लंघन
+Anumati Campaign,अभियान
+Anumati Channel Provider,मैसेजिंग खाता
+Anumati Consent Event,सहमति रिकॉर्ड
+Anumati Consent State,वर्तमान सहमति
+Anumati Data Category,डेटा की श्रेणी
+Anumati Data Principal,लाभार्थी
+Anumati Field Device,फील्ड फ़ोन
+Anumati Funder Link,फंडर के साथ साझा
+Anumati Grievance,शिकायत
+Anumati Guardian Link,अभिभावक
+Anumati Message Template,संदेश टेम्पलेट
+Anumati Notice Template,सूचना
+Anumati Notice Translation,सूचना का अनुवाद
+Anumati Processor,डेटा प्रोसेसर (साझेदार)
+Anumati Profile Question,अतिरिक्त सवाल
+Anumati Programme,कार्यक्रम
+Anumati Propagation Ack,साझेदार की पुष्टि
+Anumati Purge Request,डेटा मिटाने का काम
+Anumati Purpose,उद्देश्य
+Anumati ROPA Entry,प्रोसेसिंग रिकॉर्ड
+Anumati Retention Policy,डेटा रखने का नियम
+Anumati Rights Request,अधिकार अनुरोध
 Anumati Settings,अनुमति सेटिंग्स
+Anumati Source System,जुड़ा हुआ सिस्टम
+Anumati System Usage Log,सहमति जाँच लॉग
+Anumati Verification Attempt,पुष्टि का प्रयास
 Anything to add? (optional),कुछ और जोड़ना है? (वैकल्पिक)
 Appointment order,नियुक्ति आदेश
 Approve audio,ऑडियो स्वीकृत करें
@@ -28,8 +56,6 @@ Assessing,जाँच जारी
 Assigned to me,मुझे सौंपे गए
 Audio,ऑडियो
 Audio notice,ऑडियो सूचना
-Audit Entry,ऑडिट लॉग प्रविष्टि
-Audit Share,ऑडिटर लिंक
 Audit log,ऑडिट लॉग
 Back,वापस
 Beneficiaries,लाभार्थी
@@ -38,14 +64,11 @@ Beneficiary: {0},लाभार्थी: {0}
 Board told now,बोर्ड को अभी बताया
 Board told on {0},बोर्ड को {0} को बताया
 Breach,डेटा उल्लंघन
-Breach Incident,डेटा उल्लंघन
 Breaches,डेटा उल्लंघन
-Campaign,अभियान
 Can't do this,नहीं हो सकता
 Can't publish yet,अभी प्रकाशित नहीं हो सकता
 Cancel,रद्द करें
 Change number,नंबर बदलें
-Channel Provider,मैसेजिंग खाता
 Check signature,हस्ताक्षर जाँचें
 Choose the outcome with the final answer.,अंतिम जवाब के साथ परिणाम चुनें।
 Choose what it is about.,चुनें कि यह किस बारे में है।
@@ -62,9 +85,7 @@ Confirmation attempt,पुष्टि का प्रयास
 Confirmed,पुष्टि हुई
 Connected systems,जुड़े हुए सिस्टम
 Consent,सहमति
-Consent Event,सहमति रिकॉर्ड
 Consent Events Per Week,हर हफ़्ते की सहमतियाँ
-Consent State,वर्तमान सहमति
 Consent records,सहमति रिकॉर्ड
 Consent today,आज की सहमति
 Consents,सहमतियाँ
@@ -77,9 +98,7 @@ Continue,आगे बढ़ें
 Correct my details,मेरी जानकारी सुधारें
 Current consent per purpose,हर उद्देश्य की वर्तमान सहमति
 DPO or grievance contact,DPO या शिकायत संपर्क
-Data Category,डेटा की श्रेणी
 Data Fiduciary,डेटा फ़िड्यूशियरी
-Data Principal,लाभार्थी
 Data Processor,डेटा प्रोसेसर
 Data Protection Officer: {0},डेटा संरक्षण अधिकारी: {0}
 Delete my data,मेरी जानकारी हटाएँ
@@ -92,7 +111,6 @@ Enter the code,कोड डालें
 Enter your 10-digit mobile number.,अपना 10 अंकों का मोबाइल नंबर डालें।
 Evidence Only,सिर्फ़ सबूत
 "Evidence is in the Evidence tab. Hash, signature and chain position are in the Proof tab. This record can never be edited; a change of mind is a new record.","सबूत 'सबूत' टैब में है। हैश, हस्ताक्षर और शृंखला 'प्रमाण' टैब में हैं। यह रिकॉर्ड कभी बदला नहीं जा सकता; राय बदलने पर नया रिकॉर्ड बनता है।"
-Field Device,फील्ड फ़ोन
 Field app,फील्ड ऐप
 Field phone,फील्ड फ़ोन
 Field phones,फील्ड फ़ोन
@@ -101,10 +119,8 @@ Field worker,फ़ील्ड कार्यकर्ता
 Find a receipt,रसीद खोजें
 For example: We are checking with the field team. The status stays Working on it.,जैसे: हम फ़ील्ड टीम से पता कर रहे हैं। स्थिति 'हम देख रहे हैं' रहेगी।
 From,से
-Funder Link,फंडर के साथ साझा
 Go back,वापस जाएँ
 Granted,सहमति दी
-Grievance,शिकायत
 Grievance Register,शिकायत रजिस्टर
 Grievance register,शिकायत रजिस्टर
 Grievance {0} received. We will reply by {1}.,शिकायत {0} मिल गई। हम {1} तक जवाब देंगे।
@@ -114,7 +130,6 @@ Grievances Not Happy,असंतुष्ट शिकायतें
 Grievances Open,खुली शिकायतें
 Grievances With The DPO,DPO के पास शिकायतें
 Guardian,अभिभावक
-Guardian Link,अभिभावक
 Guardian's ID,अभिभावक का पहचान पत्र
 Guardians,अभिभावक
 Hash chain check FAILED. Tell the DPO now.,हैश शृंखला की जाँच असफल। DPO को अभी बताएँ।
@@ -157,7 +172,6 @@ Man's voice,पुरुष की आवाज़
 Match,मिलाएँ
 Merged,मिला दिया
 Message,संदेश
-Message Template,संदेश टेम्पलेट
 Message from the person,व्यक्ति का संदेश
 Messaging,मैसेजिंग
 Minor,नाबालिग
@@ -197,8 +211,6 @@ Nothing recorded yet.,अभी कुछ दर्ज नहीं है।
 Nothing yet.,अभी कुछ नहीं।
 Notice,सूचना
 Notice Heard In Full,पूरी सूचना सुनी
-Notice Template,सूचना
-Notice Translation,सूचना का अनुवाद
 Notices,सूचनाएँ
 Notices and Compliance,सूचनाएँ और अनुपालन
 Notified,सूचित
@@ -229,16 +241,9 @@ Photo or document (optional),फ़ोटो या दस्तावेज़ 
 Please keep it under {0} characters.,कृपया {0} अक्षरों से कम लिखें।
 Please sign in again.,कृपया फिर से साइन-इन करें।
 Preview,पूर्वावलोकन
-Processor,डेटा प्रोसेसर (साझेदार)
 Profile Answer Totals,अतिरिक्त सवाल: कुल संख्या
-Profile Question,अतिरिक्त सवाल
-Programme,कार्यक्रम
 Programmes,कार्यक्रम
 Programmes At A Glance,कार्यक्रम एक नज़र में
-Propagation Ack,साझेदार की पुष्टि
-Purge Request,डेटा मिटाने का काम
-Purpose,उद्देश्य
-ROPA Entry,प्रोसेसिंग रिकॉर्ड
 Raised by you,आपके अनुरोध
 Re-consent,दोबारा सहमति
 Re-consent campaign,दोबारा सहमति अभियान
@@ -271,11 +276,9 @@ Requests By Type,प्रकार के अनुसार अनुरोध
 Requests To Match,मिलान वाले अनुरोध
 Requests board,अनुरोध बोर्ड
 Required,ज़रूरी
-Retention Policy,डेटा रखने का नियम
 Retired,बंद
 Rights / support request,अधिकार / सहायता अनुरोध
 Rights / support requests,अधिकार / सहायता अनुरोध
-Rights Request,अधिकार अनुरोध
 Rights requests,अधिकार अनुरोध
 Rule 3: {0} is missing,नियम 3: {0} नहीं है
 Running,चल रहा है
@@ -312,7 +315,6 @@ Significant Data Fiduciary,महत्वपूर्ण डेटा फ़ि
 Something else,कुछ और
 Something went wrong with your data or a request,आपकी जानकारी या किसी अनुरोध में कुछ गलत हुआ
 Something went wrong. Please try again.,कुछ गड़बड़ हुई। कृपया फिर कोशिश करें।
-Source System,जुड़ा हुआ सिस्टम
 Staff behaviour,कर्मचारी का व्यवहार
 Staff behaviour: only the DPO can see this grievance.,कर्मचारी का व्यवहार: यह शिकायत केवल DPO देख सकते हैं।
 Start,शुरू करें
@@ -324,7 +326,6 @@ Stopped,बंद किया
 Stopping takes effect now. You can change this again at any time.,बंद करना अभी लागू होगा। आप इसे कभी भी फिर बदल सकते हैं।
 Summary of security safeguards,सुरक्षा उपायों का सार
 Switch person,व्यक्ति बदलें
-System Usage Log,सहमति जाँच लॉग
 Team,टीम
 Tell us what happened,बताएँ क्या हुआ
 Tell us what happened.,बताएँ क्या हुआ।
@@ -363,7 +364,6 @@ Unmatched Requests,मिलान बाकी अनुरोध
 Use the self-service page,स्वयं-सेवा पेज इस्तेमाल करें
 Use your receipt code,अपनी रसीद का कोड इस्तेमाल करें
 Used without my consent,मेरी सहमति के बिना इस्तेमाल हुआ
-Verification Attempt,पुष्टि का प्रयास
 Verification Pipeline,पुष्टि की स्थिति
 Verified by,पुष्टि
 View guardian's ID,अभिभावक का पहचान पत्र देखें

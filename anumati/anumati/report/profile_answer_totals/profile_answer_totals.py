@@ -11,18 +11,18 @@ SMALL = 5
 
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
-	conditions = {"parenttype": "Data Principal"}
+	conditions = {"parenttype": "Anumati Data Principal"}
 	# Only programmes this user may see (User Permissions on Programme apply through get_list).
-	allowed = frappe.get_list("Programme", pluck="name", limit_page_length=0)
+	allowed = frappe.get_list("Anumati Programme", pluck="name", limit_page_length=0)
 	if filters.programme:
 		conditions["programme"] = filters.programme if filters.programme in allowed else "-"
 	else:
 		conditions["programme"] = ("in", allowed or ["-"])
 	if filters.question:
 		conditions["question"] = filters.question
-	rows = frappe.get_all("Profile Answer", conditions, ["question", "answer", "count(*) as people"],
+	rows = frappe.get_all("Anumati Profile Answer", conditions, ["question", "answer", "count(*) as people"],
 	                      group_by="question, answer", order_by="question asc, people desc")
-	labels = dict(frappe.get_all("Profile Question", ["name", "question"], as_list=True))
+	labels = dict(frappe.get_all("Anumati Profile Question", ["name", "question"], as_list=True))
 	data = [{"question": labels.get(r.question, r.question), "answer": r.answer,
 	         "people": r.people if r.people >= SMALL else _("fewer than {0}").format(SMALL)} for r in rows]
 	columns = [

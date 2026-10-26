@@ -40,7 +40,7 @@ class TestVoice(FrappeTestCase):
 	def setUp(self):
 		frappe.conf.sarvam_api_key = "test-key-not-real"
 		self.notice = demo.create_demo_programme()
-		self.translation = frappe.db.get_value("Notice Translation", {"notice": self.notice, "language": "hi"})
+		self.translation = frappe.db.get_value("Anumati Notice Translation", {"notice": self.notice, "language": "hi"})
 
 	def tearDown(self):
 		frappe.conf.pop("sarvam_api_key", None)
@@ -62,42 +62,42 @@ class TestVoice(FrappeTestCase):
 
 	def test_translation_audio_plays_only_after_approval(self):
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
-			out = voice.generate_notice_audio("Notice Translation", self.translation)
-		doc = frappe.get_doc("Notice Translation", self.translation)
+			out = voice.generate_notice_audio("Anumati Notice Translation", self.translation)
+		doc = frappe.get_doc("Anumati Notice Translation", self.translation)
 		self.assertEqual(doc.audio_file, out["audio_file"])
 		self.assertEqual(doc.audio_file_male, out["audio_file_male"])
 		self.assertIn("kavya", SPEAKERS)
 		self.assertIn("rahul", SPEAKERS)
 		self.assertTrue(doc.audio_machine_made)
 		self.assertFalse(doc.audio_reviewed_by)
-		programme = frappe.db.get_value("Notice Template", self.notice, "programme")
+		programme = frappe.db.get_value("Anumati Notice Template", self.notice, "programme")
 		self.assertIsNone(notice.get_active(programme, language="hi")["translation"]["audio_file"])
 		self.assertIsNone(notice.get_active(programme, language="hi")["translation"]["audio_file_male"])
-		voice.approve_notice_audio("Notice Translation", self.translation)
+		voice.approve_notice_audio("Anumati Notice Translation", self.translation)
 		served = notice.get_active(programme, language="hi")["translation"]
 		self.assertEqual((served["audio_file"], served["audio_file_male"]), (out["audio_file"], out["audio_file_male"]))
 		self.assertEqual(served["audio_machine_made"], 1, "the phone credits the machine voice")
 		# Making it again needs a fresh approval.
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
-			voice.generate_notice_audio("Notice Translation", self.translation)
+			voice.generate_notice_audio("Anumati Notice Translation", self.translation)
 		self.assertIsNone(notice.get_active(programme, language="hi")["translation"]["audio_file"])
 
 	def test_published_notice_gets_base_audio_after_approval(self):
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
-			voice.generate_notice_audio("Notice Template", self.notice)
-		programme = frappe.db.get_value("Notice Template", self.notice, "programme")
+			voice.generate_notice_audio("Anumati Notice Template", self.notice)
+		programme = frappe.db.get_value("Anumati Notice Template", self.notice, "programme")
 		self.assertIsNone(notice.get_active(programme)["audio_file"])
-		voice.approve_notice_audio("Notice Template", self.notice)
+		voice.approve_notice_audio("Anumati Notice Template", self.notice)
 		self.assertTrue(notice.get_active(programme)["audio_file"])
 		self.assertEqual(notice.get_active(programme)["audio_machine_made"], 1, "English consent credits Sarvam too")
 		self.assertEqual(notice.get_active(programme, language="en")["audio_machine_made"], 1)
-		self.assertEqual(frappe.db.get_value("Notice Template", self.notice, "docstatus"), 1)
+		self.assertEqual(frappe.db.get_value("Anumati Notice Template", self.notice, "docstatus"), 1)
 
 	def test_field_workers_cannot_make_or_approve_base_audio(self):
 		frappe.set_user(user_with_role("Anumati Field Worker"))
 		try:
-			self.assertRaises(frappe.PermissionError, voice.approve_notice_audio, "Notice Template", self.notice)
-			self.assertRaises(frappe.PermissionError, voice.generate_notice_audio, "Notice Template", self.notice)
+			self.assertRaises(frappe.PermissionError, voice.approve_notice_audio, "Anumati Notice Template", self.notice)
+			self.assertRaises(frappe.PermissionError, voice.generate_notice_audio, "Anumati Notice Template", self.notice)
 		finally:
 			frappe.set_user("Administrator")
 
@@ -108,8 +108,8 @@ class TestVoice(FrappeTestCase):
 		settings = frappe.get_single("Anumati Settings")
 		settings.voice_listen_helper = 1
 		self.assertRaises(frappe.ValidationError, settings.save)
-		if not frappe.db.exists("Processor", "Sarvam AI"):
-			frappe.get_doc({"doctype": "Processor", "processor_name": "Sarvam AI", "country": "India"}).insert()
+		if not frappe.db.exists("Anumati Processor", "Sarvam AI"):
+			frappe.get_doc({"doctype": "Anumati Processor", "processor_name": "Sarvam AI", "country": "India"}).insert()
 		settings = frappe.get_single("Anumati Settings")  # fresh copy after the refused save
 		settings.voice_listen_helper = 1
 		settings.save()
@@ -149,7 +149,7 @@ class TestVoice(FrappeTestCase):
 	def test_demo_site_gets_recorded_approved_notices_and_a_male_demo_worker(self):
 		demo.create_field_worker()
 		frappe.db.set_value("User", demo.FIELD_WORKER, "gender", None)
-		for doctype in ("Notice Template", "Notice Translation"):  # start from no audio, whatever ran before
+		for doctype in ("Anumati Notice Template", "Anumati Notice Translation"):  # start from no audio, whatever ran before
 			for name in frappe.get_all(doctype, pluck="name"):
 				frappe.db.set_value(doctype, name, {"audio_file": None, "audio_file_male": None, "audio_reviewed_by": None})
 		SPEAKERS.clear()
@@ -186,19 +186,19 @@ class TestVoice(FrappeTestCase):
 
 	def test_hand_attached_recording_is_a_person_recording_and_drops_the_old_approval(self):
 		with patch("anumati.voice.requests.post", side_effect=fake_sarvam):
-			voice.generate_notice_audio("Notice Translation", self.translation)
-		voice.approve_notice_audio("Notice Translation", self.translation)
-		doc = frappe.get_doc("Notice Translation", self.translation)
+			voice.generate_notice_audio("Anumati Notice Translation", self.translation)
+		voice.approve_notice_audio("Anumati Notice Translation", self.translation)
+		doc = frappe.get_doc("Anumati Notice Translation", self.translation)
 		doc.audio_file = "/private/files/recorded-by-our-team.mp3"
 		doc.save()
 		self.assertFalse(doc.audio_machine_made)
 		self.assertFalse(doc.audio_reviewed_by)
 		self.assertFalse(doc.audio_file_male)
-		programme = frappe.db.get_value("Notice Template", self.notice, "programme")
+		programme = frappe.db.get_value("Anumati Notice Template", self.notice, "programme")
 		self.assertEqual(notice.get_active(programme, language="hi")["translation"]["audio_machine_made"], 0)
 
 	def test_bundled_demo_audio_matches_the_notice_text_and_needs_no_sarvam(self):
-		for doctype in ("Notice Template", "Notice Translation"):
+		for doctype in ("Anumati Notice Template", "Anumati Notice Translation"):
 			for name in frappe.get_all(doctype, pluck="name"):
 				frappe.db.set_value(doctype, name, {"audio_file": None, "audio_file_male": None, "audio_reviewed_by": None})
 		with patch("anumati.voice.requests.post", side_effect=AssertionError("must not call Sarvam")):
@@ -209,5 +209,5 @@ class TestVoice(FrappeTestCase):
 			self.assertTrue(out["audio_file"] and out["audio_file_male"], spec["code"])
 			self.assertTrue(out["translation"]["audio_file"] and out["translation"]["audio_file_male"], spec["code"])
 		# A notice whose text was edited never gets a shipped recording of the old text.
-		frappe.db.set_value("Notice Translation", self.translation, {"audio_file": None, "summary": "बदला हुआ सार"})
+		frappe.db.set_value("Anumati Notice Translation", self.translation, {"audio_file": None, "summary": "बदला हुआ सार"})
 		self.assertEqual(demo.attach_bundled_audio(), 0)

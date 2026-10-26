@@ -40,10 +40,10 @@ class TestFieldAppMVP(FrappeTestCase):
 	def test_people_for_the_phone_carry_the_guardian_number(self):
 		ref = f"MVP-{uuid.uuid4().hex[:6]}"
 		self.grant(ref)
-		mother = frappe.get_doc({"doctype": "Data Principal", "principal_ref": f"MVP-G-{uuid.uuid4().hex[:6]}",
+		mother = frappe.get_doc({"doctype": "Anumati Data Principal", "principal_ref": f"MVP-G-{uuid.uuid4().hex[:6]}",
 		                         "full_name": "Radha S. (fictional)", "phone": "5550001234"}).insert()
-		child = frappe.db.get_value("Data Principal", {"principal_ref": ref})
-		frappe.get_doc({"doctype": "Guardian Link", "principal": child, "guardian": mother.name,
+		child = frappe.db.get_value("Anumati Data Principal", {"principal_ref": ref})
+		frappe.get_doc({"doctype": "Anumati Guardian Link", "principal": child, "guardian": mother.name,
 		                "guardian_type": "parent", "relation": "Mother", "verification_method": "device_sms_otp"}).insert()
 		out = principal.for_device(demo.PROGRAMME)
 		person = next(p for p in out["people"] if p["principal_ref"] == ref)
@@ -62,15 +62,15 @@ class TestFieldAppMVP(FrappeTestCase):
 		self.assertEqual(device.register(dev, app_version="1.0.0", pending=3), {"status": "active", "wipe": False, "voice_helper": False, "voice": "female"})
 		out = device.report_lost(dev)
 		self.assertTrue(out["incident"])
-		self.assertEqual(frappe.db.get_value("Breach Incident", out["incident"], "principals_affected"), 3)
+		self.assertEqual(frappe.db.get_value("Anumati Breach Incident", out["incident"], "principals_affected"), 3)
 		self.assertTrue(device.register(dev)["wipe"], "the lost phone is told to wipe itself")
-		self.assertEqual(frappe.db.get_value("Field Device", dev, "status"), "wiped")
+		self.assertEqual(frappe.db.get_value("Anumati Field Device", dev, "status"), "wiped")
 		self.assertFalse(device.register(dev)["wipe"], "a phone signed in again after the wipe works normally")
 
 	def test_notice_delivery_is_stored_but_not_signed(self):
 		ref = f"MVP-{uuid.uuid4().hex[:6]}"
 		art = self.grant(ref, notice_delivery="phone_voice", notice_completed=1)
-		doc = frappe.get_doc("Consent Event", art["consent_id"])
+		doc = frappe.get_doc("Anumati Consent Event", art["consent_id"])
 		self.assertEqual((doc.notice_delivery, doc.notice_completed), ("phone_voice", 1))
 		self.assertNotIn("notice_delivery", chain.CONSENT_SCHEMA)
 		self.assertEqual(chain.compute_hash(chain.payload(chain.CONSENT_SCHEMA, doc.get), doc.prev_hash), doc.hash)

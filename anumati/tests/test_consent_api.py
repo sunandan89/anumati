@@ -61,7 +61,7 @@ class TestConsentAPI(FrappeTestCase):
 		first = self.grant(event_uuid=event_uuid)
 		second = self.grant(event_uuid=event_uuid)
 		self.assertEqual(first["hash"], second["hash"])
-		self.assertEqual(frappe.db.count("Consent Event", {"event_uuid": event_uuid}), 1)
+		self.assertEqual(frappe.db.count("Anumati Consent Event", {"event_uuid": event_uuid}), 1)
 
 	def test_unknown_purpose_and_unknown_principal_are_rejected(self):
 		self.assertRaises(ConsentRequestError, self.grant, granted=("nope",), denied=())
@@ -101,7 +101,7 @@ class TestConsentAPI(FrappeTestCase):
 		child = make_principal(is_minor=1)
 		self.assertRaises(ConsentRequestError, self.grant, principal_ref=child.principal_ref, denied=())
 		guardian = make_principal()
-		link = frappe.get_doc({"doctype": "Guardian Link", "principal": child.name, "guardian": guardian.name,
+		link = frappe.get_doc({"doctype": "Anumati Guardian Link", "principal": child.name, "guardian": guardian.name,
 		                       "guardian_type": "parent", "verification_method": "device_sms_otp"}).insert()
 		self.assertRaises(ConsentRequestError, self.grant, principal_ref=child.principal_ref,
 		                  granted=("screen", "research"), denied=(), guardian_link=link.name)
@@ -115,8 +115,8 @@ class TestConsentAPI(FrappeTestCase):
 	def test_processing_before_confirmation_follows_programme_setting(self):
 		self.grant()
 		self.assertTrue(self.status("follow")["allow"])
-		frappe.db.set_value("Programme", PROG, "allow_processing_before_confirm", 0)
-		frappe.clear_document_cache("Programme", PROG)
+		frappe.db.set_value("Anumati Programme", PROG, "allow_processing_before_confirm", 0)
+		frappe.clear_document_cache("Anumati Programme", PROG)
 		try:
 			self.assertFalse(self.status("follow")["allow"])
 			other = make_principal()
@@ -126,8 +126,8 @@ class TestConsentAPI(FrappeTestCase):
 			enforcement.set_verification(art["consent_id"], "confirmed")  # as a server code check or delivery does
 			self.assertTrue(consent.check(other.principal_ref, "follow", programme=PROG)["allow"])
 		finally:
-			frappe.db.set_value("Programme", PROG, "allow_processing_before_confirm", 1)
-			frappe.clear_document_cache("Programme", PROG)
+			frappe.db.set_value("Anumati Programme", PROG, "allow_processing_before_confirm", 1)
+			frappe.clear_document_cache("Anumati Programme", PROG)
 
 	def test_check_unknown_principal_denies(self):
 		verdict = consent.check("NO-SUCH-PERSON", "follow", programme=PROG)
@@ -167,7 +167,7 @@ class TestPrincipalAndNoticeAPI(FrappeTestCase):
 		self.assertEqual(out, {"principal_ref": ref, "created": True})
 		out = principal.upsert(ref, preferred_language=None, shared_phone=1)
 		self.assertFalse(out["created"])
-		doc = frappe.get_doc("Data Principal", {"principal_ref": ref})
+		doc = frappe.get_doc("Anumati Data Principal", {"principal_ref": ref})
 		self.assertTrue(doc.shared_phone)
 		self.assertTrue(doc.phone_hash)
 		self.assertEqual(doc.get_password("full_name"), "Meena K. (fictional)")
@@ -175,20 +175,20 @@ class TestPrincipalAndNoticeAPI(FrappeTestCase):
 	def test_get_active_serves_published_notice_and_only_reviewed_translations(self):
 		make_programme("NTC", "Notice API Programme")
 		purpose = make_purpose("NTC", "screen", "Health screening")
-		if not frappe.db.exists("Data Category", "Health readings"):
-			frappe.get_doc({"doctype": "Data Category", "category_name": "Health readings"}).insert()
-		ropa = frappe.get_doc({"doctype": "ROPA Entry", "purpose": purpose, "retention": "24 months",
+		if not frappe.db.exists("Anumati Data Category", "Health readings"):
+			frappe.get_doc({"doctype": "Anumati Data Category", "category_name": "Health readings"}).insert()
+		ropa = frappe.get_doc({"doctype": "Anumati ROPA Entry", "purpose": purpose, "retention": "24 months",
 		                       "safeguards": "Encrypted", "data_categories": [{"data_category": "Health readings"}]}).insert()
 		apply_workflow(ropa, "Approve")
 		doc = frappe.get_doc({
-			"doctype": "Notice Template", "programme": "NTC", "version": "1.0.0", "summary": "We screen your health.",
+			"doctype": "Anumati Notice Template", "programme": "NTC", "version": "1.0.0", "summary": "We screen your health.",
 			"purposes": [{"purpose": purpose}], "withdrawal_methods": "SMS STOP", "rights_text": "Access, correction",
 			"board_complaint_route": "Data Protection Board", "dpo_contact": "DPO (fictional)",
 			"security_summary": "Encrypted",
 		}).insert()
 		apply_workflow(doc, "Publish")
 		ensure_language("en", "English")
-		frappe.get_doc({"doctype": "Notice Translation", "notice": doc.name, "language": "en",
+		frappe.get_doc({"doctype": "Anumati Notice Translation", "notice": doc.name, "language": "en",
 		                "summary": "Machine draft", "machine_translated": 1}).insert()
 		out = notice.get_active("NTC", language="en")
 		self.assertEqual(out["version"], "1.0.0")

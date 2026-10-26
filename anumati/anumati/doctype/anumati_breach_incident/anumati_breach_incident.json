@@ -1,0 +1,373 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:BR-{###}",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "incident_tab",
+  "breach_type",
+  "detected_on",
+  "programme",
+  "status",
+  "c1",
+  "principals_affected",
+  "field_device",
+  "purposes_affected",
+  "detail_section",
+  "description",
+  "steps_tab",
+  "steps_section",
+  "contained_on",
+  "risk_assessed_on",
+  "principals_notified_on",
+  "notifications_sent",
+  "c2",
+  "board_intimated_on",
+  "board_report_on",
+  "dpb_report",
+  "closed_on",
+  "notify_tab",
+  "audience_section",
+  "notify_audience",
+  "notify_ids",
+  "c3",
+  "notify_counts",
+  "message_section",
+  "what_happened_en",
+  "can_do_en",
+  "c4",
+  "what_happened_hi",
+  "can_do_hi",
+  "preview_section",
+  "notify_preview",
+  "results_section",
+  "notify_sent_on",
+  "notify_sent_by",
+  "notify_sent",
+  "c5",
+  "notify_delivered",
+  "notify_failed",
+  "visit_section",
+  "visit_list"
+ ],
+ "fields": [
+  {
+   "fieldname": "incident_tab",
+   "fieldtype": "Tab Break",
+   "label": "Incident"
+  },
+  {
+   "fieldname": "breach_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "What kind",
+   "options": "data_leak\nlost_device\nphishing\nransomware\nunauthorised_access",
+   "reqd": 1
+  },
+  {
+   "fieldname": "detected_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Discovered",
+   "reqd": 1
+  },
+  {
+   "fieldname": "programme",
+   "fieldtype": "Link",
+   "label": "Programme",
+   "options": "Anumati Programme"
+  },
+  {
+   "default": "Assessing",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Assessing\nContained\nNotifying\nReported\nClosed"
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "principals_affected",
+   "fieldtype": "Int",
+   "label": "People possibly affected"
+  },
+  {
+   "depends_on": "eval:doc.breach_type=='lost_device'",
+   "fieldname": "field_device",
+   "fieldtype": "Link",
+   "label": "Field device",
+   "options": "Anumati Field Device"
+  },
+  {
+   "fieldname": "purposes_affected",
+   "fieldtype": "Table MultiSelect",
+   "label": "Purposes affected",
+   "options": "Anumati Breach Purpose"
+  },
+  {
+   "fieldname": "detail_section",
+   "fieldtype": "Section Break",
+   "label": "What happened"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "steps_tab",
+   "fieldtype": "Tab Break",
+   "label": "72-hour steps"
+  },
+  {
+   "fieldname": "steps_section",
+   "fieldtype": "Section Break",
+   "label": "Steps (72-hour clock)"
+  },
+  {
+   "fieldname": "contained_on",
+   "fieldtype": "Datetime",
+   "label": "Contained"
+  },
+  {
+   "fieldname": "risk_assessed_on",
+   "fieldtype": "Datetime",
+   "label": "Risk assessed"
+  },
+  {
+   "fieldname": "principals_notified_on",
+   "fieldtype": "Datetime",
+   "label": "Affected people told"
+  },
+  {
+   "fieldname": "notifications_sent",
+   "fieldtype": "Int",
+   "label": "Notifications sent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "board_intimated_on",
+   "fieldtype": "Datetime",
+   "label": "Board intimated"
+  },
+  {
+   "fieldname": "board_report_on",
+   "fieldtype": "Datetime",
+   "label": "Detailed Board report"
+  },
+  {
+   "fieldname": "dpb_report",
+   "fieldtype": "Attach",
+   "label": "Board report file"
+  },
+  {
+   "fieldname": "closed_on",
+   "fieldtype": "Datetime",
+   "label": "Closed"
+  },
+  {
+   "fieldname": "notify_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tell affected people"
+  },
+  {
+   "fieldname": "audience_section",
+   "fieldtype": "Section Break",
+   "label": "Who was affected"
+  },
+  {
+   "description": "People whose data was on the lost phone, everyone in the programme, people with the affected uses, or a list of IDs",
+   "fieldname": "notify_audience",
+   "fieldtype": "Select",
+   "label": "Who to tell",
+   "options": "\nlost_phone\nwhole_programme\naffected_uses\nid_list"
+  },
+  {
+   "depends_on": "eval:doc.notify_audience=='id_list'",
+   "fieldname": "notify_ids",
+   "fieldtype": "Small Text",
+   "label": "Beneficiary IDs (one per line)"
+  },
+  {
+   "fieldname": "c3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notify_counts",
+   "fieldtype": "HTML",
+   "label": "Who will be told"
+  },
+  {
+   "description": "The words around these blanks are the approved breach notice (Message Template). Say only what you know; the Board report has the detail.",
+   "fieldname": "message_section",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "fieldname": "what_happened_en",
+   "fieldtype": "Data",
+   "label": "What happened (English)",
+   "length": 30
+  },
+  {
+   "fieldname": "can_do_en",
+   "fieldtype": "Data",
+   "label": "What you can do (English)",
+   "length": 30
+  },
+  {
+   "fieldname": "c4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "what_happened_hi",
+   "fieldtype": "Data",
+   "label": "What happened (Hindi)",
+   "length": 30
+  },
+  {
+   "fieldname": "can_do_hi",
+   "fieldtype": "Data",
+   "label": "What you can do (Hindi)",
+   "length": 30
+  },
+  {
+   "fieldname": "preview_section",
+   "fieldtype": "Section Break",
+   "label": "Preview"
+  },
+  {
+   "fieldname": "notify_preview",
+   "fieldtype": "HTML",
+   "label": "Preview"
+  },
+  {
+   "fieldname": "results_section",
+   "fieldtype": "Section Break",
+   "label": "Results"
+  },
+  {
+   "fieldname": "notify_sent_on",
+   "fieldtype": "Datetime",
+   "label": "Sent on",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "notify_sent_by",
+   "fieldtype": "Link",
+   "label": "Sent by",
+   "no_copy": 1,
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notify_sent",
+   "fieldtype": "Int",
+   "label": "Sent by SMS",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "c5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notify_delivered",
+   "fieldtype": "Int",
+   "label": "Delivered",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "notify_failed",
+   "fieldtype": "Int",
+   "label": "Failed",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "description": "People without a phone, and anyone whose SMS failed. IDs only: field workers find each person in the app by ID.",
+   "fieldname": "visit_section",
+   "fieldtype": "Section Break",
+   "label": "Field visit list"
+  },
+  {
+   "fieldname": "visit_list",
+   "fieldtype": "Table",
+   "label": "Field visit list",
+   "options": "Anumati Breach Visit"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-26 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Anumati Breach Incident",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

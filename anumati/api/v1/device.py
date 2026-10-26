@@ -26,11 +26,11 @@ def _device(device_id):
 	device_id = (device_id or "").strip()[:140]
 	if not device_id:
 		frappe.throw(_("device_id is required"))
-	if not frappe.db.exists("Field Device", device_id):
-		doc = frappe.new_doc("Field Device")
+	if not frappe.db.exists("Anumati Field Device", device_id):
+		doc = frappe.new_doc("Anumati Field Device")
 		doc.device_id = device_id
 		return doc
-	doc = frappe.get_doc("Field Device", device_id)
+	doc = frappe.get_doc("Anumati Field Device", device_id)
 	if doc.user and doc.user != frappe.session.user and doc.status not in FREE_STATES:
 		frappe.throw(_("This phone is signed in to another field worker. Ask your coordinator to release it "
 		               "(Field Device > Status: logged_out)."), DeviceTakenError)
@@ -77,7 +77,7 @@ def sign_out(device_id):
 @frappe.whitelist(methods=["POST"])
 def report_lost(device):
 	"""Desk: Field Device > Report lost. Needs write on Field Device (Programme Manager, Admin)."""
-	doc = frappe.get_doc("Field Device", device)
+	doc = frappe.get_doc("Anumati Field Device", device)
 	doc.check_permission("write")
 	if doc.status in WIPE_STATES:
 		return {"status": doc.status, "incident": None}
@@ -86,7 +86,7 @@ def report_lost(device):
 	doc.reported_lost_by = frappe.session.user
 	doc.save()
 	incident = frappe.get_doc({
-		"doctype": "Breach Incident", "breach_type": "lost_device", "detected_on": now_datetime(),
+		"doctype": "Anumati Breach Incident", "breach_type": "lost_device", "detected_on": now_datetime(),
 		"field_device": doc.name, "principals_affected": cint(doc.pending_events),
 		"description": _("Phone {0} reported lost. Unsynced records at its last sync: {1}. "
 		                 "It will wipe itself if it connects again.").format(doc.name, cint(doc.pending_events)),

@@ -14,7 +14,7 @@
   }
  ],
  "content": "[{\"id\": \"today0\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"Anumati\", \"col\": 12}}, {\"id\": \"today1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Recorded (30 Days)\", \"col\": 4}}, {\"id\": \"today2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Confirmed\", \"col\": 4}}, {\"id\": \"today3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Evidence Only\", \"col\": 4}}, {\"id\": \"today4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Waiting To Sync\", \"col\": 4}}, {\"id\": \"today5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Withdrawn (30 Days)\", \"col\": 4}}, {\"id\": \"today6\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 4}}, {\"id\": \"today7\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Verification Pipeline\", \"col\": 4}}, {\"id\": \"today8\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Withdrawals By Channel\", \"col\": 4}}, {\"id\": \"today9\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Needs Attention\", \"col\": 4}}, {\"id\": \"today10\", \"type\": \"custom_block\", \"data\": {\"custom_block_name\": \"Programmes At A Glance\", \"col\": 12}}, {\"id\": \"today11\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"today12\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Inbox\", \"col\": 3}}, {\"id\": \"today13\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Find a receipt\", \"col\": 3}}, {\"id\": \"today14\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Beneficiaries\", \"col\": 3}}, {\"id\": \"today15\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Consent Events Per Week\", \"col\": 12}}, {\"id\": \"today16\", \"type\": \"card\", \"data\": {\"card_name\": \"Requests\", \"col\": 4}}]",
- "creation": "2026-10-16 10:00:00.000000",
+ "creation": "2026-10-26 10:00:00.000000",
  "custom_blocks": [
   {
    "custom_block_name": "Needs Attention",
@@ -45,9 +45,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Rights Request",
+   "label": "Anumati Rights Request",
    "link_count": 0,
-   "link_to": "Rights Request",
+   "link_to": "Anumati Rights Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -55,9 +55,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Purge Request",
+   "label": "Anumati Purge Request",
    "link_count": 0,
-   "link_to": "Purge Request",
+   "link_to": "Anumati Purge Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -65,15 +65,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Propagation Ack",
+   "label": "Anumati Propagation Ack",
    "link_count": 0,
-   "link_to": "Propagation Ack",
+   "link_to": "Anumati Propagation Ack",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-10-16 10:00:00.000000",
+ "modified": "2026-10-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Today",
@@ -131,22 +131,22 @@
    "label": "Requests board",
    "stats_filter": "[]",
    "type": "URL",
-   "url": "/app/rights-request/view/kanban/Requests"
+   "url": "/app/anumati-rights-request/view/kanban/Requests"
   },
   {
    "color": "Orange",
    "doc_view": "List",
    "format": "{} open",
    "label": "Inbox",
-   "link_to": "Rights Request",
-   "stats_filter": "[[\"Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"]]]",
+   "link_to": "Anumati Rights Request",
+   "stats_filter": "[[\"Anumati Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"]]]",
    "type": "DocType"
   },
   {
    "color": "Green",
    "doc_view": "List",
    "label": "Find a receipt",
-   "link_to": "Consent Event",
+   "link_to": "Anumati Consent Event",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -154,7 +154,7 @@
    "color": "Blue",
    "doc_view": "List",
    "label": "Beneficiaries",
-   "link_to": "Data Principal",
+   "link_to": "Anumati Data Principal",
    "stats_filter": "[]",
    "type": "DocType"
   }

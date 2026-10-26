@@ -10,18 +10,18 @@ from frappe import _
 
 # chart name -> (DocType, field to group by, filters)
 BREAKDOWNS = {
-	"Agreed By Purpose": ("Consent State", "purpose", [["status", "=", "granted"]]),
-	"How People Consented": ("Consent Event", "capture_mode", [["action", "=", "grant"]]),
-	"How The Notice Was Given": ("Consent Event", "notice_delivery", [["action", "!=", "withdraw"]]),
-	"Consents By Field Worker": ("Consent Event", "captured_by", [["action", "=", "grant"]]),
-	"Consents By Language": ("Consent Event", "language", [["action", "=", "grant"]]),
-	"Requests By Type": ("Rights Request", "request_type", []),
-	"Verification Pipeline": ("Consent State", "verification_status", [["status", "=", "granted"]]),
-	"Withdrawals By Channel": ("Consent Event", "channel", [["action", "=", "withdraw"]]),
+	"Agreed By Purpose": ("Anumati Consent State", "purpose", [["status", "=", "granted"]]),
+	"How People Consented": ("Anumati Consent Event", "capture_mode", [["action", "=", "grant"]]),
+	"How The Notice Was Given": ("Anumati Consent Event", "notice_delivery", [["action", "!=", "withdraw"]]),
+	"Consents By Field Worker": ("Anumati Consent Event", "captured_by", [["action", "=", "grant"]]),
+	"Consents By Language": ("Anumati Consent Event", "language", [["action", "=", "grant"]]),
+	"Requests By Type": ("Anumati Rights Request", "request_type", []),
+	"Verification Pipeline": ("Anumati Consent State", "verification_status", [["status", "=", "granted"]]),
+	"Withdrawals By Channel": ("Anumati Consent Event", "channel", [["action", "=", "withdraw"]]),
 }
 # Charts that read as a sequence keep this order instead of largest first.
 ORDER = {"Verification Pipeline": ["captured", "recorded", "unconfirmed", "confirmed", "evidence_only"]}
-LINK_TITLE = {"Purpose": "purpose_title", "Language": "language_name", "User": "full_name"}
+LINK_TITLE = {"Anumati Purpose": "purpose_title", "Language": "language_name", "User": "full_name"}
 
 
 def _label(doctype, field, value):

@@ -4,7 +4,7 @@ import frappe
 def execute():
 	# Demo sites only: give the fictional DEMO programme a realistic name and add the two other fictional
 	# demo programmes. Real customer sites have no DEMO programme and are left alone.
-	if not frappe.db.exists("Programme", "DEMO"):
+	if not frappe.db.exists("Anumati Programme", "DEMO"):
 		return
 	from anumati import demo
 

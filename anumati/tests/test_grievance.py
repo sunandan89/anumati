@@ -40,20 +40,20 @@ def sms_ok():
 	return patch("anumati.channels.msg91.requests.post", return_value=response)
 
 
-class TestGrievance(FrappeTestCase):
+class TestAnumatiGrievance(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
 		make_programme(PROG, "Grievance Test Programme")
 		make_purpose(PROG, "screen", "Health screening", essential=1)
 		make_purpose(PROG, "photos", "Photos and stories")
-		if not frappe.db.exists("Channel Provider", "MSG91 grievance test"):
-			frappe.get_doc({"doctype": "Channel Provider", "provider_name": "MSG91 grievance test", "provider_type": "SMS",
+		if not frappe.db.exists("Anumati Channel Provider", "MSG91 grievance test"):
+			frappe.get_doc({"doctype": "Anumati Channel Provider", "provider_name": "MSG91 grievance test", "provider_type": "SMS",
 			                "provider": "MSG91", "enabled": 1, "api_key": "test-key", "webhook_secret": SECRET}).insert()
-		if frappe.db.exists("Message Template", "otp-sms-en"):
-			frappe.db.set_value("Message Template", "otp-sms-en", "approved", 1)
+		if frappe.db.exists("Anumati Message Template", "otp-sms-en"):
+			frappe.db.set_value("Anumati Message Template", "otp-sms-en", "approved", 1)
 		else:
-			frappe.get_doc({"doctype": "Message Template", "template_event": "otp", "channel": "sms", "language": "en",
+			frappe.get_doc({"doctype": "Anumati Message Template", "template_event": "otp", "channel": "sms", "language": "en",
 			                "body": "Your OTP is ##OTP##", "approved": 1, "dlt_template_id": "otp-test",
 			                "send_via": "SendOTP"}).insert()
 		cls.dpo = user_with("Anumati DPO")
@@ -86,22 +86,22 @@ class TestGrievance(FrappeTestCase):
 	def test_complaints_from_the_field_app_and_sms_are_grievances_not_rights_requests(self):
 		out = rights.submit("grievance", "field_worker", principal_ref=self.person.principal_ref, payload="Calls continued")
 		self.assertTrue(out["request"].startswith("GR-"))
-		doc = frappe.get_doc("Grievance", out["request"])
+		doc = frappe.get_doc("Anumati Grievance", out["request"])
 		self.assertEqual((doc.category, doc.raised_by_role, doc.matched_principal), ("something_else", "by_field_worker", self.person.name))
-		self.assertFalse(frappe.db.exists("Rights Request", {"matched_principal": self.person.name}))
+		self.assertFalse(frappe.db.exists("Anumati Rights Request", {"matched_principal": self.person.name}))
 		sms = call_webhook(channel.inbound_sms, provider="MSG91 grievance test", token=SECRET, sender=self.phone, message="HELP please call")
 		self.assertEqual(sms["outcome"], "grievance")
-		self.assertEqual(frappe.db.get_value("Grievance", sms["request"], "matched_principal"), self.person.name)
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", sms["request"], "matched_principal"), self.person.name)
 
 	def test_grievance_api_checks_the_category(self):
 		out = api.submit("did_not_stop", "field_worker", principal_ref=self.person.principal_ref, description="Still calling")
-		self.assertEqual(frappe.db.get_value("Grievance", out["grievance"], "category"), "did_not_stop")
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", out["grievance"], "category"), "did_not_stop")
 		self.assertRaises(frappe.ValidationError, api.submit, "made_up", "field_worker")
 
 	def test_reply_by_is_thirty_days_and_the_request_must_be_theirs(self):
 		doc = self.new()
 		self.assertEqual(frappe.utils.date_diff(doc.sla_due, doc.received_on), 30)
-		theirs = frappe.get_doc({"doctype": "Rights Request", "request_type": "access", "channel": "email",
+		theirs = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": "access", "channel": "email",
 		                         "matched_principal": self.other.name}).insert()
 		self.assertRaises(frappe.ValidationError, self.new, "request_not_answered", about_request=theirs.name)
 
@@ -113,28 +113,28 @@ class TestGrievance(FrappeTestCase):
 		self.assertTrue(doc.dpo_since)
 		plain = self.new()
 		frappe.set_user(self.operator)
-		self.assertFalse(frappe.has_permission("Grievance", "read", doc=doc.name))
-		names = frappe.get_list("Grievance", pluck="name", limit_page_length=0)
+		self.assertFalse(frappe.has_permission("Anumati Grievance", "read", doc=doc.name))
+		names = frappe.get_list("Anumati Grievance", pluck="name", limit_page_length=0)
 		self.assertNotIn(doc.name, names)
 		self.assertIn(plain.name, names)
 		frappe.set_user(self.dpo)
-		self.assertTrue(frappe.has_permission("Grievance", "read", doc=doc.name))
-		self.assertIn(doc.name, frappe.get_list("Grievance", pluck="name", limit_page_length=0))
+		self.assertTrue(frappe.has_permission("Anumati Grievance", "read", doc=doc.name))
+		self.assertIn(doc.name, frappe.get_list("Anumati Grievance", pluck="name", limit_page_length=0))
 
 	def test_field_worker_sees_only_what_they_raised(self):
 		other = self.new()
 		frappe.set_user(self.worker)
 		mine = api.submit("wrong_details", "field_worker", principal_ref=self.person.principal_ref, description="Name spelt wrong")
-		names = frappe.get_list("Grievance", pluck="name", limit_page_length=0)
+		names = frappe.get_list("Anumati Grievance", pluck="name", limit_page_length=0)
 		self.assertEqual(names, [mine["grievance"]])
-		self.assertFalse(frappe.has_permission("Grievance", "read", doc=other.name))
+		self.assertFalse(frappe.has_permission("Anumati Grievance", "read", doc=other.name))
 
 	# ---------------------------------------------------------------- conversation and outcome
 
 	def test_final_answer_needs_an_outcome_and_the_person_can_push_back_once(self):
 		doc = self.new()
 		api.reply(doc.name, "Which month was it?", "question")
-		self.assertEqual(frappe.db.get_value("Grievance", doc.name, "status"), inbox.WAITING_PERSON)
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", doc.name, "status"), inbox.WAITING_PERSON)
 		self.assertRaises(frappe.ValidationError, api.reply, doc.name, "Removed it", "answer")
 		api.reply(doc.name, "We removed the photo.", "answer", "put_right")
 		doc.reload()
@@ -149,7 +149,7 @@ class TestGrievance(FrappeTestCase):
 		self.assertFalse(grievance.can_say_not_happy(doc))
 		self.assertRaises(frappe.ValidationError, grievance.respond, doc, False)
 		grievance.respond(doc, solved=True)
-		self.assertEqual(frappe.db.get_value("Grievance", doc.name, "status"), inbox.CLOSED)
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", doc.name, "status"), inbox.CLOSED)
 		self.assertRaises(frappe.ValidationError, api.reply, doc.name, "More", "update")
 
 	# ---------------------------------------------------------------- daily
@@ -159,36 +159,36 @@ class TestGrievance(FrappeTestCase):
 		slow.db_set("received_on", add_to_date(now_datetime(), days=-16))
 		answered = self.new()
 		api.reply(answered.name, "Done", "answer", "no_problem_found")
-		frappe.db.set_value("Grievance", answered.name, "answered_on", add_to_date(now_datetime(), days=-31))
+		frappe.db.set_value("Anumati Grievance", answered.name, "answered_on", add_to_date(now_datetime(), days=-31))
 		grievance.daily()
-		self.assertEqual(frappe.db.get_value("Grievance", slow.name, "assigned_to"), self.dpo)
-		self.assertTrue(frappe.db.get_value("Grievance", slow.name, "dpo_since"))
-		self.assertEqual(frappe.db.get_value("Grievance", answered.name, "status"), inbox.CLOSED)
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", slow.name, "assigned_to"), self.dpo)
+		self.assertTrue(frappe.db.get_value("Anumati Grievance", slow.name, "dpo_since"))
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", answered.name, "status"), inbox.CLOSED)
 
 	# ---------------------------------------------------------------- moving
 
 	def test_move_between_rights_requests_and_grievances(self):
-		request = frappe.get_doc({"doctype": "Rights Request", "request_type": "access", "channel": "email",
+		request = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": "access", "channel": "email",
 		                          "matched_principal": self.person.name, "raw_payload": "You shared my number!"}).insert()
 		frappe.get_doc({"doctype": "Communication", "communication_type": "Communication", "communication_medium": "Other",
 		                "sent_or_received": "Received", "content": "You shared my number!", "subject": "Complaint",
-		                "reference_doctype": "Rights Request", "reference_name": request.name}).insert(ignore_permissions=True)
+		                "reference_doctype": "Anumati Rights Request", "reference_name": request.name}).insert(ignore_permissions=True)
 		moved = api.move_from_request(request.name)["grievance"]
-		self.assertEqual(frappe.db.get_value("Rights Request", request.name, "status"), inbox.CLOSED)
-		self.assertTrue(frappe.db.exists("Communication", {"reference_doctype": "Grievance", "reference_name": moved}))
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", request.name, "status"), inbox.CLOSED)
+		self.assertTrue(frappe.db.exists("Communication", {"reference_doctype": "Anumati Grievance", "reference_name": moved}))
 		back = api.move_to_request(moved, "erasure")["request"]
-		self.assertEqual(frappe.db.get_value("Rights Request", back, "request_type"), "erasure")
-		self.assertEqual(frappe.db.get_value("Grievance", moved, "status"), inbox.CLOSED)
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", back, "request_type"), "erasure")
+		self.assertEqual(frappe.db.get_value("Anumati Grievance", moved, "status"), inbox.CLOSED)
 
 	def test_old_grievance_requests_move_over_on_migrate(self):
 		from anumati.patches import grievances_from_requests
 
-		request = frappe.get_doc({"doctype": "Rights Request", "request_type": "access", "channel": "sms",
+		request = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": "access", "channel": "sms",
 		                          "matched_principal": self.person.name, "raw_payload": "HELP"}).insert()
-		frappe.db.set_value("Rights Request", request.name, "request_type", "grievance")
+		frappe.db.set_value("Anumati Rights Request", request.name, "request_type", "grievance")
 		grievances_from_requests.execute()
-		self.assertFalse(frappe.db.exists("Rights Request", request.name))
-		moved = frappe.get_all("Grievance", {"matched_principal": self.person.name, "raw_payload": "HELP"}, pluck="name")
+		self.assertFalse(frappe.db.exists("Anumati Rights Request", request.name))
+		moved = frappe.get_all("Anumati Grievance", {"matched_principal": self.person.name, "raw_payload": "HELP"}, pluck="name")
 		self.assertEqual(len(moved), 1)
 
 	# ---------------------------------------------------------------- register
@@ -209,7 +209,7 @@ class TestGrievance(FrappeTestCase):
 		self.sign_in()
 		self.assertRaises(frappe.ValidationError, selfservice.complain, 0, "did_not_stop", "")
 		self.assertRaises(frappe.ValidationError, selfservice.complain, 0, "request_not_answered", "No reply")
-		theirs = frappe.get_doc({"doctype": "Rights Request", "request_type": "access", "channel": "email",
+		theirs = frappe.get_doc({"doctype": "Anumati Rights Request", "request_type": "access", "channel": "email",
 		                         "matched_principal": self.other.name}).insert(ignore_permissions=True)
 		self.assertRaises(frappe.PermissionError, selfservice.complain, 0, "request_not_answered", "No reply",
 		                  about_request=theirs.name)
@@ -217,9 +217,9 @@ class TestGrievance(FrappeTestCase):
 		                  photo="data:text/plain;base64," + base64.b64encode(b"hello").decode())
 		out = selfservice.complain(0, "did_not_stop", "Still calling after STOP", photo="data:image/png;base64," + PNG)
 		name = out["grievance"]
-		doc = frappe.get_doc("Grievance", name)
+		doc = frappe.get_doc("Anumati Grievance", name)
 		self.assertEqual((doc.channel, doc.raised_by_role, doc.matched_principal), ("web", "by_self", self.person.name))
-		file = frappe.get_doc("File", {"attached_to_doctype": "Grievance", "attached_to_name": name})
+		file = frappe.get_doc("File", {"attached_to_doctype": "Anumati Grievance", "attached_to_name": name})
 		self.assertTrue(file.is_private)
 		with open(file.get_full_path(), "rb") as fh:
 			self.assertTrue(fh.read().startswith(evidence.MAGIC), "the photo is encrypted on disk")

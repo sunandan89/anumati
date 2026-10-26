@@ -155,41 +155,41 @@ def create_demo_programme() -> str:
 
 def _programme(spec) -> str:
 	code = spec["code"]
-	if not frappe.db.exists("Programme", code):
+	if not frappe.db.exists("Anumati Programme", code):
 		frappe.get_doc({
-			"doctype": "Programme", "code": code, "programme_name": spec["name"], "persona": spec["persona"],
+			"doctype": "Anumati Programme", "code": code, "programme_name": spec["name"], "persona": spec["persona"],
 			"status": "Live", "languages": [{"language": "en"}, {"language": "hi"}],
 			"verification_methods": [{"verification_method": m} for m in spec["verification"]],
 		}).insert()
-	elif frappe.db.get_value("Programme", code, "programme_name") in OLD_NAMES:
-		frappe.db.set_value("Programme", code, "programme_name", spec["name"])
-		for name in frappe.get_all("Notice Template", {"programme": code}, pluck="name"):
-			frappe.db.set_value("Notice Template", name, "programme_name", spec["name"], update_modified=False)
-	if not frappe.db.exists("Data Category", spec["category"]):
-		frappe.get_doc({"doctype": "Data Category", "category_name": spec["category"]}).insert()
+	elif frappe.db.get_value("Anumati Programme", code, "programme_name") in OLD_NAMES:
+		frappe.db.set_value("Anumati Programme", code, "programme_name", spec["name"])
+		for name in frappe.get_all("Anumati Notice Template", {"programme": code}, pluck="name"):
+			frappe.db.set_value("Anumati Notice Template", name, "programme_name", spec["name"], update_modified=False)
+	if not frappe.db.exists("Anumati Data Category", spec["category"]):
+		frappe.get_doc({"doctype": "Anumati Data Category", "category_name": spec["category"]}).insert()
 
 	for pcode, title, description, essential, child_allowed in spec["purposes"]:
 		name = f"{code}-{pcode}"
-		if not frappe.db.exists("Purpose", name):
+		if not frappe.db.exists("Anumati Purpose", name):
 			frappe.get_doc({
-				"doctype": "Purpose", "programme": code, "code": pcode, "purpose_title": title,
+				"doctype": "Anumati Purpose", "programme": code, "code": pcode, "purpose_title": title,
 				"description": description, "essential": essential, "child_allowed": child_allowed,
 				"needs_phone": 1 if name in NEEDS_PHONE else 0,
 			}).insert()
-		elif name in NEEDS_PHONE and not frappe.db.get_value("Purpose", name, "needs_phone"):
-			frappe.db.set_value("Purpose", name, "needs_phone", 1)
-		if not frappe.db.exists("ROPA Entry", {"purpose": name, "status": "Approved"}):
+		elif name in NEEDS_PHONE and not frappe.db.get_value("Anumati Purpose", name, "needs_phone"):
+			frappe.db.set_value("Anumati Purpose", name, "needs_phone", 1)
+		if not frappe.db.exists("Anumati ROPA Entry", {"purpose": name, "status": "Approved"}):
 			ropa = frappe.get_doc({
-				"doctype": "ROPA Entry", "purpose": name, "retention": spec["retention"],
+				"doctype": "Anumati ROPA Entry", "purpose": name, "retention": spec["retention"],
 				"safeguards": "Encrypted at rest and in transit; access by role",
 				"data_categories": [{"data_category": spec["category"]}],
 			}).insert()
 			apply_workflow(ropa, "Approve")
 
-	notice = frappe.db.get_value("Notice Template", {"programme": code, "status": "Published"}, "name")
+	notice = frappe.db.get_value("Anumati Notice Template", {"programme": code, "status": "Published"}, "name")
 	if not notice:
 		doc = frappe.get_doc({
-			"doctype": "Notice Template", "programme": code, "version": "1.0.0",
+			"doctype": "Anumati Notice Template", "programme": code, "version": "1.0.0",
 			"summary": spec["summary"], "full_text": spec["full_text"],
 			"purposes": [{"purpose": f"{code}-{p[0]}"} for p in spec["purposes"]],
 			**RULE3,
@@ -199,17 +199,17 @@ def _programme(spec) -> str:
 	labels = [{"purpose": f"{code}-{p[0]}", "purpose_title": HINDI_PURPOSES[f"{code}-{p[0]}"][0],
 	           "description": HINDI_PURPOSES[f"{code}-{p[0]}"][1]}
 	          for p in spec["purposes"] if f"{code}-{p[0]}" in HINDI_PURPOSES]
-	existing = frappe.db.get_value("Notice Translation", {"notice": notice, "language": "hi"})
+	existing = frappe.db.get_value("Anumati Notice Translation", {"notice": notice, "language": "hi"})
 	if not existing:
 		frappe.get_doc({
-			"doctype": "Notice Translation", "notice": notice, "language": "hi",
+			"doctype": "Anumati Notice Translation", "notice": notice, "language": "hi",
 			**HINDI, **spec["hindi"], "machine_translated": 0, "reviewer": frappe.session.user, "purposes": labels,
 		}).insert()
 	else:
-		if not frappe.db.get_value("Notice Translation", existing, "rights_text"):
+		if not frappe.db.get_value("Anumati Notice Translation", existing, "rights_text"):
 			# Earlier demo translations predate the translated Rule 3 fields; fill them in.
-			frappe.db.set_value("Notice Translation", existing, {k: v for k, v in HINDI.items() if k not in ("summary", "full_text")})
-		translation = frappe.get_doc("Notice Translation", existing)
+			frappe.db.set_value("Anumati Notice Translation", existing, {k: v for k, v in HINDI.items() if k not in ("summary", "full_text")})
+		translation = frappe.get_doc("Anumati Notice Translation", existing)
 		if not translation.purposes:
 			# Earlier demo translations predate translated use names.
 			translation.set("purposes", labels)
@@ -217,8 +217,8 @@ def _programme(spec) -> str:
 	if code == PROGRAMME:
 		_demo_questions()
 	# Codes come from the server (the worker never sees them); add it to programmes made before.
-	if not frappe.db.exists("Programme Verification Method", {"parent": code, "verification_method": "server_otp"}):
-		prog = frappe.get_doc("Programme", code)
+	if not frappe.db.exists("Anumati Programme Verification Method", {"parent": code, "verification_method": "server_otp"}):
+		prog = frappe.get_doc("Anumati Programme", code)
 		prog.append("verification_methods", {"verification_method": "server_otp"})
 		prog.save()
 	_sms_setup()
@@ -254,9 +254,9 @@ def _sms_setup():
 	"""Server-sent codes through Dhwani's MSG91 account: the approved OTP template, and the messaging
 	account once `msg91_auth_key` is in the site config (set in the Frappe Cloud dashboard, never in the
 	repo). Without the key nothing is sent and the app falls back to confirm-later."""
-	if not frappe.db.exists("Message Template", "otp-sms-en"):
+	if not frappe.db.exists("Anumati Message Template", "otp-sms-en"):
 		frappe.get_doc({
-			"doctype": "Message Template", "template_event": "otp", "channel": "sms", "language": "en",
+			"doctype": "Anumati Message Template", "template_event": "otp", "channel": "sms", "language": "en",
 			"body": "Your OTP is ##OTP## . Keep it confidential. -Dhwani RIS", "approved": 1,
 			"dlt_template_id": DHWANI_OTP_TEMPLATE, "send_via": "SendOTP",
 		}).insert(ignore_permissions=True)
@@ -264,18 +264,18 @@ def _sms_setup():
 	# and enters its template ID, so nothing can be sent before then.
 	for lang, body in BREACH_NOTICE.items():
 		if frappe.db.exists("Language", lang) and not frappe.db.exists(
-				"Message Template", {"template_event": "breach_notice", "channel": "sms", "language": lang}):
-			frappe.get_doc({"doctype": "Message Template", "template_event": "breach_notice", "channel": "sms",
+				"Anumati Message Template", {"template_event": "breach_notice", "channel": "sms", "language": lang}):
+			frappe.get_doc({"doctype": "Anumati Message Template", "template_event": "breach_notice", "channel": "sms",
 			                "language": lang, "body": body, "approved": 0}).insert(ignore_permissions=True)
 	for event, bodies in REQUEST_TEXTS.items():
 		for lang, body in bodies.items():
 			if frappe.db.exists("Language", lang) and not frappe.db.exists(
-					"Message Template", {"template_event": event, "channel": "sms", "language": lang}):
-				frappe.get_doc({"doctype": "Message Template", "template_event": event, "channel": "sms",
+					"Anumati Message Template", {"template_event": event, "channel": "sms", "language": lang}):
+				frappe.get_doc({"doctype": "Anumati Message Template", "template_event": event, "channel": "sms",
 				                "language": lang, "body": body, "approved": 0}).insert(ignore_permissions=True)
-	if frappe.conf.get("msg91_auth_key") and not frappe.db.exists("Channel Provider", {"provider_type": "SMS"}):
+	if frappe.conf.get("msg91_auth_key") and not frappe.db.exists("Anumati Channel Provider", {"provider_type": "SMS"}):
 		frappe.get_doc({
-			"doctype": "Channel Provider", "provider_name": "MSG91 (Dhwani)", "provider_type": "SMS",
+			"doctype": "Anumati Channel Provider", "provider_name": "MSG91 (Dhwani)", "provider_type": "SMS",
 			"provider": "MSG91", "enabled": 1, "pooled": 1, "sender_id": DHWANI_SENDER,
 		}).insert(ignore_permissions=True)
 
@@ -287,7 +287,7 @@ def _demo_questions():
 	from anumati import profile
 
 	profile.ensure_library()
-	doc = frappe.get_doc("Programme", PROGRAMME)
+	doc = frappe.get_doc("Anumati Programme", PROGRAMME)
 	if not doc.profile_questions:
 		for question, required in DEMO_QUESTIONS:
 			doc.append("profile_questions", {"question": question, "required": required})
@@ -372,7 +372,7 @@ def create_sample_data() -> dict:
 	try:
 		for i, (suffix, name, lang, flags) in enumerate(SAMPLE_PEOPLE):
 			ref = f"{PROGRAMME}-{suffix}"
-			if frappe.db.exists("Data Principal", {"principal_ref": ref}):
+			if frappe.db.exists("Anumati Data Principal", {"principal_ref": ref}):
 				continue
 			is_minor = flags.get("is_minor")
 			phone = None if flags.get("no_phone") else ("5550000004" if flags.get("shared_phone") else f"55500{i:05d}")
@@ -386,9 +386,9 @@ def create_sample_data() -> dict:
 				guardian_ref = f"{ref}-G"
 				principal.upsert(guardian_ref, full_name=f"Guardian of {name} (sample)", preferred_language=lang)
 				link = frappe.get_doc({
-					"doctype": "Guardian Link",
-					"principal": frappe.db.get_value("Data Principal", {"principal_ref": ref}),
-					"guardian": frappe.db.get_value("Data Principal", {"principal_ref": guardian_ref}),
+					"doctype": "Anumati Guardian Link",
+					"principal": frappe.db.get_value("Anumati Data Principal", {"principal_ref": ref}),
+					"guardian": frappe.db.get_value("Anumati Data Principal", {"principal_ref": guardian_ref}),
 					"guardian_type": "parent", "relation": "Mother", "verification_method": "document",
 				}).insert()
 			denied = [c for c in optional if c not in granted and not (is_minor and c == "research")]
@@ -409,7 +409,7 @@ def create_sample_data() -> dict:
 			})
 			if phone and method == "server_otp":
 				# Sample of a code the person read back (a real one is confirmed by verification.verify_otp).
-				frappe.get_doc({"doctype": "Verification Attempt", "consent_event": art["consent_id"],
+				frappe.get_doc({"doctype": "Anumati Verification Attempt", "consent_event": art["consent_id"],
 				                "verification_method": "server_otp", "channel": "sms", "sent_at": when,
 				                "result": "confirmed", "delivered_at": when}).insert(ignore_permissions=True)
 				enforcement.set_verification(art["consent_id"], "confirmed")
@@ -468,11 +468,11 @@ DEMO_NOTE = ("Demo audio approved automatically for this fictional demo programm
 
 def _demo_targets():
 	for spec in PROGRAMMES:
-		notice = frappe.db.get_value("Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
+		notice = frappe.db.get_value("Anumati Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
 		if notice:
-			yield ("Notice Template", notice)
-			for t in frappe.get_all("Notice Translation", {"notice": notice}, pluck="name"):
-				yield ("Notice Translation", t)
+			yield ("Anumati Notice Template", notice)
+			for t in frappe.get_all("Anumati Notice Translation", {"notice": notice}, pluck="name"):
+				yield ("Anumati Notice Translation", t)
 
 
 def attach_bundled_audio() -> int:
@@ -484,7 +484,7 @@ def attach_bundled_audio() -> int:
 
 	from anumati import voice
 
-	if not frappe.db.exists("Programme", PROGRAMME):
+	if not frappe.db.exists("Anumati Programme", PROGRAMME):
 		return 0
 	folder = frappe.get_app_path("anumati", "public", "demo_audio")
 	manifest_path = os.path.join(folder, "manifest.json")
@@ -516,7 +516,7 @@ def record_demo_audio():
 	"""Anumati Settings > Record demo audio (Sarvam). Starts recording in the background (about a minute
 	per notice) and tells the person who pressed it when it is done."""
 	frappe.only_for(["System Manager", "Anumati Admin"])
-	if not frappe.db.exists("Programme", PROGRAMME):
+	if not frappe.db.exists("Anumati Programme", PROGRAMME):
 		frappe.throw(_("There are no demo programmes on this site. Run Set up field app first."))
 	from anumati import voice
 
@@ -532,7 +532,7 @@ def prepare_demo_voice(notify: str | None = None) -> dict:
 	programmes are never touched: their audio is made and approved by a person in Desk. Skips anything
 	that already has audio, so pressing the button again only fills gaps."""
 	done = {"made": 0, "already": 0, "failed": 0}
-	if not frappe.db.exists("Programme", PROGRAMME):
+	if not frappe.db.exists("Anumati Programme", PROGRAMME):
 		return done
 	set_demo_genders()
 	from anumati import voice
@@ -543,11 +543,11 @@ def prepare_demo_voice(notify: str | None = None) -> dict:
 	except voice.VoiceError:
 		return done  # no key yet
 	for spec in PROGRAMMES:
-		notice = frappe.db.get_value("Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
+		notice = frappe.db.get_value("Anumati Notice Template", {"programme": spec["code"], "status": "Published"}, "name")
 		if not notice:
 			continue
-		targets = [("Notice Template", notice)] + [
-			("Notice Translation", t) for t in frappe.get_all("Notice Translation", {"notice": notice}, pluck="name")]
+		targets = [("Anumati Notice Template", notice)] + [
+			("Anumati Notice Translation", t) for t in frappe.get_all("Anumati Notice Translation", {"notice": notice}, pluck="name")]
 		for doctype, name in targets:
 			if frappe.db.get_value(doctype, name, "audio_file"):
 				done["already"] += 1
@@ -590,7 +590,7 @@ def after_migrate():
 		frappe.log_error(title="Anumati: could not configure Mobile Control")
 	# Demo voice set-up calls Sarvam, so it runs from the hourly scheduler, never during a deploy.
 	try:
-		if frappe.db.exists("Programme", PROGRAMME):
+		if frappe.db.exists("Anumati Programme", PROGRAMME):
 			set_demo_genders()
 			attach_bundled_audio()  # recordings shipped with the app; no Sarvam call during a deploy
 	except Exception:

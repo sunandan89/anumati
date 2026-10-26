@@ -62,7 +62,7 @@ def staff_message(doc, text: str, kind: str, outcome: str | None = None) -> str:
 		frappe.throw(_("Match the request to a person first"))
 	if doc.status == inbox.CLOSED:
 		frappe.throw(_("This is closed."))
-	is_grievance = doc.doctype == "Grievance"
+	is_grievance = doc.doctype == "Anumati Grievance"
 	if is_grievance and kind == "answer" and outcome not in grievance.OUTCOME_FOR_PERSON:
 		frappe.throw(_("Choose the outcome with the final answer."))
 	text = _clean(text)

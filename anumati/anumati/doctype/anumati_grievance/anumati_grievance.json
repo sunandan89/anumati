@@ -1,0 +1,361 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:GR-{#####}",
+ "creation": "2026-09-27 10:00:00.000000",
+ "doctype": "DocType",
+ "email_append_to": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "grievance_tab",
+  "category",
+  "about_request",
+  "subject",
+  "description",
+  "evidence",
+  "channel",
+  "c1",
+  "matched_principal",
+  "raised_by_role",
+  "status",
+  "assigned_to",
+  "received_on",
+  "sla_due",
+  "dpo_since",
+  "answer_section",
+  "outcome",
+  "internal_note",
+  "c2",
+  "answer",
+  "answered_on",
+  "person_says",
+  "person_said_on",
+  "detail_tab",
+  "sender_section",
+  "match_confidence",
+  "candidates",
+  "sender_hash",
+  "raised_by",
+  "paper_trail_number",
+  "raw_payload",
+  "client_request_id",
+  "consents_tab",
+  "consents_html"
+ ],
+ "fields": [
+  {
+   "fieldname": "grievance_tab",
+   "fieldtype": "Tab Break",
+   "label": "Grievance"
+  },
+  {
+   "description": "Staff behaviour grievances are seen by the DPO only",
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "What is it about?",
+   "options": "used_without_consent\ndid_not_stop\nwrong_details\nshared_or_leaked\nstaff_behaviour\nrequest_not_answered\nsomething_else",
+   "reqd": 1
+  },
+  {
+   "fieldname": "about_request",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Which request?",
+   "mandatory_depends_on": "eval:doc.category=='request_not_answered'",
+   "options": "Anumati Rights Request"
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "label": "Subject"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "In their words"
+  },
+  {
+   "fieldname": "evidence",
+   "fieldtype": "Attach",
+   "label": "Photo or document"
+  },
+  {
+   "default": "web",
+   "fieldname": "channel",
+   "fieldtype": "Select",
+   "label": "Came in by",
+   "options": "field_worker\nslip\nsms\nmissed_call\nivr\nwhatsapp\nweb\nemail\ncommunity\napi\nussd",
+   "reqd": 1
+  },
+  {
+   "fieldname": "c1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "matched_principal",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Beneficiary",
+   "options": "Anumati Data Principal"
+  },
+  {
+   "fieldname": "raised_by_role",
+   "fieldtype": "Select",
+   "label": "Raised by",
+   "options": "\nby_self\nby_guardian\nby_nominee\nby_field_worker\nby_staff"
+  },
+  {
+   "default": "new_request",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "new_request\nwho_is_this\nworking_on_it\nwaiting_for_person\nrequest_answered\nrequest_closed"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Assigned to",
+   "options": "User"
+  },
+  {
+   "default": "now",
+   "fieldname": "received_on",
+   "fieldtype": "Datetime",
+   "label": "Received on",
+   "reqd": 1
+  },
+  {
+   "description": "Received on + the grievance days in Anumati Settings",
+   "fieldname": "sla_due",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Reply by"
+  },
+  {
+   "description": "Set when no final answer was given in time, or the person was not happy with it",
+   "fieldname": "dpo_since",
+   "fieldtype": "Datetime",
+   "label": "With the DPO since",
+   "read_only": 1
+  },
+  {
+   "fieldname": "answer_section",
+   "fieldtype": "Section Break",
+   "label": "Answer"
+  },
+  {
+   "description": "Chosen with the final answer (Reply to the person > Send final answer)",
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Outcome",
+   "options": "\nput_right\npartly_put_right\nno_problem_found",
+   "read_only": 1
+  },
+  {
+   "description": "Never shown to the person",
+   "fieldname": "internal_note",
+   "fieldtype": "Small Text",
+   "label": "What we did (internal)"
+  },
+  {
+   "fieldname": "c2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "answer",
+   "fieldtype": "Small Text",
+   "label": "Final answer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "answered_on",
+   "fieldtype": "Datetime",
+   "label": "Answered on",
+   "read_only": 1
+  },
+  {
+   "fieldname": "person_says",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Did it solve it?",
+   "options": "\nsolved\nnot_happy",
+   "read_only": 1
+  },
+  {
+   "fieldname": "person_said_on",
+   "fieldtype": "Datetime",
+   "label": "Said on",
+   "read_only": 1
+  },
+  {
+   "fieldname": "detail_tab",
+   "fieldtype": "Tab Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "sender_section",
+   "fieldtype": "Section Break",
+   "label": "Sender"
+  },
+  {
+   "fieldname": "match_confidence",
+   "fieldtype": "Percent",
+   "label": "Match confidence"
+  },
+  {
+   "description": "Beneficiary IDs sharing the sender's number; use 'Who is this for?' to pick one",
+   "fieldname": "candidates",
+   "fieldtype": "Small Text",
+   "label": "Possible matches",
+   "read_only": 1
+  },
+  {
+   "description": "Salted hash of the sender's number; the number itself is not stored",
+   "fieldname": "sender_hash",
+   "fieldtype": "Data",
+   "label": "Sender phone hash",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "description": "Set when the grievance arrives by email",
+   "fieldname": "raised_by",
+   "fieldtype": "Data",
+   "label": "Sender email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "paper_trail_number",
+   "fieldtype": "Data",
+   "label": "Paper-trail number"
+  },
+  {
+   "description": "The SMS or email text",
+   "fieldname": "raw_payload",
+   "fieldtype": "Long Text",
+   "label": "As received"
+  },
+  {
+   "description": "Sent by the field app or host system, so a retried grievance is not filed twice",
+   "fieldname": "client_request_id",
+   "fieldtype": "Data",
+   "label": "Client request ID",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "consents_tab",
+   "fieldtype": "Tab Break",
+   "label": "Beneficiary's consents"
+  },
+  {
+   "fieldname": "consents_html",
+   "fieldtype": "HTML",
+   "label": "Consents"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-26 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Anumati",
+ "name": "Anumati Grievance",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati DPO",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Operator",
+   "share": 0,
+   "submit": 0,
+   "write": 1
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Anumati Admin",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "permlevel": 0,
+   "print": 0,
+   "read": 1,
+   "report": 0,
+   "role": "Anumati Field Worker",
+   "share": 0,
+   "submit": 0,
+   "write": 0
+  },
+  {
+   "amend": 0,
+   "cancel": 0,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 0,
+   "write": 1
+  }
+ ],
+ "sender_field": "raised_by",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "subject_field": "subject",
+ "title_field": "subject",
+ "track_changes": 1
+}

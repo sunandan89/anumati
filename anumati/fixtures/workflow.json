@@ -3,7 +3,7 @@
   "doctype": "Workflow",
   "name": "Notice Publishing",
   "workflow_name": "Notice Publishing",
-  "document_type": "Notice Template",
+  "document_type": "Anumati Notice Template",
   "is_active": 1,
   "override_status": 0,
   "send_email_alert": 0,
@@ -48,7 +48,7 @@
     "next_state": "Published",
     "allowed": "Anumati DPO",
     "allow_self_approval": 1,
-    "condition": "doc.withdrawal_methods and doc.rights_text and doc.board_complaint_route and doc.dpo_contact and doc.security_summary and not [p for p in doc.purposes if not frappe.db.get_value(\"ROPA Entry\", {\"purpose\": p.purpose, \"status\": \"Approved\"}, \"name\")]"
+    "condition": "doc.withdrawal_methods and doc.rights_text and doc.board_complaint_route and doc.dpo_contact and doc.security_summary and not [p for p in doc.purposes if not frappe.db.get_value(\"Anumati ROPA Entry\", {\"purpose\": p.purpose, \"status\": \"Approved\"}, \"name\")]"
    },
    {
     "doctype": "Workflow Transition",
@@ -65,7 +65,7 @@
   "doctype": "Workflow",
   "name": "ROPA Approval",
   "workflow_name": "ROPA Approval",
-  "document_type": "ROPA Entry",
+  "document_type": "Anumati ROPA Entry",
   "is_active": 1,
   "override_status": 0,
   "send_email_alert": 0,

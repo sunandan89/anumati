@@ -103,10 +103,10 @@ def speak(text: str, language: str, speaker: str | None = None, pace: float | No
 def notice_script(doc) -> str:
 	"""What the recording says: the summary, what is collected, each purpose (base notice only; a
 	translation's own text covers them), and the Rule 3 contents."""
-	notice = frappe.get_doc("Notice Template", doc.notice) if doc.doctype == "Notice Translation" else doc
+	notice = frappe.get_doc("Anumati Notice Template", doc.notice) if doc.doctype == "Anumati Notice Translation" else doc
 	purposes = []
-	if doc.doctype == "Notice Template":
-		purposes = [frappe.db.get_value("Purpose", row.purpose, ["purpose_title", "description", "essential"])
+	if doc.doctype == "Anumati Notice Template":
+		purposes = [frappe.db.get_value("Anumati Purpose", row.purpose, ["purpose_title", "description", "essential"])
 		            for row in doc.purposes]
 	return compose_script(doc.summary, strip_html(doc.full_text or ""), purposes,
 	                      [doc.get(k) or notice.get(k) for k in RULE3])
@@ -126,14 +126,14 @@ def script_hash(script: str) -> str:
 
 
 def _language(doc) -> str:
-	return doc.language if doc.doctype == "Notice Translation" else "en"
+	return doc.language if doc.doctype == "Anumati Notice Translation" else "en"
 
 
 def _check(doctype, name, for_review=False):
-	if doctype not in ("Notice Template", "Notice Translation"):
+	if doctype not in ("Anumati Notice Template", "Anumati Notice Translation"):
 		frappe.throw(_("Audio can only be made for a notice or a notice translation."))
 	doc = frappe.get_doc(doctype, name)
-	if doctype == "Notice Template" or for_review:
+	if doctype == "Anumati Notice Template" or for_review:
 		# The base notice is the DPO's; approving any audio is a reviewer's decision.
 		if not REVIEWERS & set(frappe.get_roles()):
 			raise frappe.PermissionError

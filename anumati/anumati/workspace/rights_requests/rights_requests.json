@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"rights0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Rights Requests\", \"col\": 4}}, {\"id\": \"rights1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 4}}, {\"id\": \"rights2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Requests To Match\", \"col\": 4}}, {\"id\": \"rights3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Rights requests\", \"col\": 3}}, {\"id\": \"rights4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Requests board\", \"col\": 3}}, {\"id\": \"rights5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"New rights request\", \"col\": 3}}, {\"id\": \"rights6\", \"type\": \"card\", \"data\": {\"card_name\": \"Rights requests\", \"col\": 4}}]",
- "creation": "2026-10-16 10:00:00.000000",
+ "creation": "2026-10-26 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -25,7 +25,7 @@
    "is_query_report": 0,
    "label": "Rights request",
    "link_count": 0,
-   "link_to": "Rights Request",
+   "link_to": "Anumati Rights Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -35,7 +35,7 @@
    "is_query_report": 0,
    "label": "Deletion task",
    "link_count": 0,
-   "link_to": "Purge Request",
+   "link_to": "Anumati Purge Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -45,13 +45,13 @@
    "is_query_report": 0,
    "label": "Partner confirmation",
    "link_count": 0,
-   "link_to": "Propagation Ack",
+   "link_to": "Anumati Propagation Ack",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-10-16 10:00:00.000000",
+ "modified": "2026-10-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Rights requests",
@@ -94,8 +94,8 @@
    "doc_view": "List",
    "format": "{} open",
    "label": "Rights requests",
-   "link_to": "Rights Request",
-   "stats_filter": "[[\"Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"]]]",
+   "link_to": "Anumati Rights Request",
+   "stats_filter": "[[\"Anumati Rights Request\", \"status\", \"not in\", [\"request_answered\", \"request_closed\", \"cannot_do\"]]]",
    "type": "DocType"
   },
   {
@@ -103,14 +103,14 @@
    "label": "Requests board",
    "stats_filter": "[]",
    "type": "URL",
-   "url": "/app/rights-request/view/kanban/Requests"
+   "url": "/app/anumati-rights-request/view/kanban/Requests"
   },
   {
    "color": "Grey",
    "label": "New rights request",
    "stats_filter": "[]",
    "type": "URL",
-   "url": "/app/rights-request/new"
+   "url": "/app/anumati-rights-request/new"
   }
  ],
  "title": "Rights requests"

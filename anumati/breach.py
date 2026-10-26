@@ -31,25 +31,25 @@ def audience(doc, values=None) -> list[str]:
 	if v.notify_audience == "lost_phone":
 		if not v.field_device:
 			return []
-		names = frappe.get_all("Consent Event", {"device_id": v.field_device}, pluck="principal", distinct=True)
+		names = frappe.get_all("Anumati Consent Event", {"device_id": v.field_device}, pluck="principal", distinct=True)
 	elif v.notify_audience == "whole_programme":
 		if not v.programme:
 			return []
-		names = frappe.get_all("Consent Event", {"programme": v.programme}, pluck="principal", distinct=True)
+		names = frappe.get_all("Anumati Consent Event", {"programme": v.programme}, pluck="principal", distinct=True)
 	elif v.notify_audience == "affected_uses":
 		if not purposes:
 			return []
-		names = frappe.get_all("Consent State", {"purpose": ("in", purposes)}, pluck="principal", distinct=True)
+		names = frappe.get_all("Anumati Consent State", {"purpose": ("in", purposes)}, pluck="principal", distinct=True)
 	elif v.notify_audience == "id_list":
 		refs = [line.strip() for line in (v.notify_ids or "").splitlines() if line.strip()]
 		if not refs:
 			return []
-		names = frappe.get_all("Data Principal", {"principal_ref": ("in", refs)}, pluck="name")
+		names = frappe.get_all("Anumati Data Principal", {"principal_ref": ("in", refs)}, pluck="name")
 	else:
 		return []
 	if not names:
 		return []
-	return frappe.get_all("Data Principal", {"name": ("in", names), "merged_into": ("is", "not set")},
+	return frappe.get_all("Anumati Data Principal", {"name": ("in", names), "merged_into": ("is", "not set")},
 	                      pluck="name", order_by="principal_ref")
 
 
@@ -61,7 +61,7 @@ def plan(doc, values=None) -> list[dict]:
 	"""One row per person: principal, principal_ref, language, route (own / guardian / none). Phones stay here."""
 	rows = []
 	for name in audience(doc, values):
-		person = frappe.get_doc("Data Principal", name)
+		person = frappe.get_doc("Anumati Data Principal", name)
 		own = person.get_password("phone", raise_exception=False)
 		to = channels.contact_phone(person)
 		route = "none" if not to else ("own" if own and pii.normalise_phone(to) == pii.normalise_phone(own) else "guardian")
@@ -90,10 +90,10 @@ def counts(rows) -> dict:
 def any_template(lang: str):
 	"""The breach-notice template for a language, approved or not (for the preview); English if none."""
 	for code in dict.fromkeys([lang, "en"]):
-		name = frappe.db.get_value("Message Template", {"template_event": EVENT, "channel": "sms", "language": code},
+		name = frappe.db.get_value("Anumati Message Template", {"template_event": EVENT, "channel": "sms", "language": code},
 		                           "name", order_by="approved desc")
 		if name:
-			return frappe.get_doc("Message Template", name)
+			return frappe.get_doc("Anumati Message Template", name)
 	return None
 
 
@@ -112,8 +112,8 @@ def context(doc, lang: str, code: str | None) -> dict:
 def latest_code(principal: str, programme: str | None = None) -> str | None:
 	"""The person's own latest receipt code, so they can quote it when they call."""
 	filters = {"principal": principal, **({"programme": programme} if programme else {})}
-	return (frappe.db.get_value("Consent Event", filters, "short_code", order_by="creation desc")
-	        or frappe.db.get_value("Consent Event", {"principal": principal}, "short_code", order_by="creation desc"))
+	return (frappe.db.get_value("Anumati Consent Event", filters, "short_code", order_by="creation desc")
+	        or frappe.db.get_value("Anumati Consent Event", {"principal": principal}, "short_code", order_by="creation desc"))
 
 
 def sms_parts(text: str) -> int:
@@ -168,13 +168,13 @@ def send_one(doc, row, provider) -> tuple[str, str | None]:
 		frappe.log_error(title="Anumati breach notice send failed", message=f"incident={doc.name} template={template.name}")
 	comm = channels.log(provider, "Sent", body, pii.phone_hash(row["phone"]), template=template.name,
 	                    status="Sent" if outcome == "sent" else "Error", message_id=message_id,
-	                    link=("Breach Incident", doc.name), delivery=f"sms_{outcome}")
+	                    link=("Anumati Breach Incident", doc.name), delivery=f"sms_{outcome}")
 	return outcome, comm
 
 
 def send_all(incident: str, user: str):
 	"""Background job: send to everyone in the plan, fill the field visit list and the 72-hour steps."""
-	doc = frappe.get_doc("Breach Incident", incident)
+	doc = frappe.get_doc("Anumati Breach Incident", incident)
 	provider = channels.provider_for("SMS")
 	sent = failed = 0
 	for row in plan(doc):
@@ -222,7 +222,7 @@ def retry_failed(doc) -> dict:
 def results(doc) -> dict:
 	"""Delivered / failed / waiting from the delivery reports, counting each person's latest message once (a retry
 	that got through replaces the failed one). People are told apart by the salted phone hash, never the number."""
-	rows = frappe.get_all("Communication", {"reference_doctype": "Breach Incident", "reference_name": doc.name},
+	rows = frappe.get_all("Communication", {"reference_doctype": "Anumati Breach Incident", "reference_name": doc.name},
 	                      ["anumati_sender_hash", "anumati_delivery"], order_by="creation asc")
 	latest = {}
 	for r in rows:

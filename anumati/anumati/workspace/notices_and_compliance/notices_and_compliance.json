@@ -1,7 +1,7 @@
 {
  "charts": [],
  "content": "[{\"id\": \"notice0\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Open Breaches\", \"col\": 3}}, {\"id\": \"notice1\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Translations Not Reviewed\", \"col\": 3}}, {\"id\": \"notice2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Overdue Requests\", \"col\": 3}}, {\"id\": \"notice3\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Notices\", \"col\": 3}}, {\"id\": \"notice4\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Breaches\", \"col\": 3}}, {\"id\": \"notice5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Records of processing\", \"col\": 3}}, {\"id\": \"notice6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Audit log\", \"col\": 3}}, {\"id\": \"notice7\", \"type\": \"card\", \"data\": {\"card_name\": \"Notices\", \"col\": 4}}, {\"id\": \"notice8\", \"type\": \"card\", \"data\": {\"card_name\": \"Records and risk\", \"col\": 4}}, {\"id\": \"notice9\", \"type\": \"card\", \"data\": {\"card_name\": \"Incidents and audit\", \"col\": 4}}]",
- "creation": "2026-10-16 10:00:00.000000",
+ "creation": "2026-10-26 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -25,7 +25,7 @@
    "is_query_report": 0,
    "label": "Notice",
    "link_count": 0,
-   "link_to": "Notice Template",
+   "link_to": "Anumati Notice Template",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -35,7 +35,7 @@
    "is_query_report": 0,
    "label": "Translation",
    "link_count": 0,
-   "link_to": "Notice Translation",
+   "link_to": "Anumati Notice Translation",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -43,9 +43,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Purpose",
+   "label": "Anumati Purpose",
    "link_count": 0,
-   "link_to": "Purpose",
+   "link_to": "Anumati Purpose",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -53,9 +53,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Message Template",
+   "label": "Anumati Message Template",
    "link_count": 0,
-   "link_to": "Message Template",
+   "link_to": "Anumati Message Template",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -73,7 +73,7 @@
    "is_query_report": 0,
    "label": "Records of processing and DPIA",
    "link_count": 0,
-   "link_to": "ROPA Entry",
+   "link_to": "Anumati ROPA Entry",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -81,9 +81,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Data Category",
+   "label": "Anumati Data Category",
    "link_count": 0,
-   "link_to": "Data Category",
+   "link_to": "Anumati Data Category",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -91,9 +91,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Retention Policy",
+   "label": "Anumati Retention Policy",
    "link_count": 0,
-   "link_to": "Retention Policy",
+   "link_to": "Anumati Retention Policy",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -101,9 +101,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Processor",
+   "label": "Anumati Processor",
    "link_count": 0,
-   "link_to": "Processor",
+   "link_to": "Anumati Processor",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -111,9 +111,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Purge Request",
+   "label": "Anumati Purge Request",
    "link_count": 0,
-   "link_to": "Purge Request",
+   "link_to": "Anumati Purge Request",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -131,7 +131,7 @@
    "is_query_report": 0,
    "label": "Breach",
    "link_count": 0,
-   "link_to": "Breach Incident",
+   "link_to": "Anumati Breach Incident",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -141,7 +141,7 @@
    "is_query_report": 0,
    "label": "Audit log",
    "link_count": 0,
-   "link_to": "Audit Entry",
+   "link_to": "Anumati Audit Entry",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -169,15 +169,15 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Audit Share",
+   "label": "Anumati Audit Share",
    "link_count": 0,
-   "link_to": "Audit Share",
+   "link_to": "Anumati Audit Share",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-10-16 10:00:00.000000",
+ "modified": "2026-10-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Anumati",
  "name": "Notices and Compliance",
@@ -219,7 +219,7 @@
    "color": "Green",
    "doc_view": "List",
    "label": "Notices",
-   "link_to": "Notice Template",
+   "link_to": "Anumati Notice Template",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -228,15 +228,15 @@
    "doc_view": "List",
    "format": "{} open",
    "label": "Breaches",
-   "link_to": "Breach Incident",
-   "stats_filter": "[[\"Breach Incident\", \"status\", \"!=\", \"Closed\"]]",
+   "link_to": "Anumati Breach Incident",
+   "stats_filter": "[[\"Anumati Breach Incident\", \"status\", \"!=\", \"Closed\"]]",
    "type": "DocType"
   },
   {
    "color": "Blue",
    "doc_view": "List",
    "label": "Records of processing",
-   "link_to": "ROPA Entry",
+   "link_to": "Anumati ROPA Entry",
    "stats_filter": "[]",
    "type": "DocType"
   },
@@ -244,7 +244,7 @@
    "color": "Grey",
    "doc_view": "List",
    "label": "Audit log",
-   "link_to": "Audit Entry",
+   "link_to": "Anumati Audit Entry",
    "stats_filter": "[]",
    "type": "DocType"
   }

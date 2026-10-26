@@ -40,12 +40,12 @@ class TestChannels(FrappeTestCase):
 		make_purpose(PROG, "screen", "Health screening", essential=1)
 		make_purpose(PROG, "follow", "Follow-up calls")
 		make_purpose(PROG, "photos", "Photos and stories")
-		if not frappe.db.exists("Channel Provider", "MSG91 test"):
-			frappe.get_doc({"doctype": "Channel Provider", "provider_name": "MSG91 test", "provider_type": "SMS",
+		if not frappe.db.exists("Anumati Channel Provider", "MSG91 test"):
+			frappe.get_doc({"doctype": "Anumati Channel Provider", "provider_name": "MSG91 test", "provider_type": "SMS",
 			                "provider": "MSG91", "enabled": 1, "api_key": "test-key", "webhook_secret": SECRET}).insert()
 		for event, body in TEMPLATES.items():
-			if not frappe.db.exists("Message Template", f"{event}-sms-en"):
-				frappe.get_doc({"doctype": "Message Template", "template_event": event, "channel": "sms", "language": "en",
+			if not frappe.db.exists("Anumati Message Template", f"{event}-sms-en"):
+				frappe.get_doc({"doctype": "Anumati Message Template", "template_event": event, "channel": "sms", "language": "en",
 				                "body": body, "approved": 1, "dlt_template_id": f"flow-{event}"}).insert()
 
 	def grant(self, principal, **kw):
@@ -73,13 +73,13 @@ class TestChannels(FrappeTestCase):
 	def test_no_provider_means_no_send_and_no_error(self):
 		p = self.person("9000077002")
 		art = self.grant(p)
-		frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 0)
+		frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "enabled", 0)
 		try:
 			with fake_post() as post:
 				channels.on_consent_event(art["consent_id"])
 			post.assert_not_called()
 		finally:
-			frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 1)
+			frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "enabled", 1)
 
 	def test_server_otp_confirms_consent(self):
 		p = self.person("9000077003")
@@ -107,10 +107,10 @@ class TestChannels(FrappeTestCase):
 		art2 = self.grant(q, verification_method="deferred")
 		with fake_post():
 			channels.on_consent_event(art2["consent_id"])
-		att = frappe.db.get_value("Verification Attempt", {"consent_event": art2["consent_id"]})
-		frappe.db.set_value("Verification Attempt", att, "sent_at", now_datetime() - timedelta(days=30))
+		att = frappe.db.get_value("Anumati Verification Attempt", {"consent_event": art2["consent_id"]})
+		frappe.db.set_value("Anumati Verification Attempt", att, "sent_at", now_datetime() - timedelta(days=30))
 		enforcement.expire_unconfirmed()
-		self.assertEqual(frappe.db.get_value("Verification Attempt", att, "result"), "expired")
+		self.assertEqual(frappe.db.get_value("Anumati Verification Attempt", att, "result"), "expired")
 		self.assertEqual(consent.state(q.principal_ref, programme=PROG)[0]["verification_status"], "unconfirmed")
 
 	def test_inbound_stop_withdraws_optional_purposes(self):
@@ -120,7 +120,7 @@ class TestChannels(FrappeTestCase):
 		self.assertEqual(out["outcome"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "follow", programme=PROG)["status"], "withdrawn")
 		self.assertEqual(consent.check(p.principal_ref, "screen", programme=PROG)["status"], "granted")
-		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "request_closed")
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", out["request"], "status"), "request_closed")
 
 	def test_inbound_stop_n_and_stop_code_with_devanagari_digits(self):
 		p = self.person("9000077007")
@@ -141,14 +141,14 @@ class TestChannels(FrappeTestCase):
 		self.person("9000077009"), self.person("9000077009")
 		out = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077009", message="STOP")
 		self.assertEqual(out["outcome"], "unmatched")
-		self.assertEqual(frappe.db.get_value("Rights Request", out["request"], "status"), "who_is_this")
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", out["request"], "status"), "who_is_this")
 
 	def test_data_help_and_missed_call_open_requests(self):
 		p = self.person("9000077010")
 		data = call_webhook(channel.inbound_sms, provider="MSG91 test", token=SECRET, sender="9000077010", message="DATA")
-		self.assertEqual(frappe.db.get_value("Rights Request", data["request"], "request_type"), "access")
+		self.assertEqual(frappe.db.get_value("Anumati Rights Request", data["request"], "request_type"), "access")
 		missed = call_webhook(channel.missed_call, provider="MSG91 test", token=SECRET, caller="9000077010")
-		req = frappe.get_doc("Rights Request", missed["request"])
+		req = frappe.get_doc("Anumati Rights Request", missed["request"])
 		self.assertEqual((req.request_type, req.channel, req.matched_principal), ("withdrawal", "missed_call", p.name))
 		self.assertNotEqual(req.status, "request_closed", "a missed call is confirmed by a person, never auto-applied")
 
@@ -169,7 +169,7 @@ class TestChannels(FrappeTestCase):
 			self.assertEqual(frappe.allowed_http_methods_for_whitelisted_func[fn], ["POST"], fn.__name__)
 
 	def test_callbacks_from_an_address_not_on_the_list_are_refused(self):
-		frappe.db.set_value("Channel Provider", "MSG91 test", "allowed_ips", "198.51.100.7\n198.51.100.8")
+		frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "allowed_ips", "198.51.100.7\n198.51.100.8")
 		try:
 			self.assertRaises(frappe.PermissionError, call_webhook, channel.delivery_report, provider="MSG91 test",
 			                  token=SECRET, request_id="x", status="delivered")
@@ -177,7 +177,7 @@ class TestChannels(FrappeTestCase):
 			                   request_id="x", status="delivered")
 			self.assertEqual(out["outcome"], "unknown")
 		finally:
-			frappe.db.set_value("Channel Provider", "MSG91 test", "allowed_ips", None)
+			frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "allowed_ips", None)
 
 	def test_message_bodies_never_contain_names(self):
 		p = make_principal(full_name="Gauri P. (fictional)", phone="9000077012", preferred_language="en")
@@ -202,7 +202,7 @@ class TestChannels(FrappeTestCase):
 	def test_dhwani_sendotp_template_passes_anumatis_own_code(self):
 		p = self.person("9000077102")
 		art = self.grant(p)
-		frappe.db.set_value("Message Template", "otp-sms-en", {"send_via": "SendOTP", "dlt_template_id": "otp-tmpl"})
+		frappe.db.set_value("Anumati Message Template", "otp-sms-en", {"send_via": "SendOTP", "dlt_template_id": "otp-tmpl"})
 		try:
 			with fake_post() as post:
 				out = verification.send_otp(art["consent_id"])
@@ -213,7 +213,7 @@ class TestChannels(FrappeTestCase):
 			self.assertEqual((params["template_id"], params["mobile"]), ("otp-tmpl", "919000077102"))
 			self.assertTrue(verification.verify_otp(art["consent_id"], params["otp"])["confirmed"])
 		finally:
-			frappe.db.set_value("Message Template", "otp-sms-en", {"send_via": "Flow", "dlt_template_id": "flow-otp"})
+			frappe.db.set_value("Anumati Message Template", "otp-sms-en", {"send_via": "Flow", "dlt_template_id": "flow-otp"})
 
 	def test_codes_are_limited_and_not_sent_without_setup(self):
 		p = self.person("9000077103")
@@ -224,11 +224,11 @@ class TestChannels(FrappeTestCase):
 			self.assertRaises(frappe.ValidationError, verification.send_otp, art["consent_id"])
 		q = self.person("9000077104")
 		art2 = self.grant(q)
-		frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 0)
+		frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "enabled", 0)
 		try:
 			self.assertEqual(verification.send_otp(art2["consent_id"]), {"sent": False, "reason": "not_set_up"})
 		finally:
-			frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 1)
+			frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "enabled", 1)
 
 	def test_only_the_capturing_worker_or_staff_can_verify(self):
 		from anumati.tests.test_console import user_with_role
@@ -248,8 +248,8 @@ class TestChannels(FrappeTestCase):
 
 	def test_notice_tells_the_app_whether_the_server_can_send_codes(self):
 		self.assertTrue(channels.can_send_codes("en"))
-		frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 0)
+		frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "enabled", 0)
 		try:
 			self.assertFalse(channels.can_send_codes("en"), "no SMS account: the app uses the worker's phone")
 		finally:
-			frappe.db.set_value("Channel Provider", "MSG91 test", "enabled", 1)
+			frappe.db.set_value("Anumati Channel Provider", "MSG91 test", "enabled", 1)

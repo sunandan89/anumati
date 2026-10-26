@@ -3,7 +3,7 @@
   "doctype": "Kanban Board",
   "name": "Requests",
   "kanban_board_name": "Requests",
-  "reference_doctype": "Rights Request",
+  "reference_doctype": "Anumati Rights Request",
   "field_name": "status",
   "private": 0,
   "show_labels": 1,
@@ -67,6 +67,6 @@
     "order": "[]"
    }
   ],
-  "modified": "2026-10-16 10:00:00.000000"
+  "modified": "2026-10-26 10:00:00.000000"
  }
 ]

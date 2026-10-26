@@ -108,12 +108,12 @@ class TestConsole(FrappeTestCase):
 
 	def test_requests_board_covers_every_status(self):
 		board = frappe.get_doc("Kanban Board", "Requests")
-		self.assertEqual(board.reference_doctype, "Rights Request")
+		self.assertEqual(board.reference_doctype, "Anumati Rights Request")
 		self.assertFalse(board.private)
-		options = frappe.get_meta("Rights Request").get_field("status").options.split("\n")
+		options = frappe.get_meta("Anumati Rights Request").get_field("status").options.split("\n")
 		self.assertEqual([c.column_name for c in board.columns], options)
 		for field in json.loads(board.fields):
-			self.assertTrue(frappe.get_meta("Rights Request").has_field(field), field)
+			self.assertTrue(frappe.get_meta("Anumati Rights Request").has_field(field), field)
 
 	def test_saved_filters_are_shared_and_valid(self):
 		rows = frappe.get_all("List Filter", filters={"name": ["like", "anumati-%"]}, fields=["*"])
@@ -144,8 +144,8 @@ class TestConsole(FrappeTestCase):
 			self.assertFalse(frappe.has_permission(doctype, "write", user=user_with_role("Anumati DPO")), doctype)
 
 	def test_forms_open_on_a_tab(self):
-		for doctype in ("Programme", "Notice Template", "Data Principal", "Consent Event", "Rights Request", "Breach Incident"):
+		for doctype in ("Anumati Programme", "Anumati Notice Template", "Anumati Data Principal", "Anumati Consent Event", "Anumati Rights Request", "Anumati Breach Incident"):
 			self.assertEqual(frappe.get_meta(doctype).fields[0].fieldtype, "Tab Break", doctype)
 		# Signature, hash and chain stay on the Consent Event form, in their own "Proof" tab.
-		fields = [f.fieldname for f in frappe.get_meta("Consent Event").fields]
+		fields = [f.fieldname for f in frappe.get_meta("Anumati Consent Event").fields]
 		self.assertLess(fields.index("proof_tab"), fields.index("hash"))

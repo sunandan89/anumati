@@ -29,21 +29,21 @@ after_migrate = ["anumati.install.after_migrate", "anumati.demo.after_migrate", 
 app_include_js = ["/assets/anumati/js/notice_audio.js"]
 
 # Link fields to a beneficiary also search by whole-word name, full phone number or receipt code.
-standard_queries = {"Data Principal": "anumati.api.v1.principal.link_query"}
+standard_queries = {"Anumati Data Principal": "anumati.api.v1.principal.link_query"}
 
 # Evidence files (voice, thumbprint, guardian documents) are encrypted on disk right after upload.
 doc_events = {"File": {"after_insert": "anumati.evidence.encrypt_file"}}
 # Staff-behaviour grievances are for the DPO only; field workers see only the grievances they raised.
 # Field workers (and their phones' SDK sync) see only published notices for their own programmes.
 permission_query_conditions = {
-	"Grievance": "anumati.grievance.permission_query_conditions",
-	"Notice Template": "anumati.notice_access.notice_conditions",
-	"Notice Translation": "anumati.notice_access.translation_conditions",
+	"Anumati Grievance": "anumati.grievance.permission_query_conditions",
+	"Anumati Notice Template": "anumati.notice_access.notice_conditions",
+	"Anumati Notice Translation": "anumati.notice_access.translation_conditions",
 }
 has_permission = {
-	"Grievance": "anumati.grievance.has_permission",
-	"Notice Template": "anumati.notice_access.notice_permission",
-	"Notice Translation": "anumati.notice_access.translation_permission",
+	"Anumati Grievance": "anumati.grievance.has_permission",
+	"Anumati Notice Template": "anumati.notice_access.notice_permission",
+	"Anumati Notice Translation": "anumati.notice_access.translation_permission",
 }
 
 scheduler_events = {

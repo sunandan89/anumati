@@ -56,10 +56,10 @@ def permission_query_conditions(user=None):
 	user = user or frappe.session.user
 	if _sees_everything(user):
 		return ""
-	conditions = [f"`tabGrievance`.`category` != '{STAFF_ONLY_DPO}'"]
+	conditions = [f"`tabAnumati Grievance`.`category` != '{STAFF_ONLY_DPO}'"]
 	roles = set(frappe.get_roles(user))
 	if not roles & {"Anumati Operator", "Anumati Admin"}:
-		conditions.append(f"`tabGrievance`.`owner` = {frappe.db.escape(user)}")
+		conditions.append(f"`tabAnumati Grievance`.`owner` = {frappe.db.escape(user)}")
 	return " and ".join(conditions)
 
 
@@ -80,7 +80,7 @@ def create(category: str, channel: str, principal=None, description=None, about_
            sender_hash=None, raw_payload=None, paper_trail_number=None, raised_by=None, client_request_id=None):
 	"""A new grievance from any door (self-service page, field app, SMS, API, a moved request)."""
 	doc = frappe.get_doc({
-		"doctype": "Grievance", "category": category, "channel": channel, "matched_principal": principal,
+		"doctype": "Anumati Grievance", "category": category, "channel": channel, "matched_principal": principal,
 		"description": description, "about_request": about_request, "raised_by_role": raised_by_role,
 		"sender_hash": sender_hash, "raw_payload": raw_payload, "paper_trail_number": paper_trail_number,
 		"raised_by": raised_by, "received_on": now_datetime(), "client_request_id": client_request_id,
@@ -95,15 +95,15 @@ def move_from_request(request, ignore_permissions=False):
 	if not ignore_permissions:
 		request.check_permission("write")
 	doc = frappe.get_doc({
-		"doctype": "Grievance", "category": "something_else", "channel": request.channel,
+		"doctype": "Anumati Grievance", "category": "something_else", "channel": request.channel,
 		"matched_principal": request.matched_principal, "raised_by_role": request.get("raised_by_role"),
 		"sender_hash": request.sender_hash, "raw_payload": request.raw_payload, "raised_by": request.raised_by,
 		"paper_trail_number": request.paper_trail_number, "received_on": request.received_on,
 		"description": request.raw_payload, "assigned_to": request.assigned_to,
 	})
 	doc.insert(ignore_permissions=True)
-	frappe.db.sql("update `tabCommunication` set reference_doctype='Grievance', reference_name=%s "
-	              "where reference_doctype='Rights Request' and reference_name=%s", (doc.name, request.name))
+	frappe.db.sql("update `tabCommunication` set reference_doctype='Anumati Grievance', reference_name=%s "
+	              "where reference_doctype='Anumati Rights Request' and reference_name=%s", (doc.name, request.name))
 	doc.add_comment("Info", _("Moved from rights request {0}").format(request.name))
 	return doc
 
@@ -114,14 +114,14 @@ def move_to_request(doc, request_type: str):
 	if request_type not in ("withdrawal", "access", "correction", "erasure", "nomination"):
 		frappe.throw(_("Choose what they asked for"))
 	request = frappe.get_doc({
-		"doctype": "Rights Request", "request_type": request_type, "channel": doc.channel,
+		"doctype": "Anumati Rights Request", "request_type": request_type, "channel": doc.channel,
 		"matched_principal": doc.matched_principal, "raised_by_role": doc.raised_by_role,
 		"sender_hash": doc.sender_hash, "raw_payload": doc.raw_payload or doc.description, "raised_by": doc.raised_by,
 		"paper_trail_number": doc.paper_trail_number, "received_on": doc.received_on,
 	})
 	request.insert(ignore_permissions=True)
-	frappe.db.sql("update `tabCommunication` set reference_doctype='Rights Request', reference_name=%s "
-	              "where reference_doctype='Grievance' and reference_name=%s", (request.name, doc.name))
+	frappe.db.sql("update `tabCommunication` set reference_doctype='Anumati Rights Request', reference_name=%s "
+	              "where reference_doctype='Anumati Grievance' and reference_name=%s", (request.name, doc.name))
 	doc.status = inbox.CLOSED
 	doc.internal_note = ((doc.internal_note or "") + "\n" + _("Moved to rights request {0}").format(request.name)).strip()
 	doc.save()
@@ -155,15 +155,15 @@ def daily():
 	"""No final answer in time: to the DPO. Answered with no word for 30 days: closed."""
 	days = cint(frappe.db.get_single_value("Anumati Settings", "grievance_dpo_after_days")) or 15
 	cutoff = add_to_date(now_datetime(), days=-days)
-	for name in frappe.get_all("Grievance", {"status": ("in", OPEN), "dpo_since": ("is", "not set"),
+	for name in frappe.get_all("Anumati Grievance", {"status": ("in", OPEN), "dpo_since": ("is", "not set"),
 	                                         "received_on": ("<=", cutoff)}, pluck="name"):
-		doc = frappe.get_doc("Grievance", name)
+		doc = frappe.get_doc("Anumati Grievance", name)
 		to_dpo(doc, _("No final answer after {0} days: passed to the DPO.").format(days))
 		doc.flags.ignore_permissions = True
 		doc.save()
 	quiet = add_to_date(now_datetime(), days=-AUTO_CLOSE_DAYS)
-	for name in frappe.get_all("Grievance", {"status": inbox.ANSWERED, "answered_on": ("<=", quiet)}, pluck="name"):
-		doc = frappe.get_doc("Grievance", name)
+	for name in frappe.get_all("Anumati Grievance", {"status": inbox.ANSWERED, "answered_on": ("<=", quiet)}, pluck="name"):
+		doc = frappe.get_doc("Anumati Grievance", name)
 		doc.status = inbox.CLOSED
 		doc.add_comment("Info", _("Closed: no reply from the person {0} days after the answer.").format(AUTO_CLOSE_DAYS))
 		doc.flags.ignore_permissions = True

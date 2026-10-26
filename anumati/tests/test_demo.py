@@ -13,7 +13,7 @@ class TestFieldAppSetup(FrappeTestCase):
 		first = demo.setup_field_app()
 		second = demo.setup_field_app()
 		self.assertEqual(first["notice"], second["notice"])
-		self.assertEqual(frappe.db.count("Notice Template", {"programme": demo.PROGRAMME}), 1)
+		self.assertEqual(frappe.db.count("Anumati Notice Template", {"programme": demo.PROGRAMME}), 1)
 		out = notice.get_active(demo.PROGRAMME, language="hi")
 		self.assertEqual({p["code"] for p in out["purposes"]}, {"screen", "follow", "photos", "research"})
 		self.assertIsNotNone(out["translation"], "the demo Hindi translation is reviewed, so it is served")
@@ -22,19 +22,19 @@ class TestFieldAppSetup(FrappeTestCase):
 	def test_three_realistic_programmes_each_with_a_published_hindi_notice(self):
 		demo.create_demo_programme()
 		for spec in demo.PROGRAMMES:
-			self.assertEqual(frappe.db.get_value("Programme", spec["code"], "programme_name"), spec["name"])
+			self.assertEqual(frappe.db.get_value("Anumati Programme", spec["code"], "programme_name"), spec["name"])
 			out = notice.get_active(spec["code"], language="hi")
 			self.assertEqual(len(out["purposes"]), 4, spec["code"])
 			self.assertIsNotNone(out["translation"], spec["code"])
-		self.assertEqual(frappe.db.get_value("Programme", "DEMO", "programme_name"), "Village Health Camps")
+		self.assertEqual(frappe.db.get_value("Anumati Programme", "DEMO", "programme_name"), "Village Health Camps")
 
 	def test_old_demo_name_is_renamed(self):
 		demo.create_demo_programme()
-		frappe.db.set_value("Programme", "DEMO", "programme_name", "Demo Health Camp (fictional)")
+		frappe.db.set_value("Anumati Programme", "DEMO", "programme_name", "Demo Health Camp (fictional)")
 		demo.create_demo_programme()
-		self.assertEqual(frappe.db.get_value("Programme", "DEMO", "programme_name"), "Village Health Camps")
-		name = frappe.db.get_value("Notice Template", {"programme": "DEMO"}, "name")
-		self.assertEqual(frappe.db.get_value("Notice Template", name, "programme_name"), "Village Health Camps")
+		self.assertEqual(frappe.db.get_value("Anumati Programme", "DEMO", "programme_name"), "Village Health Camps")
+		name = frappe.db.get_value("Anumati Notice Template", {"programme": "DEMO"}, "name")
+		self.assertEqual(frappe.db.get_value("Anumati Notice Template", name, "programme_name"), "Village Health Camps")
 
 	def test_field_worker_gets_roles_and_a_fresh_password(self):
 		p1 = demo.create_field_worker()
@@ -56,7 +56,7 @@ class TestFieldAppSetup(FrappeTestCase):
 		finally:
 			frappe.conf.pop("anumati_demo_password", None)
 		self.assertEqual(check_password(demo.FIELD_WORKER, "Demo@test-2026"), demo.FIELD_WORKER)
-		self.assertTrue(frappe.db.exists("Notice Template", {"programme": demo.PROGRAMME, "status": "Published"}))
+		self.assertTrue(frappe.db.exists("Anumati Notice Template", {"programme": demo.PROGRAMME, "status": "Published"}))
 
 	def test_mobile_configuration_is_switched_on_when_mobile_control_is_installed(self):
 		installed = frappe.db.exists("DocType", "Mobile Configuration")
@@ -71,15 +71,15 @@ class TestFieldAppSetup(FrappeTestCase):
 		again = demo.create_sample_data()
 		self.assertEqual(again["people"], 0, "idempotent")
 		refs = [f"{demo.PROGRAMME}-{p[0]}" for p in demo.SAMPLE_PEOPLE]
-		self.assertEqual(frappe.db.count("Data Principal", {"principal_ref": ("in", refs)}), len(refs))
-		events = frappe.get_all("Consent Event", {"programme": demo.PROGRAMME, "captured_by": demo.FIELD_WORKER},
+		self.assertEqual(frappe.db.count("Anumati Data Principal", {"principal_ref": ("in", refs)}), len(refs))
+		events = frappe.get_all("Anumati Consent Event", {"programme": demo.PROGRAMME, "captured_by": demo.FIELD_WORKER},
 		                        ["hash", "signature", "action"])
 		self.assertGreaterEqual(len(events), len(refs))
 		self.assertTrue(all(e.hash and e.signature for e in events))
 		self.assertIn("withdraw", {e.action for e in events})
 		self.assertEqual(frappe.session.user, "Administrator", "the admin session is restored")
 		for ref in refs:
-			doc = frappe.get_doc("Data Principal", {"principal_ref": ref})
+			doc = frappe.get_doc("Anumati Data Principal", {"principal_ref": ref})
 			phone = doc.get_password("phone", raise_exception=False)
 			self.assertTrue(not phone or phone.startswith("555"), "sample numbers can never be real mobiles")
 		self.assertGreaterEqual(first["consents"] + again["consents"], 0)

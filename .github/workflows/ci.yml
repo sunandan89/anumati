@@ -112,3 +112,72 @@ jobs:
       - name: Server log on failure
         if: failure()
         run: tail -n 200 /tmp/serve.log || true
+
+  upgrade:
+    name: Upgrade from main (migration patches keep data and chains)
+    runs-on: ubuntu-latest
+    needs: checks
+    if: github.ref != 'refs/heads/main'
+    timeout-minutes: 45
+    services:
+      redis-cache:
+        image: redis:alpine
+        ports: ["13000:6379"]
+      redis-queue:
+        image: redis:alpine
+        ports: ["11000:6379"]
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports: ["3306:3306"]
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install MariaDB client
+        run: sudo apt-get update -q && sudo apt-get install -y -q mariadb-client
+
+      - name: Set up bench (Frappe v15)
+        run: |
+          pip install -q frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch version-15 --python "$(which python)" ~/frappe-bench
+          mysql --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
+          mysql --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
+
+      - name: Install the app as it is on main, with sample data
+        working-directory: /home/runner/frappe-bench
+        env:
+          CI: "Yes"
+        run: |
+          git -C "$GITHUB_WORKSPACE" branch -f upgrade-base "$(git -C "$GITHUB_WORKSPACE" merge-base HEAD origin/main)"
+          git -C "$GITHUB_WORKSPACE" branch -f upgrade-head HEAD
+          bench get-app anumati "$GITHUB_WORKSPACE"
+          git -C apps/anumati fetch -q "$GITHUB_WORKSPACE" upgrade-base:upgrade-base upgrade-head:upgrade-head
+          git -C apps/anumati checkout -q upgrade-base
+          bench setup requirements --dev
+          bench new-site --db-root-password root --admin-password admin upgrade.localhost
+          bench --site upgrade.localhost install-app anumati
+          bench --site upgrade.localhost set-config allow_tests true
+          bench --site upgrade.localhost execute anumati.demo.create_sample_data
+          bench --site upgrade.localhost execute anumati.ledger.chain.seal_audit_trail
+          python "$GITHUB_WORKSPACE/ci/upgrade_snapshot.py" upgrade.localhost /tmp/before.json
+
+      - name: Upgrade to this branch and migrate
+        working-directory: /home/runner/frappe-bench
+        run: |
+          git -C apps/anumati checkout -q upgrade-head
+          bench --site upgrade.localhost migrate
+          python "$GITHUB_WORKSPACE/ci/upgrade_snapshot.py" upgrade.localhost /tmp/after.json
+          python "$GITHUB_WORKSPACE/ci/upgrade_snapshot.py" --compare /tmp/before.json /tmp/after.json

@@ -36,12 +36,12 @@ def _codes(value) -> list:
 def check_purposes(programme: str, principal: str, granted: list, denied: list):
 	if set(granted) & set(denied):
 		frappe.throw(_("A purpose cannot be both granted and denied"), ConsentRequestError)
-	person = frappe.db.get_value("Data Principal", principal, ["is_minor", "renewal_due"], as_dict=True)
+	person = frappe.db.get_value("Anumati Data Principal", principal, ["is_minor", "renewal_due"], as_dict=True)
 	if not person:
 		frappe.throw(_("Unknown beneficiary {0}").format(principal), ConsentRequestError)
 	is_minor = person.is_minor and not person.renewal_due
 	for code in granted + denied:
-		row = frappe.db.get_value("Purpose", enforcement.purpose_name(programme, code), ["child_allowed"], as_dict=True)
+		row = frappe.db.get_value("Anumati Purpose", enforcement.purpose_name(programme, code), ["child_allowed"], as_dict=True)
 		if not row:
 			frappe.throw(_("Unknown purpose {0} for programme {1}").format(code, programme), ConsentRequestError)
 		if is_minor and code in granted and not row.child_allowed:
@@ -55,14 +55,14 @@ def check_who(principal: str, action: str, event):
 	- an adult who can't decide alone (pwd_guarded): a lawful guardian link with the order number;
 	- an adult who needs help to read the notice, consenting for themselves: a witness.
 	A child who turned 18 (renewal_due) consents for themselves, so no guardian is needed."""
-	person = frappe.db.get_value("Data Principal", principal,
+	person = frappe.db.get_value("Anumati Data Principal", principal,
 	                             ["is_minor", "pwd_guarded", "needs_assistance", "renewal_due"], as_dict=True)
 	child = person.is_minor and not person.renewal_due
 	if child or person.pwd_guarded:
 		if not event.guardian_link:
 			frappe.throw(_("A child's consent needs a verified guardian_link (spec C1)") if child else
 			             _("An adult who can't decide alone needs a lawful guardian_link"), ConsentRequestError)
-		link = frappe.db.get_value("Guardian Link", event.guardian_link, ["principal", "guardian_type", "authority_ref"],
+		link = frappe.db.get_value("Anumati Guardian Link", event.guardian_link, ["principal", "guardian_type", "authority_ref"],
 		                           as_dict=True)
 		if not link or link.principal != principal:
 			frappe.throw(_("guardian_link must be a Guardian Link for this person"), ConsentRequestError)
@@ -117,9 +117,9 @@ def prepare(doc):
 	doc.action = doc.action or "grant"
 	if doc.action not in ACTIONS:
 		frappe.throw(_("action must be one of {0}").format(", ".join(ACTIONS)), ConsentRequestError)
-	if not doc.principal or not frappe.db.exists("Data Principal", doc.principal):
+	if not doc.principal or not frappe.db.exists("Anumati Data Principal", doc.principal):
 		frappe.throw(_("Unknown beneficiary {0}").format(doc.principal), ConsentRequestError)
-	if not doc.programme or not frappe.db.exists("Programme", doc.programme):
+	if not doc.programme or not frappe.db.exists("Anumati Programme", doc.programme):
 		frappe.throw(_("Unknown programme {0}").format(doc.programme), ConsentRequestError)
 
 	granted, denied = _codes(doc.purposes_granted), _codes(doc.purposes_denied)
@@ -133,7 +133,7 @@ def prepare(doc):
 		check_who(doc.principal, doc.action, doc)
 
 	if doc.notice:
-		notice = frappe.db.get_value("Notice Template", doc.notice, ["programme", "version", "docstatus"], as_dict=True)
+		notice = frappe.db.get_value("Anumati Notice Template", doc.notice, ["programme", "version", "docstatus"], as_dict=True)
 		if not notice or notice.programme != doc.programme or notice.docstatus != 1:
 			frappe.throw(_("notice must be a published notice of this programme"), ConsentRequestError)
 		doc.notice_version = notice.version
@@ -144,18 +144,18 @@ def after_insert(doc):
 	"""What a new event changes beyond the ledger, the same for every door it came through."""
 	evidence.adopt_uploads(doc.principal, _codes(doc.evidence), doc.captured_by)
 	granted = _codes(doc.purposes_granted)
-	if granted and frappe.db.get_value("Data Principal", doc.principal, "relationship_ended_on") and _rejoined(
+	if granted and frappe.db.get_value("Anumati Data Principal", doc.principal, "relationship_ended_on") and _rejoined(
 			doc.principal, doc.programme, granted):
 		# They rejoined a programme: the relationship is live again.
-		frappe.db.set_value("Data Principal", doc.principal, "relationship_ended_on", None)
-		frappe.get_doc("Data Principal", doc.principal).add_comment(
+		frappe.db.set_value("Anumati Data Principal", doc.principal, "relationship_ended_on", None)
+		frappe.get_doc("Anumati Data Principal", doc.principal).add_comment(
 			"Info", _("Rejoined programme {0}: relationship live again").format(doc.programme))
 	if (doc.action in ("grant", "renew") and not doc.guardian_link
-			and frappe.db.get_value("Data Principal", doc.principal, "renewal_due")):
+			and frappe.db.get_value("Anumati Data Principal", doc.principal, "renewal_due")):
 		# A child who turned 18 has now consented themselves: they are an adult record from here on.
-		person = frappe.get_doc("Data Principal", doc.principal)
+		person = frappe.get_doc("Anumati Data Principal", doc.principal)
 		person.db_set({"renewal_due": 0, "is_minor": 0})
-		frappe.clear_document_cache("Data Principal", doc.principal)
+		frappe.clear_document_cache("Anumati Data Principal", doc.principal)
 		enforcement.invalidate(doc.principal)
 
 
@@ -163,7 +163,7 @@ def _rejoined(principal, programme, granted) -> bool:
 	"""An essential purpose of this event is granted now. An older grant that arrives after they left is
 	ignored by enforcement (a newer decision wins), so it must not end "Relationship ended" either."""
 	essential = frappe.get_all(
-		"Purpose", {"name": ("in", [enforcement.purpose_name(programme, c) for c in granted]), "essential": 1},
+		"Anumati Purpose", {"name": ("in", [enforcement.purpose_name(programme, c) for c in granted]), "essential": 1},
 		pluck="name")
 	if not essential:
 		return False

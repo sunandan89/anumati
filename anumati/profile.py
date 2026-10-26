@@ -60,10 +60,10 @@ def ensure_library():
 	"""Install the standard questions. Ones already there, and custom questions, are left alone."""
 	with_hindi = frappe.db.exists("Language", "hi")
 	for code, question, kind, options, sensitive, term, hi_q, hi_opts in LIBRARY:
-		if frappe.db.exists("Profile Question", code):
+		if frappe.db.exists("Anumati Profile Question", code):
 			continue
 		doc = frappe.get_doc({
-			"doctype": "Profile Question", "code": code, "question": question, "answer_type": kind,
+			"doctype": "Anumati Profile Question", "code": code, "question": question, "answer_type": kind,
 			"options": "\n".join(options), "is_sensitive": sensitive, "notice_term": term, "is_standard": 1,
 			"labels": [{"language": "hi", "question": hi_q, "options": "\n".join(hi_opts)}] if with_hindi else [],
 		})
@@ -73,16 +73,16 @@ def ensure_library():
 
 def published_notice(programme: str):
 	return frappe.db.get_value(
-		"Notice Template", {"programme": programme, "docstatus": 1, "status": "Published"}, order_by="creation desc"
+		"Anumati Notice Template", {"programme": programme, "docstatus": 1, "status": "Published"}, order_by="creation desc"
 	)
 
 
 def notice_text(notice: str) -> str:
 	"""Everything the base notice says, lower-cased, without HTML: what a question's term is checked against."""
-	doc = frappe.get_doc("Notice Template", notice)
+	doc = frappe.get_doc("Anumati Notice Template", notice)
 	parts = [doc.summary or "", doc.full_text or ""]
 	for row in doc.purposes:
-		p = frappe.db.get_value("Purpose", row.purpose, ["purpose_title", "description"], as_dict=True) or {}
+		p = frappe.db.get_value("Anumati Purpose", row.purpose, ["purpose_title", "description"], as_dict=True) or {}
 		parts += [p.get("purpose_title") or "", p.get("description") or ""]
 	return re.sub(r"<[^>]+>", " ", " ".join(parts)).lower()
 
@@ -109,13 +109,13 @@ def validate_programme(doc):
 	text = notice_text(notice)
 	missing = []
 	for row in rows:
-		term, label = frappe.db.get_value("Profile Question", row.question, ["notice_term", "question"])
+		term, label = frappe.db.get_value("Anumati Profile Question", row.question, ["notice_term", "question"])
 		if not mentions(text, term):
 			missing.append(f"{label} (“{term}”)")
 	if missing:
 		frappe.throw(_("Add these to the notice first, then publish it again: {0}").format(", ".join(missing)),
 		             title=_("Not in the notice"))
-	sensitive = [r.question for r in rows if frappe.db.get_value("Profile Question", r.question, "is_sensitive")]
+	sensitive = [r.question for r in rows if frappe.db.get_value("Anumati Profile Question", r.question, "is_sensitive")]
 	if sensitive:
 		frappe.msgprint(_("Sensitive questions switched on: {0}. Ask them only if the work truly needs them; reports show totals only.")
 		                .format(", ".join(sensitive)), indicator="orange", alert=True)
@@ -124,14 +124,14 @@ def validate_programme(doc):
 def for_notice(programme: str, notice: str, language: str | None = None) -> list[dict]:
 	"""The questions a programme asks, for the phone, in the notice's language where a translation exists.
 	A question the live notice no longer mentions is left out."""
-	rows = frappe.get_all("Programme Profile Question", {"parent": programme, "parenttype": "Programme"},
+	rows = frappe.get_all("Anumati Programme Profile Question", {"parent": programme, "parenttype": "Anumati Programme"},
 	                      ["question", "required"], order_by="idx asc")
 	if not rows:
 		return []
 	text = notice_text(notice)
 	out = []
 	for r in rows:
-		q = frappe.get_doc("Profile Question", r.question)
+		q = frappe.get_doc("Anumati Profile Question", r.question)
 		if not mentions(text, q.notice_term):
 			continue
 		options = [o.strip() for o in (q.options or "").split("\n") if o.strip()]
@@ -156,7 +156,7 @@ def save_answers(doc, programme: str | None, answers: dict):
 	if not answers:
 		return
 	for code, value in answers.items():
-		q = frappe.db.get_value("Profile Question", code, ["answer_type", "options"], as_dict=True)
+		q = frappe.db.get_value("Anumati Profile Question", code, ["answer_type", "options"], as_dict=True)
 		if not q:
 			continue
 		value = "" if value is None else str(value).strip()[:140]

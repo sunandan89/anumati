@@ -19,16 +19,16 @@ RULE3 = {
 
 def make_notice(purpose, version="1.0.0", **kw):
 	return frappe.get_doc(
-		{"doctype": "Notice Template", "programme": "WFT", "version": version,
+		{"doctype": "Anumati Notice Template", "programme": "WFT", "version": version,
 		 "purposes": [{"purpose": purpose}], **RULE3, **kw}
 	).insert()
 
 
 def make_ropa(purpose, **kw):
-	if not frappe.db.exists("Data Category", "Health readings"):
-		frappe.get_doc({"doctype": "Data Category", "category_name": "Health readings", "is_sensitive": 1}).insert()
+	if not frappe.db.exists("Anumati Data Category", "Health readings"):
+		frappe.get_doc({"doctype": "Anumati Data Category", "category_name": "Health readings", "is_sensitive": 1}).insert()
 	return frappe.get_doc(
-		{"doctype": "ROPA Entry", "purpose": purpose, "data_categories": [{"data_category": "Health readings"}],
+		{"doctype": "Anumati ROPA Entry", "purpose": purpose, "data_categories": [{"data_category": "Health readings"}],
 		 "retention": "24 months", "safeguards": "Encrypted; access logged", **kw}
 	).insert()
 

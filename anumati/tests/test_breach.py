@@ -8,7 +8,7 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from anumati import breach, pii
-from anumati.anumati.doctype.breach_incident import breach_incident as api
+from anumati.anumati.doctype.anumati_breach_incident import anumati_breach_incident as api
 from anumati.api.v1 import consent
 from anumati.tests.utils import ensure_language, make_principal, make_programme, make_purpose
 
@@ -35,15 +35,15 @@ class TestBreachNotification(FrappeTestCase):
 		make_programme(PROG, "Breach Test Programme")
 		make_purpose(PROG, "screen", "Health screening", essential=1)
 		make_purpose(PROG, "photos", "Photos and stories")
-		if not frappe.db.exists("Channel Provider", {"provider_type": "SMS", "enabled": 1}):
-			frappe.get_doc({"doctype": "Channel Provider", "provider_name": "MSG91 breach test", "provider_type": "SMS",
+		if not frappe.db.exists("Anumati Channel Provider", {"provider_type": "SMS", "enabled": 1}):
+			frappe.get_doc({"doctype": "Anumati Channel Provider", "provider_name": "MSG91 breach test", "provider_type": "SMS",
 			                "provider": "MSG91", "enabled": 1, "api_key": "test-key"}).insert()
 		for lang, body in TEMPLATES.items():
 			name = f"breach_notice-sms-{lang}"
-			if frappe.db.exists("Message Template", name):
-				frappe.db.set_value("Message Template", name, {"body": body, "approved": 1, "dlt_template_id": f"flow-breach-{lang}"})
+			if frappe.db.exists("Anumati Message Template", name):
+				frappe.db.set_value("Anumati Message Template", name, {"body": body, "approved": 1, "dlt_template_id": f"flow-breach-{lang}"})
 			else:
-				frappe.get_doc({"doctype": "Message Template", "template_event": "breach_notice", "channel": "sms",
+				frappe.get_doc({"doctype": "Anumati Message Template", "template_event": "breach_notice", "channel": "sms",
 				                "language": lang, "body": body, "approved": 1, "dlt_template_id": f"flow-breach-{lang}"}).insert()
 
 	def consent_on_phone(self, person, device=DEVICE, **kw):
@@ -53,13 +53,13 @@ class TestBreachNotification(FrappeTestCase):
 
 	def setUp(self):
 		self.device = f"{DEVICE}-{uuid.uuid4().hex[:6]}"
-		frappe.get_doc({"doctype": "Field Device", "device_id": self.device, "status": "lost"}).insert()
+		frappe.get_doc({"doctype": "Anumati Field Device", "device_id": self.device, "status": "lost"}).insert()
 		self.hindi = make_principal(full_name="Sunita D. (fictional)", phone="5550101001", preferred_language="hi")
 		self.english = make_principal(full_name="Asha K. (fictional)", phone="5550101002", preferred_language="en")
 		self.nophone = make_principal(full_name="Gauri P. (fictional)", preferred_language="hi", no_phone=1)
 		mother = make_principal(full_name="Radha S. (fictional)", phone="5550101003")
 		self.child = make_principal(full_name="Meena S. (fictional)", is_minor=1, preferred_language="hi")
-		link = frappe.get_doc({"doctype": "Guardian Link", "principal": self.child.name, "guardian": mother.name,
+		link = frappe.get_doc({"doctype": "Anumati Guardian Link", "principal": self.child.name, "guardian": mother.name,
 		                       "guardian_type": "parent", "verification_method": "device_sms_otp"}).insert()
 		for p in (self.hindi, self.english, self.nophone):
 			self.consent_on_phone(p, self.device)
@@ -68,7 +68,7 @@ class TestBreachNotification(FrappeTestCase):
 		self.elsewhere = make_principal(phone="5550101009")
 		self.consent_on_phone(self.elsewhere, "another-phone")
 		self.incident = frappe.get_doc({
-			"doctype": "Breach Incident", "breach_type": "lost_device", "detected_on": frappe.utils.now_datetime(),
+			"doctype": "Anumati Breach Incident", "breach_type": "lost_device", "detected_on": frappe.utils.now_datetime(),
 			"programme": PROG, "field_device": self.device,
 			"what_happened_en": "a field phone was lost", "can_do_en": "ignore calls asking for OTP",
 			"what_happened_hi": "एक फ़ील्ड फ़ोन खो गया", "can_do_hi": "OTP माँगने वाले कॉल न सुनें",
@@ -104,14 +104,14 @@ class TestBreachNotification(FrappeTestCase):
 			self.assertNotIn(secret, dump)
 
 	def test_sending_is_off_without_an_approved_template(self):
-		frappe.db.set_value("Message Template", "breach_notice-sms-en", "approved", 0)
+		frappe.db.set_value("Anumati Message Template", "breach_notice-sms-en", "approved", 0)
 		try:
 			ready, reason = breach.readiness(self.incident, ["en"])
 			self.assertFalse(ready)
 			self.assertIn("template", reason)
 			self.assertRaises(frappe.ValidationError, api.send, self.incident.name, 3)
 		finally:
-			frappe.db.set_value("Message Template", "breach_notice-sms-en", "approved", 1)
+			frappe.db.set_value("Anumati Message Template", "breach_notice-sms-en", "approved", 1)
 
 	def test_send_needs_the_typed_count_and_happens_once(self):
 		self.assertRaises(frappe.ValidationError, api.send, self.incident.name, 2)
@@ -119,12 +119,12 @@ class TestBreachNotification(FrappeTestCase):
 			out = api.send(self.incident.name, 3)
 		self.assertEqual(out, {"queued": 3, "visit": 1})
 		self.assertEqual(post.call_count, 3)
-		doc = frappe.get_doc("Breach Incident", self.incident.name)
+		doc = frappe.get_doc("Anumati Breach Incident", self.incident.name)
 		self.assertEqual((doc.notify_sent, doc.notify_failed, doc.notifications_sent), (3, 0, 3))
 		self.assertTrue(doc.principals_notified_on)
 		self.assertEqual(doc.status, "Notifying")
 		self.assertEqual([(r.principal_ref, r.reason) for r in doc.visit_list], [(self.nophone.principal_ref, "no_phone")])
-		comms = frappe.get_all("Communication", {"reference_doctype": "Breach Incident", "reference_name": doc.name},
+		comms = frappe.get_all("Communication", {"reference_doctype": "Anumati Breach Incident", "reference_name": doc.name},
 		                       ["content", "phone_no", "anumati_delivery", "anumati_sender_hash"])
 		self.assertEqual(len(comms), 3)
 		self.assertTrue(all(c.anumati_delivery == "sms_sent" and not c.phone_no for c in comms))
@@ -135,7 +135,7 @@ class TestBreachNotification(FrappeTestCase):
 	def test_failed_sms_go_on_the_visit_list_and_retry_takes_them_off(self):
 		with fake_post(fail=True):
 			api.send(self.incident.name, 3)
-		doc = frappe.get_doc("Breach Incident", self.incident.name)
+		doc = frappe.get_doc("Anumati Breach Incident", self.incident.name)
 		self.assertEqual(doc.notify_failed, 3)
 		self.assertEqual(sorted(r.reason for r in doc.visit_list), ["no_phone", "sms_failed", "sms_failed", "sms_failed"])
 		with fake_post():
@@ -148,7 +148,7 @@ class TestBreachNotification(FrappeTestCase):
 	def test_results_count_delivery_reports(self):
 		with fake_post():
 			api.send(self.incident.name, 3)
-		comms = frappe.get_all("Communication", {"reference_doctype": "Breach Incident", "reference_name": self.incident.name},
+		comms = frappe.get_all("Communication", {"reference_doctype": "Anumati Breach Incident", "reference_name": self.incident.name},
 		                       pluck="name")
 		frappe.db.set_value("Communication", comms[0], "anumati_delivery", "sms_delivered")
 		frappe.db.set_value("Communication", comms[1], "anumati_delivery", "sms_failed")

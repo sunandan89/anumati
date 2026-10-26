@@ -9,6 +9,8 @@ Auth: `Authorization: token <api_key>:<api_secret>` of a Frappe user. There's no
 | check | read on Consent State | Field Worker, Developer, Operator, Programme Manager, DPO, Admin |
 | principal | create/write on Data Principal | Field Worker, Operator, DPO, Admin |
 
+Every Anumati DocType carries the `Anumati` prefix (`Anumati Consent Event`, `Anumati Data Principal`, …); this page uses the short names in prose. Use the full names in `/api/resource/…` paths, `frappe.client` calls and DocType filters.
+
 For a connector or host app, create a User with the right role, generate its API key on the User form, and register it as a **Source System** (its `check` calls then land in System Usage Log).
 
 ## consent.record (POST)
@@ -24,7 +26,7 @@ Returns the signed artefact `{consent_id, event_uuid, action, chain_seq, hash, s
 The server, not the caller, sets `verification_status`: whatever is sent, a new consent is `recorded`, or `evidence_only` when `verification_method` is `evidence_only` and at least one evidence item checks out (or the guardian link carries the order or ID). It becomes `confirmed` only through `verification.verify_otp` or a delivery report. Each `evidence` item must name a private file uploaded for this person (or their guardian link) and the `sha256` of its original bytes; anything else is refused. Decisions are ordered by `device_time`, capped at the time the server received them.
 
 ## Consent Event by standard insert (Frappe Mobile SDK, REST)
-A Consent Event can also be created as a plain record: `POST /api/resource/Consent Event`, `frappe.client.insert`, or the Frappe Mobile SDK's own sync. The same rules run whichever way it arrives, because they live in the record itself (`anumati.consent_rules`): purposes, who may consent, the notice, evidence, and the server-set fields. Send `principal` (the Data Principal's name), `programme`, `action` (grant, refuse, renew or withdraw), `purposes_granted` / `purposes_denied`, and either `event_uuid` or the SDK's `mobile_uuid` (it becomes the event's ID and receipt code). Whatever is sent for `verification_status`, `server_time`, the chain fields, `short_code`, `notice_version`, `witness_digest` or `captured_by` is replaced by the server. Evidence uploaded beforehand and not attached to anything counts when the same user uploaded it; it is then attached to the person and encrypted.
+A Consent Event can also be created as a plain record: `POST /api/resource/Anumati Consent Event`, `frappe.client.insert`, or the Frappe Mobile SDK's own sync. The same rules run whichever way it arrives, because they live in the record itself (`anumati.consent_rules`): purposes, who may consent, the notice, evidence, and the server-set fields. Send `principal` (the Data Principal's name), `programme`, `action` (grant, refuse, renew or withdraw), `purposes_granted` / `purposes_denied`, and either `event_uuid` or the SDK's `mobile_uuid` (it becomes the event's ID and receipt code). Whatever is sent for `verification_status`, `server_time`, the chain fields, `short_code`, `notice_version`, `witness_digest` or `captured_by` is replaced by the server. Evidence uploaded beforehand and not attached to anything counts when the same user uploaded it; it is then attached to the person and encrypted.
 
 ## consent.withdraw (POST)
 `principal_ref, programme, channel, event_uuid, purposes?, paper_trail_number?, leave_programme?` plus any capture fields. With no `purposes`, it withdraws every optional purpose currently granted (spec section 6). Idempotent on `event_uuid`. With `channel` `field_worker` or `slip`, it also files one **Closed** withdrawal Rights Request linked to the event, carrying the slip number, so the inbox lists every withdrawal. `leave_programme` (with no `purposes`) withdraws every purpose of the programme, essential ones and those already off included (so an older grant synced later cannot turn one back on), and marks the person's relationship ended once nothing is granted in any programme. A newer grant of an essential purpose clears it; an older one arriving late does not.
@@ -84,7 +86,7 @@ Field workers can also read notices as plain records (Notice Template with its p
 `since` (ISO datetime), `limit?` (at most 500) returns `{events: [...], until}`. It mirrors the webhook events (`consent.recorded`, `consent.withdrawn`, `rights.created`, `rights.closed`) for hosts that can't receive webhooks. Pass `until` back as the next `since`. It carries identifiers and purpose codes only.
 
 ## chain.verify (GET, DPO/Admin)
-`ledger` = Consent Event | Audit Entry. Walks the chain and reports the first broken link.
+`ledger` = Anumati Consent Event | Anumati Audit Entry (the older names Consent Event and Audit Entry are still accepted). Walks the chain and reports the first broken link.
 
 Out-of-order sync: a purpose's state only changes when an event is newer than the one that last set it (device time, then server time). Consent State can be rebuilt from the ledger at any time (`anumati.enforcement.rebuild`).
 
@@ -93,7 +95,7 @@ The machine-readable spec is at `https://<tenant>/assets/anumati/openapi.json`, 
 
 ## Webhooks (stock Frappe, no code)
 To push events to a host system: **Webhook → New**.
-- **Document type** `Consent Event`, **Doc event** `after_insert`, **Request URL** = your endpoint.
+- **Document type** `Anumati Consent Event`, **Doc event** `after_insert`, **Request URL** = your endpoint.
 - **Condition** `doc.action == "withdraw"` for `consent.withdrawn`, or leave it empty for every event.
 - **Webhook data:** pick fields such as `name`, `short_code`, `action`, `programme`, `purposes_granted`, `purposes_denied`, `server_time`. Never pick witness or evidence fields.
 - **Webhook secret:** Frappe signs each request (`X-Frappe-Webhook-Signature`, HMAC-SHA256). Failed deliveries show in **Webhook Request Log**.
