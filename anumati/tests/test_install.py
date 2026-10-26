@@ -31,6 +31,7 @@ class TestInstall(FrappeTestCase):
 		role = "Install Test Host Role"
 		if not frappe.db.exists("Role", role):
 			frappe.get_doc({"doctype": "Role", "role_name": role, "two_factor_auth": 1}).insert()
+		self.addCleanup(frappe.delete_doc, "Role", role, force=True, ignore_permissions=True)
 		settings = frappe.get_single("Anumati Settings")
 		settings.staff_two_factor = 1
 		settings.save()

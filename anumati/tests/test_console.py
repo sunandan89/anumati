@@ -146,7 +146,7 @@ class TestConsole(FrappeTestCase):
 		                      ("Anumati Field Worker", False)):
 			frappe.set_user(user_with_role(role))
 			try:
-				self.assertEqual(report.is_permitted(), allowed, role)
+				self.assertEqual(bool(report.is_permitted()), allowed, role)
 			finally:
 				frappe.set_user("Administrator")
 
