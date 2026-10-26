@@ -164,6 +164,8 @@ jobs:
           git -C "$GITHUB_WORKSPACE" branch -f upgrade-base "$(git -C "$GITHUB_WORKSPACE" merge-base HEAD origin/main)"
           git -C "$GITHUB_WORKSPACE" branch -f upgrade-head HEAD
           bench get-app anumati "$GITHUB_WORKSPACE"
+          # On pull_request runs the clone can sit on upgrade-head; detach so git may update both branches.
+          git -C apps/anumati checkout -q --detach
           git -C apps/anumati fetch -q "$GITHUB_WORKSPACE" upgrade-base:upgrade-base upgrade-head:upgrade-head
           git -C apps/anumati checkout -q upgrade-base
           bench setup requirements --dev
