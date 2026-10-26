@@ -5,7 +5,7 @@ import uuid
 from unittest.mock import MagicMock, patch
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import breach, pii
 from anumati.anumati.doctype.anumati_breach_incident import anumati_breach_incident as api
@@ -26,7 +26,7 @@ def fake_post(fail=False):
 	return patch("anumati.channels.msg91.requests.post", return_value=response)
 
 
-class TestBreachNotification(FrappeTestCase):
+class TestBreachNotification(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

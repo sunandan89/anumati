@@ -9,7 +9,7 @@ import os
 import pkgutil
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 import anumati
 
@@ -64,7 +64,7 @@ def whitelisted(guest_only=False):
 	return {f"{fn.__module__}.{fn.__qualname__}" for fn in source if fn.__module__.startswith("anumati.")}
 
 
-class TestRoleMatrix(FrappeTestCase):
+class TestRoleMatrix(IntegrationTestCase):
 	def test_every_doctype_is_in_the_matrix(self):
 		self.assertEqual(set(anumati_doctypes()), set(expected_matrix()))
 
@@ -93,7 +93,7 @@ class TestRoleMatrix(FrappeTestCase):
 				self.assertTrue(set(roles.get(role, [])) <= {"read"}, f"{role} on {doctype}")
 
 
-class TestGuestAccess(FrappeTestCase):
+class TestGuestAccess(IntegrationTestCase):
 	def test_guest_cannot_read_any_anumati_doctype(self):
 		for doctype in anumati_doctypes():
 			for ptype in ("read", "write", "create", "delete"):
@@ -124,7 +124,7 @@ class TestGuestAccess(FrappeTestCase):
 			frappe.flags.in_test = in_test
 
 
-class TestFormConnections(FrappeTestCase):
+class TestFormConnections(IntegrationTestCase):
 	def test_forms_show_related_records(self):
 		expect = {
 			"Anumati Programme": {"Anumati Purpose", "Anumati Notice Template", "Anumati Consent Event"},

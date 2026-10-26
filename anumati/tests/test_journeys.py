@@ -6,7 +6,7 @@ import uuid
 
 import frappe
 from frappe.model.workflow import apply_workflow
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, getdate, today
 
 from anumati import enforcement, profile
@@ -39,7 +39,7 @@ def publish_notice(programme, purposes, full_text):
 	return apply_workflow(doc, "Publish")
 
 
-class TestJourneys(FrappeTestCase):
+class TestJourneys(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

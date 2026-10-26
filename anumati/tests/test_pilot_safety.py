@@ -6,7 +6,7 @@ import uuid
 from unittest.mock import patch
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import add_to_date, now_datetime
 
 from anumati.api.v1 import consent, device, grievance, notifications, rights
@@ -34,7 +34,7 @@ def field_worker(tag):
 	return f"safety.{tag}@example.com"
 
 
-class TestPilotSafety(FrappeTestCase):
+class TestPilotSafety(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

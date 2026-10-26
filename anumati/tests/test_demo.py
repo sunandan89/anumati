@@ -2,13 +2,13 @@
 field worker, and Mobile Control switched on when installed. All data is fictional."""
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import demo
 from anumati.api.v1 import notice
 
 
-class TestFieldAppSetup(FrappeTestCase):
+class TestFieldAppSetup(IntegrationTestCase):
 	def test_setup_is_idempotent_and_serves_a_reviewed_hindi_notice(self):
 		first = demo.setup_field_app()
 		second = demo.setup_field_app()

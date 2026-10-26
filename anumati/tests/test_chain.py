@@ -1,7 +1,7 @@
 """CI gate: hash-chain tamper detection, and key rotation keeps old signatures valid."""
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati.ledger import chain, keystore
 from anumati.tests.utils import make_event, make_programme
@@ -9,7 +9,7 @@ from anumati.tests.utils import make_event, make_programme
 SAVEPOINT = "anumati_chain_test"
 
 
-class TestChain(FrappeTestCase):
+class TestChain(IntegrationTestCase):
 	def setUp(self):
 		self.events = [make_event() for _ in range(3)]
 		frappe.db.savepoint(SAVEPOINT)

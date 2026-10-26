@@ -7,7 +7,7 @@ import uuid
 
 import frappe
 from frappe.model.workflow import apply_workflow
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati import enforcement
 from anumati.api.v1 import consent, notice, principal
@@ -22,7 +22,7 @@ def uid():
 	return str(uuid.uuid4())
 
 
-class TestConsentAPI(FrappeTestCase):
+class TestConsentAPI(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
@@ -160,7 +160,7 @@ class TestConsentAPI(FrappeTestCase):
 			frappe.set_user("Administrator")
 
 
-class TestPrincipalAndNoticeAPI(FrappeTestCase):
+class TestPrincipalAndNoticeAPI(IntegrationTestCase):
 	def test_upsert_creates_then_updates_without_echoing_pii(self):
 		ref = f"UPS-{uuid.uuid4().hex[:6]}"
 		out = principal.upsert(ref, full_name="Meena K. (fictional)", phone="9000011111")

@@ -2,7 +2,7 @@
 programmes, and the translations of those notices. Sample data is fictional."""
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from anumati.tests.test_journeys import publish_notice
 from anumati.tests.utils import ensure_language, make_programme, make_purpose
@@ -28,7 +28,7 @@ def translate(notice):
 	return name
 
 
-class TestNoticeAccess(FrappeTestCase):
+class TestNoticeAccess(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

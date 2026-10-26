@@ -4,7 +4,7 @@ Sample data is fictional."""
 import uuid
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, getdate, now_datetime
 
 from anumati import inbox, pii
@@ -14,7 +14,7 @@ from anumati.tests.utils import make_principal, make_programme, make_purpose
 PROG = "INB"
 
 
-class TestInbox(FrappeTestCase):
+class TestInbox(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

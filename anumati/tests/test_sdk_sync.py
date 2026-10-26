@@ -8,7 +8,7 @@ import uuid
 
 import frappe
 from frappe.client import insert as client_insert
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import get_datetime, now_datetime
 
 from anumati import evidence
@@ -29,7 +29,7 @@ def worker(email):
 	return email
 
 
-class TestSdkSync(FrappeTestCase):
+class TestSdkSync(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()

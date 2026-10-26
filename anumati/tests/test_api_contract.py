@@ -7,7 +7,7 @@ import pkgutil
 import uuid
 
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 from frappe.utils import add_to_date, now_datetime
 
 import anumati.api.v1 as v1
@@ -21,7 +21,7 @@ def published_paths():
 		return set(json.load(fh)["paths"])
 
 
-class TestAPIContract(FrappeTestCase):
+class TestAPIContract(IntegrationTestCase):
 	def test_every_endpoint_is_documented(self):
 		for mod in pkgutil.iter_modules(v1.__path__):
 			importlib.import_module(f"anumati.api.v1.{mod.name}")
