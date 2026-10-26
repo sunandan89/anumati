@@ -66,7 +66,9 @@ def expect(ok, label):
 for site in (site_a, site_b):
 	for dt in inv["doctypes"]:
 		q = quote(dt)
-		for method, path in (("GET", f"/api/resource/{q}"), ("POST", f"/api/resource/{q}"),
+		# A single record (Anumati Settings) has no list; it is read at /api/resource/<doctype>/<doctype>.
+		read = f"/api/resource/{q}/{q}" if dt in inv.get("singles", []) else f"/api/resource/{q}"
+		for method, path in (("GET", read), ("POST", f"/api/resource/{q}"),
 		                     ("GET", f"/api/v2/document/{q}")):
 			r = call(method, site, path)
 			expect(r.status_code in DENIED, f"{site} {method} {path} -> {r.status_code}")
