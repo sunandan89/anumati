@@ -78,8 +78,9 @@ def locked(title):
 
 
 LEAVE = '<div class="out" style="color:#9E2F24;border-color:#9E2F24">⎋ Leave the programme</div>'
-OTHER = '<div class="muted">Other requests: See or correct my data · Delete my data · Complaint</div>'
-HOME = bar("Namaste, Ravi", "Village Health Camps") + '<div class="body">' + "".join([
+OTHER = ('<div class="muted" style="border-top:1px solid #DDCDB3;padding-top:8px">Other requests</div>'
+         + "".join(f'<div class="opt"><span class="dot"></span>{t}</div>' for t in ("See or correct my data", "Delete my data", "Complaint")))
+HOME = g.home_head() + '<div class="body">' + "".join([
     tile("+", "Take new consent", "Self, assisted or guardian"),
     tile("×", "Stop a use or leave", "In person, slip or letter", hl=True),
     tile("＋", "Add a use or rejoin", "A new use, a change of mind, or rejoining"),
@@ -123,16 +124,16 @@ STRIPS.append(strip(
         step("<b>1.</b> Home → <b>Stop a use or leave</b>.", phone(HOME)),
         step("<b>2.</b> Type the phone number. Everyone on that number appears, with <b>whose number</b> matched. Tap Radha.",
              phone(SCR + '<div class="body"><div class="field"><span>Receipt code, name, ID or phone</span><b>55500 01234</b></div>'
-                   + person("Radha S. (sample)", "VHC-4XK2M9 · AN-7K2Q9C", "Their number")
-                   + '<div class="card"><b>Meena S. (sample, child)</b><div class="muted">VHC-8PQ3R1 · AN-M4D2X7</div><div class="muted" style="color:#3E6B3A">Guardian\'s number (Mother)</div></div>'
-                   + '<div class="card"><b>Raju S. (sample, child)</b><div class="muted">VHC-2LK9T5 · AN-R8Z6P3</div><div class="muted" style="color:#3E6B3A">Guardian\'s number (Mother)</div></div></div>')),
+                   + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q9C", "Their number")
+                   + '<div class="card"><b>Meena S. (sample, child)</b><div class="muted">AC-5PQ3RZ2A · AN-M4D2X7</div><div class="muted" style="color:#3E6B3A">Guardian\'s number (Mother)</div></div>'
+                   + '<div class="card"><b>Raju S. (sample, child)</b><div class="muted">AC-2LK7T5WE · AN-R8Z6P3</div><div class="muted" style="color:#3E6B3A">Guardian\'s number (Mother)</div></div></div>')),
         step("<b>3.</b> Her uses that are on are switches. Switch off <b>Follow-up calls</b>. The essential use is locked. The slip box is at the bottom. The button says exactly what will happen.",
-             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "VHC-4XK2M9 · AN-7K2Q9C", "Their number")
+             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q9C", "Their number")
                    + '<div class="row" style="font-weight:400"><span class="muted">Switch off what they no longer agree to</span><span class="link">Stop all</span></div>'
                    + sw("Follow-up calls", "Will stop", False, red=True) + sw("Photos and stories", "On", True)
                    + locked("Health screening") + LEAVE + OTHER + SLIP + "</div>" + foot("Stop 1 use for Radha S. (sample)"))),
         step("<b>4.</b> <b>Withdrawal noted</b>: what stopped and a <b>withdrawal code</b> for her slip. <b>Send by SMS</b> with the code, in her language (to the parent, for a child). On sync: signed, consent check says no, closed request in the inbox.",
-             phone(SCR + '<div class="body dim">' + person("Radha S. (sample)", "VHC-4XK2M9") + "</div>"
+             phone(SCR + '<div class="body dim">' + person("Radha S. (sample)", "AC-4XK2M7PQ") + "</div>"
                    + dialog("Withdrawal noted", '<div style="font-size:14px">Stopped: Follow-up calls</div>' + code_box("AN-W5K7RD")
                             + '<div class="muted">It takes effect on this phone now and reaches the office on sync.</div>',
                             link("Send by SMS") + cta("OK")))),
@@ -144,23 +145,23 @@ STRIPS.append(strip(
     "Sunita moves away and asks to stop everything, including health screening.",
     [
         step("<b>1.</b> Find Sunita (name, code or phone). Tap <b>Leave the programme</b>.",
-             phone(SCR + '<div class="body">' + person("Sunita D. (sample)", "VHC-6TR2W8 · AN-9QH4LM")
+             phone(SCR + '<div class="body">' + person("Sunita D. (sample)", "AC-6TR2W3HJ · AN-9QH4LM")
                    + sw("Follow-up calls", "On", True) + sw("Photos and stories", "On", True)
                    + locked("Health screening") + '<div class="out hl" style="color:#9E2F24;border-color:#9E2F24">⎋ Leave the programme</div>' + OTHER + "</div>"
                    + foot("Save", off=True))),
         step("<b>2.</b> A warning: every use stops, essential too, and the programme stops serving her. Ravi checks she still wants it.",
-             phone(SCR + '<div class="body dim">' + person("Sunita D. (sample)", "VHC-6TR2W8") + "</div>"
+             phone(SCR + '<div class="body dim">' + person("Sunita D. (sample)", "AC-6TR2W3HJ") + "</div>"
                    + dialog("Leave the programme?", '<div style="font-size:14px">This stops every use of their data in this programme, essential ones too. The programme stops serving them. Do they still want this?</div>',
                             link("Cancel") + cta("Yes, leave")))),
         step("<b>3.</b> Every use now shows <b>Will stop</b>, switches greyed, with a warning. <b>Don't leave</b> undoes it. Save.",
-             phone(SCR + '<div class="body">' + person("Sunita D. (sample)", "VHC-6TR2W8 · AN-9QH4LM")
+             phone(SCR + '<div class="body">' + person("Sunita D. (sample)", "AC-6TR2W3HJ · AN-9QH4LM")
                    + sw_off("Follow-up calls") + sw_off("Photos and stories")
                    + '<div class="p req"><div><div class="t">🔒 Health screening</div><div class="d" style="color:#9E2F24">Will stop</div></div></div>'
                    + '<div class="out" style="color:#9E2F24;border:2px solid #9E2F24">↶ Don\'t leave</div>'
                    + '<div class="note bad">Every use above will stop, and the programme stops serving them.</div>' + "</div>"
                    + '<div class="foot"><div class="cta" style="background:#9E2F24">Leave the programme</div></div>')),
         step("<b>4.</b> Noted, with a withdrawal code for her slip. On sync: every use withdrawn (even ones already off, so an older “yes” from another phone can't undo it); her record shows <b>Relationship ended</b> (retention clock starts); inbox has a closed request “Left the programme”.",
-             phone(SCR + '<div class="body dim">' + person("Sunita D. (sample)", "VHC-6TR2W8") + "</div>"
+             phone(SCR + '<div class="body dim">' + person("Sunita D. (sample)", "AC-6TR2W3HJ") + "</div>"
                    + dialog("Withdrawal noted", '<div style="font-size:14px">They have left the programme.</div>' + code_box("AN-L2X9FT")
                             + '<div class="muted">It takes effect on this phone now and reaches the office on sync.</div>',
                             link("Send by SMS") + cta("OK")))),
@@ -186,7 +187,7 @@ STRIPS.append(strip(
         step("<b>3.</b> Office: the request is already <b>matched by the code</b>, due in 30 days. Staff open it → <b>Record withdrawal</b>.",
              '<div class="desk"><div class="top">Requests › RR-0117</div><div class="pad">'
              '<div class="dbox"><b>Withdrawal by paper slip</b><span class="lbl">Received today · Due in 30 days</span>'
-             '<div><span class="pill blue">Open</span></div><span class="lbl">Beneficiary</span><span>VHC-3MN8Q2 (matched from AN-B7W3KD)</span>'
+             '<div><span class="pill blue">Open</span></div><span class="lbl">Beneficiary</span><span>AC-3MN6Q2LD (matched from AN-B7W3KD)</span>'
              '<span class="lbl">Paper slip number</span><span>SLIP-0042</span></div>'
              '<div class="btn">Record withdrawal</div></div></div>'),
         step("<b>4.</b> A checklist of his optional uses that are on, all ticked. The essential use stops only if he leaves: tick <b>Leave the programme</b>. Withdraw → signed, request closed.",
@@ -205,19 +206,19 @@ STRIPS.append(strip(
     "Radha asks for her data to be deleted. The worker logs it; the office acts on it.",
     [
         step("<b>1.</b> Find Radha → under <b>Other requests</b> pick <b>Delete my data</b>. It explains what happens.",
-             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "VHC-4XK2M9 · AN-7K2Q9C")
+             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q9C")
                    + sw("Follow-up calls", "On", True) + locked("Health screening")
                    + '<div class="muted">Other requests</div><div class="opt"><span class="dot"></span>See or correct my data</div>'
                    '<div class="opt on"><span class="dot"></span><div>Delete my data<div class="d" style="font-weight:400">The office keeps only what the law needs and erases the rest. This may stop the programme\'s services to them.</div></div></div>'
                    '<div class="opt"><span class="dot"></span>Complaint</div></div>' + foot("Save request"))),
         step("<b>2.</b> Office inbox: <b>Erasure request</b>, matched to Radha, due in 30 days; staff are alerted, and reminded 3 days before.",
              '<div class="desk"><div class="top">Requests</div><div class="pad">'
-             '<div class="dbox"><b>Erasure request by field worker</b><span class="lbl">VHC-4XK2M9 · due in 30 days</span><div><span class="pill blue">Open</span></div></div>'
-             '<div class="dbox"><b>Data access request by field worker</b><span class="lbl">VHC-6TR2W8 · due in 12 days</span><div><span class="pill blue">Open</span></div></div>'
+             '<div class="dbox"><b>Erasure request by field worker</b><span class="lbl">AC-4XK2M7PQ · due in 30 days</span><div><span class="pill blue">Open</span></div></div>'
+             '<div class="dbox"><b>Data access request by field worker</b><span class="lbl">AC-6TR2W3HJ · due in 12 days</span><div><span class="pill blue">Open</span></div></div>'
              '<div class="dbox"><b>Grievance by SMS</b><span class="lbl">Not matched · overdue</span><div><span class="pill red">Overdue</span></div></div></div></div>'),
         step("<b>3.</b> Staff act (erase what the law allows, tell partners), write the resolution, close. Automating erasure is Phase 2.",
              '<div class="desk"><div class="top">Requests › RR-0121</div><div class="pad">'
-             '<div class="dbox"><b>Erasure request by field worker</b><span class="lbl">Beneficiary</span><span>VHC-4XK2M9</span>'
+             '<div class="dbox"><b>Erasure request by field worker</b><span class="lbl">Beneficiary</span><span>AC-4XK2M7PQ</span>'
              '<span class="lbl">Resolution</span><span>Erased profile and photos; consent records kept as the law requires. Told partner clinic.</span>'
              '<div><span class="pill">Closed</span></div></div></div></div>'),
     ]))
@@ -245,8 +246,8 @@ def ask(kind, title, desc):
 
 
 def agreed(*names):
-    rows = "".join(f'<div class="row" style="font-weight:400">{n}<span class="st ok">Agreed</span></div>' for n in names)
-    return f'<div class="muted">Already agreed, not asked again</div>{rows}'
+    rows = "".join(f'<div class="row" style="font-weight:400;font-size:13px">{n}<span class="st ok">granted</span></div>' for n in names)
+    return f'<div class="muted">Already agreed — not asked again</div>{rows}'
 
 
 STRIPS.append(strip(
@@ -254,27 +255,27 @@ STRIPS.append(strip(
     "Sunita, Village Health Camps. Home → Add a use or rejoin → pick her (or Find → tap her). Only what's new or changed is asked.",
     [
         step("<b>From Find:</b> tapping a person offers both actions. (Home → <b>Add a use or rejoin</b> also works.)",
-             phone(bar("Find beneficiary") + '<div class="body dim"><div class="field"><span>Search by name, ID, code or phone</span><b>sunita</b></div>'
-                   + '<div class="card"><b>Sunita D. (sample)</b><div class="muted">VHC-6TR2W8 · AN-9QH4LM</div>'
-                   + '<div class="row" style="font-weight:400">Follow-up calls<span class="st bad">Withdrawn</span></div></div></div>' + SHEET)),
+             phone(bar("Find beneficiary") + '<div class="body dim"><div class="field"><span>⌕ Search by name, ID, code or phone</span><b>sunita</b></div>'
+                   + '<div class="card"><b>Sunita D. (sample)</b><div class="muted">AC-6TR2W3HJ · AN-9QH4LM</div>'
+                   + '<div class="row" style="font-weight:400">Follow-up calls<span class="st bad">withdrawn</span></div></div></div>' + SHEET)),
         step("<b>Case 1, a new use is added.</b> The NGO added “Health tips by SMS” (notice v2). Photos, which she refused at first, is asked again. With 2+ uses: <b>Yes to all / No to all</b> once each part is read.",
-             phone(AP("Later visit · Sunita D. (sample)") + '<div class="body">' + agreed("Health screening", "Follow-up calls") + ALL
+             phone(AP("Later visit · Sunita D. (sample)") + '<div class="body">' + '<div class="card"><b>Sunita D. (sample)</b><div class="muted">AC-6TR2W3HJ · AN-9QH4LM · English</div></div>' + agreed("Health screening", "Follow-up calls") + ALL
                    + ask("New use", "Health tips by SMS", "A weekly health tip by SMS.")
                    + ask("Ask again", "Photos and stories", "Photos of the camp for our reports, never with your name.")
                    + '<div class="muted">How this is confirmed: Code from the server, after Save.</div></div>' + foot("Save"))),
         step("<b>Case 2, she changed her mind.</b> She stopped follow-up calls in May and wants them back.",
-             phone(AP("Later visit · Sunita D. (sample)") + '<div class="body">' + agreed("Health screening", "Photos and stories", "Health tips by SMS")
+             phone(AP("Later visit · Sunita D. (sample)") + '<div class="body">' + '<div class="card"><b>Sunita D. (sample)</b><div class="muted">AC-6TR2W3HJ · AN-9QH4LM · English</div></div>' + agreed("Health screening", "Photos and stories", "Health tips by SMS")
                    + ask("Ask again", "Follow-up calls", "A health worker calls to check on you after the camp.")
                    + '<div class="muted">How this is confirmed: Code from the server, after Save.</div></div>' + foot("Save"))),
         step("<b>Case 3, she left and wants to rejoin.</b> Health screening is a rejoin. The other uses wait until she says Yes to rejoining; if she says No, there is nothing to save.",
-             phone(AP("Later visit · Sunita D. (sample)") + '<div class="body"><div class="muted">Already agreed, not asked again: none</div>'
+             phone(AP("Later visit · Sunita D. (sample)") + '<div class="body">' + '<div class="card"><b>Sunita D. (sample)</b><div class="muted">AC-6TR2W3HJ · AN-9QH4LM · English</div></div>' + '<div class="muted">Already agreed — not asked again</div>'
                    + ask("Rejoin the programme", "Health screening", "Blood pressure, sugar and anaemia checks.")
                    + waiting("Ask again", "Follow-up calls") + waiting("Ask again", "Photos and stories")
                    + "</div>" + foot("Save", off=True))),
         step("<b>After Save</b> (any case): a new receipt code for the slip; the server texts a code to confirm. On sync the choices apply; in case 3 <b>Relationship ended</b> is cleared.",
              phone(AP("Later visit · Sunita D. (sample)") + '<div class="body dim">' + agreed("Health screening") + "</div>"
                    + dialog("Saved on this phone", '<div class="muted">Consent code — write it on their slip</div><div class="code">AN-P3V8NQ</div>'
-                            '<div class="out">Send code</div>', cta("OK")))),
+                            '<div class="card" style="border-color:#3E6B3A"><b>Confirm with a code to their phone</b><div class="muted">The code is sent by the server, not from this phone. They read it out to you.</div><div class="fill">✉ Send code</div></div>', link("OK")))),
     ]))
 
 
