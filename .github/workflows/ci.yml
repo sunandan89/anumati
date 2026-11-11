@@ -16,7 +16,7 @@ permissions:
 jobs:
   checks:
     name: Static checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # ubuntu-latest (26.04) ships a MariaDB 11.8 client that demands TLS from the 10.6 service
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,7 +53,7 @@ jobs:
 
   server:
     name: Frappe tests and security gates
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # ubuntu-latest (26.04) ships a MariaDB 11.8 client that demands TLS from the 10.6 service
     needs: checks
     timeout-minutes: 45
     services:
@@ -140,7 +140,7 @@ jobs:
 
   erpnext:
     name: Installs beside ERPNext v16
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # ubuntu-latest (26.04) ships a MariaDB 11.8 client that demands TLS from the 10.6 service
     needs: checks
     timeout-minutes: 60
     services:
@@ -205,7 +205,7 @@ jobs:
 
   upgrade:
     name: Upgrade from main (migration patches keep data and chains)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # ubuntu-latest (26.04) ships a MariaDB 11.8 client that demands TLS from the 10.6 service
     needs: checks
     if: github.ref != 'refs/heads/main'
     timeout-minutes: 45

@@ -566,7 +566,7 @@ Green: built. Yellow: partly built. Grey: later phases.
 | Auditor share link | **Record only** | The share can be recorded; the portal it opens is **Phase 3** |
 | Settings › Organisation, Team & roles | **Built** | Anumati Settings; Frappe users and roles |
 | Settings › Branding | **Partly** | Frappe's own website and print settings |
-| Settings › Sign-in & sharing (SSO, 2FA, funder sharing) | **Partly** | Frappe supports 2FA and Google/Microsoft sign-in but they are not set up; funder sharing is **Record only** |
+| Settings › Sign-in & sharing (SSO, 2FA, funder sharing) | **Partly** | 2FA (built): **Two-factor sign-in for Anumati staff** in Anumati Settings, off until an admin ticks it; asks Admin, DPO, Operator and Programme Manager, not field workers. Google/Microsoft sign-in is supported by Frappe but not set up; funder sharing is **Record only** |
 | Settings › Plan & billing | **Phase 3** | Belongs to the platform console |
 
 ### Analytics
