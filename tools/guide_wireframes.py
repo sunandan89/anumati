@@ -169,7 +169,7 @@ SCREENS = {
 <div class="muted">No witness: they read the notice themselves.</div>{ATTEST}</div>""" + foot("Save"),
     "a4-receipt-code": bar("Saved on this phone", "DEMO", back=False) + """<div class="body">
 <div class="big"><div class="tick">✓</div><div class="t" style="font-size:20px">Saved on this phone</div><div class="muted">Signed and chained when this phone syncs</div></div>
-<div class="card" style="border:1.5px solid #D9A285"><div class="muted" style="text-align:center">Consent code — write it on their slip</div><div class="code">AN-7K2Q9C</div></div>
+<div class="card" style="border:1.5px solid #D9A285"><div class="muted" style="text-align:center">Consent code — write it on their slip</div><div class="code">AN-7K2Q4C</div></div>
 <div class="card"><div class="row" style="font-weight:400"><span class="d">Sunita Devi (sample)</span><span>English</span></div><div class="row" style="font-weight:400"><span class="d">Granted</span><span>Health screening, Follow-up calls</span></div><div class="row" style="font-weight:400"><span class="d">Refused</span><span>Photos and stories, Anonymised research</span></div><div class="row" style="font-weight:400"><span class="d">Verified by</span><span>Code from the server (below)</span></div></div>
 <div class="grp done"><div class="t">Confirm with a code to their phone</div><div class="muted">The code is sent by the server, not from this phone. They read it out to you.</div>
 <div class="muted">Code sent to 9000012XXX. Ask them to read it out.</div><div class="otp">4 8 1 _ _ _</div><div class="link">Send a new code</div></div>
@@ -259,8 +259,8 @@ SCREENS = {
 <div class="h">Occupation (optional)</div><div class="chips"><span class="chip">Farming or farm labour</span><span class="chip on">Daily wage work</span><span class="chip">Homemaker</span><span class="chip">Self-employed</span><span class="chip">Other</span></div>
 <div class="note">These are listed in the notice under “What we collect”. Reports show only totals, never one person's answers.</div></div>""" + foot("Continue"),
     "f1-withdraw": bar("Stop a use or leave", "Withdrawal or request") + """<div class="body">
-<div class="field"><span>⌕ Receipt code, name, ID or phone</span><b>AN-7K2Q9C</b></div>
-<div class="card" style="border-color:#B4532A"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q9C</div></div>
+<div class="field"><span>⌕ Receipt code, name, ID or phone</span><b>AN-7K2Q4C</b></div>
+<div class="card" style="border-color:#B4532A"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q4C</div></div>
 <div class="row" style="font-weight:400"><span class="muted">Switch off what they no longer agree to</span><span class="link">Stop all</span></div>
 <div class="p"><div><div class="t">Follow-up calls</div><div class="d" style="color:#9E2F24">Will stop</div></div><span class="sw"></span></div>
 <div class="p"><div><div class="t">Photos and stories</div><div class="d">On</div></div><span class="sw on"></span></div>
@@ -271,7 +271,7 @@ SCREENS = {
 <div class="opt"><span class="dot"></span>Complaint</div>
 <div class="check"><span class="box on"></span><div>They gave a paper slip or letter</div></div></div>""" + foot("Stop 1 use for Sunita Devi (sample)"),
     "f2-leave": bar("Stop a use or leave", "Withdrawal or request") + """<div class="body" style="opacity:.35">
-<div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q9C</div></div>
+<div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q4C</div></div>
 <div class="p"><div><div class="t">Follow-up calls</div></div><span class="sw on"></span></div></div>
 <div style="position:absolute;left:24px;right:24px;top:230px;background:#FFFDF8;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 8px 30px rgba(0,0,0,.25)">
 <div style="font-size:19px;font-weight:600">Leave the programme?</div>
@@ -335,7 +335,7 @@ NEW_SCREENS = {
 <div class="note">Choices unlock when the whole notice has been heard or read</div></div>""" + foot("Continue", off=True),
     "k1-find": bar("Find beneficiary", chip="Synced") + """<div class="body">
 <div class="field"><span>⌕ Search by name, ID, code or phone</span><b>90000 12345</b></div>
-<div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q9C · English</div><div class="muted">Their number</div>""" + status("Health screening", "granted") + status("Follow-up calls", "withdrawn") + status("Photos and stories", "refused") + status("Anonymised research", "not asked") + """</div>
+<div class="card"><b>Sunita Devi (sample)</b><div class="muted">AC-6TR2W3HJ · AN-7K2Q4C · English</div><div class="muted">Their number</div>""" + status("Health screening", "granted") + status("Follow-up calls", "withdrawn") + status("Photos and stories", "refused") + status("Anonymised research", "not asked") + """</div>
 <div class="card"><b>Pooja (sample)</b><div class="muted">AC-5PQ3RZ2A · AN-M4D2XC · English</div><div class="muted">Guardian's number (Mother)</div>""" + status("Health screening", "granted") + status("Follow-up calls", "granted") + status("Photos and stories", "not asked") + status("Anonymised research", "not asked") + """</div></div>""",
     "k2-sync-issues": home_head(2) + """<div class="body">
 <div class="card" style="background:#F4D6CF;border-color:#9E2F24;flex-direction:row;gap:10px;align-items:center"><span style="color:#9E2F24;font-size:18px">ⓘ</span>1 record could not be saved on the server. Open to see why.</div>

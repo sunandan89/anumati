@@ -70,7 +70,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | Guardian journeys | Parent for a child; guardian with an appointment order for an adult who can't decide alone |
 | "No order yet" stop | Nothing is saved; the coordinator is told, without the person's details |
 | Extra questions | "About the person" screen, only when the programme switches questions on |
-| Receipt code | A code like `AN-7K2Q9C` to write on the slip; optional SMS receipt from the worker's phone |
+| Receipt code | A code like `AN-7K2Q4C` to write on the slip; optional SMS receipt from the worker's phone |
 | Server-sent code | After Save, online: the server texts a code to the person's phone; the worker never sees it |
 | **Stop a use or leave** | In person, or with a paper slip or letter: switch off any of the uses that are on (or Stop all / Keep all), **leave the programme**, or log a request (see or correct data, delete data, complaint) |
 | **Add a use or rejoin** | A later visit: a new use, a use they withdrew or refused (**Ask again**), or rejoining after leaving; uses already agreed are not asked again |

@@ -124,11 +124,11 @@ STRIPS.append(strip(
         step("<b>1.</b> Home → <b>Stop a use or leave</b>.", phone(HOME)),
         step("<b>2.</b> Type the phone number. Everyone on that number appears, with <b>whose number</b> matched. Tap Radha.",
              phone(SCR + '<div class="body"><div class="field"><span>Receipt code, name, ID or phone</span><b>55500 01234</b></div>'
-                   + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q9C", "Their number")
+                   + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q4C", "Their number")
                    + '<div class="card"><b>Meena S. (sample, child)</b><div class="muted">AC-5PQ3RZ2A · AN-M4D2X7</div><div class="muted" style="color:#3E6B3A">Guardian\'s number (Mother)</div></div>'
                    + '<div class="card"><b>Raju S. (sample, child)</b><div class="muted">AC-2LK7T5WE · AN-R8Z6P3</div><div class="muted" style="color:#3E6B3A">Guardian\'s number (Mother)</div></div></div>')),
         step("<b>3.</b> Her uses that are on are switches. Switch off <b>Follow-up calls</b>. The essential use is locked. The slip box is at the bottom. The button says exactly what will happen.",
-             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q9C", "Their number")
+             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q4C", "Their number")
                    + '<div class="row" style="font-weight:400"><span class="muted">Switch off what they no longer agree to</span><span class="link">Stop all</span></div>'
                    + sw("Follow-up calls", "Will stop", False, red=True) + sw("Photos and stories", "On", True)
                    + locked("Health screening") + LEAVE + OTHER + SLIP + "</div>" + foot("Stop 1 use for Radha S. (sample)"))),
@@ -206,7 +206,7 @@ STRIPS.append(strip(
     "Radha asks for her data to be deleted. The worker logs it; the office acts on it.",
     [
         step("<b>1.</b> Find Radha → under <b>Other requests</b> pick <b>Delete my data</b>. It explains what happens.",
-             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q9C")
+             phone(SCR + '<div class="body">' + person("Radha S. (sample)", "AC-4XK2M7PQ · AN-7K2Q4C")
                    + sw("Follow-up calls", "On", True) + locked("Health screening")
                    + '<div class="muted">Other requests</div><div class="opt"><span class="dot"></span>See or correct my data</div>'
                    '<div class="opt on"><span class="dot"></span><div>Delete my data<div class="d" style="font-weight:400">The office keeps only what the law needs and erases the rest. This may stop the programme\'s services to them.</div></div></div>'
