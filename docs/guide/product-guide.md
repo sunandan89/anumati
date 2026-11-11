@@ -34,6 +34,7 @@ flowchart LR
   H["Connected system<br/>MIS / CRM"] -- "check before using data" --> S
   S -- "SMS: codes, receipts" --> P["Person's or guardian's phone"]
   P -- "STOP / missed call" --> S
+  P -- "self-service page<br/>/my-consent" --> S
 ```
 
 Every consent is signed and chained, so any later change shows up. Names, phone numbers and evidence (voice, photos) are stored encrypted, and phone numbers are looked up by a salted hash, never in plain text.
@@ -43,11 +44,11 @@ Every consent is signed and chained, so any later change shows up. Names, phone 
 | Persona | Where | Main jobs |
 | --- | --- | --- |
 | **Field worker** | App | Take consent, log a withdrawal or request, add a use later, find a person, sync |
-| **Beneficiary** (the person) | In person, SMS | Hear the notice, choose each use, read back a code, withdraw any time |
-| **Parent or guardian** | In person, SMS | Consent for a child under 18, or for an adult who can't decide alone |
+| **Beneficiary** (the person) | In person, SMS, self-service page | Hear the notice, choose each use, read back a code, withdraw any time, ask for their data, make a grievance |
+| **Parent or guardian** | In person, SMS, self-service page | Consent for a child under 18, or for an adult who can't decide alone; change the child's choices |
 | **Programme manager** | Web console | Set up programmes, choose extra questions, watch the dashboards, get coordinator alerts |
-| **DPO** (Data Protection Officer) | Web console | Publish notices, approve translations and audio, work the requests inbox, verify the chain |
-| **Operator** | Web console | Work the requests inbox, match requests to people |
+| **DPO** (Data Protection Officer) | Web console | Publish notices, approve translations and audio, work the requests inbox, take over grievances (day 15, "not happy", staff behaviour), tell people affected by a breach, verify the chain |
+| **Operator** | Web console | Work the requests inbox and grievances, match requests to people, reply to the person |
 | **Admin** | Web console | Settings, users and roles, SMS account, field phones |
 | **Connected system** | API | Ask "may I use this person's data for this purpose?" before using it |
 
@@ -88,11 +89,12 @@ Each role sees only its own menus. A field worker can't open the web console at 
 
 | Area | Phase 1 features |
 | --- | --- |
-| **Today** dashboard | Consent records in the last 30 days, confirmed uses, evidence-only uses, records waiting to sync on phones, withdrawals, open requests, "Needs attention" list (overdue requests, chain check) |
+| **Today** dashboard | Consent records in the last 30 days, confirmed uses, evidence-only uses, records waiting to sync on phones, withdrawals, open requests, "Needs attention" list (counts only: overdue requests, requests to match, grievances past their reply date or with the DPO, open breaches, consents waiting for confirmation, phones not synced for 2 days, translations waiting for review, chain check) |
 | **Beneficiaries** | Search by whole-word name, full phone number, receipt code or ID (names stored encrypted; the list shows names and masked phones, and every view is logged); consent history per person; guardians; "Turned 18: renew consent" list |
 | **Programmes** | Purposes (with "allowed for children" and "needs a phone"), verification methods, **How SMS codes are sent**, extra questions, field phones. (The capture-mode and withdrawal-channel lists on the form are not used yet) |
 | **Notices and compliance** | Notice versions with a publishing workflow, Rule 3 checklist, translations with reviewer sign-off, audio approval, records of processing (ROPA), breach log with the 72-hour steps and **Tell affected people** (SMS breach notice in each person's language, field visit list for the rest), audit log |
 | **Grievances** | Complaints in their own list (GR-), apart from rights requests: what it's about, the person's words and photo, Reply to the person with an **Outcome** on the final answer, the DPO taking over at day 15 (and straight away for staff-behaviour complaints, which only the DPO sees), "did this solve it?", and the **Grievance register** |
+| **Requests** workspace | Number cards (open, overdue and to-match rights requests; grievances open, with the DPO and late) shortcuts to **Rights requests**, **Requests board**, **Grievances** and **Grievance register** (a report of totals by topic); in the sidebar, Rights requests and Grievances are pages under Requests |
 | **Requests inbox** | Every withdrawal or rights request with a reply-by date (30 days by default; late ones in red), plain statuses (Received, Who is this?, Working on it, Waiting for the person, Waiting for partners, Answered, Closed, Can't do this), a board view, **Record withdrawal** (tick the uses to stop, or leave the programme) and **Reply to the person** (Send update, Ask a question, Send final answer); staff are notified of new requests and 3 days before the reply-by date |
 | **Analytics** | Consents per week, by purpose, by capture mode, by how the notice was given, by language, by worker |
 | **Extra questions** | A library of 20 questions (sensitive ones flagged); totals-only report (counts under 5 hidden) |
@@ -104,6 +106,7 @@ Each role sees only its own menus. A field worker can't open the web console at 
 | API | Purpose |
 | --- | --- |
 | `consent.check` | Allow or deny one purpose for one person, from cache in milliseconds |
+| `rights.submit`, `grievance.submit` | Open a rights request (access, correction, erasure, withdrawal, nominee) or a grievance from another system |
 | `consent.record`, `consent.withdraw`, `consent.state` | Record and read consent from another system |
 | `principal.upsert` | Add or update a person (with extra-question answers and year of birth) |
 | `notice.get_active` | The live notice, its translations and extra questions |
@@ -204,6 +207,12 @@ A person with a disability who **can** decide with support consents for themself
 
 Wireframes of the field app with its own wording (fictional names). They are drawn to match the built screens (not screenshots) and regenerated with `tools/guide_wireframes.py` whenever a screen changes. Step labels show "of 3"; in a programme with extra questions (like Village Health Camps) they show "of 4", and guardians save on the About the person screen.
 
+### Sign in and app lock
+
+| Sign in | Choose a PIN | Unlock |
+| --- | --- | --- |
+| <img src="wireframes/m1-sign-in.png" width="200" alt="Organisation address, user ID, password, English or Hindi, wrong-password error"> | <img src="wireframes/m2-set-pin.png" width="200" alt="Choose a 4-digit PIN after the first sign-in"> | <img src="wireframes/m3-unlock.png" width="200" alt="Enter your PIN, tries left, Forgot PIN? Sign out"> |
+
 ### Home
 
 | Home |
@@ -218,9 +227,9 @@ Wireframes of the field app with its own wording (fictional names). They are dra
 
 No internet, or the programme set to "Worker's phone": the Confirm screen asks for the code from the worker's phone **and** the voice "haan" before Save.
 
-| 3. Confirm and save (offline / worker's phone) |
-| --- |
-| <img src="wireframes/a5-confirm-offline.png" width="200" alt="Confirm offline: SMS code from the worker's phone plus voice, both needed"> |
+| 3. Confirm and save (offline / worker's phone) | 2. Notice with no recording |
+| --- | --- |
+| <img src="wireframes/a5-confirm-offline.png" width="200" alt="Confirm offline: SMS code from the worker's phone plus voice, both needed"> | <img src="wireframes/a6-notice-phone-voice.png" width="200" alt="The phone reads the notice aloud; choices locked until They have read the whole notice"> |
 
 ### Journey B: needs help reading, or no phone
 
@@ -236,15 +245,21 @@ No internet, or the programme set to "Worker's phone": the Confirm screen asks f
 
 ### Journey D: guardian for an adult who can't decide alone
 
-| 2. Guardian's details | No order yet |
-| --- | --- |
-| <img src="wireframes/d2-guardian.png" width="200" alt="Appointed by, order number, relation, guardian"> | <img src="wireframes/d3-no-order.png" width="200" alt="Consent can't be taken; inform coordinator"> |
+| 1. Who (adult with a guardian) | 2. Guardian's details | No order yet |
+| --- | --- | --- |
+| <img src="wireframes/d1-who-guardian.png" width="200" alt="Screen 1 for a guardian of an adult who can't decide alone"> | <img src="wireframes/d2-guardian.png" width="200" alt="Appointed by, order number, relation, guardian"> | <img src="wireframes/d3-no-order.png" width="200" alt="Consent can't be taken; inform coordinator"> |
 
 ### Extra questions and withdrawal
 
 | About the person | Stop a use or leave | Leave the programme | Withdrawal noted |
 | --- | --- | --- | --- |
 | <img src="wireframes/e1-about.png" width="200" alt="Extra questions after the choices"> | <img src="wireframes/f1-withdraw.png" width="200" alt="Find the person, switch off uses, leave, or other requests"> | <img src="wireframes/f2-leave.png" width="200" alt="Confirm leaving the programme"> | <img src="wireframes/f3-noted.png" width="200" alt="What was stopped, with Send by SMS"> |
+
+### Find and sync issues
+
+| Find beneficiary | Records that need attention |
+| --- | --- |
+| <img src="wireframes/k1-find.png" width="200" alt="Search by phone; each use with its status; whose number matched"> | <img src="wireframes/k2-sync-issues.png" width="200" alt="Records the server could not save, with the reason, Try again or Discard"> |
 
 ## After consent
 
@@ -333,7 +348,8 @@ flowchart TD
   F -- "Not on the phone" --> R["Saved as a request with the code<br/>→ inbox; the code finds the person"]
   W -- "Switch off one or more uses<br/>(or Stop all)" --> L["Save: Stop N uses for the person"]
   W -- "Leave the programme" --> LV["Confirm: services stop<br/>→ every use, essential too"]
-  W -- "See or correct / Delete /<br/>Complaint" --> Q["Request → inbox, due in 30 days"]
+  W -- "See or correct / Delete" --> Q["Request → inbox, due in 30 days"]
+  W -- "Complaint" --> GQ["Grievance → Grievances list,<br/>answer due in 30 days"]
   L --> N["Withdrawal noted:<br/>what stopped, withdrawal code,<br/>Send by SMS"]
   LV --> N
   N -- "sync" --> S["Signed withdrawal on the server:<br/>consent check says no;<br/>closed request in the inbox<br/>with the slip number"]
@@ -359,7 +375,8 @@ flowchart LR
   B -- "No" --> U["Staff set the person<br/>(Who is this for? when<br/>the number is shared)"]
   U --> C
   C -- "withdrawal" --> W["Record withdrawal<br/>(signed) → closed"]
-  C -- "access / correction / erasure /<br/>complaint" --> M["Staff act and close<br/>(automation: Phase 2)"]
+  C -- "access / correction / erasure" --> M["Staff act by hand, Reply to the person,<br/>close (automation: Phase 2)"]
+  B -. "complaint" .-> G["Grievances list<br/>(see Work grievances)"]
 ```
 
 ### Journeys, step by step
@@ -425,6 +442,10 @@ Rules the console enforces:
 
 A request that is really a complaint (often an email): **Actions › Move to grievances**. The reverse is on the grievance.
 
+<img src="wireframes/w2-requests-workspace.png" width="100%" alt="Requests workspace: rights request and grievance counts, shortcuts, and the Needs attention box from Today">
+
+*The Needs attention box is on the Today page; it is drawn here with the Requests counts.*
+
 Withdrawals done on a field phone or on the self-service page arrive already **Closed**, so the inbox lists every withdrawal without asking staff to act on them again.
 
 ### Work grievances
@@ -443,6 +464,8 @@ Grievances (complaints, DPDP Act s.13) have their own list under **Requests › 
 ### Tell people affected by a breach
 
 Open the **Breach Incident** → **Tell affected people** tab. Only the DPO sends.
+
+<img src="wireframes/w3-breach-tell.png" width="100%" alt="Tell affected people: who to tell, counts only, message in Hindi and English, previews, send buttons, field visit list">
 
 1. **Who to tell**: people whose data was on the lost phone (the default for a lost phone), everyone in the programme, people with the affected uses, or a list of beneficiary IDs. People who withdrew or left are included: telling them is a legal duty, not a use of their data.
 2. The tab shows counts only, never names or numbers: how many by SMS (own phone or the guardian's, for a child or a guarded adult), how many have no phone, and the languages.
@@ -552,7 +575,8 @@ Green: built. Yellow: partly built. Grey: later phases.
 | Inbox › shared-number matching | **Built** | "Who is this for?" |
 | Inbox › Record withdrawal | **Built** | |
 | Inbox › erasure fulfilment with legal hold | **Phase 2** | Staff act by hand and close the request |
-| Inbox › conversation thread and replies | **Phase 2** | |
+| Inbox › conversation thread and replies | **Built** | **Reply to the person** (Send update, Ask a question, Send final answer) on rights requests and grievances; the person reads and answers on the self-service page. WhatsApp and email replies: **Phase 2** |
+| Inbox › grievances (separate list, DPO escalation, register) | **Built** | Grievances list (GR-), Outcome on the final answer, DPO at day 15, Grievance register |
 | Channels › Messaging | **Built** | MSG91 (codes, receipts); inbound SMS and missed call need a number. WhatsApp, IVR, email: **Phase 2** |
 | Channels › Capture & connectors | **Partly** | Connected systems and API; ODK connector **Phase 2**, CommCare **Phase 3** |
 | Channels › Devices (+ Report lost) | **Built** | |
@@ -575,7 +599,7 @@ Green: built. Yellow: partly built. Grey: later phases.
 | --- | --- | --- |
 | Overview | **Built** | Consents per week, by purpose, this month's counts |
 | Verification | **Partly** | Verification pipeline chart and confirmation counts; no "unconfirmed after N days" funnel |
-| Withdrawals & rights | **Partly** | Withdrawals by channel, requests by type; no on-time rate or median days |
+| Withdrawals & rights | **Partly** | Withdrawals by channel, requests by type; the **Grievance register** gives typical days to answer and late counts for grievances; no on-time rate or median days for rights requests |
 | Languages & districts | **Partly** | By language only; districts are not recorded |
 | Field team | **Built** | Consents by worker; "notice heard in full" |
 | Funder roll-up | **Phase 3** | |
@@ -682,3 +706,9 @@ flowchart LR
 | **Rule 3** | The DPDP Rule listing what every notice must say |
 | **Local Level Committee** | The National Trust body that can appoint a guardian for an adult who can't decide alone |
 | **Chain** | Each consent record carries the hash of the one before, so any change breaks the chain |
+| **Withdrawal code** | The new receipt code (`AN-…`) given when a use is stopped or the person leaves; written on their slip |
+| **Leave the programme** | Withdraw every use of a programme, essential ones too; the only way to stop an essential use |
+| **Relationship ended** | Marked on a person's record once nothing is on in any programme; starts the retention clock |
+| **Rights request** | A request to see, correct or delete data, stop a use, or name someone (RQ-), with a reply-by date |
+| **Grievance** | A complaint that something went wrong with a person's data or a request (GR-, DPDP Act s.13); answered with an **Outcome** |
+| **Self-service page** | `/my-consent` on the organisation's site, where a person sees and changes their choices and makes requests and grievances |
