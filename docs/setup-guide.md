@@ -86,13 +86,14 @@ Each organisation gets its own site. That's the tenant boundary the CI tests pro
 What happens on install, automatically:
 - The site's own Ed25519 signing key and phone-hash salt are generated and stored encrypted. You never see them or paste them.
 - Roles (Anumati Admin, DPO, Operator, Programme Manager, Field Worker, Developer, Auditor, Processor Partner, Funder Viewer), the **Notice Publishing** and **ROPA Approval** workflows, and custom fields are installed.
-- Two-factor login is switched on. Users with the Admin, DPO, Operator or Programme Manager role set up an authenticator app on first login.
+- Two-factor sign-in is **not** switched on: it is a site-wide setting, so you turn it on yourself (D5 step 2).
 
 ### D5. First steps inside the site
 
 1. Search bar → **Anumati Settings** → fill **Organisation legal name**, **DPO name/email** → **Save**. The *Signing key* section shows the key ID; that's all you need to see.
-2. Search bar → **User List** → **Add User** for your DPO → **Roles**: tick **Anumati DPO** → **Save**.
-3. To limit someone to one programme: search **User Permission** → **New** → User, *Allow* = **Programme**, *For Value* = the programme → **Save**.
+2. Still in **Anumati Settings** → **Sign-in** → tick **Two-factor sign-in for Anumati staff** → **Save**. From their next login, users with the Admin, DPO, Operator or Programme Manager role set up an authenticator app; field workers are not asked.
+3. Search bar → **User List** → **Add User** for your DPO → **Roles**: tick **Anumati DPO** → **Save**.
+4. To limit someone to one programme: search **User Permission** → **New** → User, *Allow* = **Programme**, *For Value* = the programme → **Save**.
 
 ### D6. Later deploys
 
